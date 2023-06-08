@@ -1,0 +1,40 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: flex-internal-frontend
+  namespace: flex
+  labels:
+    team: flex
+spec:
+  image: {{image}}
+  port: 8080
+  ingresses:
+    - {{ingress}}
+  replicas:
+    min: 1
+    max: 1
+    cpuThresholdPercentage: 90
+  resources:
+    limits:
+      memory: 150Mi
+    requests:
+      cpu: 100m
+      memory: 150Mi
+  liveness:
+    path: api/internal/isAlive
+  readiness:
+    path: api/internal/isReady
+  startup:
+    path: api/internal/isAlive
+    initialDelay: 10
+  azure:
+    application:
+      tenant: nav.no
+      enabled: true
+      allowAllUsers: false
+      claims:
+        groups:
+          - id: "5206a646-a99e-4cd5-90e4-758cf7948cc8" #flex
+    sidecar:
+      enabled: true
+      autoLogin: false
