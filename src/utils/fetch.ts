@@ -1,0 +1,95 @@
+import { v4 as uuidv4 } from 'uuid'
+
+export type FetchResult = { requestId: string; response: Response }
+
+export type ErrorHandler = (result: Response, requestId: string, defaultErrorHandler: () => void) => void
+
+export class FetchError extends Error {
+    status: number
+
+    constructor(message: string, status: number) {
+        super(message)
+        this.status = status
+    }
+}
+
+export class AuthenticationError extends Error {}
+
+export const fetchMedRequestId = async (
+    url: string,
+    options: RequestInit = {},
+    errorHandler?: ErrorHandler,
+): Promise<FetchResult> => {
+    const requestId = uuidv4()
+
+    options.headers = options.headers
+        ? { ...options.headers, 'x-request-id': requestId }
+        : { 'x-request-id': requestId }
+
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    const fetchUrl = async () => {
+        try {
+            return await fetch(url, options)
+        } catch (e) {
+            throw new FetchError(
+                `${e} - Kall til url: ${
+                    options.method || 'GET'
+                } ${url} og x_request_id: ${requestId} feilet uten svar fra backend.`,
+                -1,
+            )
+        }
+    }
+
+    const response = await fetchUrl()
+
+    if (response.status == 401) {
+        window.location.reload()
+        throw new AuthenticationError('Reloader siden på grunn av HTTP-kode 401 fra backend.')
+    }
+
+    if (!response.ok) {
+        const defaultErrorHandler = (): void => {
+            throw new FetchError(
+                `Kall til url: ${options.method} ${url} og x_request_id: ${requestId} feilet med HTTP-kode: ${response.status}.`,
+                response.status,
+            )
+        }
+        if (errorHandler) {
+            errorHandler(response, requestId, defaultErrorHandler)
+        } else {
+            defaultErrorHandler()
+        }
+    }
+
+    return { requestId, response }
+}
+
+export const fetchJsonMedRequestId = async <T>(
+    url: string,
+    options: RequestInit = {},
+    errorHandler?: ErrorHandler,
+): Promise<T> => {
+    const fetchResult = await fetchMedRequestId(url, options, errorHandler)
+    const response = fetchResult.response
+
+    // Guard som sjekker at response faktisk er OK før vi prøver å parse JSON siden default throw i fetchMedRequestId()
+    // kan bli utelatt i en custom errorHandler.
+    if (!response.ok) {
+        throw new Error(
+            `Response er ${response.status}, så vi parser ikke JSON for url: ${
+                options.method || 'GET'
+            } ${url} og x_request_id: ${fetchResult.requestId}.`,
+        )
+    }
+
+    try {
+        return await response.json()
+    } catch (e) {
+        throw new FetchError(
+            `${e} - Kall til url: ${options.method || 'GET'} ${url} og x_request_id: ${
+                fetchResult.requestId
+            } feilet ved parsing av JSON med HTTP-kode: ${response.status}.`,
+            response.status,
+        )
+    }
+}

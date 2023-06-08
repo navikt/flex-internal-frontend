@@ -1,0 +1,58 @@
+{
+    "name": "flex-internal-frontend",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+        "@navikt/ds-css": "^2.9.3",
+        "@navikt/ds-css-internal": "^2.9.3",
+        "@navikt/ds-react": "^2.9.3",
+        "@navikt/ds-react-internal": "^2.9.3",
+        "@navikt/ds-tailwind": "^2.9.3",
+        "@navikt/ds-tokens": "^2.9.3",
+        "@navikt/next-api-proxy": "^3.0.0",
+        "@navikt/next-logger": "^1.18.0",
+        "@tanstack/react-query": "^4.29.5",
+        "classnames": "^2.3.2",
+        "dayjs": "^1.11.7",
+        "openid-client": "^5.4.2",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "tailwind-merge": "^1.12.0",
+        "uuid": "^9.0.0"
+    },
+    "devDependencies": {
+        "@navikt/eslint-config-teamsykmelding": "^1.6.0",
+        "@types/node": "^18.15.11",
+        "@types/react": "^18.0.28",
+        "@types/react-dom": "^18.0.11",
+        "@types/uuid": "^9.0.1",
+        "autoprefixer": "^10.4.14",
+        "eslint": "^8.39.0",
+        "eslint-config-next": "^13.3.4",
+        "next": "^13.3.4",
+        "prettier": "^2.8.8",
+        "tailwindcss": "^3.3.2",
+        "typescript": "^5.0.4"
+    },
+    "scripts": {
+        "dev": "MOCK_BACKEND=true next dev -p 8080",
+        "start": "next start -p 8080",
+        "build": "next build",
+        "prettier:write": "prettier --write .",
+        "prettier:check": "prettier --check .",
+        "lint": "eslint --ext=ts,tsx src",
+        "lint:fix": "eslint --ext=ts,tsx src --fix",
+        "format": "npm run prettier:write && npm run lint:fix"
+    },
+    "eslintConfig": {
+        "extends": [
+            "@navikt/eslint-config-teamsykmelding",
+            "next/core-web-vitals"
+        ],
+        "rules": {
+            "postcss-modules/no-undef-class": "off",
+            "postcss-modules/no-unused-class": "off"
+        }
+    },
+    "prettier": "@navikt/eslint-config-teamsykmelding/prettier"
+}
