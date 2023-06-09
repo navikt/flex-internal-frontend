@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { BodyShort, TextField } from '@navikt/ds-react'
+import { Timeline } from '@navikt/ds-react-internal'
 
 import { initialProps } from '../initialprops/initialProps'
 import { useSoknader } from '../queryhooks/useSoknader'
@@ -10,6 +11,30 @@ const Index = (): JSX.Element => {
 
     function fnrInput(fnrChange: string): void {
         setFnr(fnrChange.length == 11 ? fnrChange : undefined)
+    }
+
+    function Timelinje(): JSX.Element {
+        if (soknader === undefined) {
+            return <></>
+        }
+
+        return (
+            <div className="min-w-[800px] overflow-x-auto">
+                <Timeline>
+                    {soknader?.map((s: any) => (
+                        <Timeline.Row label="Søknad" key={s.id}>
+                            <Timeline.Period start={s.fom} end={s.tom} status="success">
+                                <ul>
+                                    <li>sok id: {s.id}</li>
+                                    <li>syk id: {s.sykmeldingId}</li>
+                                    <li>status: {s.status}</li>
+                                </ul>
+                            </Timeline.Period>
+                        </Timeline.Row>
+                    ))}
+                </Timeline>
+            </div>
+        )
     }
 
     return (
@@ -25,6 +50,8 @@ const Index = (): JSX.Element => {
                     </BodyShort>
                 ))}
             </BodyShort>
+
+            <Timelinje />
         </>
     )
 }
