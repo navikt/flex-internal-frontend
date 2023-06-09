@@ -31,7 +31,12 @@ spec:
     application:
       tenant: {{azureTenant}}
       enabled: true
-      allowAllUsers: true
+      allowAllUsers: {{allowAllUsers}}
+      {{#unless allowAllUsers}}
+      claims:
+        groups:
+          - id: "5206a646-a99e-4cd5-90e4-758cf7948cc8" #flex
+      {{/unless}}
     sidecar:
       enabled: true
       autoLogin: false
