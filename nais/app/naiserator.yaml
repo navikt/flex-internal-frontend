@@ -38,3 +38,12 @@ spec:
     sidecar:
       enabled: true
       autoLogin: false
+  accessPolicy:
+    outbound:
+      rules:
+        - application: sykepengesoknad-backend
+  env:
+  {{#each env}}
+     - name: {{@key}}
+       value: "{{this}}"
+  {{/each}}

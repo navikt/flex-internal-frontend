@@ -1,1 +1,3 @@
 ingress: https://flex-internal.intern.nav.no
+env:
+  SYKEPENGESOKNAD_BACKEND_CLIENT_ID: api://dev-gcp.flex.sykepengesoknad-backend/.default

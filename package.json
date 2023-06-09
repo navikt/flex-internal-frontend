@@ -51,7 +51,8 @@
         ],
         "rules": {
             "postcss-modules/no-undef-class": "off",
-            "postcss-modules/no-unused-class": "off"
+            "postcss-modules/no-unused-class": "off",
+            "@typescript-eslint/no-explicit-any": "off"
         }
     },
     "prettier": "@navikt/eslint-config-teamsykmelding/prettier"
