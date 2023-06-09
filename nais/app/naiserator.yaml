@@ -29,7 +29,7 @@ spec:
     initialDelay: 10
   azure:
     application:
-      tenant: nav.no
+      tenant: {{azureTenant}}
       enabled: true
       allowAllUsers: false
       claims:
