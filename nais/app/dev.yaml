@@ -1,1 +1,5 @@
 ingress: https://flex-internal.intern.dev.nav.no
+azureTenant: trygdeetaten.no
+allowAllUsers: true
+env:
+  SYKEPENGESOKNAD_BACKEND_CLIENT_ID: api://dev-gcp.flex.sykepengesoknad-backend/.default
