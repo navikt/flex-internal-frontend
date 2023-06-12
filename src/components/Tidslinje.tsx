@@ -62,6 +62,12 @@ export default function Tidslinje({
                         </Timeline.Period>
                     </Timeline.Row>
                 ))}
+                <Timeline.Zoom>
+                    <Timeline.Zoom.Button label="3 mnd" interval="month" count={3} />
+                    <Timeline.Zoom.Button label="7 mnd" interval="month" count={7} />
+                    <Timeline.Zoom.Button label="9 mnd" interval="month" count={9} />
+                    <Timeline.Zoom.Button label="1.5 år" interval="year" count={1.5} />
+                </Timeline.Zoom>
             </Timeline>
         </div>
     )
