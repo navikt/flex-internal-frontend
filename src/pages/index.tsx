@@ -17,7 +17,10 @@ const Index = () => {
     let filtrerteSoknader: Soknad[] = soknader || []
     filter.forEach((f: Filter) => {
         filtrerteSoknader = filtrerteSoknader.filter((sok: any) => {
-            return (f.inkluder && sok[f.prop] === f.verdi) || (!f.inkluder && sok[f.prop] !== f.verdi)
+            return (
+                (f.inkluder && f.verdi === JSON.stringify(sok[f.prop])) ||
+                (!f.inkluder && f.verdi !== JSON.stringify(sok[f.prop]))
+            )
         })
     })
 
