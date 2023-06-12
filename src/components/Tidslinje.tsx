@@ -25,10 +25,7 @@ export default function Tidslinje({
                     <Timeline.Row key={s.id} label="Soknad">
                         <Timeline.Period start={s.fom} end={s.tom} status="success">
                             <ul>
-                                <li>
-                                    sok id: {s.id}{' '}
-                                    <FilterFelt prop="id" verdi={s.id} filter={filter} setFilter={setFilter} />
-                                </li>
+                                <li>sok id: {s.id}</li>
                                 <li>
                                     syk id: {s.sykmeldingId}{' '}
                                     <FilterFelt
@@ -42,6 +39,7 @@ export default function Tidslinje({
                                     status: {s.status}{' '}
                                     <FilterFelt prop="status" verdi={s.status} filter={filter} setFilter={setFilter} />
                                 </li>
+                                <li>sykmelding skrevet: {s.sykmeldingSkrevet}</li>
                             </ul>
                         </Timeline.Period>
                     </Timeline.Row>

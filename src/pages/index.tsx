@@ -19,6 +19,10 @@ const Index = () => {
         })
     })
 
+    filtrerteSoknader = filtrerteSoknader.sort((a: any, b: any) => {
+        return (a.sykmeldingUtskrevet || new Date(0)) > (b.sykmeldingUtskrevet || new Date(0)) ? 1 : -1
+    })
+
     return (
         <div className="flex-row space-y-4">
             <FnrInput setFnr={setFnr} />
