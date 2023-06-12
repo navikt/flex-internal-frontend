@@ -45,7 +45,7 @@ const testdata = [
         sendtTilArbeidsgiverDato: null,
         avbruttDato: null,
         startSykeforlop: '2023-04-01',
-        sykmeldingUtskrevet: '2023-06-01',
+        sykmeldingUtskrevet: '2023-06-05',
         arbeidsgiver: {
             navn: 'Klonelabben',
             orgnummer: '907670201',
