@@ -5,10 +5,12 @@ import { Soknad, useSoknader } from '../queryhooks/useSoknader'
 import { Filter, ValgteFilter } from '../components/Filter'
 import FnrInput from '../components/FnrInput'
 import Tidslinje from '../components/Tidslinje'
+import ValgtSortering, { Sortering } from '../components/Sortering'
 
 const Index = () => {
     const [fnr, setFnr] = useState<string>()
     const [filter, setFilter] = useState<Filter[]>([])
+    const [sortering, setSortering] = useState<Sortering>('sykmelding skrevet')
 
     const { data: soknader } = useSoknader(fnr, fnr !== undefined)
 
@@ -19,13 +21,11 @@ const Index = () => {
         })
     })
 
-    filtrerteSoknader = filtrerteSoknader.sort((a: any, b: any) => {
-        return (a.sykmeldingUtskrevet || new Date(0)) > (b.sykmeldingUtskrevet || new Date(0)) ? 1 : -1
-    })
-
     return (
         <div className="flex-row space-y-4">
             <FnrInput setFnr={setFnr} />
+
+            <ValgtSortering soknader={filtrerteSoknader} sortering={sortering} setSortering={setSortering} />
 
             <ValgteFilter filter={filter} setFilter={setFilter} />
 
