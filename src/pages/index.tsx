@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { TextField } from '@navikt/ds-react'
-import { Timeline } from '@navikt/ds-react-internal'
 
 import { initialProps } from '../initialprops/initialProps'
 import { Soknad, useSoknader } from '../queryhooks/useSoknader'
-import { Filter, FilterFelt, ValgteFilter } from '../components/Filter'
+import { Filter, ValgteFilter } from '../components/Filter'
+import FnrInput from '../components/FnrInput'
+import Tidslinje from '../components/Tidslinje'
 
 const Index = () => {
     const [fnr, setFnr] = useState<string>()
@@ -19,60 +19,13 @@ const Index = () => {
         })
     })
 
-    function fnrInput(fnrChange: string): void {
-        setFnr(fnrChange.length == 11 ? fnrChange : undefined)
-    }
-
-    function Tidslinje() {
-        if (soknader === undefined || filtrerteSoknader.length === 0) {
-            return <></>
-        }
-
-        return (
-            <div className="min-w-[800px] overflow-x-auto">
-                <Timeline>
-                    {filtrerteSoknader?.map((s: any) => (
-                        <Timeline.Row key={s.id} label="Soknad">
-                            <Timeline.Period start={s.fom} end={s.tom} status="success">
-                                <ul>
-                                    <li>
-                                        sok id: {s.id}{' '}
-                                        <FilterFelt prop="id" verdi={s.id} filter={filter} setFilter={setFilter} />
-                                    </li>
-                                    <li>
-                                        syk id: {s.sykmeldingId}{' '}
-                                        <FilterFelt
-                                            prop="sykmeldingId"
-                                            verdi={s.sykmeldingId}
-                                            filter={filter}
-                                            setFilter={setFilter}
-                                        />
-                                    </li>
-                                    <li>
-                                        status: {s.status}{' '}
-                                        <FilterFelt
-                                            prop="status"
-                                            verdi={s.status}
-                                            filter={filter}
-                                            setFilter={setFilter}
-                                        />
-                                    </li>
-                                </ul>
-                            </Timeline.Period>
-                        </Timeline.Row>
-                    ))}
-                </Timeline>
-            </div>
-        )
-    }
-
     return (
         <div className="flex-row space-y-4">
-            <TextField type="number" label="fnr" onChange={(e) => fnrInput(e.target.value)} />
+            <FnrInput setFnr={setFnr} />
 
             <ValgteFilter filter={filter} setFilter={setFilter} />
 
-            <Tidslinje />
+            <Tidslinje soknader={filtrerteSoknader} filter={filter} setFilter={setFilter} />
         </div>
     )
 }
