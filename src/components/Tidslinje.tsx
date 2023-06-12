@@ -21,7 +21,7 @@ export default function Tidslinje({
     return (
         <div className="min-w-[800px] overflow-x-auto">
             <Timeline>
-                {soknader?.map((s: any) => (
+                {soknader.map((s: any) => (
                     <Timeline.Row key={s.id} label="Soknad">
                         <Timeline.Period start={s.fom} end={s.tom} status="success">
                             <ul>
@@ -39,7 +39,16 @@ export default function Tidslinje({
                                     status: {s.status}{' '}
                                     <FilterFelt prop="status" verdi={s.status} filter={filter} setFilter={setFilter} />
                                 </li>
-                                <li>sykmelding skrevet: {s.sykmeldingSkrevet}</li>
+                                <li>sykmelding skrevet: {JSON.stringify(s.sykmeldingUtskrevet)}</li>
+                                <li>
+                                    soknadstype: {s.soknadstype}{' '}
+                                    <FilterFelt
+                                        prop="soknadstype"
+                                        verdi={s.soknadstype}
+                                        filter={filter}
+                                        setFilter={setFilter}
+                                    />
+                                </li>
                             </ul>
                         </Timeline.Period>
                     </Timeline.Row>
