@@ -49,6 +49,15 @@ export default function Tidslinje({
                                         setFilter={setFilter}
                                     />
                                 </li>
+                                <li>
+                                    arbeidsgiver: {JSON.stringify(s.arbeidsgiver)}{' '}
+                                    <FilterFelt
+                                        prop="arbeidsgiver"
+                                        verdi={s.arbeidsgiver}
+                                        filter={filter}
+                                        setFilter={setFilter}
+                                    />
+                                </li>
                             </ul>
                         </Timeline.Period>
                     </Timeline.Row>

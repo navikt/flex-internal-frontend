@@ -32,18 +32,18 @@ export function FilterFelt({
     setFilter,
 }: {
     prop: string
-    verdi: string
+    verdi: any
     filter: Filter[]
     setFilter: (prev: any) => void
 }) {
     const inkluder: Filter = {
         prop: prop,
-        verdi: verdi,
+        verdi: JSON.stringify(verdi),
         inkluder: true,
     }
     const ekskluder: Filter = {
         prop: prop,
-        verdi: verdi,
+        verdi: JSON.stringify(verdi),
         inkluder: false,
     }
 
