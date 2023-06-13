@@ -1,8 +1,11 @@
 # flex-internal-frontend
 
 Innlogging er begrenset til AD gruppen team flex.
+Man må ha naisdevice for å nå appen.
 
-Adressen til appen er https://flex-internal.intern.nav.no/ i prod og https://flex-internal.intern.dev.nav.no/ i dev. Man må ha naisdevice for å nå appen.
+Prod: https://flex-internal.intern.nav.no/ logg inn med fornavn.etternavn@nav.no
+
+Dev: https://flex-internal.intern.dev.nav.no/ logg inn med fornavn.etternavn@trygdeetaten.no
 
 ## Henvendelser
 
