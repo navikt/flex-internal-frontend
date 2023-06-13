@@ -1,5 +1,5 @@
-import { Timeline } from '@navikt/ds-react-internal'
 import React, { Fragment } from 'react'
+import { Timeline } from '@navikt/ds-react'
 
 import { RSSoknadstatusType, Soknad } from '../queryhooks/useSoknader'
 
@@ -26,26 +26,14 @@ export default function Tidslinje({
 
     function SoknadDetaljer({ soknad }: { soknad: Soknad }) {
         return (
-            <ul>
-                <li>sok id: {soknad.id}</li>
-                <li>
-                    syk id: {soknad.sykmeldingId}{' '}
-                    <FilterFelt prop="sykmeldingId" verdi={soknad.sykmeldingId} filter={filter} setFilter={setFilter} />
-                </li>
-                <li>
-                    status: {soknad.status}{' '}
-                    <FilterFelt prop="status" verdi={soknad.status} filter={filter} setFilter={setFilter} />
-                </li>
-                <li>sykmelding skrevet: {JSON.stringify(soknad.sykmeldingUtskrevet)}</li>
-                <li>
-                    soknadstype: {soknad.soknadstype}{' '}
-                    <FilterFelt prop="soknadstype" verdi={soknad.soknadstype} filter={filter} setFilter={setFilter} />
-                </li>
-                <li>
-                    arbeidsgiver: {JSON.stringify(soknad.arbeidsgiver)}{' '}
-                    <FilterFelt prop="arbeidsgiver" verdi={soknad.arbeidsgiver} filter={filter} setFilter={setFilter} />
-                </li>
-            </ul>
+            <Fragment>
+                {Object.entries(soknad).map(([key, val], idx) => (
+                    <div key={key + idx}>
+                        <FilterFelt prop={key} verdi={val} filter={filter} setFilter={setFilter} />
+                        {` ${key}: ${JSON.stringify(val)}`}
+                    </div>
+                ))}
+            </Fragment>
         )
     }
 
