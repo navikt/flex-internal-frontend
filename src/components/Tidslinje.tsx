@@ -1,5 +1,5 @@
 import { Timeline } from '@navikt/ds-react-internal'
-import React from 'react'
+import React, { Fragment } from 'react'
 
 import { RSSoknadstatusType, Soknad } from '../queryhooks/useSoknader'
 
@@ -24,8 +24,33 @@ export default function Tidslinje({
         return 'info'
     }
 
+    function SoknadDetaljer({ soknad }: { soknad: Soknad }) {
+        return (
+            <ul>
+                <li>sok id: {soknad.id}</li>
+                <li>
+                    syk id: {soknad.sykmeldingId}{' '}
+                    <FilterFelt prop="sykmeldingId" verdi={soknad.sykmeldingId} filter={filter} setFilter={setFilter} />
+                </li>
+                <li>
+                    status: {soknad.status}{' '}
+                    <FilterFelt prop="status" verdi={soknad.status} filter={filter} setFilter={setFilter} />
+                </li>
+                <li>sykmelding skrevet: {JSON.stringify(soknad.sykmeldingUtskrevet)}</li>
+                <li>
+                    soknadstype: {soknad.soknadstype}{' '}
+                    <FilterFelt prop="soknadstype" verdi={soknad.soknadstype} filter={filter} setFilter={setFilter} />
+                </li>
+                <li>
+                    arbeidsgiver: {JSON.stringify(soknad.arbeidsgiver)}{' '}
+                    <FilterFelt prop="arbeidsgiver" verdi={soknad.arbeidsgiver} filter={filter} setFilter={setFilter} />
+                </li>
+            </ul>
+        )
+    }
+
     if (soknader.length === 0) {
-        return <></>
+        return <Fragment />
     }
 
     return (
@@ -34,41 +59,7 @@ export default function Tidslinje({
                 {soknader.map((s: any) => (
                     <Timeline.Row key={s.id} label="Soknad">
                         <Timeline.Period start={s.fom} end={s.tom} status={timelinePeriodeStatus(s.status)}>
-                            <ul>
-                                <li>sok id: {s.id}</li>
-                                <li>
-                                    syk id: {s.sykmeldingId}{' '}
-                                    <FilterFelt
-                                        prop="sykmeldingId"
-                                        verdi={s.sykmeldingId}
-                                        filter={filter}
-                                        setFilter={setFilter}
-                                    />
-                                </li>
-                                <li>
-                                    status: {s.status}{' '}
-                                    <FilterFelt prop="status" verdi={s.status} filter={filter} setFilter={setFilter} />
-                                </li>
-                                <li>sykmelding skrevet: {JSON.stringify(s.sykmeldingUtskrevet)}</li>
-                                <li>
-                                    soknadstype: {s.soknadstype}{' '}
-                                    <FilterFelt
-                                        prop="soknadstype"
-                                        verdi={s.soknadstype}
-                                        filter={filter}
-                                        setFilter={setFilter}
-                                    />
-                                </li>
-                                <li>
-                                    arbeidsgiver: {JSON.stringify(s.arbeidsgiver)}{' '}
-                                    <FilterFelt
-                                        prop="arbeidsgiver"
-                                        verdi={s.arbeidsgiver}
-                                        filter={filter}
-                                        setFilter={setFilter}
-                                    />
-                                </li>
-                            </ul>
+                            <SoknadDetaljer soknad={s} />
                         </Timeline.Period>
                     </Timeline.Row>
                 ))}
