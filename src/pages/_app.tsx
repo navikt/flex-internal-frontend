@@ -3,9 +3,8 @@ import '../style/global.css'
 import type { AppProps } from 'next/app'
 import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
-import { Header } from '@navikt/ds-react-internal'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Modal } from '@navikt/ds-react'
+import { InternalHeader, Modal } from '@navikt/ds-react'
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
     const [queryClient] = useState(
@@ -34,9 +33,9 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
             </Head>
             <QueryClientProvider client={queryClient}>
-                <Header>
-                    <Header.Title as="h1">Flex internal frontend</Header.Title>
-                </Header>
+                <InternalHeader>
+                    <InternalHeader.Title as="h1">Flex internal frontend</InternalHeader.Title>
+                </InternalHeader>
                 <div id="root" className="mx-auto p-4 pb-32">
                     <Component {...pageProps} />
                 </div>
