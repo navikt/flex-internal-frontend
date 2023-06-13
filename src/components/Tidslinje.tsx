@@ -1,7 +1,7 @@
 import { Timeline } from '@navikt/ds-react-internal'
 import React from 'react'
 
-import { Soknad } from '../queryhooks/useSoknader'
+import { RSSoknadstatusType, Soknad } from '../queryhooks/useSoknader'
 
 import { Filter, FilterFelt } from './Filter'
 
@@ -14,6 +14,16 @@ export default function Tidslinje({
     filter: Filter[]
     setFilter: (prev: any) => void
 }) {
+    function timelinePeriodeStatus(status: RSSoknadstatusType) {
+        if (['AVBRUTT', 'SLETTET', 'UTGAATT'].includes(status)) {
+            return 'warning'
+        }
+        if (['SENDT', 'KORRIGERT'].includes(status)) {
+            return 'success'
+        }
+        return 'info'
+    }
+
     if (soknader.length === 0) {
         return <></>
     }
@@ -23,7 +33,7 @@ export default function Tidslinje({
             <Timeline>
                 {soknader.map((s: any) => (
                     <Timeline.Row key={s.id} label="Soknad">
-                        <Timeline.Period start={s.fom} end={s.tom} status="success">
+                        <Timeline.Period start={s.fom} end={s.tom} status={timelinePeriodeStatus(s.status)}>
                             <ul>
                                 <li>sok id: {s.id}</li>
                                 <li>
