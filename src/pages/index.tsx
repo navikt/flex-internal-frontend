@@ -12,9 +12,11 @@ const Index = () => {
     const [filter, setFilter] = useState<Filter[]>([])
     const [sortering, setSortering] = useState<Sortering>('sykmelding skrevet')
 
-    const { data: soknader } = useSoknader(fnr, fnr !== undefined)
+    const { data: data } = useSoknader(fnr, fnr !== undefined)
+    const soknader = data?.sykepengesoknadListe || []
+    // const klipp = data?.klippetSykepengesoknadRecord || []
 
-    let filtrerteSoknader: Soknad[] = soknader || []
+    let filtrerteSoknader: Soknad[] = soknader
     filter.forEach((f: Filter) => {
         filtrerteSoknader = filtrerteSoknader.filter((sok: any) => {
             return (
