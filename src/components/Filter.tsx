@@ -1,5 +1,5 @@
 import { Chips } from '@navikt/ds-react'
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 
 export interface Filter {
     prop: string
@@ -8,16 +8,46 @@ export interface Filter {
 }
 
 export function ValgteFilter({ filter, setFilter }: { filter: Filter[]; setFilter: (prev: any) => void }) {
-    if (filter.length === 0) return <Fragment />
+    const [deaktiverteFilter, setDeaktiverteFilter] = useState<Filter[]>([])
+
+    function filterOnClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, f: Filter) {
+        if (e.target instanceof HTMLSpanElement) {
+            if (filter.some((f2) => f2 === f)) {
+                deaktiverFilter(f)
+            } else {
+                aktiverFilter(f)
+            }
+        } else {
+            slettFilter(f)
+        }
+    }
+
+    function deaktiverFilter(f: Filter) {
+        setDeaktiverteFilter((prev) => [...prev, f])
+        setFilter((prev: Filter[]) => prev.filter((f2) => f2 !== f))
+    }
+
+    function aktiverFilter(f: Filter) {
+        setDeaktiverteFilter((prev) => prev.filter((f2) => f2 !== f))
+        setFilter((prev: Filter[]) => [...prev, f])
+    }
+
+    function slettFilter(f: Filter) {
+        setDeaktiverteFilter((prev) => prev.filter((f2) => f2 !== f))
+        setFilter((prev: Filter[]) => prev.filter((f2) => f2 !== f))
+    }
+
+    if (filter.length === 0 && deaktiverteFilter.length === 0) return <Fragment />
 
     return (
         <Chips>
             {filter.map((f) => (
-                <Chips.Removable
-                    key={f.prop}
-                    variant="action"
-                    onClick={() => setFilter((prev: Filter[]) => prev.filter((f2) => f2 !== f))}
-                >
+                <Chips.Removable key={f.prop} variant="action" onClick={(e) => filterOnClick(e, f)}>
+                    {f.prop + (f.inkluder ? ' = ' : ' != ') + f.verdi}
+                </Chips.Removable>
+            ))}
+            {deaktiverteFilter.map((f) => (
+                <Chips.Removable key={f.prop + '_deaktivert'} variant="neutral" onClick={(e) => filterOnClick(e, f)}>
                     {f.prop + (f.inkluder ? ' = ' : ' != ') + f.verdi}
                 </Chips.Removable>
             ))}
