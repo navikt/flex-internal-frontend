@@ -6,6 +6,7 @@ import { Filter, ValgteFilter } from '../components/Filter'
 import FnrInput from '../components/FnrInput'
 import Tidslinje from '../components/Tidslinje'
 import ValgtSortering, { Sortering } from '../components/Sortering'
+import { perioderSomMangler } from '../utils/overlapp'
 
 const Index = () => {
     const [fnr, setFnr] = useState<string>()
@@ -14,7 +15,7 @@ const Index = () => {
 
     const { data: data } = useSoknader(fnr, fnr !== undefined)
     const soknader = data?.sykepengesoknadListe || []
-    // const klipp = data?.klippetSykepengesoknadRecord || []
+    const klipp = data?.klippetSykepengesoknadRecord || []
 
     let filtrerteSoknader: Soknad[] = soknader
     filter.forEach((f: Filter) => {
@@ -25,6 +26,10 @@ const Index = () => {
             )
         })
     })
+
+    if (klipp.length > 0) {
+        console.log('perioderSomMangler', JSON.stringify(perioderSomMangler(klipp[0].periodeFor, klipp[0].periodeEtter))) // eslint-disable-line
+    }
 
     return (
         <div className="flex-row space-y-4">
