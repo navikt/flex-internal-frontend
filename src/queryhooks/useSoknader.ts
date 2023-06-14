@@ -1,7 +1,13 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
 import dayjs from 'dayjs'
+import nb from 'dayjs/locale/nb'
 
 import { fetchJsonMedRequestId } from '../utils/fetch'
+
+dayjs.locale({
+    ...nb,
+    weekStart: 1,
+})
 
 export function useSoknader(fnr: string | undefined, enabled = true): UseQueryResult<SoknaderResponse, Error> {
     return useQuery<SoknaderResponse, Error>({
@@ -56,8 +62,8 @@ class KlippetSykepengesoknadRecord {
         this.sykepengesoknadUuid = json.sykepengesoknadUuid
         this.sykmeldingUuid = json.sykmeldingId
         this.klippVariant = json.klippVariant
-        this.periodeFor = json.periodeFor
-        this.periodeEtter = json.periodeEtter
+        this.periodeFor = JSON.parse(json.periodeFor)
+        this.periodeEtter = JSON.parse(json.periodeEtter)
         this.timestamp = dayjsToDate(json.timestamp)
     }
 }
@@ -68,8 +74,8 @@ export class Soknad {
     soknadstype: RSSoknadstypeType
     status: RSSoknadstatusType
     arbeidssituasjon?: RSArbeidssituasjonType
-    fom?: Date
-    tom?: Date
+    fom?: string
+    tom?: string
     korrigerer?: string
     korrigertAv?: string
     egenmeldtSykmelding?: boolean
@@ -90,8 +96,8 @@ export class Soknad {
         this.soknadstype = json.soknadstype
         this.status = json.status
         this.arbeidssituasjon = json.arbeidssituasjon
-        this.fom = dayjsToDate(json.fom)
-        this.tom = dayjsToDate(json.tom)
+        this.fom = json.fom
+        this.tom = json.tom
         this.korrigerer = json.korrigerer
         this.korrigertAv = json.korrigertAv
         this.egenmeldtSykmelding = json.egenmeldtSykmelding

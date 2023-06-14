@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { Timeline } from '@navikt/ds-react'
 
-import { RSSoknadstatusType, Soknad } from '../queryhooks/useSoknader'
+import { dayjsToDate, RSSoknadstatusType, Soknad } from '../queryhooks/useSoknader'
 
 import { Filter, FilterFelt } from './Filter'
 
@@ -46,7 +46,7 @@ export default function Tidslinje({
             <Timeline>
                 {soknader.map((s: any) => (
                     <Timeline.Row key={s.id} label="Soknad">
-                        <Timeline.Period start={s.fom} end={s.tom} status={timelinePeriodeStatus(s.status)}>
+                        <Timeline.Period start={dayjsToDate(s.fom)!} end={dayjsToDate(s.tom)!} status={timelinePeriodeStatus(s.status)}>
                             <SoknadDetaljer soknad={s} />
                         </Timeline.Period>
                     </Timeline.Row>
