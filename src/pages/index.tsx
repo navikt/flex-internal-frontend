@@ -6,7 +6,6 @@ import { Filter, ValgteFilter } from '../components/Filter'
 import FnrInput from '../components/FnrInput'
 import Tidslinje from '../components/Tidslinje'
 import ValgtSortering, { Sortering } from '../components/Sortering'
-import { perioderSomMangler } from '../utils/overlapp'
 
 const Index = () => {
     const [fnr, setFnr] = useState<string>()
@@ -27,10 +26,6 @@ const Index = () => {
         })
     })
 
-    if (klipp.length > 0) {
-        console.log('perioderSomMangler', JSON.stringify(perioderSomMangler(klipp[0].periodeFor, klipp[0].periodeEtter))) // eslint-disable-line
-    }
-
     return (
         <div className="flex-row space-y-4">
             <FnrInput setFnr={setFnr} />
@@ -39,7 +34,7 @@ const Index = () => {
 
             <ValgteFilter filter={filter} setFilter={setFilter} />
 
-            <Tidslinje soknader={filtrerteSoknader} filter={filter} setFilter={setFilter} />
+            <Tidslinje soknader={filtrerteSoknader} klipp={klipp} filter={filter} setFilter={setFilter} />
         </div>
     )
 }

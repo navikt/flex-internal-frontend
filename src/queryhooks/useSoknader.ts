@@ -48,7 +48,7 @@ interface SoknaderResponse {
     klippetSykepengesoknadRecord: KlippetSykepengesoknadRecord[]
 }
 
-class KlippetSykepengesoknadRecord {
+export class KlippetSykepengesoknadRecord {
     id: string
     sykepengesoknadUuid: string
     sykmeldingUuid: string
@@ -60,7 +60,7 @@ class KlippetSykepengesoknadRecord {
     constructor(json: any) {
         this.id = json.id
         this.sykepengesoknadUuid = json.sykepengesoknadUuid
-        this.sykmeldingUuid = json.sykmeldingId
+        this.sykmeldingUuid = json.sykmeldingUuid
         this.klippVariant = json.klippVariant
         this.periodeFor = JSON.parse(json.periodeFor)
         this.periodeEtter = JSON.parse(json.periodeEtter)
