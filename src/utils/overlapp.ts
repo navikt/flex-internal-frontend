@@ -1,13 +1,19 @@
-import { RSSoknadsperiode } from '../queryhooks/useSoknader'
 import dayjs, { Dayjs } from 'dayjs'
+
+import { RSSoknadsperiode } from '../queryhooks/useSoknader'
+
+export interface Klipp {
+    fom: Date
+    tom: Date
+}
 
 export function perioderSomMangler(perioderFor: RSSoknadsperiode[], perioderEtter: RSSoknadsperiode[]) {
     const fom = minFom(perioderFor)
     const tom = maxTom(perioderFor)
     const range = dayjsRange(fom, tom)
-    let dagerSomMangler: Dayjs[] = []
+    const dagerSomMangler: Dayjs[] = []
 
-    for(const dag of range) {
+    for (const dag of range) {
         const iPerioderFor = dagErIPerioder(dag, perioderFor)
         const iPerioderEtter = dagErIPerioder(dag, perioderEtter)
         if (iPerioderFor && !iPerioderEtter) {
@@ -20,7 +26,7 @@ export function perioderSomMangler(perioderFor: RSSoknadsperiode[], perioderEtte
 
 function minFom(perioder: RSSoknadsperiode[]) {
     let currentMin = '9999-12-31'
-    perioder.forEach((p) =>  {
+    perioder.forEach((p) => {
         if (p.fom < currentMin) {
             currentMin = p.fom
         }
@@ -30,7 +36,7 @@ function minFom(perioder: RSSoknadsperiode[]) {
 
 function maxTom(perioder: RSSoknadsperiode[]) {
     let currentMax = '1111-01-01'
-    perioder.forEach((p) =>  {
+    perioder.forEach((p) => {
         if (p.tom > currentMax) {
             currentMax = p.tom
         }
@@ -41,7 +47,7 @@ function maxTom(perioder: RSSoknadsperiode[]) {
 function dayjsRange(from: string, to: string) {
     const fom = dayjs(from)
     const tom = dayjs(to)
-    let range: Dayjs[] = []
+    const range: Dayjs[] = []
 
     let current: dayjs.Dayjs
     for (current = fom; !tom.isBefore(current); current = current.add(1, 'days')) {
@@ -53,7 +59,7 @@ function dayjsRange(from: string, to: string) {
 
 function dagErIPerioder(dag: Dayjs, perioder: RSSoknadsperiode[]) {
     let iPeriode = false
-    for(const periode of perioder) {
+    for (const periode of perioder) {
         const fom = dayjs(periode.fom)
         const tom = dayjs(periode.tom)
         if (dag >= fom && dag <= tom) {
@@ -64,7 +70,7 @@ function dagErIPerioder(dag: Dayjs, perioder: RSSoknadsperiode[]) {
 }
 
 function sammenhengendeDagerTilPerioder(dager: Dayjs[]) {
-    let perioder = []
+    const perioder: Klipp[] = []
     let fom = dager[0]
     let tom = dager[0]
 
@@ -73,8 +79,8 @@ function sammenhengendeDagerTilPerioder(dager: Dayjs[]) {
             tom = dag
         } else {
             perioder.push({
-                fom: fom,
-                tom: tom
+                fom: fom.toDate(),
+                tom: tom.toDate(),
             })
             fom = dag.add(1, 'days')
             tom = fom
@@ -84,7 +90,7 @@ function sammenhengendeDagerTilPerioder(dager: Dayjs[]) {
     if (dager.length > 1 && !fom.isSame(tom, 'day')) {
         perioder.push({
             fom: fom.toDate(),
-            tom: tom.toDate()
+            tom: tom.toDate(),
         })
     }
 
