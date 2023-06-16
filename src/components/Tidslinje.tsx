@@ -33,7 +33,7 @@ function gruppering(soknader: Soknad[], klipp: KlippetSykepengesoknadRecord[]) {
     })
 
     klipp.forEach((k) => {
-        const perioderSomErKlippet = perioderSomMangler(k.periodeFor, k.periodeEtter)
+        const perioderSomErKlippet = perioderSomMangler(k)
 
         if (k.klippVariant.startsWith('SYKMELDING')) {
             sykmeldingGruppering.get(k.sykmeldingUuid)?.klippingAvSykmelding.push(...perioderSomErKlippet)
@@ -89,6 +89,16 @@ export default function Tidslinje({
         )
     }
 
+    function KlippDetaljer({ klipp }: { klipp: Klipp }) {
+        return (
+            <Fragment>
+                {Object.entries(klipp).map(([key, val], idx) => (
+                    <div key={key + idx}>{`${key}: ${JSON.stringify(val)}`}</div>
+                ))}
+            </Fragment>
+        )
+    }
+
     if (soknader.length === 0 || !soknaderGruppertPaSykmeldinger || soknaderGruppertPaSykmeldinger.size === 0) {
         return <Fragment />
     }
@@ -102,12 +112,12 @@ export default function Tidslinje({
                             .flatMap((sok: SoknadGruppering) => {
                                 const klippingAvSoknad = sok.klippingAvSoknad.map((k) => (
                                     <Timeline.Period
-                                        start={k.fom}
-                                        end={k.tom}
+                                        start={dayjsToDate(k.fom)!}
+                                        end={dayjsToDate(k.tom)!}
                                         status="neutral"
-                                        key={k.tom.toISOString()}
+                                        key={k.tom}
                                     >
-                                        {JSON.stringify(k)}
+                                        <KlippDetaljer klipp={k} />
                                     </Timeline.Period>
                                 ))
                                 const soknad = (
@@ -126,12 +136,12 @@ export default function Tidslinje({
                             .concat(
                                 syk.klippingAvSykmelding.map((k) => (
                                     <Timeline.Period
-                                        start={k.fom}
-                                        end={k.tom}
+                                        start={dayjsToDate(k.fom)!}
+                                        end={dayjsToDate(k.tom)!}
                                         status="neutral"
-                                        key={k.tom.toISOString()}
+                                        key={k.tom}
                                     >
-                                        {JSON.stringify(k)}
+                                        <KlippDetaljer klipp={k} />
                                     </Timeline.Period>
                                 )),
                             )}
