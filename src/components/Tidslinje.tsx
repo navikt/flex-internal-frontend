@@ -98,30 +98,43 @@ export default function Tidslinje({
             <Timeline>
                 {Array.from(soknaderGruppertPaSykmeldinger.entries()).map(([sykId, syk]) => (
                     <Timeline.Row key={sykId} label="Sykmelding">
-                        {Array.from(syk.soknader.values()).flatMap((sok: SoknadGruppering) => {
-                            const klippingAvSykmelding = syk.klippingAvSykmelding.map((k) => (
-                                <Timeline.Period start={k.fom} end={k.tom} status="neutral" key={k.tom.toISOString()}>
-                                    {JSON.stringify(k)}
-                                </Timeline.Period>
-                            ))
-                            const klippingAvSoknad = sok.klippingAvSoknad.map((k) => (
-                                <Timeline.Period start={k.fom} end={k.tom} status="neutral" key={k.tom.toISOString()}>
-                                    {JSON.stringify(k)}
-                                </Timeline.Period>
-                            ))
-                            const soknad = (
-                                <Timeline.Period
-                                    start={dayjsToDate(sok.soknad.fom!)!}
-                                    end={dayjsToDate(sok.soknad.tom!)!}
-                                    status={timelinePeriodeStatus(sok.soknad.status)}
-                                    key={sok.soknad.tom}
-                                >
-                                    <SoknadDetaljer soknad={sok.soknad} />
-                                </Timeline.Period>
-                            )
+                        {Array.from(syk.soknader.values())
+                            .flatMap((sok: SoknadGruppering) => {
+                                const klippingAvSoknad = sok.klippingAvSoknad.map((k) => (
+                                    <Timeline.Period
+                                        start={k.fom}
+                                        end={k.tom}
+                                        status="neutral"
+                                        key={k.tom.toISOString()}
+                                    >
+                                        {JSON.stringify(k)}
+                                    </Timeline.Period>
+                                ))
+                                const soknad = (
+                                    <Timeline.Period
+                                        start={dayjsToDate(sok.soknad.fom!)!}
+                                        end={dayjsToDate(sok.soknad.tom!)!}
+                                        status={timelinePeriodeStatus(sok.soknad.status)}
+                                        key={sok.soknad.tom}
+                                    >
+                                        <SoknadDetaljer soknad={sok.soknad} />
+                                    </Timeline.Period>
+                                )
 
-                            return [soknad, ...klippingAvSoknad, ...klippingAvSykmelding]
-                        })}
+                                return [soknad, ...klippingAvSoknad]
+                            })
+                            .concat(
+                                syk.klippingAvSykmelding.map((k) => (
+                                    <Timeline.Period
+                                        start={k.fom}
+                                        end={k.tom}
+                                        status="neutral"
+                                        key={k.tom.toISOString()}
+                                    >
+                                        {JSON.stringify(k)}
+                                    </Timeline.Period>
+                                )),
+                            )}
                     </Timeline.Row>
                 ))}
 
