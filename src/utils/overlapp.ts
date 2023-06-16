@@ -1,27 +1,27 @@
 import dayjs, { Dayjs } from 'dayjs'
 
-import { RSSoknadsperiode } from '../queryhooks/useSoknader'
+import { KlippetSykepengesoknadRecord, RSSoknadsperiode } from '../queryhooks/useSoknader'
 
-export interface Klipp {
-    fom: Date
-    tom: Date
+export interface Klipp extends KlippetSykepengesoknadRecord {
+    fom: string
+    tom: string
 }
 
-export function perioderSomMangler(perioderFor: RSSoknadsperiode[], perioderEtter: RSSoknadsperiode[]) {
-    const fom = minFom(perioderFor)
-    const tom = maxTom(perioderFor)
+export function perioderSomMangler(klipping: KlippetSykepengesoknadRecord) {
+    const fom = minFom(klipping.periodeFor)
+    const tom = maxTom(klipping.periodeFor)
     const range = dayjsRange(fom, tom)
     const dagerSomMangler: Dayjs[] = []
 
     for (const dag of range) {
-        const iPerioderFor = dagErIPerioder(dag, perioderFor)
-        const iPerioderEtter = dagErIPerioder(dag, perioderEtter)
+        const iPerioderFor = dagErIPerioder(dag, klipping.periodeFor)
+        const iPerioderEtter = dagErIPerioder(dag, klipping.periodeEtter)
         if (iPerioderFor && !iPerioderEtter) {
             dagerSomMangler.push(dag)
         }
     }
 
-    return sammenhengendeDagerTilPerioder(dagerSomMangler)
+    return sammenhengendeDagerTilPerioder(dagerSomMangler, klipping)
 }
 
 function minFom(perioder: RSSoknadsperiode[]) {
@@ -69,7 +69,7 @@ function dagErIPerioder(dag: Dayjs, perioder: RSSoknadsperiode[]) {
     return iPeriode
 }
 
-function sammenhengendeDagerTilPerioder(dager: Dayjs[]) {
+function sammenhengendeDagerTilPerioder(dager: Dayjs[], klipping: KlippetSykepengesoknadRecord) {
     const perioder: Klipp[] = []
     let fom = dager[0]
     let tom = dager[0]
@@ -79,8 +79,9 @@ function sammenhengendeDagerTilPerioder(dager: Dayjs[]) {
             tom = dag
         } else {
             perioder.push({
-                fom: fom.toDate(),
-                tom: tom.toDate(),
+                fom: fom.format('YYYY-MM-DD'),
+                tom: tom.format('YYYY-MM-DD'),
+                ...klipping,
             })
             fom = dag.add(1, 'days')
             tom = fom
@@ -89,8 +90,9 @@ function sammenhengendeDagerTilPerioder(dager: Dayjs[]) {
 
     if (dager.length > 1 && !fom.isSame(tom, 'day')) {
         perioder.push({
-            fom: fom.toDate(),
-            tom: tom.toDate(),
+            fom: fom.format('YYYY-MM-DD'),
+            tom: tom.format('YYYY-MM-DD'),
+            ...klipping,
         })
     }
 
