@@ -81,7 +81,7 @@ export class Soknad {
     egenmeldtSykmelding?: boolean
     avbruttDato?: Date
     sykmeldingUtskrevet?: Date
-    startSykeforlop?: Date
+    startSykeforlop?: string
     opprettetDato?: Date
     sendtTilNAVDato?: Date
     sendtTilArbeidsgiverDato?: Date
@@ -103,7 +103,7 @@ export class Soknad {
         this.egenmeldtSykmelding = json.egenmeldtSykmelding
         this.avbruttDato = dayjsToDate(json.avbruttDato)
         this.sykmeldingUtskrevet = dayjsToDate(json.sykmeldingUtskrevet)
-        this.startSykeforlop = dayjsToDate(json.startSykeforlop)
+        this.startSykeforlop = json.startSykeforlop
         this.opprettetDato = dayjsToDate(json.opprettetDato)
         this.sendtTilNAVDato = dayjsToDate(json.sendtTilNAVDato)
         this.sendtTilArbeidsgiverDato = dayjsToDate(json.sendtTilArbeidsgiverDato)
