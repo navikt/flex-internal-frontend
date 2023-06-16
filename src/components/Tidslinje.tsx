@@ -94,7 +94,7 @@ export default function Tidslinje({
     }
 
     return (
-        <div className="min-w-[800px] overflow-x-auto">
+        <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <Timeline>
                 {Array.from(soknaderGruppertPaSykmeldinger.entries()).map(([sykId, syk]) => (
                     <Timeline.Row key={sykId} label="Sykmelding">
