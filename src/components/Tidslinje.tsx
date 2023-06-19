@@ -32,7 +32,55 @@ function gruppering(soknader: Soknad[], klipp: KlippetSykepengesoknadRecord[]) {
         sykmeldingGruppering.get(key)?.soknader.set(sok.id, { soknad: sok, klippingAvSoknad: [] })
     })
 
-    klipp.forEach((k) => {
+    const fullstendigKlipp = klipp.filter((k) => k.periodeEtter === null)
+    fullstendigKlipp.forEach((k) => {
+        const perioderSomErKlippet = perioderSomMangler(k)
+
+        if (k.klippVariant.startsWith('SYKMELDING')) {
+            // Sykmeldingen ble klippet før vi opprettet søknader for den
+            sykmeldingGruppering.set(k.sykmeldingUuid, {
+                soknader: new Map<string, SoknadGruppering>(),
+                klippingAvSykmelding: [...perioderSomErKlippet],
+            })
+        }
+        if (k.klippVariant.startsWith('SOKNAD')) {
+            let sykmeldingEksisterte = false
+
+            // Noen ganger er hele søknaden klippet bort, men sykmelding var lang og vi finner fremdeles sykmeldingen
+            sykmeldingGruppering.forEach((sokGruppering) => {
+                // TODO: Vi finner aldri denne søknaden, og vi kjenner heller ikke sykmelding id'n, så i disse tilfellene klarer vi ikke koble sammen klipping av søknad med riktig sykmelding
+                if (sokGruppering.soknader.has(k.sykepengesoknadUuid)) {
+                    sokGruppering.soknader.get(k.sykepengesoknadUuid)?.klippingAvSoknad.push(...perioderSomErKlippet)
+                    sykmeldingEksisterte = true
+                }
+            })
+
+            // Når hele søknaden er klippet bort og det ikke fantes flere søknader på samme sykmelding
+            if (!sykmeldingEksisterte) {
+                const ghostSoknad = new Soknad({
+                    id: k.sykepengesoknadUuid,
+                    sykmeldingId: k.sykmeldingUuid + '_GHOST',
+                    soknadstype: 'ARBEIDSTAKERE',
+                    arbeidssituasjon: 'ARBEIDSTAKER',
+                })
+
+                if (!sykmeldingGruppering.has(ghostSoknad.sykmeldingId!)) {
+                    sykmeldingGruppering.set(ghostSoknad.sykmeldingId!, {
+                        soknader: new Map<string, SoknadGruppering>(),
+                        klippingAvSykmelding: [],
+                    })
+                }
+
+                sykmeldingGruppering.get(ghostSoknad.sykmeldingId!)?.soknader.set(k.sykepengesoknadUuid, {
+                    soknad: ghostSoknad,
+                    klippingAvSoknad: [...perioderSomErKlippet],
+                })
+            }
+        }
+    })
+
+    const delvisKlipp = klipp.filter((k) => k.periodeEtter !== null)
+    delvisKlipp.forEach((k) => {
         const perioderSomErKlippet = perioderSomMangler(k)
 
         if (k.klippVariant.startsWith('SYKMELDING')) {
@@ -106,47 +154,54 @@ export default function Tidslinje({
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <Timeline>
-                {Array.from(soknaderGruppertPaSykmeldinger.entries()).map(([sykId, syk]) => (
-                    <Timeline.Row key={sykId} label="Sykmelding">
-                        {Array.from(syk.soknader.values())
-                            .flatMap((sok: SoknadGruppering) => {
-                                const klippingAvSoknad = sok.klippingAvSoknad.map((k) => (
-                                    <Timeline.Period
-                                        start={dayjsToDate(k.fom)!}
-                                        end={dayjsToDate(k.tom)!}
-                                        status="neutral"
-                                        key={k.tom}
-                                    >
-                                        <KlippDetaljer klipp={k} />
-                                    </Timeline.Period>
-                                ))
-                                const soknad = (
-                                    <Timeline.Period
-                                        start={dayjsToDate(sok.soknad.fom!)!}
-                                        end={dayjsToDate(sok.soknad.tom!)!}
-                                        status={timelinePeriodeStatus(sok.soknad.status)}
-                                        key={sok.soknad.tom}
-                                    >
-                                        <SoknadDetaljer soknad={sok.soknad} />
-                                    </Timeline.Period>
-                                )
+                {Array.from(soknaderGruppertPaSykmeldinger.entries()).map(([sykId, syk]) => {
+                    const erGhostSykmelding = sykId.endsWith('_GHOST')
 
-                                return [soknad, ...klippingAvSoknad]
-                            })
-                            .concat(
-                                syk.klippingAvSykmelding.map((k) => (
-                                    <Timeline.Period
-                                        start={dayjsToDate(k.fom)!}
-                                        end={dayjsToDate(k.tom)!}
-                                        status="neutral"
-                                        key={k.tom}
-                                    >
-                                        <KlippDetaljer klipp={k} />
-                                    </Timeline.Period>
-                                )),
-                            )}
-                    </Timeline.Row>
-                ))}
+                    return (
+                        <Timeline.Row key={sykId} label={erGhostSykmelding ? 'Sykmelding 👻' : 'Sykmelding'}>
+                            {Array.from(syk.soknader.values())
+                                .flatMap((sok: SoknadGruppering) => {
+                                    const klippingAvSoknad = sok.klippingAvSoknad.map((k) => (
+                                        <Timeline.Period
+                                            start={dayjsToDate(k.fom)!}
+                                            end={dayjsToDate(k.tom)!}
+                                            status="neutral"
+                                            key={k.tom}
+                                        >
+                                            <KlippDetaljer klipp={k} />
+                                        </Timeline.Period>
+                                    ))
+
+                                    if (!erGhostSykmelding) {
+                                        klippingAvSoknad.push(
+                                            <Timeline.Period
+                                                start={dayjsToDate(sok.soknad.fom!)!}
+                                                end={dayjsToDate(sok.soknad.tom!)!}
+                                                status={timelinePeriodeStatus(sok.soknad.status)}
+                                                key={sok.soknad.tom}
+                                            >
+                                                <SoknadDetaljer soknad={sok.soknad} />
+                                            </Timeline.Period>,
+                                        )
+                                    }
+
+                                    return klippingAvSoknad
+                                })
+                                .concat(
+                                    syk.klippingAvSykmelding.map((k) => (
+                                        <Timeline.Period
+                                            start={dayjsToDate(k.fom)!}
+                                            end={dayjsToDate(k.tom)!}
+                                            status="neutral"
+                                            key={k.tom}
+                                        >
+                                            <KlippDetaljer klipp={k} />
+                                        </Timeline.Period>
+                                    )),
+                                )}
+                        </Timeline.Row>
+                    )
+                })}
 
                 <Timeline.Zoom>
                     <Timeline.Zoom.Button label="3 mnd" interval="month" count={3} />
