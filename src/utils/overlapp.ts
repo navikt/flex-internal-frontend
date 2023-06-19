@@ -59,6 +59,11 @@ function dayjsRange(from: string, to: string) {
 
 function dagErIPerioder(dag: Dayjs, perioder: RSSoknadsperiode[]) {
     let iPeriode = false
+
+    if (perioder === null) {
+        return false
+    }
+
     for (const periode of perioder) {
         const fom = dayjs(periode.fom)
         const tom = dayjs(periode.tom)
