@@ -78,17 +78,17 @@ export class Soknad {
     tom?: string
     korrigerer?: string
     korrigertAv?: string
-    egenmeldtSykmelding?: boolean
-    avbruttDato?: Date
+    avbruttDato?: string
     sykmeldingUtskrevet?: Date
+    sykmeldingSignaturDato?: Date
     startSykeforlop?: string
     opprettetDato?: Date
     sendtTilNAVDato?: Date
     sendtTilArbeidsgiverDato?: Date
-    arbeidsgiver?: Arbeidsgiver
+    arbeidsgiverNavn?: string
+    arbeidsgiverOrgnummer?: string
     soknadPerioder: RSSoknadsperiode[]
     merknaderFraSykmelding?: RSMerknad[]
-    opprettetAvInntektsmelding: boolean
 
     constructor(json: any) {
         this.id = json.id
@@ -100,22 +100,17 @@ export class Soknad {
         this.tom = json.tom
         this.korrigerer = json.korrigerer
         this.korrigertAv = json.korrigertAv
-        this.egenmeldtSykmelding = json.egenmeldtSykmelding
-        this.avbruttDato = dayjsToDate(json.avbruttDato)
+        this.avbruttDato = json.avbruttDato
         this.sykmeldingUtskrevet = dayjsToDate(json.sykmeldingUtskrevet)
+        this.sykmeldingSignaturDato = dayjsToDate(json.sykmeldingSignaturDato)
         this.startSykeforlop = json.startSykeforlop
         this.opprettetDato = dayjsToDate(json.opprettetDato)
         this.sendtTilNAVDato = dayjsToDate(json.sendtTilNAVDato)
         this.sendtTilArbeidsgiverDato = dayjsToDate(json.sendtTilArbeidsgiverDato)
-        if (json.arbeidsgiver) {
-            this.arbeidsgiver = {
-                navn: json.arbeidsgiver.navn,
-                orgnummer: json.arbeidsgiver.orgnummer,
-            }
-        }
+        this.arbeidsgiverNavn = json.arbeidsgiverNavn
+        this.arbeidsgiverOrgnummer = json.arbeidsgiverOrgnummer
         this.soknadPerioder = json.soknadPerioder
         this.merknaderFraSykmelding = json.merknaderFraSykmelding
-        this.opprettetAvInntektsmelding = json.opprettetAvInntektsmelding
     }
 }
 
@@ -154,11 +149,6 @@ export type RSSoknadstatusType =
     | 'UTGAATT'
 
 export type RSArbeidssituasjonType = 'NAERINGSDRIVENDE' | 'FRILANSER' | 'ARBEIDSTAKER' | 'ARBEIDSLEDIG' | 'ANNET'
-
-export interface Arbeidsgiver {
-    navn: string
-    orgnummer: string
-}
 
 export interface RSSoknadsperiode {
     fom: string
