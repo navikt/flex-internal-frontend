@@ -8,7 +8,7 @@ import { mockApi } from '../../../testdata/testdata'
 
 const { serverRuntimeConfig } = getConfig()
 
-const tillatteApier = ['GET /api/v1/flex/sykepengesoknader']
+const tillatteApier = ['GET /api/v1/flex/sykepengesoknader', 'GET /api/v1/flex/identer']
 
 const handler = beskyttetApi(async (req: NextApiRequest, res: NextApiResponse) => {
     const opts = {

@@ -334,6 +334,21 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
+    const ident = req.headers.ident
+
+    if (validert.api == 'GET /api/v1/flex/identer' && ident !== undefined) {
+        res.status(200)
+        res.json([
+            { gruppe: 'FOLKEREGISTERIDENT', ident: ident },
+            {
+                gruppe: 'FOLKEREGISTERIDENT',
+                ident: '11111111111',
+            },
+            { gruppe: 'AKTORID', ident: '1111111111122' },
+        ])
+        res.end()
+        return
+    }
 
     res.status(404)
     res.end()
