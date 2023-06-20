@@ -1,18 +1,25 @@
 import React, { useState } from 'react'
-import { Table } from '@navikt/ds-react'
+import { Table, TextField } from '@navikt/ds-react'
 
 import { initialProps } from '../initialprops/initialProps'
-import FnrInput from '../components/FnrInput'
 import { useIdenter } from '../queryhooks/useIdenter'
 
 const IdentPage = () => {
-    const [fnr, setFnr] = useState<string>()
+    const [ident, setIdent] = useState<string>()
 
-    const { data: data } = useIdenter(fnr, fnr !== undefined)
+    const { data: data } = useIdenter(ident, ident !== undefined)
 
     return (
         <div className="flex-row space-y-4">
-            <FnrInput setFnr={setFnr} />
+            <TextField
+                type="number"
+                label="ident"
+                onChange={(e) =>
+                    e.target.value.length == 11 || e.target.value.length == 13
+                        ? setIdent(e.target.value)
+                        : setIdent(undefined)
+                }
+            />
             <Table>
                 <Table.Header>
                     <Table.Row>
