@@ -334,11 +334,12 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
+    const ident = req.headers.ident
 
-    if (validert.api == 'GET /api/v1/flex/identer' && fnr !== undefined) {
+    if (validert.api == 'GET /api/v1/flex/identer' && ident !== undefined) {
         res.status(200)
         res.json([
-            { gruppe: 'FOLKEREGISTERIDENT', ident: fnr },
+            { gruppe: 'FOLKEREGISTERIDENT', ident: ident },
             {
                 gruppe: 'FOLKEREGISTERIDENT',
                 ident: '11111111111',

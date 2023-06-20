@@ -19,7 +19,7 @@ export function useIdenter(fnr: string | undefined, enabled = true): UseQueryRes
                 method: 'GET',
                 credentials: 'include',
                 headers: {
-                    fnr: fnr,
+                    ident: fnr,
                 },
             })
         },
