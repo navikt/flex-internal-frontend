@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 
 import { initialProps } from '../initialprops/initialProps'
-import { Soknad, useSoknader } from '../queryhooks/useSoknader'
+import { useSoknader } from '../queryhooks/useSoknader'
 import { Filter, ValgteFilter } from '../components/Filter'
 import FnrInput from '../components/FnrInput'
 import Tidslinje from '../components/Tidslinje'
-import ValgtSortering, { Sortering } from '../components/Sortering'
+import ValgtSortering, { Sortering } from '../components/ValgtSortering'
 
 const Index = () => {
     const [fnr, setFnr] = useState<string>()
@@ -16,25 +16,15 @@ const Index = () => {
     const soknader = data?.sykepengesoknadListe || []
     const klipp = data?.klippetSykepengesoknadRecord || []
 
-    let filtrerteSoknader: Soknad[] = soknader
-    filter.forEach((f: Filter) => {
-        filtrerteSoknader = filtrerteSoknader.filter((sok: any) => {
-            return (
-                (f.inkluder && f.verdi === JSON.stringify(sok[f.prop])) ||
-                (!f.inkluder && f.verdi !== JSON.stringify(sok[f.prop]))
-            )
-        })
-    })
-
     return (
         <div className="flex-row space-y-4">
             <FnrInput setFnr={setFnr} />
 
-            <ValgtSortering soknader={filtrerteSoknader} sortering={sortering} setSortering={setSortering} />
+            <ValgtSortering sortering={sortering} setSortering={setSortering} />
 
             <ValgteFilter filter={filter} setFilter={setFilter} />
 
-            <Tidslinje soknader={filtrerteSoknader} klipp={klipp} filter={filter} setFilter={setFilter} />
+            <Tidslinje soknader={soknader} klipp={klipp} filter={filter} setFilter={setFilter} sortering={sortering} />
         </div>
     )
 }
