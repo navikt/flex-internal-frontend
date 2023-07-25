@@ -131,27 +131,27 @@ export function sortert(a: [string, SykmeldingGruppering], b: [string, Sykmeldin
 
     switch (sortering) {
         case 'sykmelding skrevet': {
-            const verdiA = mapTilSoknadProp(aSykmeldingGruppering, 'sykmeldingUtskrevet').reduce(maximum)!
-            const verdiB = mapTilSoknadProp(bSykmeldingGruppering, 'sykmeldingUtskrevet').reduce(maximum)!
+            const verdiA = mapTilSoknadProp(aSykmeldingGruppering, 'sykmeldingUtskrevet').reduce(maximum, new Date(0))
+            const verdiB = mapTilSoknadProp(bSykmeldingGruppering, 'sykmeldingUtskrevet').reduce(maximum, new Date(0))
             return verdiA > verdiB ? -1 : 1
         }
         case 'opprettet': {
             const verdiA = aSykmeldingId.endsWith('_GHOST')
-                ? mapTilKlippProp(aSykmeldingGruppering, 'timestamp').reduce(maximum)!
-                : mapTilSoknadProp(aSykmeldingGruppering, 'opprettetDato').reduce(maximum)!
+                ? mapTilKlippProp(aSykmeldingGruppering, 'timestamp').reduce(maximum, new Date(0))
+                : mapTilSoknadProp(aSykmeldingGruppering, 'opprettetDato').reduce(maximum, new Date(0))
             const verdiB = bSykmeldingId.endsWith('_GHOST')
-                ? mapTilKlippProp(bSykmeldingGruppering, 'timestamp').reduce(maximum)!
-                : mapTilSoknadProp(bSykmeldingGruppering, 'opprettetDato').reduce(maximum)!
+                ? mapTilKlippProp(bSykmeldingGruppering, 'timestamp').reduce(maximum, new Date(0))
+                : mapTilSoknadProp(bSykmeldingGruppering, 'opprettetDato').reduce(maximum, new Date(0))
             return verdiA > verdiB ? -1 : 1
         }
         default:
         case 'tom': {
             const verdiA = aSykmeldingId.endsWith('_GHOST')
-                ? mapTilKlippProp(aSykmeldingGruppering, 'tom').reduce(maximum)!
-                : mapTilSoknadProp(aSykmeldingGruppering, 'tom').reduce(maximum)!
+                ? mapTilKlippProp(aSykmeldingGruppering, 'tom').reduce(maximum, '2000-01-01')
+                : mapTilSoknadProp(aSykmeldingGruppering, 'tom').reduce(maximum, '2000-01-01')
             const verdiB = bSykmeldingId.endsWith('_GHOST')
-                ? mapTilKlippProp(bSykmeldingGruppering, 'tom').reduce(maximum)!
-                : mapTilSoknadProp(bSykmeldingGruppering, 'tom').reduce(maximum)!
+                ? mapTilKlippProp(bSykmeldingGruppering, 'tom').reduce(maximum, '2000-01-01')
+                : mapTilSoknadProp(bSykmeldingGruppering, 'tom').reduce(maximum, '2000-01-01')
             return verdiA > verdiB ? -1 : 1
         }
     }
