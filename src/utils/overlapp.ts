@@ -83,29 +83,34 @@ function dagErIPerioder(dag: Dayjs, perioder: RSSoknadsperiode[]) {
 }
 
 function sammenhengendeDagerTilPerioder(dager: Dayjs[]) {
+    if (dager.length === 0) {
+        return []
+    }
+
+    dager.sort((a, b) => a.diff(b))
     const perioder: FomTom[] = []
     let fom = dager[0]
     let tom = dager[0]
 
     for (const dag of dager) {
         if (tom.isSame(dag, 'day') || tom.add(1, 'day').isSame(dag)) {
+            // Sammenhengende periode
             tom = dag
         } else {
+            // Ny periode
             perioder.push({
                 fom: fom.format('YYYY-MM-DD'),
                 tom: tom.format('YYYY-MM-DD'),
             })
-            fom = dag.add(1, 'days')
-            tom = fom
+            fom = dag
+            tom = dag
         }
     }
 
-    if (dager.length > 1 && !fom.isSame(tom, 'day')) {
-        perioder.push({
-            fom: fom.format('YYYY-MM-DD'),
-            tom: tom.format('YYYY-MM-DD'),
-        })
-    }
+    perioder.push({
+        fom: fom.format('YYYY-MM-DD'),
+        tom: tom.format('YYYY-MM-DD'),
+    })
 
     return perioder
 }
