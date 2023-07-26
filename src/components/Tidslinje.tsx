@@ -7,6 +7,7 @@ import gruppertOgFiltrert, { SoknadGruppering, sortert, SykmeldingGruppering } f
 
 import { Filter, FilterFelt } from './Filter'
 import { Sortering } from './ValgtSortering'
+import OverlappendeTidslinjeRad from './OverlappendeTidslinjeRad'
 
 export default function Tidslinje({
     soknader,
@@ -67,6 +68,7 @@ export default function Tidslinje({
 
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
+            <OverlappendeTidslinjeRad sykmeldingGruppering={soknaderGruppertPaSykmeldinger} />
             <Timeline>
                 {Array.from(soknaderGruppertPaSykmeldinger.entries())
                     .sort((a, b) => sortert(a, b, sortering))

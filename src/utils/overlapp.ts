@@ -2,10 +2,13 @@ import dayjs, { Dayjs } from 'dayjs'
 
 import { KlippetSykepengesoknadRecord, RSSoknadsperiode } from '../queryhooks/useSoknader'
 
-export interface Klipp extends KlippetSykepengesoknadRecord {
+import { SykmeldingGruppering } from './gruppering'
+
+export interface FomTom {
     fom: string
     tom: string
 }
+export interface Klipp extends KlippetSykepengesoknadRecord, FomTom {}
 
 export function perioderSomMangler(klipping: KlippetSykepengesoknadRecord) {
     const fom = minFom(klipping.periodeFor)
@@ -21,7 +24,12 @@ export function perioderSomMangler(klipping: KlippetSykepengesoknadRecord) {
         }
     }
 
-    return sammenhengendeDagerTilPerioder(dagerSomMangler, klipping)
+    return sammenhengendeDagerTilPerioder(dagerSomMangler).map((p) => {
+        return {
+            ...p,
+            ...klipping,
+        } as Klipp
+    })
 }
 
 function minFom(perioder: RSSoknadsperiode[]) {
@@ -74,8 +82,8 @@ function dagErIPerioder(dag: Dayjs, perioder: RSSoknadsperiode[]) {
     return iPeriode
 }
 
-function sammenhengendeDagerTilPerioder(dager: Dayjs[], klipping: KlippetSykepengesoknadRecord) {
-    const perioder: Klipp[] = []
+function sammenhengendeDagerTilPerioder(dager: Dayjs[]) {
+    const perioder: FomTom[] = []
     let fom = dager[0]
     let tom = dager[0]
 
@@ -86,7 +94,6 @@ function sammenhengendeDagerTilPerioder(dager: Dayjs[], klipping: KlippetSykepen
             perioder.push({
                 fom: fom.format('YYYY-MM-DD'),
                 tom: tom.format('YYYY-MM-DD'),
-                ...klipping,
             })
             fom = dag.add(1, 'days')
             tom = fom
@@ -97,9 +104,41 @@ function sammenhengendeDagerTilPerioder(dager: Dayjs[], klipping: KlippetSykepen
         perioder.push({
             fom: fom.format('YYYY-MM-DD'),
             tom: tom.format('YYYY-MM-DD'),
-            ...klipping,
         })
     }
 
     return perioder
+}
+
+export function overlappendePeriodeInnenforTimelineRad(sykmeldingGruppering: Map<string, SykmeldingGruppering>) {
+    const overlappendeDager: string[] = []
+
+    Array.from(sykmeldingGruppering.entries()).forEach(([sykId, syk]) => {
+        const dager: string[] = [] // Alle dager som skal legges til i samme rad i tidslinjen
+
+        syk.klippingAvSykmelding.forEach((klippSyk) => {
+            dayjsRange(klippSyk.fom, klippSyk.tom).forEach((dag) => {
+                dager.push(dag.format('YYYY-MM-DD'))
+            })
+        })
+
+        syk.soknader.forEach((sok) => {
+            if (!sykId.endsWith('_GHOST')) {
+                dayjsRange(sok.soknad.fom!, sok.soknad.tom!).forEach((dag) => {
+                    dager.push(dag.format('YYYY-MM-DD'))
+                })
+            }
+            sok.klippingAvSoknad.forEach((klippSok) => {
+                dayjsRange(klippSok.fom, klippSok.tom).forEach((dag) => {
+                    dager.push(dag.format('YYYY-MM-DD'))
+                })
+            })
+        })
+
+        // Finner dager som kommer til å overlappe i tidslinjen
+        const duplikateDager = dager.filter((item, index) => dager.indexOf(item) !== index)
+        overlappendeDager.push(...duplikateDager)
+    })
+
+    return sammenhengendeDagerTilPerioder(overlappendeDager.sort().map((dag) => dayjs(dag)))
 }
