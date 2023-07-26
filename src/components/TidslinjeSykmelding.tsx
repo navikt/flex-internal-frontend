@@ -23,6 +23,16 @@ export default function TidslinjeSykmelding({
     const [sortering, setSortering] = useState<Sortering>('sykmelding skrevet')
     const soknaderGruppertPaSykmeldinger = new Map<string, SykmeldingGruppering>()
 
+    function sykmeldingLabel(sykId: string) {
+        if (sykId.includes('_GHOST')) {
+            return 'Sykmelding 👻'
+        }
+        if (sykId.includes('_KORRIGERT')) {
+            return 'Korrigert '
+        }
+        return 'Sykmelding'
+    }
+
     if (arbeidsgiver === 'alle') {
         return <Fragment />
     }
@@ -50,10 +60,10 @@ export default function TidslinjeSykmelding({
                 {Array.from(soknaderGruppertPaSykmeldinger.entries())
                     .sort((a, b) => sortert(a, b, sortering))
                     .map(([sykId, syk]) => {
-                        const erGhostSykmelding = sykId.endsWith('_GHOST')
+                        const erGhostSykmelding = sykId.includes('_GHOST')
 
                         return (
-                            <Timeline.Row key={sykId} label={erGhostSykmelding ? 'Sykmelding 👻' : 'Sykmelding'}>
+                            <Timeline.Row key={sykId} label={sykmeldingLabel(sykId)}>
                                 {Array.from(syk.soknader.values())
                                     .flatMap((sok: SoknadGruppering) => {
                                         const klippingAvSoknad = sok.klippingAvSoknad.map((k) => (

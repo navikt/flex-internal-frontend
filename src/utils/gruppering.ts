@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 import { KlippetSykepengesoknadRecord, Soknad } from '../queryhooks/useSoknader'
 import { Sortering } from '../components/ValgtSortering'
 import { Filter } from '../components/Filter'
@@ -34,18 +36,34 @@ function filtrer(filter: Filter[], soknader: Soknad[]) {
 function grupperPaSykmelding(soknader: Soknad[], klipp: KlippetSykepengesoknadRecord[]) {
     const sykmeldingGruppering = new Map<string, SykmeldingGruppering>()
 
-    soknader.forEach((sok) => {
-        const key = sok.sykmeldingId!
+    soknader
+        .sort((a, b) => dayjs(a.opprettetDato).diff(b.opprettetDato))
+        .forEach((sok) => {
+            const key = sok.sykmeldingId!
+            let sykmeldingKey = key
 
-        if (!sykmeldingGruppering.has(key)) {
-            sykmeldingGruppering.set(key, {
-                soknader: new Map<string, SoknadGruppering>(),
-                klippingAvSykmelding: [],
-            })
-        }
+            if (sok.status === 'KORRIGERT') {
+                let korrigeringIndex = 0
+                let ledigKorrigeringKey = false
 
-        sykmeldingGruppering.get(key)?.soknader.set(sok.id, { soknad: sok, klippingAvSoknad: [] })
-    })
+                while (!ledigKorrigeringKey) {
+                    korrigeringIndex += 1
+                    sykmeldingKey = `${key}_KORRIGERT_(${korrigeringIndex})`
+                    if (!sykmeldingGruppering.has(sykmeldingKey)) {
+                        ledigKorrigeringKey = true
+                    }
+                }
+            }
+
+            if (!sykmeldingGruppering.has(sykmeldingKey)) {
+                sykmeldingGruppering.set(sykmeldingKey, {
+                    soknader: new Map<string, SoknadGruppering>(),
+                    klippingAvSykmelding: [],
+                })
+            }
+
+            sykmeldingGruppering.get(sykmeldingKey)?.soknader.set(sok.id, { soknad: sok, klippingAvSoknad: [] })
+        })
 
     const fullstendigKlipp = klipp.filter((k) => k.periodeEtter === null)
     fullstendigKlipp.forEach((k) => {
@@ -124,6 +142,7 @@ function grupperPaArbeidsgiver(gruppertPaSykmelding: Map<string, SykmeldingGrupp
         let grupperingOrgnummer = orgnummer
 
         while (!sykmeldingBleLagtTil) {
+            console.log('grupperingOrgnummer', grupperingOrgnummer) // eslint-disable-line
             if (!gruppering.has(grupperingOrgnummer)) {
                 gruppering.set(grupperingOrgnummer, { sykmeldinger: new Map<string, SykmeldingGruppering>() })
             }
