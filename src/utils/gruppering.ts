@@ -2,7 +2,7 @@ import { KlippetSykepengesoknadRecord, Soknad } from '../queryhooks/useSoknader'
 import { Sortering } from '../components/ValgtSortering'
 import { Filter } from '../components/Filter'
 
-import { Klipp, perioderSomMangler } from './overlapp'
+import { Klipp, perioderSomMangler, sykmeldingDager, sykmeldingOverlappendeDager } from './overlapp'
 
 export interface SoknadGruppering {
     soknad: Soknad
@@ -12,6 +12,10 @@ export interface SoknadGruppering {
 export interface SykmeldingGruppering {
     soknader: Map<string, SoknadGruppering>
     klippingAvSykmelding: Klipp[]
+}
+
+export interface ArbeidsgiverGruppering {
+    sykmeldinger: Map<string, SykmeldingGruppering>
 }
 
 function filtrer(filter: Filter[], soknader: Soknad[]) {
@@ -27,7 +31,7 @@ function filtrer(filter: Filter[], soknader: Soknad[]) {
     return filtrerteSoknader
 }
 
-function gruppering(soknader: Soknad[], klipp: KlippetSykepengesoknadRecord[]) {
+function grupperPaSykmelding(soknader: Soknad[], klipp: KlippetSykepengesoknadRecord[]) {
     const sykmeldingGruppering = new Map<string, SykmeldingGruppering>()
 
     soknader.forEach((sok) => {
@@ -107,6 +111,44 @@ function gruppering(soknader: Soknad[], klipp: KlippetSykepengesoknadRecord[]) {
     return sykmeldingGruppering
 }
 
+function grupperPaArbeidsgiver(gruppertPaSykmelding: Map<string, SykmeldingGruppering>) {
+    const gruppering = new Map<string, ArbeidsgiverGruppering>()
+    const sykmeldingArray = Array.from(gruppertPaSykmelding.entries()).sort((a, b) => sortert(a, b, 'opprettet'))
+
+    sykmeldingArray.forEach(([sykId, syk]) => {
+        let arbeidsgiverIndex = 0
+        let sykmeldingBleLagtTil = false
+        const orgnummer =
+            Array.from(syk.soknader.values()).find((sok) => sok.soknad.arbeidsgiverOrgnummer !== undefined)?.soknad
+                .arbeidsgiverOrgnummer || 'arbeidsgiver_GHOST'
+        let grupperingOrgnummer = orgnummer
+
+        while (!sykmeldingBleLagtTil) {
+            if (!gruppering.has(grupperingOrgnummer)) {
+                gruppering.set(grupperingOrgnummer, { sykmeldinger: new Map<string, SykmeldingGruppering>() })
+            }
+            const arbeidsgiver = gruppering.get(grupperingOrgnummer)!
+
+            const alleDager = []
+            alleDager.push(...sykmeldingDager(sykId, syk))
+            Array.from(arbeidsgiver.sykmeldinger.entries()).forEach(([sId, s]) => {
+                alleDager.push(...sykmeldingDager(sId, s))
+            })
+
+            const overlappendeDager = sykmeldingOverlappendeDager(alleDager)
+            if (overlappendeDager.length > 0) {
+                arbeidsgiverIndex += 1
+                grupperingOrgnummer = `${orgnummer}(${arbeidsgiverIndex})`
+            } else {
+                arbeidsgiver.sykmeldinger.set(sykId, syk)
+                sykmeldingBleLagtTil = true
+            }
+        }
+    })
+
+    return gruppering
+}
+
 export function sortert(a: [string, SykmeldingGruppering], b: [string, SykmeldingGruppering], sortering: Sortering) {
     const aSykmeldingId = a.at(0) as string
     const aSykmeldingGruppering = a.at(1) as SykmeldingGruppering
@@ -161,7 +203,8 @@ export default function gruppertOgFiltrert(
     filter: Filter[],
     soknader: Soknad[],
     klipp: KlippetSykepengesoknadRecord[],
-): Map<string, SykmeldingGruppering> {
+): Map<string, ArbeidsgiverGruppering> {
     const filtrerteSoknader = filtrer(filter, soknader)
-    return gruppering(filtrerteSoknader, klipp)
+    const gruppertPaSykmelding = grupperPaSykmelding(filtrerteSoknader, klipp)
+    return grupperPaArbeidsgiver(gruppertPaSykmelding)
 }

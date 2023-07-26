@@ -119,31 +119,39 @@ export function overlappendePeriodeInnenforTimelineRad(sykmeldingGruppering: Map
     const overlappendeDager: string[] = []
 
     Array.from(sykmeldingGruppering.entries()).forEach(([sykId, syk]) => {
-        const dager: string[] = [] // Alle dager som skal legges til i samme rad i tidslinjen
-
-        syk.klippingAvSykmelding.forEach((klippSyk) => {
-            dayjsRange(klippSyk.fom, klippSyk.tom).forEach((dag) => {
-                dager.push(dag.format('YYYY-MM-DD'))
-            })
-        })
-
-        syk.soknader.forEach((sok) => {
-            if (!sykId.endsWith('_GHOST')) {
-                dayjsRange(sok.soknad.fom!, sok.soknad.tom!).forEach((dag) => {
-                    dager.push(dag.format('YYYY-MM-DD'))
-                })
-            }
-            sok.klippingAvSoknad.forEach((klippSok) => {
-                dayjsRange(klippSok.fom, klippSok.tom).forEach((dag) => {
-                    dager.push(dag.format('YYYY-MM-DD'))
-                })
-            })
-        })
-
         // Finner dager som kommer til å overlappe i tidslinjen
-        const duplikateDager = dager.filter((item, index) => dager.indexOf(item) !== index)
-        overlappendeDager.push(...duplikateDager)
+        overlappendeDager.push(...sykmeldingOverlappendeDager(sykmeldingDager(sykId, syk)))
     })
 
     return sammenhengendeDagerTilPerioder(overlappendeDager.sort().map((dag) => dayjs(dag)))
+}
+
+export function sykmeldingDager(sykId: string, syk: SykmeldingGruppering) {
+    const dager: string[] = [] // Alle dager som skal legges til i samme rad i tidslinjen
+
+    syk.klippingAvSykmelding.forEach((klippSyk) => {
+        dayjsRange(klippSyk.fom, klippSyk.tom).forEach((dag) => {
+            dager.push(dag.format('YYYY-MM-DD'))
+        })
+    })
+
+    syk.soknader.forEach((sok) => {
+        if (!sykId.endsWith('_GHOST')) {
+            dayjsRange(sok.soknad.fom!, sok.soknad.tom!).forEach((dag) => {
+                dager.push(dag.format('YYYY-MM-DD'))
+            })
+        }
+        sok.klippingAvSoknad.forEach((klippSok) => {
+            dayjsRange(klippSok.fom, klippSok.tom).forEach((dag) => {
+                dager.push(dag.format('YYYY-MM-DD'))
+            })
+        })
+    })
+
+    return dager
+}
+
+export function sykmeldingOverlappendeDager(dager: string[]) {
+    // Finner dager som kommer til å overlappe i tidslinjen
+    return dager.filter((item, index) => dager.indexOf(item) !== index)
 }

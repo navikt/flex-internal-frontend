@@ -7,7 +7,7 @@ export interface Filter {
     inkluder: boolean
 }
 
-export function ValgteFilter({ filter, setFilter }: { filter: Filter[]; setFilter: (prev: any) => void }) {
+export function ValgteFilter({ filter, setFilter }: { filter: Filter[]; setFilter: (val: any) => void }) {
     const [deaktiverteFilter, setDeaktiverteFilter] = useState<Filter[]>([])
 
     function filterOnClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, f: Filter) {
@@ -64,7 +64,7 @@ export function FilterFelt({
     prop: string
     verdi: any
     filter: Filter[]
-    setFilter: (prev: any) => void
+    setFilter: (val: any) => void
 }) {
     const inkluder: Filter = {
         prop: prop,
