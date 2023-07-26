@@ -26,7 +26,7 @@ export default function TidslinjeArbeidsgiver({
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <Timeline>
                 {Array.from(soknaderGruppertPaArbeidsgiver.entries()).map(([arbId, arb]) => {
-                    const erGhostArbeidsgiver = arbId.endsWith('_GHOST')
+                    const erGhostArbeidsgiver = arbId.includes('_GHOST')
 
                     return (
                         <Timeline.Row key={arbId} label={erGhostArbeidsgiver ? 'Arbeidsgiver 👻' : arbId}>
