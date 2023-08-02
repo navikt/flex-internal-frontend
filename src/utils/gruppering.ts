@@ -142,7 +142,6 @@ function grupperPaArbeidsgiver(gruppertPaSykmelding: Map<string, SykmeldingGrupp
         let grupperingOrgnummer = orgnummer
 
         while (!sykmeldingBleLagtTil) {
-            console.log('grupperingOrgnummer', grupperingOrgnummer) // eslint-disable-line
             if (!gruppering.has(grupperingOrgnummer)) {
                 gruppering.set(grupperingOrgnummer, { sykmeldinger: new Map<string, SykmeldingGruppering>() })
             }
