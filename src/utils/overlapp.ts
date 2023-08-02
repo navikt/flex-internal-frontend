@@ -32,7 +32,7 @@ export function perioderSomMangler(klipping: KlippetSykepengesoknadRecord) {
     })
 }
 
-function minFom(perioder: RSSoknadsperiode[]) {
+export function minFom(perioder: RSSoknadsperiode[]) {
     let currentMin = '9999-12-31'
     perioder.forEach((p) => {
         if (p.fom < currentMin) {
@@ -42,7 +42,7 @@ function minFom(perioder: RSSoknadsperiode[]) {
     return currentMin
 }
 
-function maxTom(perioder: RSSoknadsperiode[]) {
+export function maxTom(perioder: RSSoknadsperiode[]) {
     let currentMax = '1111-01-01'
     perioder.forEach((p) => {
         if (p.tom > currentMax) {

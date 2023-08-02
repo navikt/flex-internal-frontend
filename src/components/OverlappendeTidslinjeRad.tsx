@@ -16,7 +16,7 @@ export default function OverlappendeTidslinjeRad({
     }
 
     return (
-        <Alert variant="info" size="small">
+        <Alert variant="info" size="small" className="[&>div]:max-w-max">
             Det er overlappende perioder i en av sykmeldingen, visningen av disse periodene kan være feil:{'\n'}
             {JSON.stringify(overlappendePerioder)}
         </Alert>

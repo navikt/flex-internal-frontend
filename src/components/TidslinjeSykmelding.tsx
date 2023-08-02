@@ -8,6 +8,7 @@ import ValgtSortering, { Sortering } from './ValgtSortering'
 import OverlappendeTidslinjeRad from './OverlappendeTidslinjeRad'
 import { KlippDetaljer, SoknadDetaljer, timelinePeriodeStatus } from './Tidslinje'
 import { Filter } from './Filter'
+import KlippBugInfo from './KlippBugInfo'
 
 export default function TidslinjeSykmelding({
     soknaderGruppertPaArbeidsgiver,
@@ -56,6 +57,7 @@ export default function TidslinjeSykmelding({
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <ValgtSortering sortering={sortering} setSortering={setSortering} />
             <OverlappendeTidslinjeRad sykmeldingGruppering={soknaderGruppertPaSykmeldinger} />
+            <KlippBugInfo sykmeldingGruppering={soknaderGruppertPaSykmeldinger} />
             <Timeline>
                 {Array.from(soknaderGruppertPaSykmeldinger.entries())
                     .sort((a, b) => sortert(a, b, sortering))
