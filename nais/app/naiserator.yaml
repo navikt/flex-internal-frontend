@@ -16,10 +16,10 @@ spec:
     cpuThresholdPercentage: 90
   resources:
     limits:
-      memory: 150Mi
+      memory: 250Mi
     requests:
       cpu: 100m
-      memory: 150Mi
+      memory: 200Mi
   liveness:
     path: api/internal/isAlive
   readiness:
