@@ -4,7 +4,8 @@ import type { AppProps } from 'next/app'
 import React, { useState } from 'react'
 import Head from 'next/head'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { InternalHeader } from '@navikt/ds-react'
+import { Dropdown, InternalHeader, Spacer } from '@navikt/ds-react'
+import { useRouter } from 'next/router'
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
     const [queryClient] = useState(
@@ -20,6 +21,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
                 },
             }),
     )
+    const router = useRouter()
 
     return (
         <>
@@ -31,6 +33,28 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
             <QueryClientProvider client={queryClient}>
                 <InternalHeader>
                     <InternalHeader.Title as="h1">Flex internal frontend</InternalHeader.Title>
+                    <Spacer />
+                    <Dropdown>
+                        <InternalHeader.UserButton as={Dropdown.Toggle} name="Velg en underside" />
+                        <Dropdown.Menu>
+                            <Dropdown.Menu.List>
+                                <Dropdown.Menu.List.Item
+                                    onClick={() => {
+                                        router.push('/')
+                                    }}
+                                >
+                                    Tidslinje av søknader
+                                </Dropdown.Menu.List.Item>
+                                <Dropdown.Menu.List.Item
+                                    onClick={() => {
+                                        router.push('/ident')
+                                    }}
+                                >
+                                    Slå opp fnr og aktor id
+                                </Dropdown.Menu.List.Item>
+                            </Dropdown.Menu.List>
+                        </Dropdown.Menu>
+                    </Dropdown>
                 </InternalHeader>
                 <div id="root" className="mx-auto p-4 pb-32">
                     <Component {...pageProps} />
