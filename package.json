@@ -3,9 +3,9 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "@navikt/ds-css": "^5.7.2",
-        "@navikt/ds-react": "^5.7.2",
-        "@navikt/ds-tailwind": "^5.7.2",
+        "@navikt/ds-css": "^5.7.3",
+        "@navikt/ds-react": "^5.7.3",
+        "@navikt/ds-tailwind": "^5.7.3",
         "@navikt/ds-tokens": "^5.6.1",
         "@navikt/next-api-proxy": "^3.3.1",
         "@navikt/next-logger": "^1.19.0",
