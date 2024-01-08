@@ -349,6 +349,13 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
+    if (validert.api == 'POST /api/v1/flex/republiser/[uuid]') {
+        setTimeout(() => {
+            res.status(200)
+            res.end()
+        }, 1000)
+        return
+    }
 
     res.status(404)
     res.end()
