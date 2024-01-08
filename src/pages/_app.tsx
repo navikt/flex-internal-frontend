@@ -52,6 +52,13 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
                                 >
                                     Slå opp fnr og aktor id
                                 </Dropdown.Menu.List.Item>
+                                <Dropdown.Menu.List.Item
+                                    onClick={() => {
+                                        router.push('/republiser')
+                                    }}
+                                >
+                                    Republiser søknad
+                                </Dropdown.Menu.List.Item>
                             </Dropdown.Menu.List>
                         </Dropdown.Menu>
                     </Dropdown>
