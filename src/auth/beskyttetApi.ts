@@ -1,9 +1,8 @@
 import { logger } from '@navikt/next-logger'
 import { NextApiRequest, NextApiResponse } from 'next'
+import { getToken, validateAzureToken } from '@navikt/oasis'
 
 import { isMockBackend } from '../utils/environment'
-
-import { verifyAzureAccessToken } from './azureVerifisering'
 
 type ApiHandler = (req: NextApiRequest, res: NextApiResponse) => void | Promise<void>
 
@@ -14,16 +13,16 @@ export function beskyttetApi(handler: ApiHandler): ApiHandler {
         }
 
         async function beskyttetApiInterne(req: NextApiRequest, res: NextApiResponse): Promise<void> {
-            const bearerToken: string | null | undefined = req.headers['authorization']
+            const bearerToken = getToken(req)
             if (!bearerToken) {
                 return send401()
             }
-            try {
-                await verifyAzureAccessToken(bearerToken)
-            } catch (e) {
-                logger.error(e, 'Kunne ikke autentisere.')
+            const result = await validateAzureToken(bearerToken)
+            if (!result.ok) {
+                logger.warn('kunne ikke validere azuretoken i beskyttetApi')
                 return send401()
             }
+
             return handler(req, res)
         }
 
