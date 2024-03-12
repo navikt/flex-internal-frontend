@@ -1,8 +1,7 @@
 import { proxyApiRouteRequest } from '@navikt/next-api-proxy'
 import { logger } from '@navikt/next-logger'
 import { NextApiRequest, NextApiResponse } from 'next'
-
-import { getOboAccessToken } from '../auth/getOboAccessToken'
+import { requestAzureOboToken } from '@navikt/oasis'
 
 export interface BackendProxyOpts {
     req: NextApiRequest
@@ -36,8 +35,19 @@ export async function proxyKallTilBackend(opts: BackendProxyOpts): Promise<void>
     if (!validert) return
 
     async function bearerToken(): Promise<string | undefined> {
+        if (!opts.req.headers.authorization) throw new Error('Mangler authorization header')
+
         if (opts.backendClientId) {
-            return await getOboAccessToken(opts.req?.headers.authorization?.split(' ')[1], opts.backendClientId)
+            const obo = await requestAzureOboToken(opts.req?.headers.authorization?.split(' ')[1], opts.backendClientId)
+            if (!obo.ok) {
+                throw new Error(
+                    `Unable to exchange token for ${opts.backendClientId} token,reason: ${obo.error.message}`,
+                    {
+                        cause: obo.error,
+                    },
+                )
+            }
+            return obo.token
         }
         return undefined
     }
