@@ -59,6 +59,13 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
                                 >
                                     Konverter søknad id til fnr
                                 </Dropdown.Menu.List.Item>
+                                <Dropdown.Menu.List.Item
+                                    onClick={() => {
+                                        router.push('/vedtaksperioder')
+                                    }}
+                                >
+                                    Vedtaksperioder i flex-inntektsmelding-status
+                                </Dropdown.Menu.List.Item>
                             </Dropdown.Menu.List>
                         </Dropdown.Menu>
                     </Dropdown>
