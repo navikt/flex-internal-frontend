@@ -52,9 +52,9 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
 
                 <Timeline.Zoom>
                     <Timeline.Zoom.Button label="3 mnd" interval="month" count={3} />
-                    <Timeline.Zoom.Button label="7 mnd" interval="month" count={7} />
-                    <Timeline.Zoom.Button label="9 mnd" interval="month" count={9} />
-                    <Timeline.Zoom.Button label="1.5 år" interval="year" count={1.5} />
+                    <Timeline.Zoom.Button label="6 mnd" interval="month" count={6} />
+                    <Timeline.Zoom.Button label="12 mnd" interval="month" count={12} />
+                    <Timeline.Zoom.Button label="18 mnd" interval="month" count={18} />
                 </Timeline.Zoom>
             </Timeline>
         </div>
