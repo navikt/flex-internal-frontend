@@ -1,5 +1,6 @@
-import { Timeline } from '@navikt/ds-react'
+import { BodyShort, Heading, Table, Timeline } from '@navikt/ds-react'
 import React, { Fragment } from 'react'
+import dayjs from 'dayjs'
 
 import { dayjsToDate } from '../queryhooks/useSoknader'
 import { VedtaksperiodeResponse } from '../queryhooks/useVedtaksperioder'
@@ -12,6 +13,8 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                     return (
                         <Timeline.Row key={vp.orgnr} label={vp.orgnr}>
                             {vp.statusHistorikk.map((sh) => {
+                                const sisteStatus = sh.statusHistorikk[sh.statusHistorikk.length - 1]
+
                                 return (
                                     <Timeline.Period
                                         start={dayjsToDate(sh.vedtakFom)!}
@@ -20,7 +23,25 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                                         key={sh.id}
                                     >
                                         <Fragment>
-                                            <span>${JSON.stringify(sh)}</span>
+                                            <Heading size="small">{sisteStatus.status}</Heading>
+                                            <BodyShort>{sh.orgNavn}</BodyShort>
+                                            <BodyShort>{sh.vedtakFom}</BodyShort>
+                                            <BodyShort>{sh.vedtakTom}</BodyShort>
+                                            <BodyShort>Statushistorikk</BodyShort>
+                                            <Table size="small">
+                                                <Table.Body>
+                                                    {sh.statusHistorikk.map((status) => {
+                                                        return (
+                                                            <Table.Row key={status.id}>
+                                                                <Table.DataCell>
+                                                                    {dayjs(status.opprettet).format()}
+                                                                </Table.DataCell>
+                                                                <Table.DataCell>{status.status}</Table.DataCell>
+                                                            </Table.Row>
+                                                        )
+                                                    })}
+                                                </Table.Body>
+                                            </Table>
                                         </Fragment>
                                     </Timeline.Period>
                                 )
