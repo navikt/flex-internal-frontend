@@ -1,4 +1,4 @@
-import { BodyShort, Table, Timeline } from '@navikt/ds-react'
+import { BodyShort, DatePicker, Table, Timeline, useDatepicker } from '@navikt/ds-react'
 import React, { Fragment } from 'react'
 import dayjs from 'dayjs'
 
@@ -27,9 +27,25 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
     const eldsteDato = datoer.sort((a, b) => (dayjs(a).isBefore(dayjs(b)) ? -1 : 1))[0]
     const nyesteDato = datoer.sort((a, b) => (dayjs(a).isBefore(dayjs(b)) ? 1 : -1))[0]
 
+    const {
+        datepickerProps: fraDatepickerProps,
+        inputProps: fraInputprops,
+        selectedDay: fraSelectedDay,
+    } = useDatepicker({
+        defaultSelected: eldsteDato.toDate(),
+    })
+
+    const {
+        datepickerProps: tilDatepickerProps,
+        inputProps: tilInputprops,
+        selectedDay: tilSelectedDay,
+    } = useDatepicker({
+        defaultSelected: nyesteDato.add(1, 'week').toDate(),
+    })
+
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
-            <Timeline endDate={nyesteDato.add(1, 'week').toDate()} startDate={eldsteDato.toDate()}>
+            <Timeline endDate={tilSelectedDay} startDate={fraSelectedDay}>
                 {vedtaksperioder.map((vp) => {
                     return (
                         <Timeline.Row key={vp.orgnr} label={vp.orgnr}>
@@ -84,6 +100,14 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                     )
                 })}
             </Timeline>
+            <div className="mt-20">
+                <DatePicker {...fraDatepickerProps}>
+                    <DatePicker.Input {...fraInputprops} label="Fra dato" />
+                </DatePicker>
+                <DatePicker {...tilDatepickerProps} className="inline">
+                    <DatePicker.Input {...tilInputprops} label="Til dato" />
+                </DatePicker>
+            </div>
         </div>
     )
 }
