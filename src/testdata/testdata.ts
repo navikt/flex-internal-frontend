@@ -340,7 +340,7 @@ const vedtaksperiodeTestdata = [
                     {
                         id: 'eca8496c-2136-4662-b42a-540f76bc1ad6',
                         status: 'TRENGER_IKKE_INNTEKTSMELDING',
-                        opprettet: '2024-04-17T08:42:51.669948Z',
+                        opprettet: '2022-06-01T08:42:51.669948Z',
                     },
                 ],
             },
@@ -358,37 +358,37 @@ const vedtaksperiodeTestdata = [
                     {
                         id: 'c5f3431f-fd3d-4ce9-9153-27008749a0bc',
                         status: 'MANGLER_INNTEKTSMELDING',
-                        opprettet: '2024-04-17T08:42:51.686712Z',
+                        opprettet: '2022-07-01T08:42:51.686712Z',
                     },
                     {
                         id: 'fcab4703-8868-45ef-98fe-1b27b995c23b',
                         status: 'BRUKERNOTIFIKSJON_MANGLER_INNTEKTSMELDING_SENDT',
-                        opprettet: '2024-04-17T08:42:51.908827Z',
+                        opprettet: '2022-07-16T08:42:51.908827Z',
                     },
                     {
                         id: 'c5fa8c58-a68f-41ae-aa12-acbdb67a4435',
                         status: 'DITT_SYKEFRAVAER_MANGLER_INNTEKTSMELDING_SENDT',
-                        opprettet: '2024-04-17T08:42:52.023284Z',
+                        opprettet: '2022-07-16T08:42:52.023284Z',
                     },
                     {
                         id: 'f8d2cde3-10d6-4364-a492-ef0246430737',
                         status: 'HAR_INNTEKTSMELDING',
-                        opprettet: '2024-04-17T08:42:52.389031Z',
+                        opprettet: '2022-07-23T08:42:52.389031Z',
                     },
                     {
                         id: '469784fa-e75a-47c6-89a1-f55a752e68e0',
                         status: 'BRUKERNOTIFIKSJON_MANGLER_INNTEKTSMELDING_DONE_SENDT',
-                        opprettet: '2024-04-17T08:42:52.399857Z',
+                        opprettet: '2022-07-23T08:42:52.399857Z',
                     },
                     {
                         id: '6af7905f-6bb0-4274-aba2-1dec7d68dc96',
                         status: 'DITT_SYKEFRAVAER_MANGLER_INNTEKTSMELDING_DONE_SENDT',
-                        opprettet: '2024-04-17T08:42:52.405236Z',
+                        opprettet: '2022-07-23T08:42:52.405236Z',
                     },
                     {
                         id: 'a81bb968-6bc0-4123-8da1-ad29f760323a',
                         status: 'DITT_SYKEFRAVAER_MOTTATT_INNTEKTSMELDING_SENDT',
-                        opprettet: '2024-04-17T08:42:52.407471Z',
+                        opprettet: '2022-07-23T08:42:52.407471Z',
                     },
                 ],
             },
@@ -405,18 +405,8 @@ const vedtaksperiodeTestdata = [
                 statusHistorikk: [
                     {
                         id: '670560a4-77e5-4d2e-8191-ee0a7a74a5e3',
-                        status: 'MANGLER_INNTEKTSMELDING',
-                        opprettet: '2024-04-17T08:42:51.698392Z',
-                    },
-                    {
-                        id: '31c8528f-ddc2-4890-b170-750ae529f5d5',
-                        status: 'HAR_PERIODE_RETT_FOER',
-                        opprettet: '2024-04-17T08:42:51.898785Z',
-                    },
-                    {
-                        id: '9dbbe422-4ad9-4001-b08a-2087dc69691c',
-                        status: 'HAR_INNTEKTSMELDING',
-                        opprettet: '2024-04-17T08:42:52.425103Z',
+                        status: 'TRENGER_IKKE_INNTEKTSMELDING',
+                        opprettet: '2022-07-06T08:42:51.698392Z',
                     },
                 ],
             },
