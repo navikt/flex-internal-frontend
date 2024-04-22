@@ -51,6 +51,8 @@ spec:
       rules:
         - application: sykepengesoknad-backend
         - application: flex-inntektsmelding-status
+      external:
+        - host: reops-proxy.intern.nav.no
   env:
   {{#each env}}
      - name: {{@key}}
