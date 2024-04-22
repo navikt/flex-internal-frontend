@@ -4,7 +4,7 @@ import type { AppProps } from 'next/app'
 import React, { useState } from 'react'
 import Head from 'next/head'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Dropdown, InternalHeader, Spacer } from '@navikt/ds-react'
+import { Dropdown, InternalHeader } from '@navikt/ds-react'
 import { useRouter } from 'next/router'
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
@@ -23,6 +23,14 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
     )
     const router = useRouter()
 
+    const sider = {
+        '/': 'Tidslinje av søknader',
+        '/ident': 'Slå opp fnr og aktor id',
+        '/soknad-til-fnr': 'Konverter søknad id til fnr',
+        '/vedtaksperioder': 'Vedtaksperioder i flex-inntektsmelding-status',
+        '/amplitude': 'Amplitude',
+    }
+
     return (
         <>
             <Head>
@@ -33,39 +41,22 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
             <QueryClientProvider client={queryClient}>
                 <InternalHeader>
                     <InternalHeader.Title as="h1">Flex internal frontend</InternalHeader.Title>
-                    <Spacer />
+                    <InternalHeader.Title as="h2">{sider[router.pathname as keyof typeof sider]}</InternalHeader.Title>
+
                     <Dropdown>
-                        <InternalHeader.UserButton as={Dropdown.Toggle} name="Velg en underside" />
+                        <InternalHeader.UserButton as={Dropdown.Toggle} name="Velg en underside" className="ml-auto" />
                         <Dropdown.Menu>
                             <Dropdown.Menu.List>
-                                <Dropdown.Menu.List.Item
-                                    onClick={() => {
-                                        router.push('/')
-                                    }}
-                                >
-                                    Tidslinje av søknader
-                                </Dropdown.Menu.List.Item>
-                                <Dropdown.Menu.List.Item
-                                    onClick={() => {
-                                        router.push('/ident')
-                                    }}
-                                >
-                                    Slå opp fnr og aktor id
-                                </Dropdown.Menu.List.Item>
-                                <Dropdown.Menu.List.Item
-                                    onClick={() => {
-                                        router.push('/soknad-til-fnr')
-                                    }}
-                                >
-                                    Konverter søknad id til fnr
-                                </Dropdown.Menu.List.Item>
-                                <Dropdown.Menu.List.Item
-                                    onClick={() => {
-                                        router.push('/vedtaksperioder')
-                                    }}
-                                >
-                                    Vedtaksperioder i flex-inntektsmelding-status
-                                </Dropdown.Menu.List.Item>
+                                {Object.entries(sider).map(([url, side]) => (
+                                    <Dropdown.Menu.List.Item
+                                        key={url}
+                                        onClick={() => {
+                                            router.push(url)
+                                        }}
+                                    >
+                                        {side}
+                                    </Dropdown.Menu.List.Item>
+                                ))}
                             </Dropdown.Menu.List>
                         </Dropdown.Menu>
                     </Dropdown>
