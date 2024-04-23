@@ -96,20 +96,20 @@ export const AmplitudeScreenshotView = ({ data }: { data: AmplitudeResponse }) =
 const Screenshot = ({ eventgruppe }: { eventgruppe: EventGruppe }) => {
     function imagePng() {
         if (eventgruppe.url === 'www.nav.no/') {
-            return 'www.nav.no.png'
+            return 'www.nav.no'
         }
         if (eventgruppe.url === 'www.nav.no/kontaktoss') {
-            return 'www.nav.no.kontaktoss.png'
+            return 'www.nav.no.kontaktoss'
         }
         if (eventgruppe.url === 'www.nav.no/syk/sykepengesoknad') {
-            return 'www.nav.no.syk.sykepengesoknad.png'
+            return 'www.nav.no.syk.sykepengesoknad'
         }
     }
 
     const png = imagePng()
     if (png) {
         // eslint-disable-next-line @next/next/no-img-element
-        return <img style={{ maxHeight: '70vh' }} src={'/static/amplitude/' + png} alt="screenshot" />
+        return <img style={{ maxHeight: '70vh' }} src={'/static/amplitude/' + png + '.png'} alt="screenshot" />
     }
 
     return null
