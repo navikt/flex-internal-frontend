@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Alert, BodyShort, Button, Link, ReadMore } from '@navikt/ds-react'
+import { Alert, BodyShort, Button, Link, Switch } from '@navikt/ds-react'
 
 import { AmplitudeResponse } from '../queryhooks/useAmplitudedata'
 
@@ -9,7 +9,7 @@ export const AmplitudeScreenshotView = ({ data }: { data: AmplitudeResponse }) =
     const parsedEvents = parseEvents(data.events)
     const [currentIndex, setCurrentIndex] = useState(0)
     const [alertLukket, setAlertLukket] = useState(false)
-
+    const [json, setJson] = useState(false)
     const handlePrevious = useCallback(() => {
         setCurrentIndex((prevIndex) => Math.max(prevIndex - 1, 0))
     }, [setCurrentIndex])
@@ -47,30 +47,32 @@ export const AmplitudeScreenshotView = ({ data }: { data: AmplitudeResponse }) =
                     utdatert.
                 </Alert>
             )}
-            <BodyShort>{eventGruppe.tidspunkt.format('D MMM YYYY HH:mm:ss')}</BodyShort>
-            <Link href={'https://' + eventGruppe.url} target="_blank">
-                {eventGruppe.url}
-            </Link>
-            {eventGruppe.eventTekster.map((e, i) => {
-                return (
-                    <BodyShort key={i} className="py-0">
-                        {e}
-                    </BodyShort>
-                )
-            })}
-            <ReadMore header="Hele eventet">
-                <pre>{JSON.stringify(eventGruppe.events, null, 2)}</pre>
-            </ReadMore>
-            <div className="fixed bottom-24">
-                <Screenshot eventgruppe={eventGruppe}></Screenshot>
+            <div className="min-h-44">
+                <BodyShort>{eventGruppe.tidspunkt.format('D MMM YYYY HH:mm:ss')}</BodyShort>
+                <Link href={'https://' + eventGruppe.url} target="_blank">
+                    {eventGruppe.url}
+                </Link>
+                {eventGruppe.eventTekster.map((e, i) => {
+                    return (
+                        <BodyShort key={i} className="py-0">
+                            {e}
+                        </BodyShort>
+                    )
+                })}
             </div>
-            <div className="space-x-4 fixed inset-x-0 bottom-0 bg-gray-800 text-white p-4">
+            {json && <pre>{JSON.stringify(eventGruppe.events, null, 2)}</pre>}
+            {!json && (
+                <div className="">
+                    <Screenshot eventgruppe={eventGruppe}></Screenshot>
+                </div>
+            )}
+            <div className="space-x-4 fixed items-center inset-x-0 bottom-0 bg-gray-200 p-4 flex">
                 <Button variant="primary-neutral" onClick={handlePrevious} disabled={currentIndex === 0}>
                     Forrige
                 </Button>
-                <span>
+                <BodyShort>
                     {currentIndex + 1}/{parsedEvents.length}
-                </span>
+                </BodyShort>
                 <Button
                     variant="primary-neutral"
                     onClick={handleNext}
@@ -78,6 +80,14 @@ export const AmplitudeScreenshotView = ({ data }: { data: AmplitudeResponse }) =
                 >
                     Neste
                 </Button>
+                <Switch>Mobil</Switch>
+                <Switch
+                    onClick={() => {
+                        setJson(!json)
+                    }}
+                >
+                    JSON
+                </Switch>
             </div>
         </>
     )
@@ -99,7 +109,7 @@ const Screenshot = ({ eventgruppe }: { eventgruppe: EventGruppe }) => {
     const png = imagePng()
     if (png) {
         // eslint-disable-next-line @next/next/no-img-element
-        return <img src={'/static/' + png} alt="screenshot" />
+        return <img style={{ maxHeight: '70vh' }} src={'/static/amplitude/' + png} alt="screenshot" />
     }
 
     return null

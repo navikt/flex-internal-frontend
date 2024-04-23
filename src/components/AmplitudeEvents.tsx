@@ -10,13 +10,13 @@ const AmplitudeEvents = () => {
     const [fnr, setFnr] = useState<string>(localStorage.getItem('amplitude-id') || '')
     const [enabled, setEnabled] = useState<boolean>(false)
     const { data: data, isLoading, isError } = useAmplitudedata(fnr, enabled)
-    const [visning, setVisning] = useState('liste')
+    const [visning, setVisning] = useState('screenshots')
 
     return (
         <div className="flex-row">
             <ReadMore header="Vis meny" defaultOpen={true}>
                 <TextField
-                    className="mt-4 w-1/5"
+                    className="w-1/5 mb-4"
                     onChange={(e) => {
                         setFnr(e.target.value)
                         localStorage.setItem('amplitude-id', e.target.value)
@@ -26,7 +26,9 @@ const AmplitudeEvents = () => {
                     label="AmplitudeId"
                     size="medium"
                 />
-                <Button onClick={() => setEnabled(true)}>Hent amplitudebruker</Button>
+                <Button size="small" onClick={() => setEnabled(true)}>
+                    Hent amplitudebruker
+                </Button>
                 <div>
                     {isLoading && enabled && <span>Laster...</span>}
                     {isError && <Alert variant="error">Noe gikk galt</Alert>}
@@ -39,12 +41,13 @@ const AmplitudeEvents = () => {
                                 onChange={setVisning}
                                 value={visning}
                             >
-                                <Radio value="liste" className="mr-4">
-                                    Event liste
-                                </Radio>
                                 <Radio value="screenshots" className="mr-4">
                                     Screenshots
                                 </Radio>
+                                <Radio value="liste" className="mr-4">
+                                    Event liste
+                                </Radio>
+
                                 <Radio value="raw">Rådata fra amplitude</Radio>
                             </RadioGroup>
 
