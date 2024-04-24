@@ -103,31 +103,47 @@ export const AmplitudeScreenshotView = ({ data }: { data: AmplitudeResponse }) =
 }
 
 const Screenshot = ({ eventgruppe, mobil }: { eventgruppe: EventGruppe; mobil: boolean }) => {
-    function imagePng() {
-        const urlUtenTrailingSlash = eventgruppe.url.replace(/\/$/, '')
+    const urlUtenTrailingSlash = eventgruppe.url.replace(/\/$/, '')
+    const plattform = mobil ? 'mobil' : 'desktop'
 
+    function imagePng() {
         if (urlUtenTrailingSlash === 'www.nav.no') {
             return 'www.nav.no'
         }
         if (urlUtenTrailingSlash === 'www.nav.no/kontaktoss') {
             return 'www.nav.no.kontaktoss'
         }
-        if (urlUtenTrailingSlash === 'www.nav.no/syk/sykepengesoknad') {
-            return 'www.nav.no.syk.sykepengesoknad'
-        }
         if (urlUtenTrailingSlash === 'www.nav.no/minside') {
             return 'www.nav.no.minside'
+        }
+        if (urlUtenTrailingSlash === 'www.nav.no/min-side') {
+            return 'www.nav.no.min-side'
         }
         if (urlUtenTrailingSlash === 'www.nav.no/minside/nb/varsler') {
             return 'www.nav.no.minside.nb.varsler'
         }
-        if (urlUtenTrailingSlash === 'www.nav.no/syk/sykepengesoknad/soknader/[redacted]/1') {
-            return 'soknad-forsteside'
+        if (
+            urlUtenTrailingSlash === 'person.nav.no/dokumentarkiv' ||
+            urlUtenTrailingSlash === 'www.nav.no/dokumentarkiv'
+        ) {
+            return 'person.nav.no.dokumentarkiv'
         }
-        if (urlUtenTrailingSlash === 'www.nav.no/syk/sykepengesoknad/soknader/[redacted]') {
-            return 'soknad-forsteside'
+        if (urlUtenTrailingSlash === 'www.nav.no/utlogget') {
+            return 'www.nav.no.utlogget'
         }
-        if (urlUtenTrailingSlash.startsWith('www.nav.no/syk/sykepengesoknad/soknader/[redacted]/')) {
+        if (urlUtenTrailingSlash === 'www.nav.no/skriv-til-oss') {
+            return 'www.nav.no.skriv-til-oss'
+        }
+        if (urlUtenTrailingSlash === 'person.nav.no/dokumentarkiv/tema/SYK') {
+            return 'person.nav.no.dokumentarkiv.tema.syk'
+        }
+        if (urlUtenTrailingSlash === 'person.nav.no/dokumentarkiv/tema/SYM') {
+            return 'person.nav.no.dokumentarkiv.tema.sym'
+        }
+        if (
+            urlUtenTrailingSlash.startsWith('www.nav.no/syk/sykepengesoknad/soknader/[redacted]/') &&
+            urlUtenTrailingSlash !== 'www.nav.no/syk/sykepengesoknad/soknader/[redacted]/1'
+        ) {
             return 'soknad-sporsmal'
         }
         return null
@@ -135,17 +151,62 @@ const Screenshot = ({ eventgruppe, mobil }: { eventgruppe: EventGruppe; mobil: b
 
     const filnavn = imagePng()
     if (filnavn) {
-        const plattform = mobil ? 'mobil' : 'desktop'
-        if (filnavn) {
-            return (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                    style={{ maxHeight: '70vh' }}
-                    src={'/static/amplitude/' + plattform + '/' + filnavn + '.png'}
-                    alt="screenshot"
-                />
-            )
+        return (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+                style={{ maxHeight: '70vh' }}
+                src={'/static/amplitude/' + plattform + '/' + filnavn + '.png'}
+                alt="screenshot"
+            />
+        )
+    }
+
+    function iframedUrl() {
+        if (urlUtenTrailingSlash === 'www.nav.no/syk/sykmeldinger/[redacted]') {
+            return 'https://sykmeldinger.ekstern.dev.nav.no/syk/sykmeldinger/b4f4172f-4bb8-4512-b572-03f211b26f08'
         }
+        if (urlUtenTrailingSlash === 'www.nav.no/syk/sykefravaer') {
+            return 'https://demo.ekstern.dev.nav.no/syk/sykefravaer?testperson=syk-17-siden'
+        }
+        if (urlUtenTrailingSlash === 'www.nav.no/syk/sykmeldinger') {
+            return 'https://sykmeldinger.ekstern.dev.nav.no/syk/sykmeldinger'
+        }
+        if (urlUtenTrailingSlash === 'www.nav.no/syk/oppfolgingsplaner/sykmeldt') {
+            return 'https://demo.ekstern.dev.nav.no/syk/oppfolgingsplaner/sykmeldt'
+        }
+        if (urlUtenTrailingSlash === 'www.nav.no/syk/sykepengesoknad') {
+            return 'https://demo.ekstern.dev.nav.no/syk/sykepengesoknad'
+        }
+        if (urlUtenTrailingSlash === 'www.nav.no/syk/sykepenger') {
+            if (eventgruppe.events.some((e) => e.event_type == 'skjema åpnet')) {
+                return 'https://demo.ekstern.dev.nav.no/syk/sykepenger?id=a147e9a9-0aa2-4f5f-a8e3-c16c901e4071'
+            }
+            return 'https://demo.ekstern.dev.nav.no/syk/sykepenger'
+        }
+        if (urlUtenTrailingSlash === 'www.nav.no/syk/sykepengesoknad/avbrutt/[redacted]') {
+            return 'https://demo.ekstern.dev.nav.no/syk/sykepengesoknad/avbrutt/811d15b2-2a76-4623-9530-1ba55617e0a5?testperson=integrasjon-soknader'
+        }
+        if (urlUtenTrailingSlash === 'www.nav.no/syk/meroppfolging/snart-slutt-pa-sykepengene') {
+            return 'https://demo.ekstern.dev.nav.no/syk/meroppfolging/snart-slutt-pa-sykepengene'
+        }
+        if (urlUtenTrailingSlash === 'www.nav.no/syk/sykepengesoknad/kvittering/[redacted]') {
+            return 'https://demo.ekstern.dev.nav.no/syk/sykepengesoknad/kvittering/3848e75e-4069-4076-95c0-3f9f0b63e498?testperson=integrasjon-soknader'
+        }
+        if (
+            urlUtenTrailingSlash === 'www.nav.no/syk/sykepengesoknad/soknader/[redacted]/1' ||
+            urlUtenTrailingSlash === 'www.nav.no/syk/sykepengesoknad/soknader/[redacted]'
+        ) {
+            return 'https://demo.ekstern.dev.nav.no/syk/sykepengesoknad/soknader/faba11f5-c4f2-4647-8c8a-58b28ce2f3ef/1'
+        }
+        return null
+    }
+
+    const iframed = iframedUrl()
+    if (iframed) {
+        if (mobil) {
+            return <iframe src={iframed} style={{ width: '390px', height: '844px' }} title="Iframed"></iframe>
+        }
+        return <iframe src={iframed} style={{ width: '100%', height: '70vh' }} title="Iframed"></iframe>
     }
     return null
 }
