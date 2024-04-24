@@ -20,7 +20,7 @@ export function useAmplitudedata(
 
 export interface AmplitudeResponse {
     userData: AmplitudeUserdata
-    events: AmplitdudeEvent[]
+    events: AmplitudeEvent[]
 }
 
 export interface AmplitudeUserdata {
@@ -29,7 +29,7 @@ export interface AmplitudeUserdata {
     last_used: string
 }
 
-export interface AmplitdudeEvent {
+export interface AmplitudeEvent {
     event_id: string
     event_type: string
     client_event_time: string
@@ -45,5 +45,8 @@ export interface EventProperties {
     url: string
     component?: string
     komponent?: string
+    tittel?: string
+    composition?: string
     tekst?: string
+    destinasjon?: string
 }
