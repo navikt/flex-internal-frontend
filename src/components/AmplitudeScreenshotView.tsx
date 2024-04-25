@@ -174,14 +174,8 @@ const Screenshot = ({ eventgruppe, mobil }: { eventgruppe: EventGruppeMedDetalje
         }
 
         switch (urlUtenTrailingSlash) {
-            case 'www.nav.no/syk/sykmeldinger/[redacted]':
-                return 'https://sykmeldinger.ekstern.dev.nav.no/syk/sykmeldinger/b4f4172f-4bb8-4512-b572-03f211b26f08'
-
             case 'www.nav.no/syk/sykefravaer':
                 return 'https://demo.ekstern.dev.nav.no/syk/sykefravaer?testperson=syk-17-siden'
-
-            case 'www.nav.no/syk/sykmeldinger':
-                return 'https://sykmeldinger.ekstern.dev.nav.no/syk/sykmeldinger'
 
             case 'www.nav.no/syk/oppfolgingsplaner/sykmeldt':
                 return 'https://demo.ekstern.dev.nav.no/syk/oppfolgingsplaner/sykmeldt'
