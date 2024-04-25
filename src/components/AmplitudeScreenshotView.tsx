@@ -44,6 +44,9 @@ export const AmplitudeScreenshotView = ({ data }: { data: AmplitudeResponse }) =
         }
     }, [handleNext, handlePrevious])
 
+    if (parsedEvents.length === 0) {
+        return <BodyShort>Ingen events</BodyShort>
+    }
     const eventGruppe = parsedEvents[currentIndex]
     return (
         <>
@@ -243,7 +246,7 @@ function eventgruppeTilDemoSporsmalSide(e: EventGruppeMedDetaljer): string | nul
     switch (soknadstype) {
         case 'ARBEIDSTAKERE': {
             const base =
-                'https://demo.ekstern.dev.nav.no/syk/sykepengesoknad/soknader/faba11f5-c4f2-4647-8c8a-58b28ce2f3ef/'
+                'https://sykepengesoknad-demo-samesite.ekstern.dev.nav.no/syk/sykepengesoknad/soknader/faba11f5-c4f2-4647-8c8a-58b28ce2f3ef/'
             switch (sporsmal) {
                 case 'ANSVARSERKLARING':
                     return base + '1'
