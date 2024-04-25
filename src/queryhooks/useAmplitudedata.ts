@@ -27,6 +27,14 @@ export interface AmplitudeUserdata {
     user_id: string
     first_used: string
     last_used: string
+    device: string
+    os: string
+    properties: Properties
+}
+
+interface Properties {
+    vindushoyde: number
+    vindusbredde: number
 }
 
 export interface AmplitudeEvent {

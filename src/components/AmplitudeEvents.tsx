@@ -14,7 +14,7 @@ const AmplitudeEvents = () => {
 
     return (
         <div className="flex-row">
-            <ReadMore header="Vis meny" defaultOpen={true}>
+            <ReadMore header="Vis meny" defaultOpen={true} className="pb-4">
                 <TextField
                     className="w-1/5 mb-4"
                     onChange={(e) => {
@@ -50,9 +50,12 @@ const AmplitudeEvents = () => {
 
                                 <Radio value="raw">Rådata fra amplitude</Radio>
                             </RadioGroup>
-
-                            <BodyShort className="font-bold" spacing>
-                                {data.events.length} events
+                            <BodyShort>{data.events.length} events</BodyShort>
+                            <BodyShort>
+                                {data.userData.device} - {data.userData.os}
+                            </BodyShort>
+                            <BodyShort>
+                                {data.userData.properties.vindushoyde} x {data.userData.properties.vindusbredde}
                             </BodyShort>
                         </>
                     )}
