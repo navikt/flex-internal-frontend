@@ -240,7 +240,7 @@ function eventgruppeTilDemoSporsmalSide(e: EventGruppeMedDetaljer): string | nul
     switch (soknadstype) {
         case 'ARBEIDSTAKERE': {
             const base =
-                'https://sykepengesoknad-demo-samesite.ekstern.dev.nav.no/syk/sykepengesoknad/soknader/faba11f5-c4f2-4647-8c8a-58b28ce2f3ef/'
+                'https://demo.ekstern.dev.nav.no/syk/sykepengesoknad/soknader/faba11f5-c4f2-4647-8c8a-58b28ce2f3ef/'
             switch (sporsmal) {
                 case 'ANSVARSERKLARING':
                     return base + '1'
