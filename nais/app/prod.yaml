@@ -1,4 +1,4 @@
-ingress: https://flex-internal.intern.nav.no
+ingress: https://flex.ansatt.nav.no
 azureTenant: nav.no
 allowAllUsers: false
 env:
