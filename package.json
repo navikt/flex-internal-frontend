@@ -37,6 +37,7 @@
     },
     "scripts": {
         "dev": "MOCK_BACKEND=true next dev -p 8080",
+        "local": "LOCAL_BACKEND=true MOCK_BACKEND=true next dev -p 8080",
         "start": "next start -p 8080",
         "build": "next build",
         "prettier:write": "prettier --write .",
