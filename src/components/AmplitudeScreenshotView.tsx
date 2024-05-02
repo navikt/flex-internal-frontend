@@ -77,7 +77,6 @@ export const AmplitudeScreenshotView = ({ data }: { data: AmplitudeResponse }) =
                         </BodyShort>
                     )
                 })}
-                <BodyShort>{eventGruppe.sidevisning}</BodyShort>
                 <BodyShort>{eventGruppe.spormalTag}</BodyShort>
                 <BodyShort>{eventGruppe.soknadstype}</BodyShort>
             </div>
