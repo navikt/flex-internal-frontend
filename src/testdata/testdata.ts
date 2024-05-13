@@ -1,4 +1,5 @@
 import { BackendProxyOpts, validerKall } from '../proxy/backendproxy'
+import { FullVedtaksperiodeBehandling } from '../queryhooks/useVedtaksperioder'
 
 const testdata = {
     sykepengesoknadListe: [
@@ -322,93 +323,48 @@ const testdata = {
     ],
 }
 
-const vedtaksperiodeTestdata = [
+const vedtaksperiodeTestdata: FullVedtaksperiodeBehandling[] = [
     {
-        orgnr: '123456547',
-        statusHistorikk: [
+        soknad: {
+            id: '281d97c9-8f02-4b8a-974f-5803bbea7443',
+            sykepengesoknadUuid: '2f7a41d4-1658-4049-9694-94d1df7fcd6f',
+            orgnummer: '123456547',
+            soknadstype: 'ARBEIDSTAKERE',
+            startSyketilfelle: '2022-06-01',
+            fom: '2022-06-01',
+            tom: '2022-06-30',
+            fnr: '12345678901',
+            sendt: '2024-05-13T10:56:48.047527Z',
+            opprettetDatabase: '2024-05-13T10:56:48.267622Z',
+        },
+        vedtaksperiode: {
+            id: 'b592f435-fe21-43a2-a5f2-098069a47f69',
+            opprettetDatabase: '2024-05-13T10:56:50.855626Z',
+            oppdatert: '2024-05-13T10:56:50.883256Z',
+            sisteSpleisstatus: 'VENTER_PÅ_ARBEIDSGIVER',
+            sisteVarslingstatus: null,
+            vedtaksperiodeId: '3337dceb-e5a5-481d-b659-b55da88a6d61',
+            behandlingId: '5809d055-3ccf-49d9-aee7-d81e88db25ee',
+            sykepengesoknadUuid: '2f7a41d4-1658-4049-9694-94d1df7fcd6f',
+        },
+        status: [
             {
-                id: 'f53233e9-3a12-4893-87c3-a378c536c397',
-                fnr: '12345678901',
-                orgNr: '123456547',
-                orgNavn: 'Flex AS',
-                opprettet: '2024-04-17T08:42:51.660473Z',
-                vedtakFom: '2022-05-16',
-                vedtakTom: '2022-05-31',
-                eksternTimestamp: '2024-04-17T08:42:51.630642Z',
-                eksternId: 'c1f58eb2-b8ca-4bf0-9693-badab5a21b6b',
-                statusHistorikk: [
-                    {
-                        id: 'eca8496c-2136-4662-b42a-540f76bc1ad6',
-                        status: 'TRENGER_IKKE_INNTEKTSMELDING',
-                        opprettet: '2022-06-01T08:42:51.669948Z',
-                    },
-                ],
+                id: '92d68e13-8a17-4a87-a0db-158ebeaffc9a',
+                vedtaksperiodeBehandlingId: 'b592f435-fe21-43a2-a5f2-098069a47f69',
+                opprettetDatabase: '2024-05-13T10:56:50.864047Z',
+                tidspunkt: '2024-05-13T10:56:50.827301Z',
+                status: 'OPPRETTET',
+                brukervarselId: null,
+                dittSykefravaerMeldingId: null,
             },
             {
-                id: '74f94060-66c6-409c-bf59-1e0edd75912a',
-                fnr: '12345678901',
-                orgNr: '123456547',
-                orgNavn: 'Flex AS',
-                opprettet: '2024-04-17T08:42:51.684031Z',
-                vedtakFom: '2022-06-01',
-                vedtakTom: '2022-06-30',
-                eksternTimestamp: '2024-04-17T08:42:51.645882Z',
-                eksternId: '6abbba65-d9e6-458e-9021-bbb4a39ed1e9',
-                statusHistorikk: [
-                    {
-                        id: 'c5f3431f-fd3d-4ce9-9153-27008749a0bc',
-                        status: 'MANGLER_INNTEKTSMELDING',
-                        opprettet: '2022-07-01T08:42:51.686712Z',
-                    },
-                    {
-                        id: 'fcab4703-8868-45ef-98fe-1b27b995c23b',
-                        status: 'BRUKERNOTIFIKSJON_MANGLER_INNTEKTSMELDING_SENDT',
-                        opprettet: '2022-07-16T08:42:51.908827Z',
-                    },
-                    {
-                        id: 'c5fa8c58-a68f-41ae-aa12-acbdb67a4435',
-                        status: 'DITT_SYKEFRAVAER_MANGLER_INNTEKTSMELDING_SENDT',
-                        opprettet: '2022-07-16T08:42:52.023284Z',
-                    },
-                    {
-                        id: 'f8d2cde3-10d6-4364-a492-ef0246430737',
-                        status: 'HAR_INNTEKTSMELDING',
-                        opprettet: '2022-07-23T08:42:52.389031Z',
-                    },
-                    {
-                        id: '469784fa-e75a-47c6-89a1-f55a752e68e0',
-                        status: 'BRUKERNOTIFIKSJON_MANGLER_INNTEKTSMELDING_DONE_SENDT',
-                        opprettet: '2022-07-23T08:42:52.399857Z',
-                    },
-                    {
-                        id: '6af7905f-6bb0-4274-aba2-1dec7d68dc96',
-                        status: 'DITT_SYKEFRAVAER_MANGLER_INNTEKTSMELDING_DONE_SENDT',
-                        opprettet: '2022-07-23T08:42:52.405236Z',
-                    },
-                    {
-                        id: 'a81bb968-6bc0-4123-8da1-ad29f760323a',
-                        status: 'DITT_SYKEFRAVAER_MOTTATT_INNTEKTSMELDING_SENDT',
-                        opprettet: '2022-07-23T08:42:52.407471Z',
-                    },
-                ],
-            },
-            {
-                id: '710639b1-59a2-41b7-bafd-0886b1f8e07a',
-                fnr: '12345678901',
-                orgNr: '123456547',
-                orgNavn: 'Flex AS',
-                opprettet: '2024-04-17T08:42:51.695736Z',
-                vedtakFom: '2022-07-01',
-                vedtakTom: '2022-07-05',
-                eksternTimestamp: '2024-04-17T08:42:51.651665Z',
-                eksternId: '70e18c4a-7914-4012-a5d7-21e7f85d6515',
-                statusHistorikk: [
-                    {
-                        id: '670560a4-77e5-4d2e-8191-ee0a7a74a5e3',
-                        status: 'TRENGER_IKKE_INNTEKTSMELDING',
-                        opprettet: '2022-07-06T08:42:51.698392Z',
-                    },
-                ],
+                id: '69923ea7-7635-4391-8336-018ad39d2a7d',
+                vedtaksperiodeBehandlingId: 'b592f435-fe21-43a2-a5f2-098069a47f69',
+                opprettetDatabase: '2024-05-13T10:56:50.887690Z',
+                tidspunkt: '2024-05-13T10:56:50.827301Z',
+                status: 'VENTER_PÅ_ARBEIDSGIVER',
+                brukervarselId: null,
+                dittSykefravaerMeldingId: null,
             },
         ],
     },

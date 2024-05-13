@@ -12,8 +12,8 @@ dayjs.locale({
 export function useVedtaksperioder(
     fnr: string | undefined,
     enabled = true,
-): UseQueryResult<VedtaksperiodeResponse[], Error> {
-    return useQuery<VedtaksperiodeResponse[], Error>({
+): UseQueryResult<FullVedtaksperiodeBehandling[], Error> {
+    return useQuery<FullVedtaksperiodeBehandling[], Error>({
         queryKey: ['vedtaksperioder', fnr],
         enabled: enabled,
         queryFn: () => {
@@ -31,26 +31,44 @@ export function useVedtaksperioder(
     })
 }
 
-export interface VedtaksperiodeResponse {
-    orgnr: string
-    statusHistorikk: StatusHistorikk[]
+export interface FullVedtaksperiodeBehandling {
+    soknad: Sykepengesoknad
+    vedtaksperiode: VedtaksperiodeBehandlingDbRecord | null
+    status: VedtaksperiodeBehandlingStatusDbRecord[]
 }
 
-export interface StatusHistorikk {
-    id: string
+interface Sykepengesoknad {
+    id: string | null
+    sykepengesoknadUuid: string
+    orgnummer: string | null
+    soknadstype: string
+    startSyketilfelle: string
+    fom: string
+    tom: string
     fnr: string
-    orgNr: string
-    orgNavn: string
-    opprettet: string
-    vedtakFom: string
-    vedtakTom: string
-    eksternTimestamp: string
-    eksternId: string
-    statusHistorikk: StatusHistorikk2[]
+    sendt: string
+    opprettetDatabase: string
 }
 
-export interface StatusHistorikk2 {
-    id: string
-    status: string
-    opprettet: string
+interface VedtaksperiodeBehandlingDbRecord {
+    id: string | null
+    opprettetDatabase: string
+    oppdatert: string
+    sisteSpleisstatus: StatusVerdi
+    sisteVarslingstatus: StatusVerdi | null
+    vedtaksperiodeId: string
+    behandlingId: string
+    sykepengesoknadUuid: string
 }
+
+interface VedtaksperiodeBehandlingStatusDbRecord {
+    id: string | null
+    vedtaksperiodeBehandlingId: string
+    opprettetDatabase: string
+    tidspunkt: string
+    status: StatusVerdi
+    brukervarselId: string | null
+    dittSykefravaerMeldingId: string | null
+}
+
+type StatusVerdi = string
