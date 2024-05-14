@@ -1,4 +1,4 @@
-import { BodyShort, DatePicker, Timeline, useDatepicker } from '@navikt/ds-react'
+import { BodyShort, DatePicker, Table, Timeline, useDatepicker } from '@navikt/ds-react'
 import React, { Fragment } from 'react'
 import dayjs from 'dayjs'
 
@@ -46,31 +46,98 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <Timeline endDate={tilSelectedDay} startDate={fraSelectedDay}>
                 {Array.from(mappet.keys()).map((orgnummer) => {
+                    const filtrertePerioder = vedtaksperioder.filter((vp) => vp.soknad.orgnummer === orgnummer)
+                    const gruppert = Object.values(
+                        Object.groupBy(filtrertePerioder, (d) => d.soknad.fom + ' - ' + d.soknad.tom),
+                    )
+
                     return (
                         <Timeline.Row key={orgnummer} label={orgnummer}>
-                            {vedtaksperioder.map((vp) => {
+                            {gruppert.map((vp) => {
+                                if (!vp) return null
+
+                                const sortertEtterOppdatert = vp.sort(
+                                    (a, b) =>
+                                        dayjs(a.vedtaksperiode?.oppdatert || 0).unix() -
+                                        dayjs(b.vedtaksperiode?.oppdatert || 0).unix(),
+                                )
+                                const nyeste = sortertEtterOppdatert[sortertEtterOppdatert.length - 1]
+                                const vedtaksperiodeLesbar = `${dayjs(nyeste.soknad.fom).format(' D MMMM')} til ${dayjs(nyeste.soknad.tom).format(' D MMMM')}`
                                 return (
                                     <Timeline.Period
-                                        start={dayjs(vp.soknad.fom).toDate()}
-                                        end={dayjs(vp.soknad.tom).toDate()}
+                                        start={dayjs(nyeste.soknad.fom).toDate()}
+                                        end={dayjs(nyeste.soknad.tom).toDate()}
                                         status="neutral"
-                                        key={vp.soknad.id}
-                                        icon={vp.vedtaksperiode?.sisteSpleisstatus || 'ukjent'}
+                                        key={nyeste.soknad.id}
+                                        icon={nyeste.vedtaksperiode?.sisteSpleisstatus || 'ukjent'}
                                     >
                                         <Fragment>
                                             <BodyShort className="font-bold" spacing>
-                                                {vp.vedtaksperiode?.sisteSpleisstatus}
+                                                {nyeste.vedtaksperiode?.sisteSpleisstatus}
                                             </BodyShort>
-                                            <BodyShort spacing>{vp.soknad.id}</BodyShort>
-                                            <BodyShort spacing={true}>
-                                                {vp.soknad.fom + ' - ' + vp.soknad.tom}
+                                            <BodyShort spacing={true}>{vedtaksperiodeLesbar}</BodyShort>
+                                            <BodyShort className="font-bold" spacing>
+                                                Behandlinger
                                             </BodyShort>
-                                            <BodyShort spacing>Statushistorikk</BodyShort>
-                                            {vp.status.map((status) => {
+                                            {sortertEtterOppdatert.map((behandling) => {
                                                 return (
-                                                    <BodyShort spacing key={status.id}>
-                                                        {status.status + ' ' + status.tidspunkt}
-                                                    </BodyShort>
+                                                    <>
+                                                        <Table size="small" className="mb-4">
+                                                            <Table.Body>
+                                                                <Table.Row>
+                                                                    <Table.DataCell>SykepengesoknadUUID</Table.DataCell>
+                                                                    <Table.DataCell>
+                                                                        {behandling.soknad.sykepengesoknadUuid}
+                                                                    </Table.DataCell>
+                                                                </Table.Row>
+                                                                <Table.Row>
+                                                                    <Table.DataCell>Søknad sendt</Table.DataCell>
+                                                                    <Table.DataCell>
+                                                                        {dayjs(behandling.soknad.sendt).format(
+                                                                            'D MMM YYYY HH:mm',
+                                                                        )}
+                                                                    </Table.DataCell>
+                                                                </Table.Row>
+                                                                {behandling.vedtaksperiode && (
+                                                                    <>
+                                                                        <Table.Row>
+                                                                            <Table.DataCell>
+                                                                                VedtaksperiodeId
+                                                                            </Table.DataCell>
+                                                                            <Table.DataCell>
+                                                                                {
+                                                                                    behandling.vedtaksperiode
+                                                                                        .vedtaksperiodeId
+                                                                                }
+                                                                            </Table.DataCell>
+                                                                        </Table.Row>
+                                                                        <Table.Row>
+                                                                            <Table.DataCell>
+                                                                                BehandlingId
+                                                                            </Table.DataCell>
+                                                                            <Table.DataCell>
+                                                                                {behandling.vedtaksperiode.behandlingId}
+                                                                            </Table.DataCell>
+                                                                        </Table.Row>
+                                                                    </>
+                                                                )}
+                                                                {behandling.status.map((status) => {
+                                                                    return (
+                                                                        <Table.Row key={status.id}>
+                                                                            <Table.DataCell>
+                                                                                {dayjs(status.tidspunkt).format(
+                                                                                    'D MMM YYYY HH:mm',
+                                                                                )}
+                                                                            </Table.DataCell>
+                                                                            <Table.DataCell>
+                                                                                {status.status}
+                                                                            </Table.DataCell>
+                                                                        </Table.Row>
+                                                                    )
+                                                                })}
+                                                            </Table.Body>
+                                                        </Table>
+                                                    </>
                                                 )
                                             })}
                                         </Fragment>
@@ -81,12 +148,12 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                     )
                 })}
             </Timeline>
-            <div className="mt-20">
+            <div className="mt-20 flex gap-x-2">
                 <DatePicker {...fraDatepickerProps}>
-                    <DatePicker.Input {...fraInputprops} label="Fra dato" />
+                    <DatePicker.Input {...fraInputprops} label="Fra" />
                 </DatePicker>
-                <DatePicker {...tilDatepickerProps} className="inline">
-                    <DatePicker.Input {...tilInputprops} label="Til dato" />
+                <DatePicker {...tilDatepickerProps}>
+                    <DatePicker.Input {...tilInputprops} label="Til" />
                 </DatePicker>
             </div>
         </div>
