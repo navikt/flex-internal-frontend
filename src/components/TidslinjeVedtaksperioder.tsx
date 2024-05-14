@@ -56,24 +56,35 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                             {gruppert.map((vp) => {
                                 if (!vp) return null
 
+                                function firstOrNull<T>(array: T[] | null | undefined): T | null {
+                                    return array?.[0] ?? null
+                                }
+
                                 const sortertEtterOppdatert = vp.sort(
                                     (a, b) =>
-                                        dayjs(a.vedtaksperiode?.oppdatert || 0).unix() -
-                                        dayjs(b.vedtaksperiode?.oppdatert || 0).unix(),
+                                        dayjs(firstOrNull(a.vedtaksperioder)?.vedtaksperiode.oppdatert || 0).unix() -
+                                        dayjs(firstOrNull(b.vedtaksperioder)?.vedtaksperiode.oppdatert || 0).unix(),
                                 )
                                 const nyeste = sortertEtterOppdatert[sortertEtterOppdatert.length - 1]
                                 const vedtaksperiodeLesbar = `${dayjs(nyeste.soknad.fom).format(' D MMMM')} til ${dayjs(nyeste.soknad.tom).format(' D MMMM')}`
+
+                                const flerePerioder = nyeste.vedtaksperioder.length > 1
+                                let iconTekst =
+                                    firstOrNull(nyeste.vedtaksperioder)?.vedtaksperiode.sisteSpleisstatus || 'ukjent'
+                                if (flerePerioder) {
+                                    iconTekst += ' (⚠️ flere vedtaksperioder på en søknad)'
+                                }
                                 return (
                                     <Timeline.Period
                                         start={dayjs(nyeste.soknad.fom).toDate()}
                                         end={dayjs(nyeste.soknad.tom).toDate()}
                                         status="neutral"
                                         key={nyeste.soknad.id}
-                                        icon={nyeste.vedtaksperiode?.sisteSpleisstatus || 'ukjent'}
+                                        icon={iconTekst}
                                     >
                                         <Fragment>
                                             <BodyShort className="font-bold" spacing>
-                                                {nyeste.vedtaksperiode?.sisteSpleisstatus}
+                                                {firstOrNull(nyeste.vedtaksperioder)?.vedtaksperiode.sisteSpleisstatus}
                                             </BodyShort>
                                             <BodyShort spacing={true}>{vedtaksperiodeLesbar}</BodyShort>
                                             <BodyShort className="font-bold" spacing>
@@ -98,41 +109,54 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                                                                         )}
                                                                     </Table.DataCell>
                                                                 </Table.Row>
-                                                                {behandling.vedtaksperiode && (
-                                                                    <>
-                                                                        <Table.Row>
-                                                                            <Table.DataCell>
-                                                                                VedtaksperiodeId
-                                                                            </Table.DataCell>
-                                                                            <Table.DataCell>
-                                                                                {
-                                                                                    behandling.vedtaksperiode
-                                                                                        .vedtaksperiodeId
-                                                                                }
-                                                                            </Table.DataCell>
-                                                                        </Table.Row>
-                                                                        <Table.Row>
-                                                                            <Table.DataCell>
-                                                                                BehandlingId
-                                                                            </Table.DataCell>
-                                                                            <Table.DataCell>
-                                                                                {behandling.vedtaksperiode.behandlingId}
-                                                                            </Table.DataCell>
-                                                                        </Table.Row>
-                                                                    </>
-                                                                )}
-                                                                {behandling.status.map((status) => {
+                                                                {behandling.vedtaksperioder.map((behandling) => {
                                                                     return (
-                                                                        <Table.Row key={status.id}>
-                                                                            <Table.DataCell>
-                                                                                {dayjs(status.tidspunkt).format(
-                                                                                    'D MMM YYYY HH:mm',
-                                                                                )}
-                                                                            </Table.DataCell>
-                                                                            <Table.DataCell>
-                                                                                {status.status}
-                                                                            </Table.DataCell>
-                                                                        </Table.Row>
+                                                                        <>
+                                                                            {behandling.vedtaksperiode && (
+                                                                                <>
+                                                                                    <Table.Row>
+                                                                                        <Table.DataCell>
+                                                                                            VedtaksperiodeId
+                                                                                        </Table.DataCell>
+                                                                                        <Table.DataCell>
+                                                                                            {
+                                                                                                behandling
+                                                                                                    .vedtaksperiode
+                                                                                                    .vedtaksperiodeId
+                                                                                            }
+                                                                                        </Table.DataCell>
+                                                                                    </Table.Row>
+                                                                                    <Table.Row>
+                                                                                        <Table.DataCell>
+                                                                                            BehandlingId
+                                                                                        </Table.DataCell>
+                                                                                        <Table.DataCell>
+                                                                                            {
+                                                                                                behandling
+                                                                                                    .vedtaksperiode
+                                                                                                    .behandlingId
+                                                                                            }
+                                                                                        </Table.DataCell>
+                                                                                    </Table.Row>
+                                                                                </>
+                                                                            )}
+                                                                            {behandling.status.map((status) => {
+                                                                                return (
+                                                                                    <Table.Row key={status.id}>
+                                                                                        <Table.DataCell>
+                                                                                            {dayjs(
+                                                                                                status.tidspunkt,
+                                                                                            ).format(
+                                                                                                'D MMM YYYY HH:mm',
+                                                                                            )}
+                                                                                        </Table.DataCell>
+                                                                                        <Table.DataCell>
+                                                                                            {status.status}
+                                                                                        </Table.DataCell>
+                                                                                    </Table.Row>
+                                                                                )
+                                                                            })}
+                                                                        </>
                                                                     )
                                                                 })}
                                                             </Table.Body>
