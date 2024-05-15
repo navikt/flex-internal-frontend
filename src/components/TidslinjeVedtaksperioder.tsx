@@ -1,8 +1,31 @@
-import { BodyShort, DatePicker, Table, Timeline, useDatepicker } from '@navikt/ds-react'
+import { BodyShort, Button, DatePicker, ReadMore, Table, Timeline, useDatepicker } from '@navikt/ds-react'
 import React, { Fragment } from 'react'
 import dayjs from 'dayjs'
 
 import { FullVedtaksperiodeBehandling } from '../queryhooks/useVedtaksperioder'
+
+function VelgManederKnapp(props: {
+    maneder: number
+    setFraSelected: (date: Date) => void
+    setTilSelected: (date: Date) => void
+}) {
+    return (
+        <li className="navds-detail">
+            <Button
+                type="button"
+                size="small"
+                variant="secondary-neutral"
+                className="navds-timeline__zoom-button font-normal"
+                onClick={() => {
+                    props.setFraSelected(dayjs().subtract(props.maneder, 'month').toDate())
+                    props.setTilSelected(dayjs().toDate())
+                }}
+            >
+                {props.maneder + ' mnd'}
+            </Button>
+        </li>
+    )
+}
 
 export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder: FullVedtaksperiodeBehandling[] }) {
     const datoer = [] as dayjs.Dayjs[]
@@ -18,6 +41,7 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
         datepickerProps: fraDatepickerProps,
         inputProps: fraInputprops,
         selectedDay: fraSelectedDay,
+        setSelected: setFraSelected,
     } = useDatepicker({
         defaultSelected: eldsteDato.toDate(),
     })
@@ -26,6 +50,7 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
         datepickerProps: tilDatepickerProps,
         inputProps: tilInputprops,
         selectedDay: tilSelectedDay,
+        setSelected: setTilSelected,
     } = useDatepicker({
         defaultSelected: nyesteDato.add(1, 'week').toDate(),
     })
@@ -172,14 +197,24 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                     )
                 })}
             </Timeline>
-            <div className="mt-20 flex gap-x-2">
-                <DatePicker {...fraDatepickerProps}>
-                    <DatePicker.Input {...fraInputprops} label="Fra" />
-                </DatePicker>
-                <DatePicker {...tilDatepickerProps}>
-                    <DatePicker.Input {...tilInputprops} label="Til" />
-                </DatePicker>
+            <div>
+                <ul className="flex navds-timeline__zoom" style={{ float: 'none' }}>
+                    <VelgManederKnapp maneder={1} setFraSelected={setFraSelected} setTilSelected={setTilSelected} />
+                    <VelgManederKnapp maneder={3} setFraSelected={setFraSelected} setTilSelected={setTilSelected} />
+                    <VelgManederKnapp maneder={6} setFraSelected={setFraSelected} setTilSelected={setTilSelected} />
+                    <VelgManederKnapp maneder={12} setFraSelected={setFraSelected} setTilSelected={setTilSelected} />
+                </ul>
             </div>
+            <ReadMore header="Velg datoer">
+                <div className="mt-4 flex gap-x-2">
+                    <DatePicker {...fraDatepickerProps}>
+                        <DatePicker.Input {...fraInputprops} label="Fra" />
+                    </DatePicker>
+                    <DatePicker {...tilDatepickerProps}>
+                        <DatePicker.Input {...tilInputprops} label="Til" />
+                    </DatePicker>
+                </div>
+            </ReadMore>
         </div>
     )
 }
