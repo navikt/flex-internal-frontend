@@ -1,8 +1,9 @@
-import { BodyShort, Button, DatePicker, ReadMore, Table, Timeline, useDatepicker } from '@navikt/ds-react'
+import { BodyShort, Button, DatePicker, Link, ReadMore, Table, Timeline, useDatepicker } from '@navikt/ds-react'
 import React, { Fragment } from 'react'
 import dayjs from 'dayjs'
 
 import { FullVedtaksperiodeBehandling } from '../queryhooks/useVedtaksperioder'
+import { spleisSporingUrl } from '../utils/environment'
 
 function VelgManederKnapp(props: {
     maneder: number
@@ -144,11 +145,20 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                                                                                             VedtaksperiodeId
                                                                                         </Table.DataCell>
                                                                                         <Table.DataCell>
-                                                                                            {
-                                                                                                behandling
-                                                                                                    .vedtaksperiode
-                                                                                                    .vedtaksperiodeId
-                                                                                            }
+                                                                                            <Link
+                                                                                                href={
+                                                                                                    spleisSporingUrl() +
+                                                                                                    behandling
+                                                                                                        .vedtaksperiode
+                                                                                                        .vedtaksperiodeId
+                                                                                                }
+                                                                                            >
+                                                                                                {
+                                                                                                    behandling
+                                                                                                        .vedtaksperiode
+                                                                                                        .vedtaksperiodeId
+                                                                                                }
+                                                                                            </Link>
                                                                                         </Table.DataCell>
                                                                                     </Table.Row>
                                                                                     <Table.Row>

@@ -9,5 +9,6 @@ module.exports = {
     publicRuntimeConfig: {
         // Will be available on both server and client
         mockBackend: process.env.MOCK_BACKEND,
+        spleisSporingUrl: process.env.SPLEIS_SPORING_URL,
     },
 }
