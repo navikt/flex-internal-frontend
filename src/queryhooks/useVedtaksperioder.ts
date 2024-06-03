@@ -31,13 +31,10 @@ export function useVedtaksperioder(
     })
 }
 
-export interface VedtaksperiodeMedStatuser {
-    vedtaksperiode: VedtaksperiodeBehandlingDbRecord
-    status: VedtaksperiodeBehandlingStatusDbRecord[]
-}
 export interface FullVedtaksperiodeBehandling {
-    soknad: Sykepengesoknad
-    vedtaksperioder: VedtaksperiodeMedStatuser[]
+    soknader: Sykepengesoknad[]
+    vedtaksperiode: VedtaksperiodeBehandlingDbRecord
+    statuser: VedtaksperiodeBehandlingStatusDbRecord[]
 }
 
 interface Sykepengesoknad {
