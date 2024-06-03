@@ -31,8 +31,10 @@ function VelgManederKnapp(props: {
 export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder: FullVedtaksperiodeBehandling[] }) {
     const datoer = [] as dayjs.Dayjs[]
     vedtaksperioder.forEach((vp) => {
-        datoer.push(dayjs(vp.soknad.fom))
-        datoer.push(dayjs(vp.soknad.tom))
+        vp.soknader.forEach((soknad) => {
+            datoer.push(dayjs(soknad.fom))
+            datoer.push(dayjs(soknad.tom))
+        })
     })
 
     const eldsteDato = datoer.sort((a, b) => (dayjs(a).isBefore(dayjs(b)) ? -1 : 1))[0]
@@ -60,7 +62,7 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
     // Map med orgnummer som key og FullVedtaksperiode[] som value
     const mappet = new Map<string, FullVedtaksperiodeBehandling[]>()
     vedtaksperioder.forEach((vp) => {
-        const org = vp.soknad.orgnummer || 'ukjent'
+        const org = vp.soknader[0].orgnummer || 'ukjent'
         if (mappet.has(org)) {
             mappet.get(org)?.push(vp)
         } else {
@@ -72,9 +74,9 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <Timeline endDate={tilSelectedDay} startDate={fraSelectedDay}>
                 {Array.from(mappet.keys()).map((orgnummer) => {
-                    const filtrertePerioder = vedtaksperioder.filter((vp) => vp.soknad.orgnummer === orgnummer)
+                    const filtrertePerioder = vedtaksperioder.filter((vp) => vp.soknader[0].orgnummer === orgnummer)
                     const gruppert = Object.values(
-                        Object.groupBy(filtrertePerioder, (d) => d.soknad.fom + ' - ' + d.soknad.tom),
+                        Object.groupBy(filtrertePerioder, (d) => d.soknader[0].fom + ' - ' + d.soknader[0].tom),
                     )
 
                     return (
@@ -82,35 +84,30 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                             {gruppert.map((vp) => {
                                 if (!vp) return null
 
-                                function firstOrNull<T>(array: T[] | null | undefined): T | null {
-                                    return array?.[0] ?? null
-                                }
-
                                 const sortertEtterOppdatert = vp.sort(
                                     (a, b) =>
-                                        dayjs(firstOrNull(a.vedtaksperioder)?.vedtaksperiode.oppdatert || 0).unix() -
-                                        dayjs(firstOrNull(b.vedtaksperioder)?.vedtaksperiode.oppdatert || 0).unix(),
+                                        dayjs(a.vedtaksperiode.oppdatert).unix() -
+                                        dayjs(b.vedtaksperiode.oppdatert || 0).unix(),
                                 )
                                 const nyeste = sortertEtterOppdatert[sortertEtterOppdatert.length - 1]
-                                const vedtaksperiodeLesbar = `${dayjs(nyeste.soknad.fom).format(' D MMMM')} til ${dayjs(nyeste.soknad.tom).format(' D MMMM')}`
+                                const vedtaksperiodeLesbar = `${dayjs(nyeste.soknader[0].fom).format(' D MMMM')} til ${dayjs(nyeste.soknader[0].tom).format(' D MMMM')}`
 
-                                const flerePerioder = nyeste.vedtaksperioder.length > 1
-                                let iconTekst =
-                                    firstOrNull(nyeste.vedtaksperioder)?.vedtaksperiode.sisteSpleisstatus || 'ukjent'
-                                if (flerePerioder) {
-                                    iconTekst += ' (⚠️ flere vedtaksperioder på en søknad)'
+                                const flereSoknader = nyeste.soknader.length > 1
+                                let iconTekst = nyeste.vedtaksperiode.sisteSpleisstatus
+                                if (flereSoknader) {
+                                    iconTekst += ' (⚠️ flere søknader på en vedtaksperiode)'
                                 }
                                 return (
                                     <Timeline.Period
-                                        start={dayjs(nyeste.soknad.fom).toDate()}
-                                        end={dayjs(nyeste.soknad.tom).toDate()}
+                                        start={dayjs(nyeste.soknader[0].fom).toDate()}
+                                        end={dayjs(nyeste.soknader[0].tom).toDate()}
                                         status="neutral"
-                                        key={nyeste.soknad.id}
+                                        key={nyeste.vedtaksperiode.id}
                                         icon={iconTekst}
                                     >
                                         <Fragment>
                                             <BodyShort className="font-bold" spacing>
-                                                {firstOrNull(nyeste.vedtaksperioder)?.vedtaksperiode.sisteSpleisstatus}
+                                                {nyeste.vedtaksperiode.sisteSpleisstatus}
                                             </BodyShort>
                                             <BodyShort spacing={true}>{vedtaksperiodeLesbar}</BodyShort>
                                             <BodyShort className="font-bold" spacing>
@@ -121,77 +118,64 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                                                     <>
                                                         <Table size="small" className="mb-4">
                                                             <Table.Body>
-                                                                <Table.Row>
-                                                                    <Table.DataCell>SykepengesoknadUUID</Table.DataCell>
-                                                                    <Table.DataCell>
-                                                                        {behandling.soknad.sykepengesoknadUuid}
-                                                                    </Table.DataCell>
-                                                                </Table.Row>
-                                                                <Table.Row>
-                                                                    <Table.DataCell>Søknad sendt</Table.DataCell>
-                                                                    <Table.DataCell>
-                                                                        {dayjs(behandling.soknad.sendt).format(
-                                                                            'D MMM YYYY HH:mm',
-                                                                        )}
-                                                                    </Table.DataCell>
-                                                                </Table.Row>
-                                                                {behandling.vedtaksperioder.map((behandling) => {
+                                                                {behandling.soknader.map((soknad) => {
                                                                     return (
                                                                         <>
-                                                                            {behandling.vedtaksperiode && (
-                                                                                <>
-                                                                                    <Table.Row>
-                                                                                        <Table.DataCell>
-                                                                                            VedtaksperiodeId
-                                                                                        </Table.DataCell>
-                                                                                        <Table.DataCell>
-                                                                                            <Link
-                                                                                                href={
-                                                                                                    spleisSporingUrl() +
-                                                                                                    behandling
-                                                                                                        .vedtaksperiode
-                                                                                                        .vedtaksperiodeId
-                                                                                                }
-                                                                                            >
-                                                                                                {
-                                                                                                    behandling
-                                                                                                        .vedtaksperiode
-                                                                                                        .vedtaksperiodeId
-                                                                                                }
-                                                                                            </Link>
-                                                                                        </Table.DataCell>
-                                                                                    </Table.Row>
-                                                                                    <Table.Row>
-                                                                                        <Table.DataCell>
-                                                                                            BehandlingId
-                                                                                        </Table.DataCell>
-                                                                                        <Table.DataCell>
-                                                                                            {
-                                                                                                behandling
-                                                                                                    .vedtaksperiode
-                                                                                                    .behandlingId
-                                                                                            }
-                                                                                        </Table.DataCell>
-                                                                                    </Table.Row>
-                                                                                </>
-                                                                            )}
-                                                                            {behandling.status.map((status) => {
-                                                                                return (
-                                                                                    <Table.Row key={status.id}>
-                                                                                        <Table.DataCell>
-                                                                                            {dayjs(
-                                                                                                status.tidspunkt,
-                                                                                            ).format(
-                                                                                                'D MMM YYYY HH:mm',
-                                                                                            )}
-                                                                                        </Table.DataCell>
-                                                                                        <Table.DataCell>
-                                                                                            {status.status}
-                                                                                        </Table.DataCell>
-                                                                                    </Table.Row>
-                                                                                )
-                                                                            })}
+                                                                            <Table.Row>
+                                                                                <Table.DataCell>
+                                                                                    SykepengesoknadUUID
+                                                                                </Table.DataCell>
+                                                                                <Table.DataCell>
+                                                                                    {soknad.sykepengesoknadUuid}
+                                                                                </Table.DataCell>
+                                                                            </Table.Row>
+                                                                            <Table.Row>
+                                                                                <Table.DataCell>
+                                                                                    Søknad sendt
+                                                                                </Table.DataCell>
+                                                                                <Table.DataCell>
+                                                                                    {dayjs(soknad.sendt).format(
+                                                                                        'D MMM YYYY HH:mm',
+                                                                                    )}
+                                                                                </Table.DataCell>
+                                                                            </Table.Row>
                                                                         </>
+                                                                    )
+                                                                })}
+
+                                                                <Table.Row>
+                                                                    <Table.DataCell>VedtaksperiodeId</Table.DataCell>
+                                                                    <Table.DataCell>
+                                                                        <Link
+                                                                            href={
+                                                                                spleisSporingUrl() +
+                                                                                behandling.vedtaksperiode
+                                                                                    .vedtaksperiodeId
+                                                                            }
+                                                                        >
+                                                                            {behandling.vedtaksperiode.vedtaksperiodeId}
+                                                                        </Link>
+                                                                    </Table.DataCell>
+                                                                </Table.Row>
+                                                                <Table.Row>
+                                                                    <Table.DataCell>BehandlingId</Table.DataCell>
+                                                                    <Table.DataCell>
+                                                                        {behandling.vedtaksperiode.behandlingId}
+                                                                    </Table.DataCell>
+                                                                </Table.Row>
+
+                                                                {behandling.statuser.map((status) => {
+                                                                    return (
+                                                                        <Table.Row key={status.id}>
+                                                                            <Table.DataCell>
+                                                                                {dayjs(status.tidspunkt).format(
+                                                                                    'D MMM YYYY HH:mm',
+                                                                                )}
+                                                                            </Table.DataCell>
+                                                                            <Table.DataCell>
+                                                                                {status.status}
+                                                                            </Table.DataCell>
+                                                                        </Table.Row>
                                                                     )
                                                                 })}
                                                             </Table.Body>
