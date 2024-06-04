@@ -6,9 +6,9 @@
         "node": "20"
     },
     "dependencies": {
-        "@navikt/ds-css": "^6.8.0",
-        "@navikt/ds-react": "^6.8.0",
-        "@navikt/ds-tailwind": "^6.8.0",
+        "@navikt/ds-css": "^6.10.0",
+        "@navikt/ds-react": "^6.10.0",
+        "@navikt/ds-tailwind": "^6.10.0",
         "@navikt/ds-tokens": "^6.1.0",
         "@navikt/next-api-proxy": "^3.4.1",
         "@navikt/next-logger": "^1.23.0",
