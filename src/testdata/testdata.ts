@@ -542,6 +542,9 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
     const { req, res } = opts
     const fnr = req.headers.fnr
 
+    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+    await sleep(3000)
     if (validert.api == 'GET /api/v1/flex/sykepengesoknader' && fnr !== undefined) {
         res.status(200)
         res.json(testdata)
@@ -557,6 +560,12 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
     if (validert.api == 'GET /api/v1/vedtaksperioder') {
         res.status(200)
         res.json(vedtaksperiodeTestdata)
+        res.end()
+        return
+    }
+    if (validert.api == 'POST /api/v1/cronjob') {
+        res.status(200)
+        res.json({ heihei: 12354 })
         res.end()
         return
     }
