@@ -1,5 +1,5 @@
 import React from 'react'
-import { Alert } from '@navikt/ds-react'
+import { Alert, ReadMore } from '@navikt/ds-react'
 
 import { InntektsmeldingDbRecord } from '../queryhooks/useInntektsmeldinger'
 import { formatterTimestamp } from '../utils/formatterDatoer'
@@ -9,7 +9,7 @@ export function InntektsmeldingView({ inntektsmeldinger }: { inntektsmeldinger: 
         return <Alert variant="info">Ingen inntektsmeldinger registrert</Alert>
     }
     return (
-        <div>
+        <ReadMore header={inntektsmeldinger.length + ' inntektsmelding' + (inntektsmeldinger.length > 1 ? 'er' : '')}>
             {inntektsmeldinger.map((inntektsmelding) => (
                 <div key={inntektsmelding.id} className="mb-2 bg-bg-subtle rounded-2xl p-4">
                     <div>InntektsmeldingId: {inntektsmelding.inntektsmeldingId}</div>
@@ -22,6 +22,6 @@ export function InntektsmeldingView({ inntektsmeldinger }: { inntektsmeldinger: 
                     <div>VedtaksperiodeId: {inntektsmelding.vedtaksperiodeId}</div>
                 </div>
             ))}
-        </div>
+        </ReadMore>
     )
 }
