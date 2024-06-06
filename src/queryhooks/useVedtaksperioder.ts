@@ -1,13 +1,6 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
-import dayjs from 'dayjs'
-import nb from 'dayjs/locale/nb'
 
 import { fetchJsonMedRequestId } from '../utils/fetch'
-
-dayjs.locale({
-    ...nb,
-    weekStart: 1,
-})
 
 export function useVedtaksperioder(
     fnr: string | undefined,

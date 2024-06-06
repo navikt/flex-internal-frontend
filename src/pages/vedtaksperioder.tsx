@@ -7,12 +7,15 @@ import FnrInput from '../components/FnrInput'
 import { useVedtaksperioder } from '../queryhooks/useVedtaksperioder'
 import { TidslinjeVedtaksperioder } from '../components/TidslinjeVedtaksperioder'
 import { fetchJsonMedRequestId } from '../utils/fetch'
+import { useInntektsmeldinger } from '../queryhooks/useInntektsmeldinger'
+import { InntektsmeldingView } from '../components/Inntektsmeldinger'
 
 const Vedtaksperioder = () => {
     const [fnr, setFnr] = useState<string>()
 
     const enabled = fnr !== undefined
     const { data: data, isLoading, isRefetching } = useVedtaksperioder(fnr, enabled)
+    const { data: inntetksmeldinger, isRefetching: isRefetchingIm } = useInntektsmeldinger(fnr, enabled)
     const queryClient = useQueryClient()
 
     const cronJobMutation = useMutation<object>({
@@ -34,6 +37,9 @@ const Vedtaksperioder = () => {
                     onClick={async () => {
                         await queryClient.invalidateQueries({
                             queryKey: ['vedtaksperioder', fnr],
+                        })
+                        await queryClient.invalidateQueries({
+                            queryKey: ['inntektsmeldinger', fnr],
                         })
                     }}
                 >
@@ -65,6 +71,9 @@ const Vedtaksperioder = () => {
             {isLoading && enabled && <span>Laster...</span>}
             {!isRefetching && data && data.length === 0 && <span>Ingen vedtaksperioder</span>}
             {!isRefetching && data && data.length > 0 && <TidslinjeVedtaksperioder vedtaksperioder={data} />}
+            {!isRefetchingIm && typeof inntetksmeldinger !== 'undefined' && (
+                <InntektsmeldingView inntektsmeldinger={inntetksmeldinger} />
+            )}
         </div>
     )
 }

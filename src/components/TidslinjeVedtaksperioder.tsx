@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 
 import { FullVedtaksperiodeBehandling } from '../queryhooks/useVedtaksperioder'
 import { spleisSporingUrl } from '../utils/environment'
+import { formatterTimestamp } from '../utils/formatterDatoer'
 
 function VelgManederKnapp(props: {
     maneder: number
@@ -71,7 +72,7 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
     })
 
     return (
-        <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
+        <div className="overflow-x-auto">
             <Timeline endDate={tilSelectedDay} startDate={fraSelectedDay}>
                 {Array.from(mappet.keys()).map((orgnummer) => {
                     const filtrertePerioder = vedtaksperioder.filter((vp) => vp.soknader[0].orgnummer === orgnummer)
@@ -134,9 +135,7 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                                                                                     Søknad sendt
                                                                                 </Table.DataCell>
                                                                                 <Table.DataCell>
-                                                                                    {dayjs(soknad.sendt).format(
-                                                                                        'D MMM YYYY HH:mm',
-                                                                                    )}
+                                                                                    {formatterTimestamp(soknad.sendt)}
                                                                                 </Table.DataCell>
                                                                             </Table.Row>
                                                                         </>
@@ -168,9 +167,7 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                                                                     return (
                                                                         <Table.Row key={status.id}>
                                                                             <Table.DataCell>
-                                                                                {dayjs(status.tidspunkt).format(
-                                                                                    'D MMM YYYY HH:mm',
-                                                                                )}
+                                                                                {formatterTimestamp(status.tidspunkt)}
                                                                             </Table.DataCell>
                                                                             <Table.DataCell>
                                                                                 {status.status}
