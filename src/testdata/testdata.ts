@@ -1,5 +1,6 @@
 import { BackendProxyOpts, validerKall } from '../proxy/backendproxy'
 import { FullVedtaksperiodeBehandling } from '../queryhooks/useVedtaksperioder'
+import { InntektsmeldingDbRecord } from '../queryhooks/useInntektsmeldinger'
 
 const testdata = {
     sykepengesoknadListe: [
@@ -560,6 +561,25 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
     if (validert.api == 'GET /api/v1/vedtaksperioder') {
         res.status(200)
         res.json(vedtaksperiodeTestdata)
+        res.end()
+        return
+    }
+    if (validert.api == 'GET /api/v1/inntektsmeldinger') {
+        res.status(200)
+
+        const inntektsmedling: InntektsmeldingDbRecord = {
+            id: '123',
+            inntektsmeldingId: '123',
+            fnr: '11111111111',
+            arbeidsgivertype: 'VIRKSOMHET',
+            virksomhetsnummer: '123456789',
+            fullRefusjon: true,
+            opprettet: '2024-05-14T05:12:14.978695Z',
+            mottattDato: '2024-05-14T05:12:14.978695Z',
+            foersteFravaersdag: '2024-04-26',
+            vedtaksperiodeId: '123',
+        }
+        res.json([inntektsmedling])
         res.end()
         return
     }
