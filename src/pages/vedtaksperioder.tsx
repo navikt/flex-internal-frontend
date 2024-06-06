@@ -70,10 +70,10 @@ const Vedtaksperioder = () => {
             {isRefetching && enabled && <span>Oppdaterer...</span>}
             {isLoading && enabled && <span>Laster...</span>}
             {!isRefetching && data && data.length === 0 && <span>Ingen vedtaksperioder</span>}
-            {!isRefetching && data && data.length > 0 && <TidslinjeVedtaksperioder vedtaksperioder={data} />}
             {!isRefetchingIm && typeof inntetksmeldinger !== 'undefined' && (
                 <InntektsmeldingView inntektsmeldinger={inntetksmeldinger} />
             )}
+            {!isRefetching && data && data.length > 0 && <TidslinjeVedtaksperioder vedtaksperioder={data} />}
         </div>
     )
 }

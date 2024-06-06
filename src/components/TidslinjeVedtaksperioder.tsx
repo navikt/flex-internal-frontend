@@ -72,7 +72,7 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
     })
 
     return (
-        <div className="overflow-x-auto">
+        <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <Timeline endDate={tilSelectedDay} startDate={fraSelectedDay}>
                 {Array.from(mappet.keys()).map((orgnummer) => {
                     const filtrertePerioder = vedtaksperioder.filter((vp) => vp.soknader[0].orgnummer === orgnummer)
