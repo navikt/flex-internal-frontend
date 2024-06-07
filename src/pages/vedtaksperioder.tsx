@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Alert, Button } from '@navikt/ds-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import dayjs from 'dayjs'
 
 import { initialProps } from '../initialprops/initialProps'
 import FnrInput from '../components/FnrInput'
@@ -18,14 +19,26 @@ const Vedtaksperioder = () => {
     const { data: inntetksmeldinger, isRefetching: isRefetchingIm } = useInntektsmeldinger(fnr, enabled)
     const queryClient = useQueryClient()
 
-    const cronJobMutation = useMutation<object>({
-        mutationFn: async () => {
-            return await fetchJsonMedRequestId<object>(`/api/flex-inntektsmelding-status/api/v1/cronjob`, {
-                method: 'POST',
-            })
+    const cronJobMutation = useMutation<object, any, dayjs.Dayjs>({
+        mutationFn: async (dato) => {
+            return await fetchJsonMedRequestId<object>(
+                `/api/flex-inntektsmelding-status/api/v1/cronjob?now=${dato.toISOString()}`,
+                {
+                    method: 'POST',
+                },
+            )
         },
     })
-
+    const DayButton = ({ days }: { days: number }) => (
+        <Button
+            size="small"
+            variant="secondary"
+            loading={cronJobMutation.isLoading}
+            onClick={() => cronJobMutation.mutate(dayjs().add(days, 'day'))}
+        >
+            {days} dager
+        </Button>
+    )
     return (
         <div className="flex-row space-y-4">
             <FnrInput setFnr={setFnr} />
@@ -45,16 +58,12 @@ const Vedtaksperioder = () => {
                 >
                     Reload
                 </Button>
-                <Button
-                    size="small"
-                    variant="secondary"
-                    loading={cronJobMutation.isLoading}
-                    onClick={() => {
-                        cronJobMutation.mutate()
-                    }}
-                >
-                    Start cronjob
-                </Button>
+                <DayButton days={0} />
+                <DayButton days={1} />
+                <DayButton days={14} />
+                <DayButton days={15} />
+                <DayButton days={27} />
+                <DayButton days={28} />
             </div>
             {cronJobMutation.data && (
                 <Alert
