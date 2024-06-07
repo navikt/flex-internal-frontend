@@ -583,9 +583,9 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
-    if (validert.api == 'POST /api/v1/cronjob') {
+    if (validert.api.startsWith('POST /api/v1/cronjob')) {
         res.status(200)
-        res.json({ heihei: 12354 })
+        res.json({ heihei: 12354, now: req.query.now })
         res.end()
         return
     }
@@ -604,7 +604,6 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
-
     res.status(404)
     res.end()
 }

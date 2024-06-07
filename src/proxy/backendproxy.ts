@@ -18,7 +18,7 @@ export function validerKall(opts: BackendProxyOpts): { api: string; rewritedPath
         throw new Error('rewritedPath is undefined')
     }
 
-    const api = `${opts.req.method} ${cleanPathForMetric(rewritedPath)}`
+    const api = `${opts.req.method} ${cleanPathForMetric(rewritedPath).split('?')[0]}`
     if (!opts.tillatteApier.includes(api)) {
         logger.warn(`404: ukjent api: ${api}.`)
         opts.res.status(404)
