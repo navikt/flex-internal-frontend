@@ -29,6 +29,14 @@ const Vedtaksperioder = () => {
                 },
             )
         },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({
+                queryKey: ['vedtaksperioder', fnr],
+            })
+            await queryClient.invalidateQueries({
+                queryKey: ['inntektsmeldinger', fnr],
+            })
+        },
     })
     const DayButton = ({ days }: { days: number }) => (
         <Button
