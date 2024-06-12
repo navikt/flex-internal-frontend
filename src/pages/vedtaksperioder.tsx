@@ -10,6 +10,7 @@ import { TidslinjeVedtaksperioder } from '../components/TidslinjeVedtaksperioder
 import { fetchJsonMedRequestId } from '../utils/fetch'
 import { useInntektsmeldinger } from '../queryhooks/useInntektsmeldinger'
 import { InntektsmeldingView } from '../components/Inntektsmeldinger'
+import { isNotProd } from '../utils/environment'
 
 const Vedtaksperioder = () => {
     const [fnr, setFnr] = useState<string>()
@@ -58,12 +59,16 @@ const Vedtaksperioder = () => {
                 >
                     Reload
                 </Button>
-                <DayButton days={0} />
-                <DayButton days={1} />
-                <DayButton days={14} />
-                <DayButton days={15} />
-                <DayButton days={27} />
-                <DayButton days={28} />
+                {isNotProd() && (
+                    <>
+                        <DayButton days={0} />
+                        <DayButton days={1} />
+                        <DayButton days={14} />
+                        <DayButton days={15} />
+                        <DayButton days={27} />
+                        <DayButton days={28} />
+                    </>
+                )}
             </div>
             {cronJobMutation.data && (
                 <Alert
