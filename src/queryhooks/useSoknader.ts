@@ -89,6 +89,7 @@ export class Soknad {
     arbeidsgiverOrgnummer?: string
     soknadPerioder: RSSoknadsperiode[]
     merknaderFraSykmelding?: RSMerknad[]
+    erForstegangssoknad?: boolean
 
     constructor(json: any) {
         this.id = json.id
@@ -111,6 +112,7 @@ export class Soknad {
         this.arbeidsgiverOrgnummer = json.arbeidsgiverOrgnummer
         this.soknadPerioder = json.soknadPerioder
         this.merknaderFraSykmelding = json.merknaderFraSykmelding
+        this.erForstegangssoknad = json.erForstegangssoknad
     }
 }
 
