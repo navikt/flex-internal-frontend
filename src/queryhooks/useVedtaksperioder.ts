@@ -54,7 +54,7 @@ interface VedtaksperiodeBehandlingDbRecord {
     sykepengesoknadUuid: string
 }
 
-interface VedtaksperiodeBehandlingStatusDbRecord {
+export interface VedtaksperiodeBehandlingStatusDbRecord {
     id: string | null
     vedtaksperiodeBehandlingId: string
     opprettetDatabase: string
