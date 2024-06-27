@@ -2,7 +2,7 @@ import { BodyShort, Button, DatePicker, Link, ReadMore, Table, Timeline, useDate
 import React, { Fragment } from 'react'
 import dayjs from 'dayjs'
 
-import { FullVedtaksperiodeBehandling } from '../queryhooks/useVedtaksperioder'
+import { FullVedtaksperiodeBehandling, VedtaksperiodeBehandlingStatusDbRecord } from '../queryhooks/useVedtaksperioder'
 import { spleisSporingUrl } from '../utils/environment'
 import { formatterTimestamp } from '../utils/formatterDatoer'
 
@@ -35,6 +35,9 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
         vp.soknader.forEach((soknad) => {
             datoer.push(dayjs(soknad.fom))
             datoer.push(dayjs(soknad.tom))
+        })
+        vp.statuser.forEach((status) => {
+            datoer.push(dayjs(status.tidspunkt))
         })
     })
 
@@ -71,9 +74,32 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
         }
     })
 
+    const varslinger: VedtaksperiodeBehandlingStatusDbRecord[] = []
+    vedtaksperioder.forEach((vp) => {
+        vp.statuser.forEach((status) => {
+            if (
+                [
+                    'VARSLET_MANGLER_INNTEKTSMELDING_FØRSTE',
+                    'VARSLET_MANGLER_INNTEKTSMELDING_ANDRE',
+                    'VARSLET_VENTER_PÅ_SAKSBEHANDLER_FØRSTE',
+                ].includes(status.status)
+            ) {
+                varslinger.push(status)
+            }
+        })
+    })
+
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <Timeline endDate={tilSelectedDay} startDate={fraSelectedDay}>
+                {varslinger.map((status) => {
+                    return (
+                        <Timeline.Pin key={status.id} date={dayjs(status.tidspunkt).toDate()}>
+                            <p>{status.status}</p>
+                            <p>{formatterTimestamp(status.tidspunkt)}</p>
+                        </Timeline.Pin>
+                    )
+                })}
                 {Array.from(mappet.keys()).map((orgnummer) => {
                     const filtrertePerioder = vedtaksperioder.filter((vp) => vp.soknader[0].orgnummer === orgnummer)
                     const gruppert = Object.values(

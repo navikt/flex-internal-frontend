@@ -368,6 +368,15 @@ const vedtaksperiodeTestdata: FullVedtaksperiodeBehandling[] = [
                 brukervarselId: null,
                 dittSykefravaerMeldingId: null,
             },
+            {
+                id: '69923ea7-7635-4391-8336-12345644',
+                vedtaksperiodeBehandlingId: 'b592f435-fe21-43a2-a5f2-098069a47f69',
+                opprettetDatabase: '2024-05-13T10:56:50.887690Z',
+                tidspunkt: '2024-06-27T10:56:50.827301Z',
+                status: 'VARSLET_MANGLER_INNTEKTSMELDING_FØRSTE',
+                brukervarselId: null,
+                dittSykefravaerMeldingId: null,
+            },
         ],
     },
     {
