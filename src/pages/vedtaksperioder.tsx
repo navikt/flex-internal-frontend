@@ -16,7 +16,7 @@ const Vedtaksperioder = () => {
     const [fnr, setFnr] = useState<string>()
 
     const enabled = fnr !== undefined
-    const { data: data, isLoading, isRefetching } = useVedtaksperioder(fnr, enabled)
+    const { data: data, isLoading, isRefetching } = useVedtaksperioder(fnr, undefined, enabled)
     const { data: inntetksmeldinger, isRefetching: isRefetchingIm } = useInntektsmeldinger(fnr, enabled)
     const queryClient = useQueryClient()
 
@@ -32,9 +32,6 @@ const Vedtaksperioder = () => {
         onSuccess: async () => {
             await queryClient.invalidateQueries({
                 queryKey: ['vedtaksperioder', fnr],
-            })
-            await queryClient.invalidateQueries({
-                queryKey: ['inntektsmeldinger', fnr],
             })
         },
     })

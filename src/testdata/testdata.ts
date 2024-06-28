@@ -573,6 +573,12 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
+    if (validert.api == 'POST /api/v1/vedtaksperioder') {
+        res.status(200)
+        res.json(vedtaksperiodeTestdata)
+        res.end()
+        return
+    }
     if (validert.api == 'GET /api/v1/inntektsmeldinger') {
         res.status(200)
 
