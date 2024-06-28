@@ -4,20 +4,22 @@ import { fetchJsonMedRequestId } from '../utils/fetch'
 
 export function useVedtaksperioder(
     fnr: string | undefined,
+    vedtaksperiodeId: string | undefined,
     enabled = true,
 ): UseQueryResult<FullVedtaksperiodeBehandling[], Error> {
     return useQuery<FullVedtaksperiodeBehandling[], Error>({
-        queryKey: ['vedtaksperioder', fnr],
+        queryKey: ['vedtaksperioder', fnr, vedtaksperiodeId],
         enabled: enabled,
         queryFn: () => {
-            if (fnr === undefined) {
+            if (fnr === undefined && vedtaksperiodeId === undefined) {
                 return []
             }
             return fetchJsonMedRequestId('/api/flex-inntektsmelding-status/api/v1/vedtaksperioder', {
-                method: 'GET',
+                method: 'POST',
                 credentials: 'include',
+                body: JSON.stringify({ fnr, vedtaksperiodeId }),
                 headers: {
-                    fnr: fnr,
+                    'Content-Type': 'application/json',
                 },
             })
         },
