@@ -5,10 +5,9 @@ import dayjs from 'dayjs'
 
 import { initialProps } from '../initialprops/initialProps'
 import FnrInput from '../components/FnrInput'
-import { useVedtaksperioder } from '../queryhooks/useVedtaksperioder'
+import { useVedtaksperioderMedInntektsmeldinger } from '../queryhooks/useVedtaksperioderMedInntektsmeldinger'
 import { TidslinjeVedtaksperioder } from '../components/TidslinjeVedtaksperioder'
 import { fetchJsonMedRequestId } from '../utils/fetch'
-import { useInntektsmeldinger } from '../queryhooks/useInntektsmeldinger'
 import { InntektsmeldingView } from '../components/Inntektsmeldinger'
 import { isNotProd } from '../utils/environment'
 
@@ -20,8 +19,11 @@ const Vedtaksperioder = () => {
     const enabled =
         (sokeinput == 'fnr' && fnr !== undefined) ||
         (sokeinput == 'vedtaksperiodeid' && vedtaksperiodeId?.length === 36)
-    const { data: data, isLoading, isRefetching } = useVedtaksperioder(fnr, vedtaksperiodeId, enabled)
-    const { data: inntetksmeldinger, isRefetching: isRefetchingIm } = useInntektsmeldinger(fnr, enabled)
+    const {
+        data: data,
+        isLoading,
+        isRefetching,
+    } = useVedtaksperioderMedInntektsmeldinger(fnr, vedtaksperiodeId, enabled)
     const queryClient = useQueryClient()
 
     const cronJobMutation = useMutation<object, any, dayjs.Dayjs>({
@@ -62,9 +64,6 @@ const Vedtaksperioder = () => {
                     queryClient.removeQueries({
                         queryKey: ['vedtaksperioder'],
                     })
-                    queryClient.removeQueries({
-                        queryKey: ['inntektsmeldinger'],
-                    })
                 }}
                 value={sokeinput}
             >
@@ -88,9 +87,6 @@ const Vedtaksperioder = () => {
                     onClick={async () => {
                         await queryClient.invalidateQueries({
                             queryKey: ['vedtaksperioder'],
-                        })
-                        await queryClient.invalidateQueries({
-                            queryKey: ['inntektsmeldinger'],
                         })
                     }}
                 >
@@ -120,11 +116,13 @@ const Vedtaksperioder = () => {
             )}
             {isRefetching && enabled && <span>Oppdaterer...</span>}
             {isLoading && enabled && <span>Laster...</span>}
-            {!isRefetching && data && data.length === 0 && <span>Ingen vedtaksperioder</span>}
-            {!isRefetchingIm && typeof inntetksmeldinger !== 'undefined' && (
-                <InntektsmeldingView inntektsmeldinger={inntetksmeldinger} />
+            {!isRefetching && data && data.vedtaksperioder.length === 0 && <span>Ingen vedtaksperioder</span>}
+            {!isRefetching && typeof data !== 'undefined' && (
+                <InntektsmeldingView inntektsmeldinger={data.inntektsmeldinger} />
             )}
-            {!isRefetching && data && data.length > 0 && <TidslinjeVedtaksperioder vedtaksperioder={data} />}
+            {!isRefetching && data && data.vedtaksperioder.length > 0 && (
+                <TidslinjeVedtaksperioder vedtaksperioder={data.vedtaksperioder} />
+            )}
         </div>
     )
 }

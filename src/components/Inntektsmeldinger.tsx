@@ -1,8 +1,8 @@
 import React from 'react'
 import { Alert, ReadMore } from '@navikt/ds-react'
 
-import { InntektsmeldingDbRecord } from '../queryhooks/useInntektsmeldinger'
 import { formatterTimestamp } from '../utils/formatterDatoer'
+import { InntektsmeldingDbRecord } from '../queryhooks/useVedtaksperioderMedInntektsmeldinger'
 
 export function InntektsmeldingView({ inntektsmeldinger }: { inntektsmeldinger: InntektsmeldingDbRecord[] }) {
     if (inntektsmeldinger.length === 0) {

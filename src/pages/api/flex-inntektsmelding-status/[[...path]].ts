@@ -8,12 +8,7 @@ import { mockApi } from '../../../testdata/testdata'
 
 const { serverRuntimeConfig } = getConfig()
 
-const tillatteApier = [
-    'GET /api/v1/vedtaksperioder',
-    'POST /api/v1/vedtaksperioder',
-    'GET /api/v1/inntektsmeldinger',
-    'POST /api/v1/cronjob',
-]
+const tillatteApier = ['POST /api/v1/vedtak-og-inntektsmeldinger', 'POST /api/v1/cronjob']
 
 const handler = beskyttetApi(async (req: NextApiRequest, res: NextApiResponse) => {
     const opts = {
