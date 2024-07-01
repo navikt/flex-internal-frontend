@@ -2,7 +2,10 @@ import { BodyShort, Button, DatePicker, Link, ReadMore, Table, Timeline, useDate
 import React, { Fragment } from 'react'
 import dayjs from 'dayjs'
 
-import { FullVedtaksperiodeBehandling, VedtaksperiodeBehandlingStatusDbRecord } from '../queryhooks/useVedtaksperioder'
+import {
+    FullVedtaksperiodeBehandling,
+    VedtaksperiodeBehandlingStatusDbRecord,
+} from '../queryhooks/useVedtaksperioderMedInntektsmeldinger'
 import { spleisSporingUrl } from '../utils/environment'
 import { formatterTimestamp } from '../utils/formatterDatoer'
 

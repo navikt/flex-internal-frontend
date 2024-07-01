@@ -2,19 +2,19 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query'
 
 import { fetchJsonMedRequestId } from '../utils/fetch'
 
-export function useVedtaksperioder(
+export function useVedtaksperioderMedInntektsmeldinger(
     fnr: string | undefined,
     vedtaksperiodeId: string | undefined,
     enabled = true,
-): UseQueryResult<FullVedtaksperiodeBehandling[], Error> {
-    return useQuery<FullVedtaksperiodeBehandling[], Error>({
+): UseQueryResult<VedtakspoerioderOgImResponse, Error> {
+    return useQuery<VedtakspoerioderOgImResponse, Error>({
         queryKey: ['vedtaksperioder'],
         enabled: enabled,
         queryFn: () => {
             if (fnr === undefined && vedtaksperiodeId === undefined) {
-                return []
+                return { vedtaksperioder: [], inntektsmeldinger: [] }
             }
-            return fetchJsonMedRequestId('/api/flex-inntektsmelding-status/api/v1/vedtaksperioder', {
+            return fetchJsonMedRequestId('/api/flex-inntektsmelding-status/api/v1/vedtak-og-inntektsmeldinger', {
                 method: 'POST',
                 credentials: 'include',
                 body: JSON.stringify({ fnr, vedtaksperiodeId }),
@@ -24,6 +24,11 @@ export function useVedtaksperioder(
             })
         },
     })
+}
+
+export interface VedtakspoerioderOgImResponse {
+    vedtaksperioder: FullVedtaksperiodeBehandling[]
+    inntektsmeldinger: InntektsmeldingDbRecord[]
 }
 
 export interface FullVedtaksperiodeBehandling {
@@ -67,3 +72,16 @@ export interface VedtaksperiodeBehandlingStatusDbRecord {
 }
 
 type StatusVerdi = string
+
+export interface InntektsmeldingDbRecord {
+    id: string | null
+    inntektsmeldingId: string
+    fnr: string
+    arbeidsgivertype: string
+    virksomhetsnummer: string | null
+    fullRefusjon: boolean
+    opprettet: string
+    mottattDato: string
+    foersteFravaersdag: string | null
+    vedtaksperiodeId: string | null
+}

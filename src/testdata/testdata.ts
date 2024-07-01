@@ -1,6 +1,8 @@
 import { BackendProxyOpts, validerKall } from '../proxy/backendproxy'
-import { FullVedtaksperiodeBehandling } from '../queryhooks/useVedtaksperioder'
-import { InntektsmeldingDbRecord } from '../queryhooks/useInntektsmeldinger'
+import {
+    FullVedtaksperiodeBehandling,
+    InntektsmeldingDbRecord,
+} from '../queryhooks/useVedtaksperioderMedInntektsmeldinger'
 
 const testdata = {
     sykepengesoknadListe: [
@@ -567,21 +569,7 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
-    if (validert.api == 'GET /api/v1/vedtaksperioder') {
-        res.status(200)
-        res.json(vedtaksperiodeTestdata)
-        res.end()
-        return
-    }
-    if (validert.api == 'POST /api/v1/vedtaksperioder') {
-        res.status(200)
-        res.json(vedtaksperiodeTestdata)
-        res.end()
-        return
-    }
-    if (validert.api == 'GET /api/v1/inntektsmeldinger') {
-        res.status(200)
-
+    if (validert.api == 'POST /api/v1/vedtak-og-inntektsmeldinger') {
         const inntektsmedling: InntektsmeldingDbRecord = {
             id: '123',
             inntektsmeldingId: '123',
@@ -594,10 +582,12 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
             foersteFravaersdag: '2024-04-26',
             vedtaksperiodeId: '123',
         }
-        res.json([inntektsmedling])
+        res.status(200)
+        res.json({ inntektsmeldinger: [inntektsmedling], vedtaksperioder: vedtaksperiodeTestdata })
         res.end()
         return
     }
+
     if (validert.api.startsWith('POST /api/v1/cronjob')) {
         res.status(200)
         res.json({ heihei: 12354, now: req.query.now })
