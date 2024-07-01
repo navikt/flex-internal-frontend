@@ -5,7 +5,7 @@ export default function FnrInput({ setFnr }: { setFnr: (fnr: any) => void }) {
     return (
         <TextField
             type="number"
-            label="fnr"
+            label="Fødselsnummer"
             onChange={(e) => (e.target.value.length == 11 ? setFnr(e.target.value) : setFnr(undefined))}
         />
     )

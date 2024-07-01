@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Alert, Button } from '@navikt/ds-react'
+import { Alert, Button, Radio, RadioGroup, TextField } from '@navikt/ds-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
@@ -14,9 +14,13 @@ import { isNotProd } from '../utils/environment'
 
 const Vedtaksperioder = () => {
     const [fnr, setFnr] = useState<string>()
+    const [vedtaksperiodeId, setVedtaksperiodeId] = useState<string>()
+    const [sokeinput, setSokeinput] = useState<'vedtaksperiodeid' | 'fnr'>('vedtaksperiodeid')
 
-    const enabled = fnr !== undefined
-    const { data: data, isLoading, isRefetching } = useVedtaksperioder(fnr, undefined, enabled)
+    const enabled =
+        (sokeinput == 'fnr' && fnr !== undefined) ||
+        (sokeinput == 'vedtaksperiodeid' && vedtaksperiodeId?.length === 36)
+    const { data: data, isLoading, isRefetching } = useVedtaksperioder(fnr, vedtaksperiodeId, enabled)
     const { data: inntetksmeldinger, isRefetching: isRefetchingIm } = useInntektsmeldinger(fnr, enabled)
     const queryClient = useQueryClient()
 
@@ -47,7 +51,35 @@ const Vedtaksperioder = () => {
     )
     return (
         <div className="flex-row space-y-4">
-            <FnrInput setFnr={setFnr} />
+            <RadioGroup
+                legend="Søk med:"
+                size="small"
+                onChange={(v) => {
+                    setSokeinput(v)
+                    setVedtaksperiodeId(undefined)
+                    setFnr(undefined)
+
+                    queryClient.removeQueries({
+                        queryKey: ['vedtaksperioder'],
+                    })
+                    queryClient.removeQueries({
+                        queryKey: ['inntektsmeldinger'],
+                    })
+                }}
+                value={sokeinput}
+            >
+                <Radio value="vedtaksperiodeid">VedtaksperiodeId</Radio>
+                <Radio value="fnr">Fødselsnummer</Radio>
+            </RadioGroup>
+            {sokeinput === 'fnr' && <FnrInput setFnr={setFnr} />}
+            {sokeinput === 'vedtaksperiodeid' && (
+                <TextField
+                    label="VedtaksperiodeID"
+                    onChange={(e) => {
+                        setVedtaksperiodeId(e.target.value)
+                    }}
+                />
+            )}
             <div className="space-x-2">
                 <Button
                     size="small"
@@ -55,10 +87,10 @@ const Vedtaksperioder = () => {
                     loading={isRefetching}
                     onClick={async () => {
                         await queryClient.invalidateQueries({
-                            queryKey: ['vedtaksperioder', fnr],
+                            queryKey: ['vedtaksperioder'],
                         })
                         await queryClient.invalidateQueries({
-                            queryKey: ['inntektsmeldinger', fnr],
+                            queryKey: ['inntektsmeldinger'],
                         })
                     }}
                 >

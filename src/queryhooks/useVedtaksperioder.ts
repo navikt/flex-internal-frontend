@@ -8,7 +8,7 @@ export function useVedtaksperioder(
     enabled = true,
 ): UseQueryResult<FullVedtaksperiodeBehandling[], Error> {
     return useQuery<FullVedtaksperiodeBehandling[], Error>({
-        queryKey: ['vedtaksperioder', fnr, vedtaksperiodeId],
+        queryKey: ['vedtaksperioder'],
         enabled: enabled,
         queryFn: () => {
             if (fnr === undefined && vedtaksperiodeId === undefined) {
