@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
-import { Alert, Button, Radio, RadioGroup, TextField } from '@navikt/ds-react'
+import { Alert, Button, Radio, RadioGroup, ReadMore, TextField } from '@navikt/ds-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
 import { initialProps } from '../initialprops/initialProps'
 import FnrInput from '../components/FnrInput'
-import { useVedtaksperioderMedInntektsmeldinger } from '../queryhooks/useVedtaksperioderMedInntektsmeldinger'
+import {
+    FullVedtaksperiodeBehandling,
+    useVedtaksperioderMedInntektsmeldinger,
+} from '../queryhooks/useVedtaksperioderMedInntektsmeldinger'
 import { TidslinjeVedtaksperioder } from '../components/TidslinjeVedtaksperioder'
 import { fetchJsonMedRequestId } from '../utils/fetch'
 import { InntektsmeldingView } from '../components/Inntektsmeldinger'
@@ -51,6 +54,32 @@ const Vedtaksperioder = () => {
             {days} dager
         </Button>
     )
+    const FnrVisning = ({
+        sokeinput,
+        vedtaksperioder,
+    }: {
+        sokeinput: string
+        vedtaksperioder: FullVedtaksperiodeBehandling[]
+    }) => {
+        if (sokeinput === 'fnr') {
+            return null
+        }
+        const fnrSet = new Set<string>()
+        vedtaksperioder.forEach((vp) => {
+            vp.soknader.forEach((s) => {
+                fnrSet.add(s.fnr)
+            })
+        })
+        return (
+            <div className="space-y-2">
+                <ReadMore header="Fødselsnummer">
+                    {[...fnrSet].map((f) => (
+                        <div key={f}>{f}</div>
+                    ))}
+                </ReadMore>
+            </div>
+        )
+    }
     return (
         <div className="flex-row space-y-4">
             <RadioGroup
@@ -75,6 +104,9 @@ const Vedtaksperioder = () => {
                 <TextField
                     label="VedtaksperiodeID"
                     onChange={(e) => {
+                        queryClient.removeQueries({
+                            queryKey: ['vedtaksperioder'],
+                        })
                         setVedtaksperiodeId(e.target.value)
                     }}
                 />
@@ -121,7 +153,10 @@ const Vedtaksperioder = () => {
                 <InntektsmeldingView inntektsmeldinger={data.inntektsmeldinger} />
             )}
             {!isRefetching && data && data.vedtaksperioder.length > 0 && (
-                <TidslinjeVedtaksperioder vedtaksperioder={data.vedtaksperioder} />
+                <>
+                    <FnrVisning vedtaksperioder={data.vedtaksperioder} sokeinput={sokeinput} />
+                    <TidslinjeVedtaksperioder vedtaksperioder={data.vedtaksperioder} />
+                </>
             )}
         </div>
     )
