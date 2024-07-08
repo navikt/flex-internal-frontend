@@ -148,6 +148,62 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                                                     <>
                                                         <Table size="small" className="mb-4">
                                                             <Table.Body>
+                                                                <Table.Row>
+                                                                    <Table.DataCell>
+                                                                        Spleisstatus tidspunkt
+                                                                    </Table.DataCell>
+                                                                    <Table.DataCell>
+                                                                        {formatterTimestamp(
+                                                                            behandling.vedtaksperiode
+                                                                                .sisteSpleisstatusTidspunkt,
+                                                                        )}
+                                                                    </Table.DataCell>
+                                                                </Table.Row>
+                                                                {behandling.vedtaksperiode
+                                                                    .sisteVarslingstatusTidspunkt && (
+                                                                    <Table.Row>
+                                                                        <Table.DataCell>
+                                                                            Varslingstatus tidspunkt
+                                                                        </Table.DataCell>
+                                                                        <Table.DataCell>
+                                                                            {formatterTimestamp(
+                                                                                behandling.vedtaksperiode
+                                                                                    .sisteVarslingstatusTidspunkt,
+                                                                            )}
+                                                                        </Table.DataCell>
+                                                                    </Table.Row>
+                                                                )}
+                                                                {behandling.vedtaksperiode.sisteVarslingstatus && (
+                                                                    <Table.Row>
+                                                                        <Table.DataCell>Varslingstatus</Table.DataCell>
+                                                                        <Table.DataCell>
+                                                                            {
+                                                                                behandling.vedtaksperiode
+                                                                                    .sisteVarslingstatus
+                                                                            }
+                                                                        </Table.DataCell>
+                                                                    </Table.Row>
+                                                                )}
+                                                                <Table.Row>
+                                                                    <Table.DataCell>VedtaksperiodeId</Table.DataCell>
+                                                                    <Table.DataCell>
+                                                                        <Link
+                                                                            href={
+                                                                                spleisSporingUrl() +
+                                                                                behandling.vedtaksperiode
+                                                                                    .vedtaksperiodeId
+                                                                            }
+                                                                        >
+                                                                            {behandling.vedtaksperiode.vedtaksperiodeId}
+                                                                        </Link>
+                                                                    </Table.DataCell>
+                                                                </Table.Row>
+                                                                <Table.Row>
+                                                                    <Table.DataCell>BehandlingId</Table.DataCell>
+                                                                    <Table.DataCell>
+                                                                        {behandling.vedtaksperiode.behandlingId}
+                                                                    </Table.DataCell>
+                                                                </Table.Row>
                                                                 {behandling.soknader.map((soknad) => {
                                                                     return (
                                                                         <>
@@ -170,28 +226,6 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                                                                         </>
                                                                     )
                                                                 })}
-
-                                                                <Table.Row>
-                                                                    <Table.DataCell>VedtaksperiodeId</Table.DataCell>
-                                                                    <Table.DataCell>
-                                                                        <Link
-                                                                            href={
-                                                                                spleisSporingUrl() +
-                                                                                behandling.vedtaksperiode
-                                                                                    .vedtaksperiodeId
-                                                                            }
-                                                                        >
-                                                                            {behandling.vedtaksperiode.vedtaksperiodeId}
-                                                                        </Link>
-                                                                    </Table.DataCell>
-                                                                </Table.Row>
-                                                                <Table.Row>
-                                                                    <Table.DataCell>BehandlingId</Table.DataCell>
-                                                                    <Table.DataCell>
-                                                                        {behandling.vedtaksperiode.behandlingId}
-                                                                    </Table.DataCell>
-                                                                </Table.Row>
-
                                                                 {behandling.statuser.map((status) => {
                                                                     return (
                                                                         <Table.Row key={status.id}>
