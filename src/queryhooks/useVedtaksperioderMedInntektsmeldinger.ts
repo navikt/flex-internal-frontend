@@ -56,6 +56,8 @@ interface VedtaksperiodeBehandlingDbRecord {
     oppdatert: string
     sisteSpleisstatus: StatusVerdi
     sisteVarslingstatus: StatusVerdi | null
+    sisteSpleisstatusTidspunkt: string
+    sisteVarslingstatusTidspunkt: string | null
     vedtaksperiodeId: string
     behandlingId: string
     sykepengesoknadUuid: string
