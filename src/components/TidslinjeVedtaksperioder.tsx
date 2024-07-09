@@ -188,11 +188,7 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                                                                     <Table.DataCell>VedtaksperiodeId</Table.DataCell>
                                                                     <Table.DataCell>
                                                                         <Link
-                                                                            href={
-                                                                                spleisSporingUrl() +
-                                                                                behandling.vedtaksperiode
-                                                                                    .vedtaksperiodeId
-                                                                            }
+                                                                            href={`${spleisSporingUrl()}/tilstandsmaskin/${behandling.vedtaksperiode.vedtaksperiodeId}`}
                                                                         >
                                                                             {behandling.vedtaksperiode.vedtaksperiodeId}
                                                                         </Link>
