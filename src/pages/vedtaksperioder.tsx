@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Alert, Button, Radio, RadioGroup, ReadMore, TextField } from '@navikt/ds-react'
+import { Alert, BodyShort, Button, Link, Radio, RadioGroup, ReadMore, TextField } from '@navikt/ds-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
@@ -12,7 +12,8 @@ import {
 import { TidslinjeVedtaksperioder } from '../components/TidslinjeVedtaksperioder'
 import { fetchJsonMedRequestId } from '../utils/fetch'
 import { InntektsmeldingView } from '../components/Inntektsmeldinger'
-import { isNotProd } from '../utils/environment'
+import { isNotProd, spleisSporingUrl } from '../utils/environment'
+import { useIdenter } from '../queryhooks/useIdenter'
 
 const Vedtaksperioder = () => {
     const [fnr, setFnr] = useState<string>()
@@ -54,6 +55,26 @@ const Vedtaksperioder = () => {
             {days} dager
         </Button>
     )
+    const AktorIDVisning = ({ fnr }: { fnr: string }) => {
+        const { data: data } = useIdenter(fnr, true)
+        if (!data) {
+            return null
+        }
+        const aktorid = data.find((d) => d.gruppe === 'AKTORID')?.ident
+        if (!aktorid) {
+            return null
+        }
+        return (
+            <>
+                <ReadMore header="AktørID">
+                    <BodyShort>{aktorid}</BodyShort>
+                </ReadMore>
+                <Link href={`${spleisSporingUrl()}/person/${aktorid}`} target="_blank">
+                    Spleis sporing
+                </Link>
+            </>
+        )
+    }
     const FnrVisning = ({
         sokeinput,
         vedtaksperioder,
@@ -70,14 +91,17 @@ const Vedtaksperioder = () => {
                 fnrSet.add(s.fnr)
             })
         })
+        const fnrList = [...fnrSet]
+
         return (
-            <div className="space-y-2">
+            <>
                 <ReadMore header="Fødselsnummer">
                     {[...fnrSet].map((f) => (
                         <div key={f}>{f}</div>
                     ))}
                 </ReadMore>
-            </div>
+                {fnrList.length > 1 && <AktorIDVisning fnr={fnrList[0]} />}
+            </>
         )
     }
     return (
@@ -155,6 +179,7 @@ const Vedtaksperioder = () => {
             {!isRefetching && data && data.vedtaksperioder.length > 0 && (
                 <>
                     <FnrVisning vedtaksperioder={data.vedtaksperioder} sokeinput={sokeinput} />
+                    {sokeinput === 'fnr' && fnr?.length == 11 && <AktorIDVisning fnr={fnr} />}
                     <TidslinjeVedtaksperioder vedtaksperioder={data.vedtaksperioder} />
                 </>
             )}
