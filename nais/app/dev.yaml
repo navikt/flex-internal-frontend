@@ -5,3 +5,4 @@ env:
   SYKEPENGESOKNAD_BACKEND_CLIENT_ID: api://dev-gcp.flex.sykepengesoknad-backend/.default
   FLEX_INNTEKTSMELDING_STATUS_CLIENT_ID: api://dev-gcp.flex.flex-inntektsmelding-status/.default
   SPLEIS_SPORING_URL: https://sporing.ansatt.dev.nav.no
+  SPANNER_URL: https://spanner.ansatt.dev.nav.no

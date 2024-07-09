@@ -8,6 +8,9 @@ export function isMockBackend(): boolean {
 export function spleisSporingUrl(): boolean {
     return publicRuntimeConfig.spleisSporingUrl
 }
+export function spannerUrl(): boolean {
+    return publicRuntimeConfig.spannerUrl
+}
 
 export function isProd(): boolean {
     return publicRuntimeConfig.naisClusterName === 'prod-gcp'
