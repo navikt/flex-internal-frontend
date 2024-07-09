@@ -72,7 +72,7 @@ const Vedtaksperioder = () => {
                 <Link href={`${spleisSporingUrl()}/person/${aktorid}`} target="_blank">
                     Spleis sporing
                 </Link>
-                <Link href={`${spannerUrl()}/person/${aktorid}`} target="_blank">
+                <Link className="block" href={`${spannerUrl()}/person/${aktorid}`} target="_blank">
                     Spanner
                 </Link>
             </>
