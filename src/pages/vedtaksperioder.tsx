@@ -156,6 +156,10 @@ const Vedtaksperioder = () => {
                         <DayButton days={15} />
                         <DayButton days={27} />
                         <DayButton days={28} />
+                        <DayButton days={60} />
+                        <DayButton days={70} />
+                        <DayButton days={95} />
+                        <DayButton days={130} />
                     </>
                 )}
             </div>
