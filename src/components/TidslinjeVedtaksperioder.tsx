@@ -85,6 +85,7 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                     'VARSLET_MANGLER_INNTEKTSMELDING_FØRSTE',
                     'VARSLET_MANGLER_INNTEKTSMELDING_ANDRE',
                     'VARSLET_VENTER_PÅ_SAKSBEHANDLER_FØRSTE',
+                    'REVARSLET_VENTER_PÅ_SAKSBEHANDLER',
                 ].includes(status.status)
             ) {
                 varslinger.push(status)
