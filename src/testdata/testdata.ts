@@ -564,7 +564,7 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
 
     const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-    await sleep(3000)
+    await sleep(200)
     if (validert.api == 'GET /api/v1/flex/sykepengesoknader' && fnr !== undefined) {
         res.status(200)
         res.json(testdata)

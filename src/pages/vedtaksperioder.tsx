@@ -12,7 +12,7 @@ import {
 import { TidslinjeVedtaksperioder } from '../components/TidslinjeVedtaksperioder'
 import { fetchJsonMedRequestId } from '../utils/fetch'
 import { InntektsmeldingView } from '../components/Inntektsmeldinger'
-import { isNotProd, spleisSporingUrl } from '../utils/environment'
+import { isNotProd, spannerUrl, spleisSporingUrl } from '../utils/environment'
 import { useIdenter } from '../queryhooks/useIdenter'
 
 const Vedtaksperioder = () => {
@@ -58,11 +58,11 @@ const Vedtaksperioder = () => {
     const AktorIDVisning = ({ fnr }: { fnr: string }) => {
         const { data: data } = useIdenter(fnr, true)
         if (!data) {
-            return null
+            return <p>Ingen data</p>
         }
         const aktorid = data.find((d) => d.gruppe === 'AKTORID')?.ident
         if (!aktorid) {
-            return null
+            return <p>Ingen aktør</p>
         }
         return (
             <>
@@ -71,6 +71,9 @@ const Vedtaksperioder = () => {
                 </ReadMore>
                 <Link href={`${spleisSporingUrl()}/person/${aktorid}`} target="_blank">
                     Spleis sporing
+                </Link>
+                <Link href={`${spannerUrl()}/person/${aktorid}`} target="_blank">
+                    Spanner
                 </Link>
             </>
         )
@@ -100,7 +103,7 @@ const Vedtaksperioder = () => {
                         <div key={f}>{f}</div>
                     ))}
                 </ReadMore>
-                {fnrList.length > 1 && <AktorIDVisning fnr={fnrList[0]} />}
+                {fnrList.length > 0 && <AktorIDVisning fnr={fnrList[0]} />}
             </>
         )
     }

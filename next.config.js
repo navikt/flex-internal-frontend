@@ -10,6 +10,7 @@ module.exports = {
         // Will be available on both server and client
         mockBackend: process.env.MOCK_BACKEND,
         spleisSporingUrl: process.env.SPLEIS_SPORING_URL,
+        spannerUrl: process.env.SPANNER_URL,
         naisClusterName: process.env.NAIS_CLUSTER_NAME,
     },
 }
