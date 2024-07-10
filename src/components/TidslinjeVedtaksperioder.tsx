@@ -220,6 +220,16 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                                                                                     {formatterTimestamp(soknad.sendt)}
                                                                                 </Table.DataCell>
                                                                             </Table.Row>
+                                                                            <Table.Row>
+                                                                                <Table.DataCell>
+                                                                                    Søknad start syketilfelle
+                                                                                </Table.DataCell>
+                                                                                <Table.DataCell>
+                                                                                    {formatterTimestamp(
+                                                                                        soknad.startSyketilfelle,
+                                                                                    )}
+                                                                                </Table.DataCell>
+                                                                            </Table.Row>
                                                                         </>
                                                                     )
                                                                 })}
