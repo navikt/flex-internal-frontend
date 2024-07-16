@@ -1,8 +1,14 @@
-import { BackendProxyOpts, validerKall } from '../proxy/backendproxy'
+import { Readable } from 'stream'
+
+import { stream2buffer } from '@navikt/next-api-proxy/dist/proxyUtils'
+import { NextApiRequest } from 'next'
+
 import {
     FullVedtaksperiodeBehandling,
     InntektsmeldingDbRecord,
 } from '../queryhooks/useVedtaksperioderMedInntektsmeldinger'
+import { BackendProxyOpts, validerKall } from '../proxy/backendproxy'
+import { HentIdenterRequest } from '../queryhooks/useIdenter'
 
 const testdata = {
     sykepengesoknadListe: [
@@ -555,17 +561,21 @@ const vedtaksperiodeTestdata: FullVedtaksperiodeBehandling[] = [
         ],
     },
 ]
-
+async function parseRequest<T>(req: NextApiRequest): Promise<T> {
+    const stream = Readable.from(req)
+    const buffer = await stream2buffer(stream)
+    const jsonString = buffer.toString()
+    return JSON.parse(jsonString)
+}
 export async function mockApi(opts: BackendProxyOpts): Promise<void> {
     const validert = validerKall(opts)
     if (!validert) return
     const { req, res } = opts
-    const fnr = req.headers.fnr
 
     const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
     await sleep(200)
-    if (validert.api == 'GET /api/v1/flex/sykepengesoknader' && fnr !== undefined) {
+    if (validert.api == 'POST /api/v1/flex/sykepengesoknader') {
         res.status(200)
         res.json(testdata)
         res.end()
@@ -602,12 +612,12 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
-    const ident = req.headers.ident
 
-    if (validert.api == 'GET /api/v1/flex/identer' && ident !== undefined) {
+    if (validert.api == 'POST /api/v1/flex/identer') {
+        const body = await parseRequest<HentIdenterRequest>(req)
         res.status(200)
         res.json([
-            { gruppe: 'FOLKEREGISTERIDENT', ident: ident },
+            { gruppe: 'FOLKEREGISTERIDENT', ident: body.ident },
             {
                 gruppe: 'FOLKEREGISTERIDENT',
                 ident: '11111111111',

@@ -21,11 +21,9 @@ export function useSoknader(fnr: string | undefined, enabled = true): UseQueryRe
                 }
             }
             return fetchJsonMedRequestId('/api/sykepengesoknad-backend/api/v1/flex/sykepengesoknader', {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                    fnr: fnr,
-                },
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fnr: fnr }),
             }).then((jsonResponse: any) => {
                 const response: SoknaderResponse = {
                     sykepengesoknadListe: [],

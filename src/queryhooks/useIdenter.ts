@@ -7,6 +7,9 @@ interface IdentData {
     ident: string
 }
 
+export interface HentIdenterRequest {
+    ident: string
+}
 export function useIdenter(fnr: string | undefined, enabled = true): UseQueryResult<IdentData[], Error> {
     return useQuery<IdentData[], Error>({
         queryKey: ['ident', fnr],
@@ -16,11 +19,9 @@ export function useIdenter(fnr: string | undefined, enabled = true): UseQueryRes
                 return []
             }
             return fetchJsonMedRequestId('/api/sykepengesoknad-backend/api/v1/flex/identer', {
-                method: 'GET',
-                credentials: 'include',
-                headers: {
-                    ident: fnr,
-                },
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ident: fnr } as HentIdenterRequest),
             })
         },
     })
