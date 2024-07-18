@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { logger } from '@navikt/next-logger'
 
 import { KlippetSykepengesoknadRecord, Soknad } from '../queryhooks/useSoknader'
 import { Sortering } from '../components/ValgtSortering'
@@ -140,8 +141,11 @@ function grupperPaArbeidsgiver(gruppertPaSykmelding: Map<string, SykmeldingGrupp
             Array.from(syk.soknader.values()).find((sok) => sok.soknad.arbeidsgiverOrgnummer !== undefined)?.soknad
                 .arbeidsgiverOrgnummer || 'arbeidsgiver_GHOST'
         let grupperingOrgnummer = orgnummer
+        let iterationCount = 0
+        const maxIterations = 20
+        while (!sykmeldingBleLagtTil && iterationCount < maxIterations) {
+            iterationCount++
 
-        while (!sykmeldingBleLagtTil) {
             if (!gruppering.has(grupperingOrgnummer)) {
                 gruppering.set(grupperingOrgnummer, { sykmeldinger: new Map<string, SykmeldingGruppering>() })
             }
@@ -161,6 +165,9 @@ function grupperPaArbeidsgiver(gruppertPaSykmelding: Map<string, SykmeldingGrupp
                 arbeidsgiver.sykmeldinger.set(sykId, syk)
                 sykmeldingBleLagtTil = true
             }
+        }
+        if (iterationCount >= maxIterations) {
+            logger.error('Evig løkke unngått: nådd maksimal iterasjoner')
         }
     })
 
