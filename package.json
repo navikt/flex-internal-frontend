@@ -10,7 +10,7 @@
         "@navikt/ds-react": "^6.16.0",
         "@navikt/ds-tailwind": "^6.16.0",
         "@navikt/ds-tokens": "^6.1.0",
-        "@navikt/next-api-proxy": "^3.4.2",
+        "@navikt/next-api-proxy": "^3.4.5",
         "@navikt/next-logger": "^1.23.0",
         "@navikt/oasis": "^3.4.0",
         "@tanstack/react-query": "^4.36.1",
