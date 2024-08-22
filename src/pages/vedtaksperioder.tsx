@@ -49,7 +49,7 @@ const Vedtaksperioder = () => {
         <Button
             size="small"
             variant="secondary"
-            loading={cronJobMutation.isLoading}
+            loading={cronJobMutation.isPending}
             onClick={() => cronJobMutation.mutate(dayjs().add(days, 'day'))}
         >
             {days} dager
