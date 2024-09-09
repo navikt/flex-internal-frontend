@@ -69,7 +69,7 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
     // Map med orgnummer som key og FullVedtaksperiode[] som value
     const mappet = new Map<string, FullVedtaksperiodeBehandling[]>()
     vedtaksperioder.forEach((vp) => {
-        const org = vp.soknader[0].orgnummer || 'ukjent'
+        const org = vp.soknader[0].orgnummer || vp.soknader[0].soknadstype
         if (mappet.has(org)) {
             mappet.get(org)?.push(vp)
         } else {
@@ -105,7 +105,9 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                     )
                 })}
                 {Array.from(mappet.keys()).map((orgnummer) => {
-                    const filtrertePerioder = vedtaksperioder.filter((vp) => vp.soknader[0].orgnummer === orgnummer)
+                    const filtrertePerioder = vedtaksperioder.filter(
+                        (vp) => (vp.soknader[0].orgnummer || vp.soknader[0].soknadstype) === orgnummer,
+                    )
                     const gruppert = Object.values(
                         Object.groupBy(filtrertePerioder, (d) => d.soknader[0].fom + ' - ' + d.soknader[0].tom),
                     )
