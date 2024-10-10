@@ -6,10 +6,10 @@
         "node": "20"
     },
     "dependencies": {
-        "@navikt/ds-css": "^6.16.3",
-        "@navikt/ds-react": "^6.16.3",
-        "@navikt/ds-tailwind": "^6.16.3",
-        "@navikt/ds-tokens": "^6.1.0",
+        "@navikt/ds-css": "^7.2.0",
+        "@navikt/ds-react": "^7.2.0",
+        "@navikt/ds-tailwind": "^7.2.0",
+        "@navikt/ds-tokens": "^7.2.0",
         "@navikt/next-api-proxy": "^4.0.2",
         "@navikt/next-logger": "^1.32.0",
         "@navikt/oasis": "^3.4.0",
