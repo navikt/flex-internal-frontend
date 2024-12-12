@@ -627,6 +627,13 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
+
+    if (validert.api == 'POST /api/v1/flex/aareg') {
+        res.status(200)
+        res.json([{ aareg: 'Masse aareg data' }])
+        res.end()
+        return
+    }
     res.status(404)
     res.end()
 }

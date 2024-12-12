@@ -11,6 +11,7 @@ const { serverRuntimeConfig } = getConfig()
 const tillatteApier = [
     'POST /api/v1/flex/sykepengesoknader',
     'POST /api/v1/flex/identer',
+    'POST /api/v1/flex/aareg',
     'GET /api/v1/flex/sykepengesoknader/[uuid]',
 ]
 
