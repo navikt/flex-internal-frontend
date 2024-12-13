@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { TextField } from '@navikt/ds-react'
+import { allExpanded, defaultStyles, JsonView } from 'react-json-view-lite'
 
 import { initialProps } from '../initialprops/initialProps'
 import { useAareg } from '../queryhooks/useAareg'
@@ -15,7 +16,7 @@ const AaregPage = () => {
                 label="Fnr"
                 onChange={(e) => (e.target.value.length == 11 ? setFnr(e.target.value) : setFnr(undefined))}
             />
-            {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
+            {data && <JsonView data={data} shouldExpandNode={allExpanded} style={defaultStyles} />}
         </div>
     )
 }
