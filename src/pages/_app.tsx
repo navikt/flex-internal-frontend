@@ -1,4 +1,5 @@
 import '../style/global.css'
+import 'react-json-view-lite/dist/index.css'
 
 import type { AppProps } from 'next/app'
 import React, { useState } from 'react'

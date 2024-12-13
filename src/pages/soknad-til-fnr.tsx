@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { BodyShort, TextField } from '@navikt/ds-react'
+import { JsonView, allExpanded, defaultStyles } from 'react-json-view-lite'
 
 import { initialProps } from '../initialprops/initialProps'
 import { useSoknad } from '../queryhooks/useSoknad'
@@ -16,7 +17,9 @@ const SoknadTilFnrPage = () => {
                 onChange={(e) => (e.target.value.length == 36 ? setSoknadId(e.target.value) : setSoknadId(undefined))}
             />
             {data?.sykepengesoknad && <BodyShort>{'Fødselsnummer: ' + data.fnr}</BodyShort>}
-            {data?.sykepengesoknad && <pre>{JSON.stringify(data.sykepengesoknad, null, 2)}</pre>}
+            {data?.sykepengesoknad && (
+                <JsonView data={data.sykepengesoknad} shouldExpandNode={allExpanded} style={defaultStyles} />
+            )}
         </div>
     )
 }
