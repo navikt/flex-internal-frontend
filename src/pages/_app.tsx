@@ -29,6 +29,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
         '/ident': 'Slå opp fnr og aktor id',
         '/soknad-til-fnr': 'Konverter søknad id til fnr',
         '/aareg': 'Se rådata fra aareg',
+        '/sigrun': 'Se rådata fra sigrun',
         '/vedtaksperioder': 'Vedtaksperioder i flex-inntektsmelding-status',
         '/amplitude': 'Amplitude',
     }
