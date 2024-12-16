@@ -12,6 +12,7 @@ const tillatteApier = [
     'POST /api/v1/flex/sykepengesoknader',
     'POST /api/v1/flex/identer',
     'POST /api/v1/flex/aareg',
+    'POST /api/v1/flex/sigrun',
     'GET /api/v1/flex/sykepengesoknader/[uuid]',
 ]
 

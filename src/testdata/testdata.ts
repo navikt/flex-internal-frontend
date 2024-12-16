@@ -634,6 +634,12 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
+    if (validert.api == 'POST /api/v1/flex/sigrun') {
+        res.status(200)
+        res.json([{ skatt: 'Masse sigrun data' }])
+        res.end()
+        return
+    }
     res.status(404)
     res.end()
 }
