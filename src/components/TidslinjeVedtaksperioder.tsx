@@ -1,4 +1,4 @@
-import { BodyShort, Button, DatePicker, Link, ReadMore, Table, Timeline, useDatepicker } from '@navikt/ds-react'
+import { BodyShort, DatePicker, Link, ReadMore, Table, Timeline, useDatepicker } from '@navikt/ds-react'
 import React, { Fragment } from 'react'
 import dayjs from 'dayjs'
 
@@ -9,28 +9,7 @@ import {
 import { spleisSporingUrl } from '../utils/environment'
 import { formatterTimestamp } from '../utils/formatterDatoer'
 
-function VelgManederKnapp(props: {
-    maneder: number
-    setFraSelected: (date: Date) => void
-    setTilSelected: (date: Date) => void
-}) {
-    return (
-        <li className="navds-detail">
-            <Button
-                type="button"
-                size="small"
-                variant="secondary-neutral"
-                className="navds-timeline__zoom-button font-normal"
-                onClick={() => {
-                    props.setFraSelected(dayjs().subtract(props.maneder, 'month').toDate())
-                    props.setTilSelected(dayjs().toDate())
-                }}
-            >
-                {props.maneder + ' mnd'}
-            </Button>
-        </li>
-    )
-}
+import { VelgManederKnapp } from './VelgManederKnapp'
 
 export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder: FullVedtaksperiodeBehandling[] }) {
     const datoer = [] as dayjs.Dayjs[]
