@@ -2,8 +2,8 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query'
 
 import { fetchJsonMedRequestId } from '../utils/fetch'
 
-export function useAareg(fnr: string | undefined, enabled = true): UseQueryResult<object | null, Error> {
-    return useQuery<object | null, Error>({
+export function useAareg(fnr: string | undefined, enabled = true): UseQueryResult<AaregResponse | null, Error> {
+    return useQuery<AaregResponse | null, Error>({
         queryKey: ['aareg', fnr],
         enabled: enabled,
         queryFn: () => {
@@ -17,4 +17,63 @@ export function useAareg(fnr: string | undefined, enabled = true): UseQueryResul
             })
         },
     })
+}
+
+export interface AaregResponse {
+    arbeidsforholdoversikter: Arbeidsforholdoversikter[]
+}
+
+export interface Arbeidsforholdoversikter {
+    type: Type
+    arbeidstaker: Arbeidstaker
+    arbeidssted: Arbeidssted
+    opplysningspliktig: Opplysningspliktig
+    startdato: string
+    sluttdato: string | null
+    yrke: Yrke
+    avtaltStillingsprosent: number
+    permisjonsprosent: any
+    permitteringsprosent: any
+}
+
+export interface Type {
+    kode: string
+    beskrivelse: string
+}
+
+export interface Arbeidstaker {
+    identer: Identer[]
+}
+
+export interface Identer {
+    type: string
+    ident: string
+    gjeldende: boolean
+}
+
+export interface Arbeidssted {
+    type: string
+    identer: Identer2[]
+}
+
+export interface Identer2 {
+    type: string
+    ident: string
+    gjeldende: any
+}
+
+export interface Opplysningspliktig {
+    type: string
+    identer: Identer3[]
+}
+
+export interface Identer3 {
+    type: string
+    ident: string
+    gjeldende: any
+}
+
+export interface Yrke {
+    kode: string
+    beskrivelse: string
 }
