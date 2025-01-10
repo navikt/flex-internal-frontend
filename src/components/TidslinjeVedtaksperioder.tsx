@@ -88,7 +88,7 @@ export function TidslinjeVedtaksperioder({
 
     const forelagteMap = new Map<string, ForelagteOpplysningerDbRecord>()
     forelagteOpplysninger.forEach((fo) => {
-        forelagteMap.set(fo.vedtaksperiodeId + '-' + fo.behandlingId, fo)
+        forelagteMap.set(`${fo.vedtaksperiodeId}-${fo.behandlingId}`, fo)
     })
 
     return (
@@ -158,9 +158,7 @@ export function TidslinjeVedtaksperioder({
                                             {sortertEtterOppdatert.map((behandling) => {
                                                 const statuserMedForelegging = [...behandling.statuser]
                                                 const forelagt = forelagteMap.get(
-                                                    behandling.vedtaksperiode.vedtaksperiodeId +
-                                                        '-' +
-                                                        behandling.vedtaksperiode.behandlingId,
+                                                    `${behandling.vedtaksperiode.vedtaksperiodeId}-${behandling.vedtaksperiode.behandlingId}`,
                                                 )
                                                 if (forelagt) {
                                                     statuserMedForelegging.push({
@@ -183,6 +181,19 @@ export function TidslinjeVedtaksperioder({
                                                             tidspunkt: forelagt.forelagt,
                                                             vedtaksperiodeBehandlingId: behandling.vedtaksperiode.id!,
                                                         })
+                                                    }
+                                                }
+                                                const sortert = statuserMedForelegging.sort((a, b) =>
+                                                    a.tidspunkt.localeCompare(b.tidspunkt),
+                                                )
+
+                                                const tidligstePerStatus: VedtaksperiodeBehandlingStatusDbRecord[] = []
+                                                const settMedStatus: Set<string> = new Set()
+
+                                                for (const element of sortert) {
+                                                    if (!settMedStatus.has(element.status)) {
+                                                        tidligstePerStatus.push(element)
+                                                        settMedStatus.add(element.status)
                                                     }
                                                 }
 
@@ -274,7 +285,7 @@ export function TidslinjeVedtaksperioder({
                                                                         </>
                                                                     )
                                                                 })}
-                                                                {behandling.statuser.map((status) => {
+                                                                {tidligstePerStatus.map((status) => {
                                                                     return (
                                                                         <Table.Row key={status.id}>
                                                                             <Table.DataCell>
