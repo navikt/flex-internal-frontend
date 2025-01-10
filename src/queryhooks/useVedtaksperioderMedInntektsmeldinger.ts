@@ -12,7 +12,7 @@ export function useVedtaksperioderMedInntektsmeldinger(
         enabled: enabled,
         queryFn: () => {
             if (fnr === undefined && vedtaksperiodeId === undefined) {
-                return { vedtaksperioder: [], inntektsmeldinger: [] }
+                return { vedtaksperioder: [], inntektsmeldinger: [], forelagteOpplysninger: [] }
             }
             return fetchJsonMedRequestId('/api/flex-inntektsmelding-status/api/v1/vedtak-og-inntektsmeldinger', {
                 method: 'POST',
@@ -29,6 +29,7 @@ export function useVedtaksperioderMedInntektsmeldinger(
 export interface VedtakspoerioderOgImResponse {
     vedtaksperioder: FullVedtaksperiodeBehandling[]
     inntektsmeldinger: InntektsmeldingDbRecord[]
+    forelagteOpplysninger: ForelagteOpplysningerDbRecord[]
 }
 
 export interface FullVedtaksperiodeBehandling {
@@ -86,4 +87,13 @@ export interface InntektsmeldingDbRecord {
     mottattDato: string
     foersteFravaersdag: string | null
     vedtaksperiodeId: string | null
+}
+
+export interface ForelagteOpplysningerDbRecord {
+    id: string | null
+    vedtaksperiodeId: string
+    behandlingId: string
+    opprettet: string
+    opprinneligOpprettet: string
+    forelagt: string | null
 }
