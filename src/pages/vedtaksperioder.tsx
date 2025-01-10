@@ -187,7 +187,10 @@ const Vedtaksperioder = () => {
                 <>
                     <FnrVisning vedtaksperioder={data.vedtaksperioder} sokeinput={sokeinput} />
                     {sokeinput === 'fnr' && fnr?.length == 11 && <AktorIDVisning fnr={fnr} />}
-                    <TidslinjeVedtaksperioder vedtaksperioder={data.vedtaksperioder} />
+                    <TidslinjeVedtaksperioder
+                        vedtaksperioder={data.vedtaksperioder}
+                        forelagteOpplysninger={data.forelagteOpplysninger}
+                    />
                 </>
             )}
         </div>

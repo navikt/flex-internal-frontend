@@ -3,6 +3,7 @@ import React, { Fragment } from 'react'
 import dayjs from 'dayjs'
 
 import {
+    ForelagteOpplysningerDbRecord,
     FullVedtaksperiodeBehandling,
     VedtaksperiodeBehandlingStatusDbRecord,
 } from '../queryhooks/useVedtaksperioderMedInntektsmeldinger'
@@ -11,7 +12,13 @@ import { formatterTimestamp } from '../utils/formatterDatoer'
 
 import { VelgManederKnapp } from './VelgManederKnapp'
 
-export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder: FullVedtaksperiodeBehandling[] }) {
+export function TidslinjeVedtaksperioder({
+    vedtaksperioder,
+    forelagteOpplysninger,
+}: {
+    vedtaksperioder: FullVedtaksperiodeBehandling[]
+    forelagteOpplysninger: ForelagteOpplysningerDbRecord[]
+}) {
     const datoer = [] as dayjs.Dayjs[]
     vedtaksperioder.forEach((vp) => {
         vp.soknader.forEach((soknad) => {
@@ -21,6 +28,13 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
         vp.statuser.forEach((status) => {
             datoer.push(dayjs(status.tidspunkt))
         })
+    })
+    forelagteOpplysninger.forEach((fo) => {
+        if (fo.forelagt != null) {
+            datoer.push(dayjs(fo.forelagt))
+        }
+        datoer.push(dayjs(fo.opprettet))
+        datoer.push(dayjs(fo.opprinneligOpprettet))
     })
 
     const eldsteDato = datoer.sort((a, b) => (dayjs(a).isBefore(dayjs(b)) ? -1 : 1))[0]
@@ -72,6 +86,11 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
         })
     })
 
+    const forelagteMap = new Map<string, ForelagteOpplysningerDbRecord>()
+    forelagteOpplysninger.forEach((fo) => {
+        forelagteMap.set(fo.vedtaksperiodeId + '-' + fo.behandlingId, fo)
+    })
+
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <Timeline endDate={tilSelectedDay} startDate={fraSelectedDay}>
@@ -80,6 +99,17 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                         <Timeline.Pin key={status.id} date={dayjs(status.tidspunkt).toDate()}>
                             <p>{status.status}</p>
                             <p>{formatterTimestamp(status.tidspunkt)}</p>
+                        </Timeline.Pin>
+                    )
+                })}
+                {forelagteOpplysninger.map((fo) => {
+                    if (fo.forelagt == null) {
+                        return null
+                    }
+                    return (
+                        <Timeline.Pin key={fo.id} date={dayjs(fo.forelagt).toDate()}>
+                            <p>Forelagt opplysninger fra A-Ordningen</p>
+                            <p>{formatterTimestamp(fo.forelagt)}</p>
                         </Timeline.Pin>
                     )
                 })}
@@ -126,6 +156,36 @@ export function TidslinjeVedtaksperioder({ vedtaksperioder }: { vedtaksperioder:
                                                 Behandlinger
                                             </BodyShort>
                                             {sortertEtterOppdatert.map((behandling) => {
+                                                const statuserMedForelegging = [...behandling.statuser]
+                                                const forelagt = forelagteMap.get(
+                                                    behandling.vedtaksperiode.vedtaksperiodeId +
+                                                        '-' +
+                                                        behandling.vedtaksperiode.behandlingId,
+                                                )
+                                                if (forelagt) {
+                                                    statuserMedForelegging.push({
+                                                        id: forelagt.id,
+                                                        brukervarselId: null,
+                                                        dittSykefravaerMeldingId: null,
+                                                        opprettetDatabase: forelagt.opprettet,
+                                                        status: 'FORELEGGING_FORESPORSEL_MOTTATT',
+                                                        tidspunkt: forelagt.opprinneligOpprettet,
+                                                        vedtaksperiodeBehandlingId: behandling.vedtaksperiode.id!,
+                                                    })
+
+                                                    if (forelagt.forelagt) {
+                                                        statuserMedForelegging.push({
+                                                            id: forelagt.id,
+                                                            brukervarselId: null,
+                                                            dittSykefravaerMeldingId: null,
+                                                            opprettetDatabase: forelagt.opprettet,
+                                                            status: 'FORELEGGING_VARSEL_SENDT',
+                                                            tidspunkt: forelagt.forelagt,
+                                                            vedtaksperiodeBehandlingId: behandling.vedtaksperiode.id!,
+                                                        })
+                                                    }
+                                                }
+
                                                 return (
                                                     <>
                                                         <Table size="small" className="mb-4">
