@@ -2,16 +2,16 @@ import { DatePicker, ReadMore, Timeline, useDatepicker } from '@navikt/ds-react'
 import React, { Fragment } from 'react'
 import dayjs from 'dayjs'
 
-import { AaregResponse, Arbeidsforholdoversikter } from '../queryhooks/useAareg'
+import { AaregResponse, Arbeidsforhold } from '../queryhooks/useAareg'
 
 import { VelgManederKnapp } from './VelgManederKnapp'
 
 export function TidslinjeAareg({ aaregresponse }: { aaregresponse: AaregResponse }) {
     const datoer = [] as dayjs.Dayjs[]
-    const ao = aaregresponse.arbeidsforholdoversikter
+    const ao = aaregresponse
     ao.forEach((vp) => {
-        vp.startdato && datoer.push(dayjs(vp.startdato))
-        vp.sluttdato && datoer.push(dayjs(vp.sluttdato))
+        vp.ansettelsesperiode.startdato && datoer.push(dayjs(vp.ansettelsesperiode.startdato))
+        vp.ansettelsesperiode.sluttdato && datoer.push(dayjs(vp.ansettelsesperiode.sluttdato))
     })
     datoer.push(dayjs().add(1, 'week'))
 
@@ -38,7 +38,7 @@ export function TidslinjeAareg({ aaregresponse }: { aaregresponse: AaregResponse
 
     // grupper perioder per soknad.orgnummer
     // Map med orgnummer som key og FullVedtaksperiode[] som value
-    const mappet = new Map<string, Arbeidsforholdoversikter[]>()
+    const mappet = new Map<string, Arbeidsforhold[]>()
     ao.forEach((a) => {
         const org = a.opplysningspliktig.identer[0].ident + ' - ' + a.arbeidssted.identer[0].ident
         if (mappet.has(org)) {
@@ -58,20 +58,20 @@ export function TidslinjeAareg({ aaregresponse }: { aaregresponse: AaregResponse
                         <Timeline.Row key={orgnummer} label={orgnummer}>
                             {gruppert?.map((ao, i) => {
                                 function sluttDatoEllerToUkerTil() {
-                                    if (ao.sluttdato) {
-                                        return dayjs(ao.sluttdato).toDate()
+                                    if (ao.ansettelsesperiode.sluttdato) {
+                                        return dayjs(ao.ansettelsesperiode.sluttdato).toDate()
                                     }
 
-                                    return dayjs(ao.startdato).add(2, 'week').toDate()
+                                    return dayjs().add(2, 'week').toDate()
                                 }
 
                                 return (
                                     <Timeline.Period
-                                        start={dayjs(ao.startdato).toDate()}
+                                        start={dayjs(ao.ansettelsesperiode.startdato).toDate()}
                                         end={sluttDatoEllerToUkerTil()}
                                         status="neutral"
                                         key={i}
-                                        icon={ao.yrke.beskrivelse}
+                                        icon={ao.arbeidssted.identer[0].ident}
                                     >
                                         <Fragment>
                                             <pre className="text-small">{JSON.stringify(ao, null, 2)}</pre>

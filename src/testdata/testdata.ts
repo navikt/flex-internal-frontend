@@ -632,108 +632,97 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
 
     if (validert.api == 'POST /api/v1/flex/aareg') {
         res.status(200)
-        res.json({
-            arbeidsforholdoversikter: [
-                {
-                    type: {
-                        kode: 'ordinaertArbeidsforhold',
-                        beskrivelse: 'Ordinært arbeidsforhold',
-                    },
-                    arbeidstaker: {
-                        identer: [
-                            {
-                                type: 'AKTORID',
-                                ident: '2559209957176',
-                                gjeldende: true,
-                            },
-                            {
-                                type: 'FOLKEREGISTERIDENT',
-                                ident: '26879498340',
-                                gjeldende: true,
-                            },
-                        ],
-                    },
-                    arbeidssted: {
-                        type: 'Underenhet',
-                        identer: [
-                            {
-                                type: 'ORGANISASJONSNUMMER',
-                                ident: '971066407',
-                                gjeldende: null,
-                            },
-                        ],
-                    },
-                    opplysningspliktig: {
-                        type: 'Hovedenhet',
-                        identer: [
-                            {
-                                type: 'ORGANISASJONSNUMMER',
-                                ident: '842006082',
-                                gjeldende: null,
-                            },
-                        ],
-                    },
+        res.json([
+            {
+                type: {
+                    kode: 'ordinaertArbeidsforhold',
+                    beskrivelse: 'Ordinært arbeidsforhold',
+                },
+                arbeidstaker: {
+                    identer: [
+                        {
+                            type: 'AKTORID',
+                            ident: '2559209957176',
+                            gjeldende: true,
+                        },
+                        {
+                            type: 'FOLKEREGISTERIDENT',
+                            ident: '26879498340',
+                            gjeldende: true,
+                        },
+                    ],
+                },
+                arbeidssted: {
+                    type: 'Underenhet',
+                    identer: [
+                        {
+                            type: 'ORGANISASJONSNUMMER',
+                            ident: '971066407',
+                            gjeldende: null,
+                        },
+                    ],
+                },
+                opplysningspliktig: {
+                    type: 'Hovedenhet',
+                    identer: [
+                        {
+                            type: 'ORGANISASJONSNUMMER',
+                            ident: '842006082',
+                            gjeldende: null,
+                        },
+                    ],
+                },
+                ansettelsesperiode: {
                     startdato: '2024-11-15',
                     sluttdato: null,
-                    yrke: {
-                        kode: '7217102',
-                        beskrivelse: 'BILSKADEREPARATØR',
-                    },
-                    avtaltStillingsprosent: 100,
-                    permisjonsprosent: null,
-                    permitteringsprosent: null,
                 },
-                {
-                    type: {
-                        kode: 'ordinaertArbeidsforhold',
-                        beskrivelse: 'Ordinært arbeidsforhold',
-                    },
-                    arbeidstaker: {
-                        identer: [
-                            {
-                                type: 'AKTORID',
-                                ident: '2559209957176',
-                                gjeldende: true,
-                            },
-                            {
-                                type: 'FOLKEREGISTERIDENT',
-                                ident: '26879498340',
-                                gjeldende: true,
-                            },
-                        ],
-                    },
-                    arbeidssted: {
-                        type: 'Underenhet',
-                        identer: [
-                            {
-                                type: 'ORGANISASJONSNUMMER',
-                                ident: '896929119',
-                                gjeldende: null,
-                            },
-                        ],
-                    },
-                    opplysningspliktig: {
-                        type: 'Hovedenhet',
-                        identer: [
-                            {
-                                type: 'ORGANISASJONSNUMMER',
-                                ident: '963743254',
-                                gjeldende: null,
-                            },
-                        ],
-                    },
+            },
+            {
+                type: {
+                    kode: 'ordinaertArbeidsforhold',
+                    beskrivelse: 'Ordinært arbeidsforhold',
+                },
+                arbeidstaker: {
+                    identer: [
+                        {
+                            type: 'AKTORID',
+                            ident: '2559209957176',
+                            gjeldende: true,
+                        },
+                        {
+                            type: 'FOLKEREGISTERIDENT',
+                            ident: '26879498340',
+                            gjeldende: true,
+                        },
+                    ],
+                },
+                arbeidssted: {
+                    type: 'Underenhet',
+                    identer: [
+                        {
+                            type: 'ORGANISASJONSNUMMER',
+                            ident: '896929119',
+                            gjeldende: null,
+                        },
+                    ],
+                },
+                opplysningspliktig: {
+                    type: 'Hovedenhet',
+                    identer: [
+                        {
+                            type: 'ORGANISASJONSNUMMER',
+                            ident: '963743254',
+                            gjeldende: null,
+                        },
+                    ],
+                },
+
+                ansettelsesperiode: {
                     startdato: '2004-12-12',
                     sluttdato: null,
-                    yrke: {
-                        kode: '7217102',
-                        beskrivelse: 'BILSKADEREPARATØR',
-                    },
-                    avtaltStillingsprosent: 100,
-                    permisjonsprosent: null,
-                    permitteringsprosent: null,
                 },
-            ],
-        })
+            },
+        ])
         res.end()
         return
     }
