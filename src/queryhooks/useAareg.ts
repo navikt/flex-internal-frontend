@@ -19,21 +19,19 @@ export function useAareg(fnr: string | undefined, enabled = true): UseQueryResul
     })
 }
 
-export interface AaregResponse {
-    arbeidsforholdoversikter: Arbeidsforholdoversikter[]
-}
+export type AaregResponse = Arbeidsforhold[]
 
-export interface Arbeidsforholdoversikter {
+export interface Arbeidsforhold {
     type: Type
     arbeidstaker: Arbeidstaker
     arbeidssted: Arbeidssted
     opplysningspliktig: Opplysningspliktig
+    ansettelsesperiode: Ansettelsesperiode
+}
+
+export interface Ansettelsesperiode {
     startdato: string
     sluttdato: string | null
-    yrke: Yrke
-    avtaltStillingsprosent: number
-    permisjonsprosent: any
-    permitteringsprosent: any
 }
 
 export interface Type {
