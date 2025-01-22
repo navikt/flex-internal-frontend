@@ -122,7 +122,7 @@ export const AmplitudeScreenshotView = ({ data }: { data: AmplitudeResponse }) =
 }
 
 const Screenshot = ({ eventgruppe, mobil }: { eventgruppe: EventGruppeMedDetaljer; mobil: boolean }) => {
-    const urlUtenTrailingSlash = eventgruppe.url.replace(/\/$/, '')
+    const urlUtenTrailingSlash = eventgruppe.url?.replace(/\/$/, '')
     const plattform = mobil ? 'mobil' : 'desktop'
 
     function imagePng() {
@@ -159,7 +159,7 @@ const Screenshot = ({ eventgruppe, mobil }: { eventgruppe: EventGruppeMedDetalje
                 return 'person.nav.no.dokumentarkiv'
 
             default:
-                if (urlUtenTrailingSlash.startsWith('www.nav.no/syk/sykepengesoknad/soknader/[redacted]/')) {
+                if (urlUtenTrailingSlash?.startsWith('www.nav.no/syk/sykepengesoknad/soknader/[redacted]/')) {
                     return 'soknad-sporsmal'
                 }
                 return null
