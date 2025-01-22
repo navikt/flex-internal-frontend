@@ -32,7 +32,7 @@ export function parseEvents(events: AmplitudeEvent[]): EventGruppeMedDetaljer[] 
 
     sortedEvents.forEach((event, index) => {
         //Fjern trailing slash fra url
-        event.event_properties.url = event.event_properties.url.replace(/\/$/, '')
+        event.event_properties.url = event.event_properties?.url?.replace(/\/$/, '')
         if (index === 0) {
             // Starter den første gruppen med det første eventet
             currentGroup.push(event)
@@ -104,7 +104,7 @@ export function parseEvents(events: AmplitudeEvent[]): EventGruppeMedDetaljer[] 
                 sidevisning: 'generell',
                 ...g,
             }
-            if (g.url.startsWith('www.nav.no/syk/sykepengesoknad/soknader/[redacted]/')) {
+            if (g.url?.startsWith('www.nav.no/syk/sykepengesoknad/soknader/[redacted]/')) {
                 newVar.sidevisning = 'soknadssporsmal'
                 newVar.soknadstype = g.events.map((e) => e.event_properties.soknadstype).find((e) => !!e)
                 newVar.spormalTag = g.events.map((e) => e.event_properties.spørsmål).find((e) => !!e)
