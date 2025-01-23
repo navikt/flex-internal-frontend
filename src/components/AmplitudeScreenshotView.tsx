@@ -122,7 +122,7 @@ export const AmplitudeScreenshotView = ({ data }: { data: AmplitudeResponse }) =
 }
 
 const Screenshot = ({ eventgruppe, mobil }: { eventgruppe: EventGruppeMedDetaljer; mobil: boolean }) => {
-    const urlUtenTrailingSlash = eventgruppe.url?.replace(/\/$/, '')
+    const urlUtenTrailingSlash = eventgruppe.url?.replace(/\/$/, '')?.replace('https://', '')?.replace('http://', '')
     const plattform = mobil ? 'mobil' : 'desktop'
 
     function imagePng() {
@@ -140,6 +140,9 @@ const Screenshot = ({ eventgruppe, mobil }: { eventgruppe: EventGruppeMedDetalje
                 return 'www.nav.no.min-side'
 
             case 'www.nav.no/minside/nb/varsler':
+                return 'www.nav.no.minside.nb.varsler'
+
+            case 'www.nav.no/minside/varsler':
                 return 'www.nav.no.minside.nb.varsler'
 
             case 'www.nav.no/utlogget':
