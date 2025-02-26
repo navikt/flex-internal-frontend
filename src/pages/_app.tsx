@@ -32,6 +32,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
         '/sigrun': 'Se rådata fra sigrun',
         '/vedtaksperioder': 'Vedtaksperioder i flex-inntektsmelding-status',
         '/amplitude': 'Amplitude',
+        '/fta-import': 'Import av løpende friskmeldt vedtak',
     }
 
     return (
