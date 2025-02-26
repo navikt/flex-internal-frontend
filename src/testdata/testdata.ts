@@ -583,6 +583,12 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
+    if (validert.api == 'POST /api/v1/flex/fta-vedtak') {
+        res.status(200)
+        res.json({ opprettet: 23, feilet: 0 })
+        res.end()
+        return
+    }
     if (validert.api == 'GET /api/v1/flex/sykepengesoknader/[uuid]') {
         res.status(200)
         res.json({ fnr: 'fødselsnummer', sykepengesoknad: testdata.sykepengesoknadListe[0] })
