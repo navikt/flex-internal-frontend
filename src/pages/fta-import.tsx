@@ -34,6 +34,9 @@ const FtaImportPage = () => {
                     const res = await fetch(`/api/sykepengesoknad-backend/api/v1/flex/fta-vedtak`, {
                         method: 'POST',
                         body: body,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
                     })
                     const response = await res.text()
                     if (res.ok) {
