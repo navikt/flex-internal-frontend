@@ -1,5 +1,5 @@
-import { BodyShort, DatePicker, Link, ReadMore, Table, Timeline, useDatepicker } from '@navikt/ds-react'
-import React, { Fragment } from 'react'
+import { BodyShort, DatePicker, Link, ReadMore, Switch, Table, Timeline, useDatepicker } from '@navikt/ds-react'
+import React, { Fragment, useState } from 'react'
 import dayjs from 'dayjs'
 
 import {
@@ -39,6 +39,7 @@ export function TidslinjeVedtaksperioder({
 
     const eldsteDato = datoer.sort((a, b) => (dayjs(a).isBefore(dayjs(b)) ? -1 : 1))[0]
     const nyesteDato = datoer.sort((a, b) => (dayjs(a).isBefore(dayjs(b)) ? 1 : -1))[0]
+    const [fjernDuplikatStatus, setFjernDuplikatStatus] = useState(true)
 
     const {
         datepickerProps: fraDatepickerProps,
@@ -188,15 +189,14 @@ export function TidslinjeVedtaksperioder({
                                                 )
 
                                                 const tidligstePerStatus: VedtaksperiodeBehandlingStatusDbRecord[] = []
-                                                const settMedStatus: Set<string> = new Set()
+                                                let forrigeStatus: string | undefined = undefined
 
                                                 for (const element of sortert) {
-                                                    if (!settMedStatus.has(element.status)) {
+                                                    if (element.status !== forrigeStatus) {
                                                         tidligstePerStatus.push(element)
-                                                        settMedStatus.add(element.status)
+                                                        forrigeStatus = element.status
                                                     }
                                                 }
-
                                                 return (
                                                     <>
                                                         <Table size="small" className="mb-4">
@@ -285,7 +285,10 @@ export function TidslinjeVedtaksperioder({
                                                                         </>
                                                                     )
                                                                 })}
-                                                                {tidligstePerStatus.map((status) => {
+                                                                {(fjernDuplikatStatus
+                                                                    ? tidligstePerStatus
+                                                                    : sortert
+                                                                ).map((status) => {
                                                                     return (
                                                                         <Table.Row key={status.id}>
                                                                             <Table.DataCell>
@@ -310,24 +313,32 @@ export function TidslinjeVedtaksperioder({
                     )
                 })}
             </Timeline>
-            <div>
-                <ul className="flex navds-timeline__zoom" style={{ float: 'none' }}>
+
+            <div className="flex justify-evenly mt-8">
+                <ul className="flex navds-timeline__zoom" style={{ float: 'none', marginTop: 0 }}>
                     <VelgManederKnapp maneder={1} setFraSelected={setFraSelected} setTilSelected={setTilSelected} />
                     <VelgManederKnapp maneder={3} setFraSelected={setFraSelected} setTilSelected={setTilSelected} />
                     <VelgManederKnapp maneder={6} setFraSelected={setFraSelected} setTilSelected={setTilSelected} />
                     <VelgManederKnapp maneder={12} setFraSelected={setFraSelected} setTilSelected={setTilSelected} />
                 </ul>
+                <ReadMore header="Velg datoer" className="mb-8">
+                    <div className="mt-4 flex gap-x-2">
+                        <DatePicker {...fraDatepickerProps}>
+                            <DatePicker.Input {...fraInputprops} label="Fra" />
+                        </DatePicker>
+                        <DatePicker {...tilDatepickerProps}>
+                            <DatePicker.Input {...tilInputprops} label="Til" />
+                        </DatePicker>
+                    </div>
+                </ReadMore>
+                <Switch
+                    size="small"
+                    checked={fjernDuplikatStatus}
+                    onChange={(e) => setFjernDuplikatStatus(e.target.checked)}
+                >
+                    Skjul duplikat statuser
+                </Switch>
             </div>
-            <ReadMore header="Velg datoer">
-                <div className="mt-4 flex gap-x-2">
-                    <DatePicker {...fraDatepickerProps}>
-                        <DatePicker.Input {...fraInputprops} label="Fra" />
-                    </DatePicker>
-                    <DatePicker {...tilDatepickerProps}>
-                        <DatePicker.Input {...tilInputprops} label="Til" />
-                    </DatePicker>
-                </div>
-            </ReadMore>
         </div>
     )
 }

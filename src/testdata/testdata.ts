@@ -609,7 +609,11 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
             vedtaksperiodeId: '123',
         }
         res.status(200)
-        res.json({ inntektsmeldinger: [inntektsmedling], vedtaksperioder: vedtaksperiodeTestdata })
+        res.json({
+            inntektsmeldinger: [inntektsmedling],
+            vedtaksperioder: vedtaksperiodeTestdata,
+            forelagteOpplysninger: [],
+        })
         res.end()
         return
     }
