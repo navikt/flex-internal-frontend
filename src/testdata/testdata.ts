@@ -742,6 +742,12 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
+    if (validert.api == 'POST /api/v1/flex/arbeidssokerregister') {
+        res.status(200)
+        res.json([{ arbs: 'Masse arbs data' }])
+        res.end()
+        return
+    }
     res.status(404)
     res.end()
 }
