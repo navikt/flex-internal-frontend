@@ -135,6 +135,7 @@ export type RSSoknadstypeType =
     | 'ANNET_ARBEIDSFORHOLD'
     | 'REISETILSKUDD'
     | 'GRADERT_REISETILSKUDD'
+    | 'FRISKMELDT_TIL_ARBEIDSFORMIDLING'
 
 export type RSSoknadstatusType =
     | 'NY'

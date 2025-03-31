@@ -73,6 +73,36 @@ const testdata = {
             merknaderFraSykmelding: null,
         },
         {
+            id: 'b1621dbb-2d0a-3a82-b8be-d892a94447cf',
+            sykmeldingId: '70df59fa-e1a3-4f38-bc3d-6a1fb2349c04',
+            soknadstype: 'FRISKMELDT_TIL_ARBEIDSFORMIDLING',
+            status: 'SENDT',
+            fom: '2023-01-30',
+            tom: '2023-02-26',
+            opprettetDato: '2023-06-12T16:24:31.185225',
+            sendtTilNAVDato: '2023-06-13T10:09:41.301409',
+            sendtTilArbeidsgiverDato: '2023-06-13T10:09:41.301409',
+            avbruttDato: null,
+            startSykeforlop: '2023-01-01',
+            sykmeldingUtskrevet: '2023-01-01T01:00:00',
+            sykmeldingSignaturDato: null,
+            arbeidsgiver: null,
+            arbeidsgiverNavn: 'Klonelabben',
+            arbeidsgiverOrgnummer: '907670201',
+            korrigerer: null,
+            korrigertAv: null,
+            arbeidssituasjon: 'ARBEIDSTAKER',
+            soknadPerioder: [
+                {
+                    fom: '2023-01-30',
+                    tom: '2023-02-26',
+                    grad: 50,
+                    sykmeldingstype: 'GRADERT',
+                },
+            ],
+            merknaderFraSykmelding: null,
+        },
+        {
             id: '813adafc-d468-304c-a00d-917c3ab31a08',
             sykmeldingId: '70df59fa-e1a3-4f38-bc3d-6a1fb2349c04',
             soknadstype: 'ARBEIDSTAKERE',
@@ -744,7 +774,7 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
     }
     if (validert.api == 'POST /api/v1/flex/arbeidssokerregister') {
         res.status(200)
-        res.json([{ arbs: 'Masse arbs data' }])
+        res.json([{ startet: { tidspunkt: '2025-03-31T10:44:52Z' } }])
         res.end()
         return
     }
