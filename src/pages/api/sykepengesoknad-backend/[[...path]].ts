@@ -15,6 +15,7 @@ const tillatteApier = [
     'POST /api/v1/flex/aareg',
     'POST /api/v1/flex/sigrun',
     'POST /api/v1/flex/arbeidssokerregister',
+    'POST /api/v1/flex/fta-vedtak-for-person',
     'GET /api/v1/flex/sykepengesoknader/[uuid]',
 ]
 
