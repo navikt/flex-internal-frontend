@@ -4,6 +4,7 @@ import { Alert, Button, Detail, Heading, Search, Table } from '@navikt/ds-react'
 import { initialProps } from '../initialprops/initialProps'
 import { useArbeidssoker, ArbeidssokerDetaljer } from '../queryhooks/useArbeidssoker'
 import { useSoknader } from '../queryhooks/useSoknader'
+import { useFtaVedtak } from '../queryhooks/useFtaVedtak'
 
 const FriskmeldtPage = () => {
     const [fnr, setFnr] = useState<string>()
@@ -85,6 +86,7 @@ const FriskmeldtEnkeltPerson = ({ fnr }: { fnr: string }) => {
                 Friskmeldt for {fnr}
             </Heading>
             <ArbeidssokerDetaljerVisning arbeidssokerdata={arbeidssokerdata} />
+            <FtaVedtak fnr={fnr} />
             <Soknader fnr={fnr} />
         </div>
     )
@@ -131,6 +133,46 @@ const Soknader = ({ fnr }: { fnr: string }) => {
                                 {soknad.fom} - {soknad.tom}
                             </Table.DataCell>
                             <Table.DataCell>{soknad.status}</Table.DataCell>
+                        </Table.Row>
+                    ))}
+                </Table.Body>
+            </Table>
+        </>
+    )
+}
+
+const FtaVedtak = ({ fnr }: { fnr: string }) => {
+    const { data: vedtak, isLoading } = useFtaVedtak(fnr)
+    if (isLoading || vedtak === undefined) {
+        return <div>Laster vedtak...</div>
+    }
+
+    if (vedtak.length == 0) {
+        return <Alert variant="info">Ingen friskmeldt til arbeidsformidling vedtak registert</Alert>
+    }
+    return (
+        <>
+            <Heading size="small">Vedtak i sykepengesoknad-backend</Heading>
+            <Table size="small">
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell>ID</Table.HeaderCell>
+                        <Table.HeaderCell>Periode</Table.HeaderCell>
+                        <Table.HeaderCell>Status</Table.HeaderCell>
+                        <Table.HeaderCell>Opprettet</Table.HeaderCell>
+                        <Table.HeaderCell>Avsluttet</Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {vedtak.map((vedtak) => (
+                        <Table.Row key={vedtak.id}>
+                            <Table.DataCell>{vedtak.id}</Table.DataCell>
+                            <Table.DataCell>
+                                {vedtak.fom} - {vedtak.tom}
+                            </Table.DataCell>
+                            <Table.DataCell>{vedtak.behandletStatus}</Table.DataCell>
+                            <Table.DataCell>{vedtak.opprettet}</Table.DataCell>
+                            <Table.DataCell>{vedtak.avsluttetTidspunkt}</Table.DataCell>
                         </Table.Row>
                     ))}
                 </Table.Body>
