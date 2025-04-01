@@ -1,5 +1,17 @@
-import React, { useState } from 'react'
-import { Alert, Button, Detail, Heading, Search, Table } from '@navikt/ds-react'
+import React, { useRef, useState } from 'react'
+import {
+    Alert,
+    BodyLong,
+    Button,
+    DatePicker,
+    Detail,
+    Heading,
+    Modal,
+    Search,
+    Table,
+    useDatepicker,
+} from '@navikt/ds-react'
+import { FileIcon } from '@navikt/aksel-icons'
 
 import { initialProps } from '../initialprops/initialProps'
 import { useArbeidssoker, ArbeidssokerDetaljer } from '../queryhooks/useArbeidssoker'
@@ -55,25 +67,32 @@ function ArbeidssokerDetaljerVisning({ arbeidssokerdata }: { arbeidssokerdata: A
     if (arbeidssokerdata === undefined) {
         return <div>Laster arbeidssøkerregister...</div>
     }
-    if (arbeidssokerdata.length == 0) {
-        return (
-            <Alert className="mb-8" variant="warning">
-                Ikke registrert arbeidssoker
-            </Alert>
-        )
+
+    function arbeidssokerTekst() {
+        if (arbeidssokerdata!.length == 0) {
+            return {
+                tekst: 'Ikke registrert arbeidssoker',
+                color: 'bg-red-300 p-8 rounded',
+            }
+        }
+        if (arbeidssokerdata!.length == 0) {
+            return {
+                tekst: 'Siste arbeidssøkerperiode avsluttet ' + arbeidssokerdata![0].avsluttet?.tidspunkt,
+                color: 'bg-red-300 p-8 rounded',
+            }
+        }
+        return {
+            tekst: 'Arbeidssøkerperiode startet ' + arbeidssokerdata![0].startet.tidspunkt,
+            color: 'py-8',
+        }
     }
-    const first = arbeidssokerdata[0]
-    if (first.avsluttet) {
-        return (
-            <Alert className="mb-8" variant="warning">
-                Siste arbeidssøkerperiode avsluttet {first.avsluttet.tidspunkt}
-            </Alert>
-        )
-    }
+
+    const tekstOgFarge = arbeidssokerTekst()
     return (
-        <Alert className="mb-8" variant="success">
-            Arbeidssøkerperiode startet {first.startet.tidspunkt}
-        </Alert>
+        <>
+            <Heading size="small">Arbeidssøkerregister status</Heading>
+            <BodyLong className={tekstOgFarge.color}>{tekstOgFarge.tekst}</BodyLong>
+        </>
     )
 }
 
@@ -83,7 +102,7 @@ const FriskmeldtEnkeltPerson = ({ fnr }: { fnr: string }) => {
     return (
         <div className="max-w-4xl">
             <Heading level="1" size="medium" spacing>
-                Friskmeldt for {fnr}
+                Friskmeldt {fnr}
             </Heading>
             <ArbeidssokerDetaljerVisning arbeidssokerdata={arbeidssokerdata} />
             <FtaVedtak fnr={fnr} />
@@ -143,6 +162,18 @@ const Soknader = ({ fnr }: { fnr: string }) => {
 
 const FtaVedtak = ({ fnr }: { fnr: string }) => {
     const { data: vedtak, isLoading } = useFtaVedtak(fnr)
+    const ref = useRef<HTMLDialogElement>(null)
+    const {
+        datepickerProps: fomDpProps,
+        inputProps: fomInputProps,
+        selectedDay: fomDag,
+    } = useDatepicker({ fromDate: new Date('2025-01-01') })
+    const {
+        datepickerProps: tomDpProps,
+        inputProps: tomInputProps,
+        selectedDay: tomDag,
+    } = useDatepicker({ fromDate: new Date('2025-01-01') })
+
     if (isLoading || vedtak === undefined) {
         return <div>Laster vedtak...</div>
     }
@@ -150,10 +181,24 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
     if (vedtak.length == 0) {
         return <Alert variant="info">Ingen friskmeldt til arbeidsformidling vedtak registert</Alert>
     }
+
+    const ok = fomDag && tomDag && fomDag < tomDag
+
+    // weeks between fom and tom
+    function regnUtUker() {
+        if (!fomDag || !tomDag) {
+            return undefined
+        }
+        return Math.ceil((tomDag.getTime() - fomDag.getTime()) / (1000 * 60 * 60 * 24 * 7))
+    }
+
+    const weeks = regnUtUker()
     return (
         <>
-            <Heading size="small">Vedtak i sykepengesoknad-backend</Heading>
-            <Table size="small">
+            <Heading size="small" spacing>
+                Vedtak i sykepengesoknad-backend
+            </Heading>
+            <Table size="small" className="mb-8">
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>ID</Table.HeaderCell>
@@ -165,7 +210,10 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                 </Table.Header>
                 <Table.Body>
                     {vedtak.map((vedtak) => (
-                        <Table.Row key={vedtak.id}>
+                        <Table.Row
+                            key={vedtak.id}
+                            className={vedtak.behandletStatus != 'BEHANDLET' ? 'bg-red-100' : ''}
+                        >
                             <Table.DataCell>{vedtak.id}</Table.DataCell>
                             <Table.DataCell>
                                 {vedtak.fom} - {vedtak.tom}
@@ -177,6 +225,61 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                     ))}
                 </Table.Body>
             </Table>
+            <Button
+                className="mb-8"
+                size="small"
+                variant="secondary"
+                onClick={() => {
+                    ref.current?.showModal()
+                }}
+            >
+                Legg til vedtak
+            </Button>
+            <Modal
+                ref={ref}
+                header={{
+                    icon: <FileIcon aria-hidden />,
+                    heading: 'Legg til vedtak',
+                }}
+            >
+                <Modal.Body>
+                    <div className="min-w-96 flex gap-8 mb-8">
+                        <DatePicker {...fomDpProps}>
+                            <DatePicker.Input {...fomInputProps} label="Fra og med" />
+                        </DatePicker>
+                        <DatePicker {...tomDpProps}>
+                            <DatePicker.Input {...tomInputProps} label="Til og med" />
+                        </DatePicker>
+                    </div>
+                    {/* weeks is not undefined */}
+                    {weeks === undefined && <BodyLong spacing>Velg fra og til dato</BodyLong>}
+                    {weeks !== undefined && (
+                        <>
+                            <BodyLong spacing>{weeks} uker valgt.</BodyLong>
+                            {!ok && <Alert variant="warning">Fra og med må være før til og med</Alert>}
+                        </>
+                    )}
+                    {weeks && weeks > 11 && <Alert variant="warning">Vedtak er over 11 uker</Alert>}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button
+                        type="button"
+                        disabled={!ok || (weeks !== undefined && weeks > 14)}
+                        onClick={() => {
+                            window.alert(
+                                '' + fomDag?.toISOString().slice(0, 10) + ' ' + tomDag?.toISOString().slice(0, 10),
+                            )
+
+                            return ref.current?.close()
+                        }}
+                    >
+                        Lagre
+                    </Button>
+                    <Button type="button" variant="secondary" onClick={() => ref.current?.close()}>
+                        Lukk
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </>
     )
 }
