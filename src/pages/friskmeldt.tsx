@@ -18,32 +18,65 @@ import { useArbeidssoker, ArbeidssokerDetaljer } from '../queryhooks/useArbeidss
 import { useSoknader } from '../queryhooks/useSoknader'
 import { useFtaVedtak } from '../queryhooks/useFtaVedtak'
 import { useNyttFriskmeldtVedtak } from '../queryhooks/useNyttFriskmeldtVedtak'
+import { useUbehandledeFtaVedtak } from '../queryhooks/useUbehandledeFtaVedtak'
 
 const FriskmeldtPage = () => {
     const [fnr, setFnr] = useState<string>()
+    const { data: ubehandlede } = useUbehandledeFtaVedtak()
 
     if (!fnr) {
         return (
-            <Search
-                className="w-56"
-                label="Søk opp person"
-                onSearchClick={(input) => {
-                    if (input.length == 11) {
-                        setFnr(input)
-                    } else {
-                        window.alert('Fnr må være 11 siffer')
-                    }
-                }}
-                onKeyDown={(evt) => {
-                    if (evt.key === 'Enter') {
-                        if (evt.currentTarget.value.length == 11) {
-                            setFnr(evt.currentTarget.value)
+            <>
+                <Search
+                    className="w-56"
+                    label="Søk opp person"
+                    onSearchClick={(input) => {
+                        if (input.length == 11) {
+                            setFnr(input)
                         } else {
                             window.alert('Fnr må være 11 siffer')
                         }
-                    }
-                }}
-            />
+                    }}
+                    onKeyDown={(evt) => {
+                        if (evt.key === 'Enter') {
+                            if (evt.currentTarget.value.length == 11) {
+                                setFnr(evt.currentTarget.value)
+                            } else {
+                                window.alert('Fnr må være 11 siffer')
+                            }
+                        }
+                    }}
+                />
+                {ubehandlede && ubehandlede.length > 0 && (
+                    <Table>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.HeaderCell>ID</Table.HeaderCell>
+                                <Table.HeaderCell>Periode</Table.HeaderCell>
+                                <Table.HeaderCell>Status</Table.HeaderCell>
+                                <Table.HeaderCell>Fnr</Table.HeaderCell>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
+                            {ubehandlede.map((vedtak) => (
+                                <Table.Row
+                                    key={vedtak.id}
+                                    onClick={() => {
+                                        setFnr(vedtak.fnr)
+                                    }}
+                                >
+                                    <Table.DataCell>{vedtak.id}</Table.DataCell>
+                                    <Table.DataCell>
+                                        {vedtak.fom} - {vedtak.tom}
+                                    </Table.DataCell>
+                                    <Table.DataCell>{vedtak.behandletStatus}</Table.DataCell>
+                                    <Table.DataCell>{vedtak.fnr}</Table.DataCell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table>
+                )}
+            </>
         )
     }
 
