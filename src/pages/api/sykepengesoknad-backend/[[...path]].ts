@@ -17,6 +17,8 @@ const tillatteApier = [
     'POST /api/v1/flex/arbeidssokerregister',
     'POST /api/v1/flex/fta-vedtak-for-person',
     'GET /api/v1/flex/sykepengesoknader/[uuid]',
+    'GET /api/v1/flex/fta-vedtak/ubehandlede',
+    'POST /api/v1/flex/fta-vedtak-for-person/opprett',
 ]
 
 const handler = beskyttetApi(async (req: NextApiRequest, res: NextApiResponse) => {
