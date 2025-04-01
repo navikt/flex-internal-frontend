@@ -180,10 +180,6 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
         return <div>Laster vedtak...</div>
     }
 
-    if (vedtak.length == 0) {
-        return <Alert variant="info">Ingen friskmeldt til arbeidsformidling vedtak registert</Alert>
-    }
-
     const ok = fomDag && tomDag && fomDag < tomDag
 
     // weeks between fom and tom
@@ -200,33 +196,38 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
             <Heading size="small" spacing>
                 Vedtak i sykepengesoknad-backend
             </Heading>
-            <Table size="small" className="mb-8">
-                <Table.Header>
-                    <Table.Row>
-                        <Table.HeaderCell>ID</Table.HeaderCell>
-                        <Table.HeaderCell>Periode</Table.HeaderCell>
-                        <Table.HeaderCell>Status</Table.HeaderCell>
-                        <Table.HeaderCell>Opprettet</Table.HeaderCell>
-                        <Table.HeaderCell>Avsluttet</Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                    {vedtak.map((vedtak) => (
-                        <Table.Row
-                            key={vedtak.id}
-                            className={vedtak.behandletStatus != 'BEHANDLET' ? 'bg-red-100' : ''}
-                        >
-                            <Table.DataCell>{vedtak.id}</Table.DataCell>
-                            <Table.DataCell>
-                                {vedtak.fom} - {vedtak.tom}
-                            </Table.DataCell>
-                            <Table.DataCell>{vedtak.behandletStatus}</Table.DataCell>
-                            <Table.DataCell>{vedtak.opprettet}</Table.DataCell>
-                            <Table.DataCell>{vedtak.avsluttetTidspunkt}</Table.DataCell>
+            {vedtak.length == 0 && (
+                <Alert variant="info">Ingen friskmeldt til arbeidsformidling vedtak registert</Alert>
+            )}
+            {vedtak.length > 0 && (
+                <Table size="small" className="mb-8">
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.HeaderCell>ID</Table.HeaderCell>
+                            <Table.HeaderCell>Periode</Table.HeaderCell>
+                            <Table.HeaderCell>Status</Table.HeaderCell>
+                            <Table.HeaderCell>Opprettet</Table.HeaderCell>
+                            <Table.HeaderCell>Avsluttet</Table.HeaderCell>
                         </Table.Row>
-                    ))}
-                </Table.Body>
-            </Table>
+                    </Table.Header>
+                    <Table.Body>
+                        {vedtak.map((vedtak) => (
+                            <Table.Row
+                                key={vedtak.id}
+                                className={vedtak.behandletStatus != 'BEHANDLET' ? 'bg-red-100' : ''}
+                            >
+                                <Table.DataCell>{vedtak.id}</Table.DataCell>
+                                <Table.DataCell>
+                                    {vedtak.fom} - {vedtak.tom}
+                                </Table.DataCell>
+                                <Table.DataCell>{vedtak.behandletStatus}</Table.DataCell>
+                                <Table.DataCell>{vedtak.opprettet}</Table.DataCell>
+                                <Table.DataCell>{vedtak.avsluttetTidspunkt}</Table.DataCell>
+                            </Table.Row>
+                        ))}
+                    </Table.Body>
+                </Table>
+            )}
             <Button
                 className="mb-8"
                 size="small"
