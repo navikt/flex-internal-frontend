@@ -8,6 +8,7 @@ export interface FtaVedtak {
     vedtakUuid: string
     fom: string
     tom: string
+    fnr: string
     behandletStatus: string
     behandletTidspunkt?: string
     avsluttetTidspunkt?: string
