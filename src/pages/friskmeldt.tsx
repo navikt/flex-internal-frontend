@@ -90,10 +90,10 @@ function ArbeidssokerDetaljerVisning({ arbeidssokerdata }: { arbeidssokerdata: A
 
     const tekstOgFarge = arbeidssokerTekst()
     return (
-        <>
+        <div className={'mb-8'}>
             <Heading size="small">Arbeidssøkerregister status</Heading>
             <BodyLong className={tekstOgFarge.color}>{tekstOgFarge.tekst}</BodyLong>
-        </>
+        </div>
     )
 }
 
@@ -197,7 +197,9 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                 Vedtak i sykepengesoknad-backend
             </Heading>
             {vedtak.length == 0 && (
-                <Alert variant="info">Ingen friskmeldt til arbeidsformidling vedtak registert</Alert>
+                <Alert variant="info" className={'mb-8'}>
+                    Ingen friskmeldt til arbeidsformidling vedtak registert
+                </Alert>
             )}
             {vedtak.length > 0 && (
                 <Table size="small" className="mb-8">
