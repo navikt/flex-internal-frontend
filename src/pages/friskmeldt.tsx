@@ -17,6 +17,7 @@ import { initialProps } from '../initialprops/initialProps'
 import { useArbeidssoker, ArbeidssokerDetaljer } from '../queryhooks/useArbeidssoker'
 import { useSoknader } from '../queryhooks/useSoknader'
 import { useFtaVedtak } from '../queryhooks/useFtaVedtak'
+import { useNyttFriskmeldtVedtak } from '../queryhooks/useNyttFriskmeldtVedtak'
 
 const FriskmeldtPage = () => {
     const [fnr, setFnr] = useState<string>()
@@ -162,6 +163,7 @@ const Soknader = ({ fnr }: { fnr: string }) => {
 
 const FtaVedtak = ({ fnr }: { fnr: string }) => {
     const { data: vedtak, isLoading } = useFtaVedtak(fnr)
+    const nyttVedtak = useNyttFriskmeldtVedtak()
     const ref = useRef<HTMLDialogElement>(null)
     const {
         datepickerProps: fomDpProps,
@@ -260,17 +262,24 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                         </>
                     )}
                     {weeks && weeks > 11 && <Alert variant="warning">Vedtak er over 11 uker</Alert>}
+                    {nyttVedtak.error && <Alert variant="error">{JSON.stringify(nyttVedtak.error)}</Alert>}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
                         type="button"
+                        loading={nyttVedtak.isPending}
                         disabled={!ok || (weeks !== undefined && weeks > 14)}
                         onClick={() => {
-                            window.alert(
-                                '' + fomDag?.toISOString().slice(0, 10) + ' ' + tomDag?.toISOString().slice(0, 10),
-                            )
-
-                            return ref.current?.close()
+                            nyttVedtak.mutate({
+                                request: {
+                                    fnr: fnr,
+                                    fom: fomDag?.toISOString().slice(0, 10) ?? '',
+                                    tom: tomDag?.toISOString().slice(0, 10) ?? '',
+                                },
+                                callback: () => {
+                                    ref.current?.close()
+                                },
+                            })
                         }}
                     >
                         Lagre
