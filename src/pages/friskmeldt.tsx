@@ -19,6 +19,7 @@ import { useSoknader } from '../queryhooks/useSoknader'
 import { useFtaVedtak } from '../queryhooks/useFtaVedtak'
 import { useNyttFriskmeldtVedtak } from '../queryhooks/useNyttFriskmeldtVedtak'
 import { useUbehandledeFtaVedtak } from '../queryhooks/useUbehandledeFtaVedtak'
+import { useEndreStatusMutation } from '../queryhooks/useEndreFtaVedtakStatus'
 
 const FriskmeldtPage = () => {
     const [fnr, setFnr] = useState<string>()
@@ -209,6 +210,8 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
         selectedDay: tomDag,
     } = useDatepicker({ fromDate: new Date('2025-01-01') })
 
+    const endreStatus = useEndreStatusMutation()
+
     if (isLoading || vedtak === undefined) {
         return <div>Laster vedtak...</div>
     }
@@ -244,22 +247,62 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                             <Table.HeaderCell>Status</Table.HeaderCell>
                             <Table.HeaderCell>Opprettet</Table.HeaderCell>
                             <Table.HeaderCell>Avsluttet</Table.HeaderCell>
+                            <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {vedtak.map((vedtak) => (
-                            <Table.Row
-                                key={vedtak.id}
-                                className={vedtak.behandletStatus != 'BEHANDLET' ? 'bg-red-100' : ''}
-                            >
-                                <Table.DataCell>{vedtak.id}</Table.DataCell>
-                                <Table.DataCell>{vedtak.fom}</Table.DataCell>{' '}
-                                <Table.DataCell>{vedtak.tom}</Table.DataCell>
-                                <Table.DataCell>{vedtak.behandletStatus}</Table.DataCell>
-                                <Table.DataCell>{vedtak.opprettet}</Table.DataCell>
-                                <Table.DataCell>{vedtak.avsluttetTidspunkt}</Table.DataCell>
-                            </Table.Row>
-                        ))}
+                        {vedtak.map((vedtak) => {
+                            return (
+                                <Table.Row
+                                    key={vedtak.id}
+                                    className={vedtak.behandletStatus != 'BEHANDLET' ? 'bg-red-100' : ''}
+                                >
+                                    <Table.DataCell>{vedtak.id}</Table.DataCell>
+                                    <Table.DataCell>{vedtak.fom}</Table.DataCell>{' '}
+                                    <Table.DataCell>{vedtak.tom}</Table.DataCell>
+                                    <Table.DataCell>{vedtak.behandletStatus}</Table.DataCell>
+                                    <Table.DataCell>{vedtak.opprettet}</Table.DataCell>
+                                    <Table.DataCell>{vedtak.avsluttetTidspunkt}</Table.DataCell>
+                                    <Table.DataCell>
+                                        {vedtak.behandletStatus == 'OVERLAPP' && (
+                                            <Button
+                                                size="small"
+                                                variant="secondary-neutral"
+                                                onClick={() => {
+                                                    endreStatus.mutate({
+                                                        request: {
+                                                            id: vedtak.id,
+                                                            status: 'OVERLAPP_OK',
+                                                        },
+                                                        fnr: fnr,
+                                                    })
+                                                }}
+                                            >
+                                                Marker ok
+                                            </Button>
+                                        )}
+                                        {vedtak.behandletStatus == 'INGEN_ARBEIDSSOKERPERIODE' ||
+                                            (vedtak.behandletStatus == 'SISTE_ARBEIDSSOKERPERIODE_AVSLUTTET' && (
+                                                <Button
+                                                    size="small"
+                                                    variant="secondary-neutral"
+                                                    onClick={() => {
+                                                        endreStatus.mutate({
+                                                            request: {
+                                                                id: vedtak.id,
+                                                                status: 'NY',
+                                                            },
+                                                            fnr: fnr,
+                                                        })
+                                                    }}
+                                                >
+                                                    Rebehandle
+                                                </Button>
+                                            ))}
+                                    </Table.DataCell>
+                                </Table.Row>
+                            )
+                        })}
                     </Table.Body>
                 </Table>
             )}

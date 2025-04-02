@@ -788,6 +788,13 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
                 behandletStatus: 'NY',
                 opprettet: '2024-05-14T05:12:14.978695Z',
             },
+            {
+                id: '12234233',
+                fom: '2024-05-01',
+                tom: '2024-05-31',
+                behandletStatus: 'OVERLAPP',
+                opprettet: '2024-05-14T05:12:14.978695Z',
+            },
         ])
         res.end()
         return
