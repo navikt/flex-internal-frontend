@@ -20,6 +20,7 @@ import { useFtaVedtak } from '../queryhooks/useFtaVedtak'
 import { useNyttFriskmeldtVedtak } from '../queryhooks/useNyttFriskmeldtVedtak'
 import { useUbehandledeFtaVedtak } from '../queryhooks/useUbehandledeFtaVedtak'
 import { useEndreStatusMutation } from '../queryhooks/useEndreFtaVedtakStatus'
+import { formatterTimestamp } from '../utils/formatterDatoer'
 
 const FriskmeldtPage = () => {
     const [fnr, setFnr] = useState<string>()
@@ -252,6 +253,9 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                     </Table.Header>
                     <Table.Body>
                         {vedtak.map((vedtak) => {
+                            const rebehandle =
+                                vedtak.behandletStatus == 'INGEN_ARBEIDSSOKERPERIODE' ||
+                                vedtak.behandletStatus == 'SISTE_ARBEIDSSOKERPERIODE_AVSLUTTET'
                             return (
                                 <Table.Row
                                     key={vedtak.id}
@@ -261,8 +265,8 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                                     <Table.DataCell>{vedtak.fom}</Table.DataCell>{' '}
                                     <Table.DataCell>{vedtak.tom}</Table.DataCell>
                                     <Table.DataCell>{vedtak.behandletStatus}</Table.DataCell>
-                                    <Table.DataCell>{vedtak.opprettet}</Table.DataCell>
-                                    <Table.DataCell>{vedtak.avsluttetTidspunkt}</Table.DataCell>
+                                    <Table.DataCell>{formatterTimestamp(vedtak.opprettet)}</Table.DataCell>
+                                    <Table.DataCell>{formatterTimestamp(vedtak.avsluttetTidspunkt)}</Table.DataCell>
                                     <Table.DataCell>
                                         {vedtak.behandletStatus == 'OVERLAPP' && (
                                             <Button
@@ -281,24 +285,23 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                                                 Marker ok
                                             </Button>
                                         )}
-                                        {vedtak.behandletStatus == 'INGEN_ARBEIDSSOKERPERIODE' ||
-                                            (vedtak.behandletStatus == 'SISTE_ARBEIDSSOKERPERIODE_AVSLUTTET' && (
-                                                <Button
-                                                    size="small"
-                                                    variant="secondary-neutral"
-                                                    onClick={() => {
-                                                        endreStatus.mutate({
-                                                            request: {
-                                                                id: vedtak.id,
-                                                                status: 'NY',
-                                                            },
-                                                            fnr: fnr,
-                                                        })
-                                                    }}
-                                                >
-                                                    Rebehandle
-                                                </Button>
-                                            ))}
+                                        {rebehandle && (
+                                            <Button
+                                                size="small"
+                                                variant="secondary-neutral"
+                                                onClick={() => {
+                                                    endreStatus.mutate({
+                                                        request: {
+                                                            id: vedtak.id,
+                                                            status: 'NY',
+                                                        },
+                                                        fnr: fnr,
+                                                    })
+                                                }}
+                                            >
+                                                Rebehandle
+                                            </Button>
+                                        )}
                                     </Table.DataCell>
                                 </Table.Row>
                             )
