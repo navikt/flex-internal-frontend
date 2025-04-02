@@ -798,6 +798,21 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
+    if (validert.api == 'GET /api/v1/flex/fta-vedtak/ubehandlede') {
+        res.status(200)
+        res.json([
+            {
+                id: '123',
+                fom: '2024-05-01',
+                tom: '2024-05-31',
+                fnr: '11111111111',
+                behandletStatus: 'NY',
+                opprettet: '2024-05-14T05:12:14.978695Z',
+            },
+        ])
+        res.end()
+        return
+    }
     res.status(404)
     res.end()
 }

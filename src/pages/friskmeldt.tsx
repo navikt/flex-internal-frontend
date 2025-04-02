@@ -52,7 +52,8 @@ const FriskmeldtPage = () => {
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell>ID</Table.HeaderCell>
-                                <Table.HeaderCell>Periode</Table.HeaderCell>
+                                <Table.HeaderCell>Fra</Table.HeaderCell>
+                                <Table.HeaderCell>Til</Table.HeaderCell>
                                 <Table.HeaderCell>Status</Table.HeaderCell>
                                 <Table.HeaderCell>Fnr</Table.HeaderCell>
                             </Table.Row>
@@ -60,15 +61,15 @@ const FriskmeldtPage = () => {
                         <Table.Body>
                             {ubehandlede.map((vedtak) => (
                                 <Table.Row
+                                    className="cursor-pointer"
                                     key={vedtak.id}
                                     onClick={() => {
                                         setFnr(vedtak.fnr)
                                     }}
                                 >
                                     <Table.DataCell>{vedtak.id}</Table.DataCell>
-                                    <Table.DataCell>
-                                        {vedtak.fom} - {vedtak.tom}
-                                    </Table.DataCell>
+                                    <Table.DataCell>{vedtak.fom}</Table.DataCell>{' '}
+                                    <Table.DataCell>{vedtak.tom}</Table.DataCell>
                                     <Table.DataCell>{vedtak.behandletStatus}</Table.DataCell>
                                     <Table.DataCell>{vedtak.fnr}</Table.DataCell>
                                 </Table.Row>
@@ -109,9 +110,9 @@ function ArbeidssokerDetaljerVisning({ arbeidssokerdata }: { arbeidssokerdata: A
                 color: 'bg-red-300 p-8 rounded',
             }
         }
-        if (arbeidssokerdata!.length == 0) {
+        if (arbeidssokerdata![0].avsluttet) {
             return {
-                tekst: 'Siste arbeidssøkerperiode avsluttet ' + arbeidssokerdata![0].avsluttet?.tidspunkt,
+                tekst: 'Siste arbeidssøkerperiode avsluttet ' + arbeidssokerdata![0].avsluttet.tidspunkt,
                 color: 'bg-red-300 p-8 rounded',
             }
         }
@@ -174,7 +175,8 @@ const Soknader = ({ fnr }: { fnr: string }) => {
                 <Table.Header>
                     <Table.Row>
                         <Table.HeaderCell>ID</Table.HeaderCell>
-                        <Table.HeaderCell>Periode</Table.HeaderCell>
+                        <Table.HeaderCell>Fom</Table.HeaderCell>
+                        <Table.HeaderCell>Tom</Table.HeaderCell>
                         <Table.HeaderCell>Status</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
@@ -182,9 +184,7 @@ const Soknader = ({ fnr }: { fnr: string }) => {
                     {friskmeldtsoknader.map((soknad) => (
                         <Table.Row key={soknad.id}>
                             <Table.DataCell>{soknad.id}</Table.DataCell>
-                            <Table.DataCell>
-                                {soknad.fom} - {soknad.tom}
-                            </Table.DataCell>
+                            <Table.DataCell>{soknad.fom}</Table.DataCell> <Table.DataCell>{soknad.tom}</Table.DataCell>
                             <Table.DataCell>{soknad.status}</Table.DataCell>
                         </Table.Row>
                     ))}
@@ -239,7 +239,8 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                     <Table.Header>
                         <Table.Row>
                             <Table.HeaderCell>ID</Table.HeaderCell>
-                            <Table.HeaderCell>Periode</Table.HeaderCell>
+                            <Table.HeaderCell>Fom</Table.HeaderCell>
+                            <Table.HeaderCell>Tom</Table.HeaderCell>
                             <Table.HeaderCell>Status</Table.HeaderCell>
                             <Table.HeaderCell>Opprettet</Table.HeaderCell>
                             <Table.HeaderCell>Avsluttet</Table.HeaderCell>
@@ -252,9 +253,8 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                                 className={vedtak.behandletStatus != 'BEHANDLET' ? 'bg-red-100' : ''}
                             >
                                 <Table.DataCell>{vedtak.id}</Table.DataCell>
-                                <Table.DataCell>
-                                    {vedtak.fom} - {vedtak.tom}
-                                </Table.DataCell>
+                                <Table.DataCell>{vedtak.fom}</Table.DataCell>{' '}
+                                <Table.DataCell>{vedtak.tom}</Table.DataCell>
                                 <Table.DataCell>{vedtak.behandletStatus}</Table.DataCell>
                                 <Table.DataCell>{vedtak.opprettet}</Table.DataCell>
                                 <Table.DataCell>{vedtak.avsluttetTidspunkt}</Table.DataCell>
