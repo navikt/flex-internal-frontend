@@ -35,7 +35,7 @@ export function useEndreStatusMutation() {
             return (await response.json()) as Promise<FriskTilArbeidVedtakDbRecord>
         },
         onSuccess: (_, { callback, fnr }) => {
-            queryClient.invalidateQueries({ queryKey: ['fta-vedtak', fnr] })
+            queryClient.invalidateQueries({ queryKey: ['fta-vedtak-for-person', fnr] })
             queryClient.invalidateQueries({ queryKey: ['ubehandlede-fta-vedtak'] })
             if (callback) callback()
         },
