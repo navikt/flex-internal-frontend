@@ -135,7 +135,7 @@ const FriskmeldtEnkeltPerson = ({ fnr }: { fnr: string }) => {
     const { data: arbeidssokerdata } = useArbeidssoker(fnr, !!fnr && fnr.length == 11)
 
     return (
-        <div className="max-w-4xl">
+        <div className="max-w-6xl">
             <Heading level="1" size="medium" spacing>
                 Friskmeldt {fnr}
             </Heading>
