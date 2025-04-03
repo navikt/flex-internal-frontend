@@ -12,6 +12,7 @@ import {
     useDatepicker,
 } from '@navikt/ds-react'
 import { FileIcon } from '@navikt/aksel-icons'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { initialProps } from '../initialprops/initialProps'
 import { useArbeidssoker, ArbeidssokerDetaljer } from '../queryhooks/useArbeidssoker'
@@ -70,10 +71,10 @@ const FriskmeldtPage = () => {
                         <Table.Header>
                             <Table.Row>
                                 <Table.HeaderCell>ID</Table.HeaderCell>
+                                <Table.HeaderCell>Fnr</Table.HeaderCell>
                                 <Table.HeaderCell>Fra</Table.HeaderCell>
                                 <Table.HeaderCell>Til</Table.HeaderCell>
                                 <Table.HeaderCell>Status</Table.HeaderCell>
-                                <Table.HeaderCell>Fnr</Table.HeaderCell>
                                 <Table.HeaderCell>Opprettet</Table.HeaderCell>
                                 <Table.HeaderCell>Behandlet</Table.HeaderCell>
                             </Table.Row>
@@ -88,10 +89,10 @@ const FriskmeldtPage = () => {
                                     }}
                                 >
                                     <Table.DataCell>{vedtak.id}</Table.DataCell>
-                                    <Table.DataCell>{vedtak.fom}</Table.DataCell>{' '}
+                                    <Table.DataCell>{vedtak.fnr}</Table.DataCell>
+                                    <Table.DataCell>{vedtak.fom}</Table.DataCell>
                                     <Table.DataCell>{vedtak.tom}</Table.DataCell>
                                     <Table.DataCell>{vedtak.behandletStatus}</Table.DataCell>
-                                    <Table.DataCell>{vedtak.fnr}</Table.DataCell>
                                     <Table.DataCell>{formatterTimestamp(vedtak.opprettet)}</Table.DataCell>
                                     <Table.DataCell>{formatterTimestamp(vedtak.behandletTidspunkt)}</Table.DataCell>
                                 </Table.Row>
@@ -218,6 +219,7 @@ const Soknader = ({ fnr }: { fnr: string }) => {
 
 const FtaVedtak = ({ fnr }: { fnr: string }) => {
     const { data: vedtak, isLoading, refetch } = useFtaVedtak(fnr)
+    const queryclient = useQueryClient()
     const nyttVedtak = useNyttFriskmeldtVedtak()
     const ref = useRef<HTMLDialogElement>(null)
     const {
@@ -355,6 +357,10 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                     variant="secondary-neutral"
                     onClick={() => {
                         refetch()
+                        // invalidate query queryKey: ['soknad', fnr],
+                        queryclient.invalidateQueries({
+                            queryKey: ['soknad', fnr],
+                        })
                     }}
                 >
                     Refresh vedtak
