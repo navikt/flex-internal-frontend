@@ -70,6 +70,7 @@ const FriskmeldtPage = () => {
                     <Table>
                         <Table.Header>
                             <Table.Row>
+                                <Table.HeaderCell></Table.HeaderCell>
                                 <Table.HeaderCell>ID</Table.HeaderCell>
                                 <Table.HeaderCell>Fnr</Table.HeaderCell>
                                 <Table.HeaderCell>Fra</Table.HeaderCell>
@@ -80,7 +81,7 @@ const FriskmeldtPage = () => {
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
-                            {ubehandlede.map((vedtak) => (
+                            {ubehandlede.map((vedtak, i) => (
                                 <Table.Row
                                     className="cursor-pointer"
                                     key={vedtak.id}
@@ -88,6 +89,7 @@ const FriskmeldtPage = () => {
                                         setFnr(vedtak.fnr)
                                     }}
                                 >
+                                    <Table.DataCell>{i + 1}</Table.DataCell>
                                     <Table.DataCell>{vedtak.id}</Table.DataCell>
                                     <Table.DataCell>{vedtak.fnr}</Table.DataCell>
                                     <Table.DataCell>{vedtak.fom}</Table.DataCell>
