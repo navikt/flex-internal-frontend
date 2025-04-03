@@ -13,6 +13,7 @@ import {
 } from '@navikt/ds-react'
 import { FileIcon } from '@navikt/aksel-icons'
 import { useQueryClient } from '@tanstack/react-query'
+import dayjs from 'dayjs'
 
 import { initialProps } from '../initialprops/initialProps'
 import { useArbeidssoker, ArbeidssokerDetaljer } from '../queryhooks/useArbeidssoker'
@@ -250,7 +251,6 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
         }
         return Math.ceil((tomDag.getTime() - fomDag.getTime()) / (1000 * 60 * 60 * 24 * 7))
     }
-
     const weeks = regnUtUker()
     return (
         <>
@@ -404,8 +404,8 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                             nyttVedtak.mutate({
                                 request: {
                                     fnr: fnr,
-                                    fom: fomDag?.toISOString().slice(0, 10) ?? '',
-                                    tom: tomDag?.toISOString().slice(0, 10) ?? '',
+                                    fom: fomDag ? dayjs(fomDag).format('YYYY-MM-DD') : '',
+                                    tom: tomDag ? dayjs(tomDag).format('YYYY-MM-DD') : '',
                                 },
                                 callback: () => {
                                     ref.current?.close()
