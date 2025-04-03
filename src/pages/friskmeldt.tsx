@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
     Alert,
     BodyLong,
@@ -25,6 +25,22 @@ import { formatterTimestamp } from '../utils/formatterDatoer'
 const FriskmeldtPage = () => {
     const [fnr, setFnr] = useState<string>()
     const { data: ubehandlede } = useUbehandledeFtaVedtak()
+    //
+    useEffect(() => {
+        if (fnr) {
+            window.history.pushState({ personSelected: true }, '')
+        }
+    }, [fnr])
+
+    useEffect(() => {
+        const onPopState = () => {
+            if (fnr) {
+                setFnr('')
+            }
+        }
+        window.addEventListener('popstate', onPopState)
+        return () => window.removeEventListener('popstate', onPopState)
+    }, [fnr])
 
     if (!fnr) {
         return (
@@ -58,6 +74,8 @@ const FriskmeldtPage = () => {
                                 <Table.HeaderCell>Til</Table.HeaderCell>
                                 <Table.HeaderCell>Status</Table.HeaderCell>
                                 <Table.HeaderCell>Fnr</Table.HeaderCell>
+                                <Table.HeaderCell>Opprettet</Table.HeaderCell>
+                                <Table.HeaderCell>Behandlet</Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
                         <Table.Body>
@@ -74,6 +92,8 @@ const FriskmeldtPage = () => {
                                     <Table.DataCell>{vedtak.tom}</Table.DataCell>
                                     <Table.DataCell>{vedtak.behandletStatus}</Table.DataCell>
                                     <Table.DataCell>{vedtak.fnr}</Table.DataCell>
+                                    <Table.DataCell>{formatterTimestamp(vedtak.opprettet)}</Table.DataCell>
+                                    <Table.DataCell>{formatterTimestamp(vedtak.behandletTidspunkt)}</Table.DataCell>
                                 </Table.Row>
                             ))}
                         </Table.Body>
@@ -197,7 +217,7 @@ const Soknader = ({ fnr }: { fnr: string }) => {
 }
 
 const FtaVedtak = ({ fnr }: { fnr: string }) => {
-    const { data: vedtak, isLoading } = useFtaVedtak(fnr)
+    const { data: vedtak, isLoading, refetch } = useFtaVedtak(fnr)
     const nyttVedtak = useNyttFriskmeldtVedtak()
     const ref = useRef<HTMLDialogElement>(null)
     const {
@@ -253,14 +273,25 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                     </Table.Header>
                     <Table.Body>
                         {vedtak.map((vedtak) => {
+                            const fargeFraStatus = () => {
+                                switch (vedtak.behandletStatus) {
+                                    case 'BEHANDLET':
+                                        return ''
+                                    case 'NY':
+                                        return 'bg-yellow-100'
+                                    case 'OVERLAPP':
+                                        return 'bg-red-100'
+                                    case 'OVERLAPP_OK':
+                                        return ''
+                                    default:
+                                        return 'bg-red-100'
+                                }
+                            }
                             const rebehandle =
                                 vedtak.behandletStatus == 'INGEN_ARBEIDSSOKERPERIODE' ||
                                 vedtak.behandletStatus == 'SISTE_ARBEIDSSOKERPERIODE_AVSLUTTET'
                             return (
-                                <Table.Row
-                                    key={vedtak.id}
-                                    className={vedtak.behandletStatus != 'BEHANDLET' ? 'bg-red-100' : ''}
-                                >
+                                <Table.Row key={vedtak.id} className={fargeFraStatus()}>
                                     <Table.DataCell>{vedtak.id}</Table.DataCell>
                                     <Table.DataCell>{vedtak.fom}</Table.DataCell>{' '}
                                     <Table.DataCell>{vedtak.tom}</Table.DataCell>
@@ -309,16 +340,26 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                     </Table.Body>
                 </Table>
             )}
-            <Button
-                className="mb-8"
-                size="small"
-                variant="secondary"
-                onClick={() => {
-                    ref.current?.showModal()
-                }}
-            >
-                Legg til vedtak
-            </Button>
+            <div className="mb-8 flex gap-8">
+                <Button
+                    size="small"
+                    variant="secondary-neutral"
+                    onClick={() => {
+                        ref.current?.showModal()
+                    }}
+                >
+                    Legg til vedtak
+                </Button>
+                <Button
+                    size="small"
+                    variant="secondary-neutral"
+                    onClick={() => {
+                        refetch()
+                    }}
+                >
+                    Refresh vedtak
+                </Button>
+            </div>
             <Modal
                 ref={ref}
                 header={{
