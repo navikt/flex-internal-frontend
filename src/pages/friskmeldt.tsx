@@ -23,6 +23,7 @@ import { useNyttFriskmeldtVedtak } from '../queryhooks/useNyttFriskmeldtVedtak'
 import { useUbehandledeFtaVedtak } from '../queryhooks/useUbehandledeFtaVedtak'
 import { useEndreStatusMutation } from '../queryhooks/useEndreFtaVedtakStatus'
 import { formatterTimestamp } from '../utils/formatterDatoer'
+import ArbeidssokerperioderTable from '../components/FlexArbeidssokerregisterPerioder'
 
 const FriskmeldtPage = () => {
     const [fnr, setFnr] = useState<string>()
@@ -168,6 +169,7 @@ const FriskmeldtEnkeltPerson = ({ fnr }: { fnr: string }) => {
             <ArbeidssokerDetaljerVisning arbeidssokerdata={arbeidssokerdata} />
             <FtaVedtak fnr={fnr} />
             <Soknader fnr={fnr} />
+            <ArbeidssokerperioderTable fnr={fnr} />
         </div>
     )
 }
