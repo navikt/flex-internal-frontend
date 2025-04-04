@@ -242,7 +242,7 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
         return <div>Laster vedtak...</div>
     }
 
-    const ok = fomDag && tomDag && fomDag < tomDag
+    const ok = fomDag && tomDag && fomDag <= tomDag
 
     // weeks between fom and tom
     function regnUtUker() {
@@ -390,9 +390,9 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                         <>
                             <BodyLong spacing>{weeks} uker valgt.</BodyLong>
                             {!ok && <Alert variant="warning">Fra og med må være før til og med</Alert>}
+                            {weeks > 12 && <Alert variant="warning">Vedtak er over 12 uker</Alert>}
                         </>
                     )}
-                    {weeks && weeks > 11 && <Alert variant="warning">Vedtak er over 11 uker</Alert>}
                     {nyttVedtak.error && <Alert variant="error">{JSON.stringify(nyttVedtak.error)}</Alert>}
                 </Modal.Body>
                 <Modal.Footer>
