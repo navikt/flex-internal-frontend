@@ -37,7 +37,7 @@ export function useFlexArbeidssokerperioder(fnr: string): UseQueryResult<FlexInt
         queryKey: ['arbeidssokerperioder', fnr],
         queryFn: () => {
             return fetchJsonMedRequestId(
-                '/api/flex-arbeidssokerregister-oppdatering/api/v1/internal/arbeidssokerperioder',
+                '/api/flex-arbeidssokerregister-oppdatering/api/v1/flex/arbeidssokerperioder',
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
