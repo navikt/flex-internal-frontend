@@ -50,6 +50,7 @@ spec:
     outbound:
       rules:
         - application: sykepengesoknad-backend
+        - application: flex-arbeidssokerregister-oppdatering
         - application: flex-inntektsmelding-status
       external:
         - host: reops-proxy.intern.nav.no

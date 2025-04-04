@@ -820,6 +820,75 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
+    if (validert.api === 'POST /api/v1/internal/arbeidssokerperioder') {
+        res.status(200).json({
+            arbeidssokerperioder: [
+                {
+                    id: 'periode1',
+                    fnr: '11111111111',
+                    vedtaksperiodeId: 'vedtak1',
+                    vedtaksperiodeFom: '2024-06-01',
+                    vedtaksperiodeTom: '2024-06-30',
+                    opprettet: '2024-06-10T12:00:00.000Z',
+                    arbeidssokerperiodeId: 'ap1',
+                    sendtPaaVegneAv: null,
+                    avsluttetMottatt: null,
+                    avsluttetTidspunkt: null,
+                    sendtAvsluttet: null,
+                    avsluttetAarsak: null,
+                    periodebekreftelser: [
+                        {
+                            id: 'bek1',
+                            arbeidssokerperiodeId: 'periode1',
+                            sykepengesoknadId: 'sok1',
+                            fortsattArbeidssoker: true,
+                            inntektUnderveis: false,
+                            opprettet: '2024-06-11T12:00:00.000Z',
+                            avsluttendeSoknad: false,
+                        },
+                        {
+                            id: 'bek2',
+                            arbeidssokerperiodeId: 'periode1',
+                            sykepengesoknadId: 'sok2',
+                            fortsattArbeidssoker: true,
+                            inntektUnderveis: false,
+                            opprettet: '2024-06-12T12:00:00.000Z',
+                            avsluttendeSoknad: false,
+                        },
+                        {
+                            id: 'bek3',
+                            arbeidssokerperiodeId: 'periode1',
+                            sykepengesoknadId: 'sok3',
+                            fortsattArbeidssoker: false,
+                            inntektUnderveis: true,
+                            opprettet: '2024-06-13T12:00:00.000Z',
+                            avsluttendeSoknad: false,
+                        },
+                        {
+                            id: 'bek4',
+                            arbeidssokerperiodeId: 'periode1',
+                            sykepengesoknadId: 'sok4',
+                            fortsattArbeidssoker: false,
+                            inntektUnderveis: false,
+                            opprettet: '2024-06-14T12:00:00.000Z',
+                            avsluttendeSoknad: true,
+                        },
+                        {
+                            id: 'bek5',
+                            arbeidssokerperiodeId: 'periode1',
+                            sykepengesoknadId: 'sok5',
+                            fortsattArbeidssoker: true,
+                            inntektUnderveis: true,
+                            opprettet: '2024-06-15T12:00:00.000Z',
+                            avsluttendeSoknad: false,
+                        },
+                    ],
+                },
+            ],
+        })
+        res.end()
+        return
+    }
     res.status(404)
     res.end()
 }
