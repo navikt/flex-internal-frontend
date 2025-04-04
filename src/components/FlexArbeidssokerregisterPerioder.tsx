@@ -72,7 +72,9 @@ const ArbeidssokerperioderTable: React.FC<ArbeidssokerperioderTableProps> = ({ f
 
     return (
         <>
-            <Heading size="small">Arbeidssøkerperioder</Heading>
+            <Heading size="small" className="mt-8">
+                Arbeidssøkerperioder
+            </Heading>
             <Detail spacing>Oversikt over registrerte arbeidssøkerperioder med tilhørende periodebekreftelser</Detail>
             <Table size="small">
                 <Table.Header>

@@ -36,11 +36,14 @@ export function useFlexArbeidssokerperioder(fnr: string): UseQueryResult<FlexInt
     return useQuery<FlexInternalResponse, Error>({
         queryKey: ['arbeidssokerperioder', fnr],
         queryFn: () => {
-            return fetchJsonMedRequestId('/api/v1/internal/arbeidssokerperioder', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ fnr }),
-            })
+            return fetchJsonMedRequestId(
+                '/api/flex-arbeidssokerregister-oppdatering/api/v1/internal/arbeidssokerperioder',
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fnr }),
+                },
+            )
         },
     })
 }
