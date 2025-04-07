@@ -58,7 +58,7 @@ const FriskmeldtPage = () => {
                         }
 
                         if (fnr.length == 11) {
-                            setFnr(input)
+                            setFnr(fnr)
                         } else {
                             window.alert('Fnr må være 11 siffer')
                         }
