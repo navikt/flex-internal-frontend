@@ -34,7 +34,6 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
         '/arbeidssoker': 'Se rådata fra arbeidssøkerregisteret',
         '/vedtaksperioder': 'Vedtaksperioder i flex-inntektsmelding-status',
         '/amplitude': 'Amplitude',
-        '/fta-import': 'Batch import av løpende friskmeldt vedtak',
     }
 
     return (

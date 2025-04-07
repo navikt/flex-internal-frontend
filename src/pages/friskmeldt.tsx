@@ -52,7 +52,12 @@ const FriskmeldtPage = () => {
                     className="w-56"
                     label="Søk opp person"
                     onSearchClick={(input) => {
-                        if (input.length == 11) {
+                        let fnr = input.trim()
+                        if (fnr.length == 10) {
+                            fnr = '0' + fnr
+                        }
+
+                        if (fnr.length == 11) {
                             setFnr(input)
                         } else {
                             window.alert('Fnr må være 11 siffer')
