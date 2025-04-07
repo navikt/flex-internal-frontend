@@ -144,12 +144,14 @@ function ArbeidssokerDetaljerVisning({ arbeidssokerdata }: { arbeidssokerdata: A
         }
         if (arbeidssokerdata![0].avsluttet) {
             return {
-                tekst: 'Siste arbeidssøkerperiode avsluttet ' + arbeidssokerdata![0].avsluttet.tidspunkt,
+                tekst:
+                    'Siste arbeidssøkerperiode avsluttet ' +
+                    formatterTimestamp(arbeidssokerdata![0].avsluttet.tidspunkt),
                 color: 'bg-red-300 p-8 rounded',
             }
         }
         return {
-            tekst: 'Arbeidssøkerperiode startet ' + arbeidssokerdata![0].startet.tidspunkt,
+            tekst: 'Arbeidssøkerperiode startet ' + formatterTimestamp(arbeidssokerdata![0].startet.tidspunkt),
             color: 'py-8',
         }
     }
