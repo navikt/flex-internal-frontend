@@ -308,6 +308,7 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                                 }
                             }
                             const rebehandle =
+                                vedtak.behandletStatus == 'OVERLAPP' ||
                                 vedtak.behandletStatus == 'INGEN_ARBEIDSSOKERPERIODE' ||
                                 vedtak.behandletStatus == 'SISTE_ARBEIDSSOKERPERIODE_AVSLUTTET'
                             return (
