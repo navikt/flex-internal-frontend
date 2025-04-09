@@ -20,6 +20,7 @@ const tillatteApier = [
     'GET /api/v1/flex/fta-vedtak/ubehandlede',
     'POST /api/v1/flex/fta-vedtak-for-person/opprett',
     'POST /api/v1/flex/fta-vedtak/endre-status',
+    'POST /api/v1/flex/fta-vedtak/ignorer-arbs',
 ]
 
 const handler = beskyttetApi(async (req: NextApiRequest, res: NextApiResponse) => {
