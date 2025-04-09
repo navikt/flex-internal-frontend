@@ -26,6 +26,7 @@ import { useUbehandledeFtaVedtak } from '../queryhooks/useUbehandledeFtaVedtak'
 import { useEndreStatusMutation } from '../queryhooks/useEndreFtaVedtakStatus'
 import { formatterTimestamp } from '../utils/formatterDatoer'
 import ArbeidssokerperioderTable from '../components/FlexArbeidssokerregisterPerioder'
+import { useFtaVedtakIgnorerArbeidssokerregister } from '../queryhooks/useFtaVedtakIgnorerArbeidssøkerregister'
 
 const FriskmeldtPage = () => {
     const [fnr, setFnr] = useState<string>()
@@ -248,6 +249,7 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
     } = useDatepicker({ fromDate: new Date('2025-01-01') })
     const [ignorerArbeidssokerregister, setIgnorerArbeidssokerregister] = useState(false)
     const endreStatus = useEndreStatusMutation()
+    const ignorerArbs = useFtaVedtakIgnorerArbeidssokerregister()
 
     if (isLoading || vedtak === undefined) {
         return <div>Laster vedtak...</div>
@@ -278,6 +280,8 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                 <Table size="small" className="mb-8">
                     <Table.Header>
                         <Table.Row>
+                            <Table.HeaderCell></Table.HeaderCell>
+
                             <Table.HeaderCell>ID</Table.HeaderCell>
                             <Table.HeaderCell>Fom</Table.HeaderCell>
                             <Table.HeaderCell>Tom</Table.HeaderCell>
@@ -285,7 +289,6 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                             <Table.HeaderCell>Ignorer arbeidssøker</Table.HeaderCell>
                             <Table.HeaderCell>Opprettet</Table.HeaderCell>
                             <Table.HeaderCell>Avsluttet</Table.HeaderCell>
-                            <Table.HeaderCell></Table.HeaderCell>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
@@ -308,7 +311,82 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                                 vedtak.behandletStatus == 'INGEN_ARBEIDSSOKERPERIODE' ||
                                 vedtak.behandletStatus == 'SISTE_ARBEIDSSOKERPERIODE_AVSLUTTET'
                             return (
-                                <Table.Row key={vedtak.id} className={fargeFraStatus()}>
+                                <Table.ExpandableRow
+                                    key={vedtak.id}
+                                    className={fargeFraStatus()}
+                                    content={
+                                        <div className="flex gap-8">
+                                            {vedtak.behandletStatus == 'OVERLAPP' && (
+                                                <Button
+                                                    size="small"
+                                                    variant="secondary-neutral"
+                                                    onClick={() => {
+                                                        endreStatus.mutate({
+                                                            request: {
+                                                                id: vedtak.id,
+                                                                status: 'OVERLAPP_OK',
+                                                            },
+                                                            fnr: fnr,
+                                                        })
+                                                    }}
+                                                >
+                                                    Marker ok
+                                                </Button>
+                                            )}
+                                            {vedtak.behandletStatus == 'BEHANDLET' && (
+                                                <Button
+                                                    size="small"
+                                                    variant="secondary-neutral"
+                                                    onClick={() => {
+                                                        endreStatus.mutate({
+                                                            request: {
+                                                                id: vedtak.id,
+                                                                status: 'NY',
+                                                            },
+                                                            fnr: fnr,
+                                                        })
+                                                    }}
+                                                >
+                                                    Sett til NY og rebehandle
+                                                </Button>
+                                            )}
+                                            {!vedtak.ignorerArbeidssokerregister && (
+                                                <Button
+                                                    size="small"
+                                                    variant="secondary-neutral"
+                                                    onClick={() => {
+                                                        ignorerArbs.mutate({
+                                                            request: {
+                                                                id: vedtak.id,
+                                                                ignorerArbeidssokerregister: true,
+                                                            },
+                                                            fnr: fnr,
+                                                        })
+                                                    }}
+                                                >
+                                                    Ignorer arbeidssøkerregister
+                                                </Button>
+                                            )}
+                                            {rebehandle && (
+                                                <Button
+                                                    size="small"
+                                                    variant="secondary-neutral"
+                                                    onClick={() => {
+                                                        endreStatus.mutate({
+                                                            request: {
+                                                                id: vedtak.id,
+                                                                status: 'NY',
+                                                            },
+                                                            fnr: fnr,
+                                                        })
+                                                    }}
+                                                >
+                                                    Rebehandle
+                                                </Button>
+                                            )}
+                                        </div>
+                                    }
+                                >
                                     <Table.DataCell>{vedtak.id}</Table.DataCell>
                                     <Table.DataCell>{vedtak.fom}</Table.DataCell>{' '}
                                     <Table.DataCell>{vedtak.tom}</Table.DataCell>
@@ -316,43 +394,8 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                                     <Table.DataCell>{vedtak.ignorerArbeidssokerregister && '✅'}</Table.DataCell>
                                     <Table.DataCell>{formatterTimestamp(vedtak.opprettet)}</Table.DataCell>
                                     <Table.DataCell>{formatterTimestamp(vedtak.avsluttetTidspunkt)}</Table.DataCell>
-                                    <Table.DataCell>
-                                        {vedtak.behandletStatus == 'OVERLAPP' && (
-                                            <Button
-                                                size="small"
-                                                variant="secondary-neutral"
-                                                onClick={() => {
-                                                    endreStatus.mutate({
-                                                        request: {
-                                                            id: vedtak.id,
-                                                            status: 'OVERLAPP_OK',
-                                                        },
-                                                        fnr: fnr,
-                                                    })
-                                                }}
-                                            >
-                                                Marker ok
-                                            </Button>
-                                        )}
-                                        {rebehandle && (
-                                            <Button
-                                                size="small"
-                                                variant="secondary-neutral"
-                                                onClick={() => {
-                                                    endreStatus.mutate({
-                                                        request: {
-                                                            id: vedtak.id,
-                                                            status: 'NY',
-                                                        },
-                                                        fnr: fnr,
-                                                    })
-                                                }}
-                                            >
-                                                Rebehandle
-                                            </Button>
-                                        )}
-                                    </Table.DataCell>
-                                </Table.Row>
+                                    <Table.DataCell></Table.DataCell>
+                                </Table.ExpandableRow>
                             )
                         })}
                     </Table.Body>
@@ -408,7 +451,7 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                         </>
                     )}
                     <RadioGroup
-                        size={'small'}
+                        size="small"
                         legend="Arbeidsøkerregister"
                         onChange={() => {
                             setIgnorerArbeidssokerregister(!ignorerArbeidssokerregister)
