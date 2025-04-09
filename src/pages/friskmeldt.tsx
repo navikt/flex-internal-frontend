@@ -7,6 +7,8 @@ import {
     Detail,
     Heading,
     Modal,
+    Radio,
+    RadioGroup,
     Search,
     Table,
     useDatepicker,
@@ -244,7 +246,7 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
         inputProps: tomInputProps,
         selectedDay: tomDag,
     } = useDatepicker({ fromDate: new Date('2025-01-01') })
-
+    const [ignorerArbeidssokerregister, setIgnorerArbeidssokerregister] = useState(false)
     const endreStatus = useEndreStatusMutation()
 
     if (isLoading || vedtak === undefined) {
@@ -260,6 +262,7 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
         }
         return Math.ceil((tomDag.getTime() - fomDag.getTime()) / (1000 * 60 * 60 * 24 * 7))
     }
+
     const weeks = regnUtUker()
     return (
         <>
@@ -279,6 +282,7 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                             <Table.HeaderCell>Fom</Table.HeaderCell>
                             <Table.HeaderCell>Tom</Table.HeaderCell>
                             <Table.HeaderCell>Status</Table.HeaderCell>
+                            <Table.HeaderCell>Ignorer arbeidssøker</Table.HeaderCell>
                             <Table.HeaderCell>Opprettet</Table.HeaderCell>
                             <Table.HeaderCell>Avsluttet</Table.HeaderCell>
                             <Table.HeaderCell></Table.HeaderCell>
@@ -309,6 +313,7 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                                     <Table.DataCell>{vedtak.fom}</Table.DataCell>{' '}
                                     <Table.DataCell>{vedtak.tom}</Table.DataCell>
                                     <Table.DataCell>{vedtak.behandletStatus}</Table.DataCell>
+                                    <Table.DataCell>{vedtak.ignorerArbeidssokerregister && '✅'}</Table.DataCell>
                                     <Table.DataCell>{formatterTimestamp(vedtak.opprettet)}</Table.DataCell>
                                     <Table.DataCell>{formatterTimestamp(vedtak.avsluttetTidspunkt)}</Table.DataCell>
                                     <Table.DataCell>
@@ -393,7 +398,7 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                             <DatePicker.Input {...tomInputProps} label="Til og med" />
                         </DatePicker>
                     </div>
-                    {/* weeks is not undefined */}
+
                     {weeks === undefined && <BodyLong spacing>Velg fra og til dato</BodyLong>}
                     {weeks !== undefined && (
                         <>
@@ -402,6 +407,17 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                             {weeks > 12 && <Alert variant="warning">Vedtak er over 12 uker</Alert>}
                         </>
                     )}
+                    <RadioGroup
+                        size={'small'}
+                        legend="Arbeidsøkerregister"
+                        onChange={() => {
+                            setIgnorerArbeidssokerregister(!ignorerArbeidssokerregister)
+                        }}
+                        value={ignorerArbeidssokerregister + ''}
+                    >
+                        <Radio value="false">Overta ansvar og gjør oppdateringer i registeret</Radio>
+                        <Radio value="true">Ignorer arbeidssøkerregisteret</Radio>
+                    </RadioGroup>
                     {nyttVedtak.error && <Alert variant="error">{JSON.stringify(nyttVedtak.error)}</Alert>}
                 </Modal.Body>
                 <Modal.Footer>
@@ -413,6 +429,7 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                             nyttVedtak.mutate({
                                 request: {
                                     fnr: fnr,
+                                    ignorerArbeidssokerregister: ignorerArbeidssokerregister,
                                     fom: fomDag ? dayjs(fomDag).format('YYYY-MM-DD') : '',
                                     tom: tomDag ? dayjs(tomDag).format('YYYY-MM-DD') : '',
                                 },

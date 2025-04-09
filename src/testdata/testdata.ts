@@ -786,6 +786,7 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
                 fom: '2024-05-01',
                 tom: '2024-05-31',
                 behandletStatus: 'NY',
+                ignorerArbeidssokerregister: true,
                 opprettet: '2024-05-14T05:12:14.978695Z',
             },
             {

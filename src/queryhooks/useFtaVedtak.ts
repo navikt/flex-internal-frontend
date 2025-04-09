@@ -10,6 +10,7 @@ export interface FtaVedtak {
     tom: string
     fnr: string
     behandletStatus: string
+    ignorerArbeidssokerregister?: boolean
     behandletTidspunkt?: string
     avsluttetTidspunkt?: string
 }

@@ -5,6 +5,7 @@ interface MutationProps {
         fnr: string
         fom: string
         tom: string
+        ignorerArbeidssokerregister: boolean
     }
     callback: () => void
 }
