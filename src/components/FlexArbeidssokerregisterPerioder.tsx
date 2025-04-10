@@ -85,6 +85,8 @@ const ArbeidssokerperioderTable: React.FC<ArbeidssokerperioderTableProps> = ({ f
                         <Table.HeaderCell>Vedtaksperiode fra</Table.HeaderCell>
                         <Table.HeaderCell>Vedtaksperiode til</Table.HeaderCell>
                         <Table.HeaderCell>Opprettet</Table.HeaderCell>
+                        <Table.HeaderCell>Avsluttet</Table.HeaderCell>
+                        <Table.HeaderCell>Avsluttet årsak</Table.HeaderCell>
                         <Table.HeaderCell>Antall periodebekreftelser</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
@@ -102,6 +104,11 @@ const ArbeidssokerperioderTable: React.FC<ArbeidssokerperioderTableProps> = ({ f
                                 <Table.DataCell>{periode.vedtaksperiodeFom}</Table.DataCell>
                                 <Table.DataCell>{periode.vedtaksperiodeTom}</Table.DataCell>
                                 <Table.DataCell>{dayjs(periode.opprettet).format('DD.MM.YYYY HH:mm')}</Table.DataCell>
+                                <Table.DataCell>
+                                    {periode.avsluttetTidspunkt &&
+                                        dayjs(periode.avsluttetTidspunkt).format('DD.MM.YYYY HH:mm')}
+                                </Table.DataCell>
+                                <Table.DataCell>{periode.avsluttetAarsak}</Table.DataCell>
                                 <Table.DataCell>
                                     {periode.periodebekreftelser ? periode.periodebekreftelser.length : 0}
                                 </Table.DataCell>

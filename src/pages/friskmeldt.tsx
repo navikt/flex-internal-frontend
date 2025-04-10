@@ -13,7 +13,7 @@ import {
     Table,
     useDatepicker,
 } from '@navikt/ds-react'
-import { FileIcon } from '@navikt/aksel-icons'
+import { ArrowsCirclepathIcon, FileIcon } from '@navikt/aksel-icons'
 import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
@@ -171,12 +171,32 @@ function ArbeidssokerDetaljerVisning({ arbeidssokerdata }: { arbeidssokerdata: A
 
 const FriskmeldtEnkeltPerson = ({ fnr }: { fnr: string }) => {
     const { data: arbeidssokerdata } = useArbeidssoker(fnr, !!fnr && fnr.length == 11)
-
+    const queryclient = useQueryClient()
     return (
         <div className="max-w-6xl">
             <Heading level="1" size="medium" spacing>
                 Friskmeldt {fnr}
             </Heading>
+            <Button
+                icon={<ArrowsCirclepathIcon aria-hidden />}
+                className="mb-6"
+                size="small"
+                variant="secondary"
+                onClick={() => {
+                    queryclient.invalidateQueries({
+                        queryKey: ['fta-vedtak-for-person', fnr],
+                    })
+                    // invalidate query queryKey: ['soknad', fnr],
+                    queryclient.invalidateQueries({
+                        queryKey: ['soknad', fnr],
+                    })
+                    queryclient.invalidateQueries({
+                        queryKey: ['arbeidssokerperioder', fnr],
+                    })
+                }}
+            >
+                Refresh
+            </Button>
             <ArbeidssokerDetaljerVisning arbeidssokerdata={arbeidssokerdata} />
             <FtaVedtakComp fnr={fnr} />
             <Soknader fnr={fnr} />
@@ -268,8 +288,7 @@ const EndreTomDato = ({ vedtak }: { vedtak: FtaVedtak }) => {
 }
 
 const FtaVedtakComp = ({ fnr }: { fnr: string }) => {
-    const { data: vedtak, isLoading, refetch } = useFtaVedtak(fnr)
-    const queryclient = useQueryClient()
+    const { data: vedtak, isLoading } = useFtaVedtak(fnr)
     const nyttVedtak = useNyttFriskmeldtVedtak()
     const ref = useRef<HTMLDialogElement>(null)
     const {
@@ -450,19 +469,6 @@ const FtaVedtakComp = ({ fnr }: { fnr: string }) => {
                     }}
                 >
                     Legg til vedtak
-                </Button>
-                <Button
-                    size="small"
-                    variant="secondary-neutral"
-                    onClick={() => {
-                        refetch()
-                        // invalidate query queryKey: ['soknad', fnr],
-                        queryclient.invalidateQueries({
-                            queryKey: ['soknad', fnr],
-                        })
-                    }}
-                >
-                    Refresh vedtak
                 </Button>
             </div>
             <Modal
