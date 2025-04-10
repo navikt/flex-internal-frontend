@@ -20,13 +20,14 @@ import dayjs from 'dayjs'
 import { initialProps } from '../initialprops/initialProps'
 import { useArbeidssoker, ArbeidssokerDetaljer } from '../queryhooks/useArbeidssoker'
 import { useSoknader } from '../queryhooks/useSoknader'
-import { useFtaVedtak } from '../queryhooks/useFtaVedtak'
+import { FtaVedtak, useFtaVedtak } from '../queryhooks/useFtaVedtak'
 import { useNyttFriskmeldtVedtak } from '../queryhooks/useNyttFriskmeldtVedtak'
 import { useUbehandledeFtaVedtak } from '../queryhooks/useUbehandledeFtaVedtak'
 import { useEndreStatusMutation } from '../queryhooks/useEndreFtaVedtakStatus'
 import { formatterTimestamp } from '../utils/formatterDatoer'
 import ArbeidssokerperioderTable from '../components/FlexArbeidssokerregisterPerioder'
 import { useFtaVedtakIgnorerArbeidssokerregister } from '../queryhooks/useFtaVedtakIgnorerArbeidssøkerregister'
+import { useEndreFtaVedtakTomMutation } from '../queryhooks/useEndreFtaVedtakTom'
 
 const FriskmeldtPage = () => {
     const [fnr, setFnr] = useState<string>()
@@ -177,7 +178,7 @@ const FriskmeldtEnkeltPerson = ({ fnr }: { fnr: string }) => {
                 Friskmeldt {fnr}
             </Heading>
             <ArbeidssokerDetaljerVisning arbeidssokerdata={arbeidssokerdata} />
-            <FtaVedtak fnr={fnr} />
+            <FtaVedtakComp fnr={fnr} />
             <Soknader fnr={fnr} />
             <ArbeidssokerperioderTable fnr={fnr} />
         </div>
@@ -232,7 +233,41 @@ const Soknader = ({ fnr }: { fnr: string }) => {
     )
 }
 
-const FtaVedtak = ({ fnr }: { fnr: string }) => {
+const EndreTomDato = ({ vedtak }: { vedtak: FtaVedtak }) => {
+    const { datepickerProps, inputProps, selectedDay } = useDatepicker({
+        defaultSelected: new Date(vedtak.tom),
+    })
+    const formattertSelected = dayjs(selectedDay).format('YYYY-MM-DD')
+    const endreTom = useEndreFtaVedtakTomMutation()
+    return (
+        <div className="mt-8">
+            <DatePicker {...datepickerProps}>
+                <DatePicker.Input {...inputProps} label="Endre tom" size="small" />
+            </DatePicker>
+            {formattertSelected !== vedtak.tom && (
+                <Button
+                    className="mt-8"
+                    size="small"
+                    variant="primary"
+                    loading={endreTom.isPending}
+                    onClick={() => {
+                        endreTom.mutate({
+                            request: {
+                                id: vedtak.id,
+                                tom: formattertSelected,
+                            },
+                            fnr: vedtak.fnr,
+                        })
+                    }}
+                >
+                    Lagre ny tom
+                </Button>
+            )}
+        </div>
+    )
+}
+
+const FtaVedtakComp = ({ fnr }: { fnr: string }) => {
     const { data: vedtak, isLoading, refetch } = useFtaVedtak(fnr)
     const queryclient = useQueryClient()
     const nyttVedtak = useNyttFriskmeldtVedtak()
@@ -307,6 +342,7 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                                         return 'bg-red-100'
                                 }
                             }
+
                             const rebehandle =
                                 vedtak.behandletStatus == 'OVERLAPP' ||
                                 vedtak.behandletStatus == 'INGEN_ARBEIDSSOKERPERIODE' ||
@@ -316,75 +352,78 @@ const FtaVedtak = ({ fnr }: { fnr: string }) => {
                                     key={vedtak.id}
                                     className={fargeFraStatus()}
                                     content={
-                                        <div className="flex gap-8">
-                                            {vedtak.behandletStatus == 'OVERLAPP' && (
-                                                <Button
-                                                    size="small"
-                                                    variant="secondary-neutral"
-                                                    onClick={() => {
-                                                        endreStatus.mutate({
-                                                            request: {
-                                                                id: vedtak.id,
-                                                                status: 'OVERLAPP_OK',
-                                                            },
-                                                            fnr: fnr,
-                                                        })
-                                                    }}
-                                                >
-                                                    Marker ok
-                                                </Button>
-                                            )}
-                                            {vedtak.behandletStatus == 'BEHANDLET' && (
-                                                <Button
-                                                    size="small"
-                                                    variant="secondary-neutral"
-                                                    onClick={() => {
-                                                        endreStatus.mutate({
-                                                            request: {
-                                                                id: vedtak.id,
-                                                                status: 'NY',
-                                                            },
-                                                            fnr: fnr,
-                                                        })
-                                                    }}
-                                                >
-                                                    Sett til NY og rebehandle
-                                                </Button>
-                                            )}
-                                            {!vedtak.ignorerArbeidssokerregister && (
-                                                <Button
-                                                    size="small"
-                                                    variant="secondary-neutral"
-                                                    onClick={() => {
-                                                        ignorerArbs.mutate({
-                                                            request: {
-                                                                id: vedtak.id,
-                                                                ignorerArbeidssokerregister: true,
-                                                            },
-                                                            fnr: fnr,
-                                                        })
-                                                    }}
-                                                >
-                                                    Ignorer arbeidssøkerregister
-                                                </Button>
-                                            )}
-                                            {rebehandle && (
-                                                <Button
-                                                    size="small"
-                                                    variant="secondary-neutral"
-                                                    onClick={() => {
-                                                        endreStatus.mutate({
-                                                            request: {
-                                                                id: vedtak.id,
-                                                                status: 'NY',
-                                                            },
-                                                            fnr: fnr,
-                                                        })
-                                                    }}
-                                                >
-                                                    Rebehandle
-                                                </Button>
-                                            )}
+                                        <div>
+                                            <div className="flex gap-8">
+                                                {vedtak.behandletStatus == 'OVERLAPP' && (
+                                                    <Button
+                                                        size="small"
+                                                        variant="secondary-neutral"
+                                                        onClick={() => {
+                                                            endreStatus.mutate({
+                                                                request: {
+                                                                    id: vedtak.id,
+                                                                    status: 'OVERLAPP_OK',
+                                                                },
+                                                                fnr: fnr,
+                                                            })
+                                                        }}
+                                                    >
+                                                        Marker ok
+                                                    </Button>
+                                                )}
+                                                {vedtak.behandletStatus == 'BEHANDLET' && (
+                                                    <Button
+                                                        size="small"
+                                                        variant="secondary-neutral"
+                                                        onClick={() => {
+                                                            endreStatus.mutate({
+                                                                request: {
+                                                                    id: vedtak.id,
+                                                                    status: 'NY',
+                                                                },
+                                                                fnr: fnr,
+                                                            })
+                                                        }}
+                                                    >
+                                                        Sett til NY og rebehandle
+                                                    </Button>
+                                                )}
+                                                {!vedtak.ignorerArbeidssokerregister && (
+                                                    <Button
+                                                        size="small"
+                                                        variant="secondary-neutral"
+                                                        onClick={() => {
+                                                            ignorerArbs.mutate({
+                                                                request: {
+                                                                    id: vedtak.id,
+                                                                    ignorerArbeidssokerregister: true,
+                                                                },
+                                                                fnr: fnr,
+                                                            })
+                                                        }}
+                                                    >
+                                                        Ignorer arbeidssøkerregister
+                                                    </Button>
+                                                )}
+                                                {rebehandle && (
+                                                    <Button
+                                                        size="small"
+                                                        variant="secondary-neutral"
+                                                        onClick={() => {
+                                                            endreStatus.mutate({
+                                                                request: {
+                                                                    id: vedtak.id,
+                                                                    status: 'NY',
+                                                                },
+                                                                fnr: fnr,
+                                                            })
+                                                        }}
+                                                    >
+                                                        Rebehandle
+                                                    </Button>
+                                                )}
+                                            </div>
+                                            <EndreTomDato vedtak={vedtak} />
                                         </div>
                                     }
                                 >
