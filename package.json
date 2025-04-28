@@ -13,7 +13,7 @@
         "@navikt/ds-tokens": "^6.1.0",
         "@navikt/next-api-proxy": "^4.1.3",
         "@navikt/next-logger": "^1.35.0",
-        "@navikt/oasis": "^3.7.0",
+        "@navikt/oasis": "^3.8.0",
         "@tanstack/react-query": "^5.74",
         "classnames": "^2.5.1",
         "dayjs": "^1.11.12",
