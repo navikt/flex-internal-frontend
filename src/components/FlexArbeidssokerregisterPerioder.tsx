@@ -85,6 +85,7 @@ const ArbeidssokerperioderTable: React.FC<ArbeidssokerperioderTableProps> = ({ f
                         <Table.HeaderCell>Vedtaksperiode ID</Table.HeaderCell>
                         <Table.HeaderCell>Vedtaksperiode fra</Table.HeaderCell>
                         <Table.HeaderCell>Vedtaksperiode til</Table.HeaderCell>
+                        <Table.HeaderCell>Arbeidssøkerregisterperiode ID</Table.HeaderCell>
                         <Table.HeaderCell>Opprettet</Table.HeaderCell>
                         <Table.HeaderCell>Avsluttet</Table.HeaderCell>
                         <Table.HeaderCell>Avsluttet årsak</Table.HeaderCell>
@@ -105,6 +106,7 @@ const ArbeidssokerperioderTable: React.FC<ArbeidssokerperioderTableProps> = ({ f
                                 <Table.DataCell>{periode.vedtaksperiodeId}</Table.DataCell>
                                 <Table.DataCell>{periode.vedtaksperiodeFom}</Table.DataCell>
                                 <Table.DataCell>{periode.vedtaksperiodeTom}</Table.DataCell>
+                                <Table.DataCell>{periode.arbeidssokerperiodeId}</Table.DataCell>
                                 <Table.DataCell>{dayjs(periode.opprettet).format('DD.MM.YYYY HH:mm')}</Table.DataCell>
                                 <Table.DataCell>
                                     {periode.avsluttetTidspunkt &&
