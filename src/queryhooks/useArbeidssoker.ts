@@ -9,6 +9,7 @@ interface Metadata {
 }
 
 export interface ArbeidssokerDetaljer {
+    periodeId: string
     startet: Metadata
     avsluttet?: Metadata
 }
