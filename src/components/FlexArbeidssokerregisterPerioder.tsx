@@ -1,8 +1,50 @@
 import React, { useState } from 'react'
 import { Alert, Button, Detail, Heading, Table } from '@navikt/ds-react'
 import dayjs from 'dayjs'
+import { DatePicker, useDatepicker } from '@navikt/ds-react'
 
-import { PeriodebekreftelseResponse, useFlexArbeidssokerperioder } from '../queryhooks/useFlexArbeidssokerperioder'
+import {
+    PeriodebekreftelseResponse,
+    useFlexArbeidssokerperioder,
+    ArbeidssokerperiodeResponse,
+} from '../queryhooks/useFlexArbeidssokerperioder'
+import { useOppdaterArbeidssokerperiodeTomMutation } from '../queryhooks/useOppdaterArbeidssokerperiodeTom'
+
+// Komponent for å endre vedtaksperiodeTom
+const EndreVedtaksperiodeTom: React.FC<{ periode: ArbeidssokerperiodeResponse }> = ({ periode }) => {
+    const { datepickerProps, inputProps, selectedDay } = useDatepicker({
+        defaultSelected: new Date(periode.vedtaksperiodeTom),
+    })
+    const formattertSelected = dayjs(selectedDay).format('YYYY-MM-DD')
+    const oppdaterTom = useOppdaterArbeidssokerperiodeTomMutation()
+
+    return (
+        <div className="mt-4 mb-4">
+            <DatePicker {...datepickerProps}>
+                <DatePicker.Input {...inputProps} label="Endre Vedtaksperiode til" size="small" />
+            </DatePicker>
+            {formattertSelected !== periode.vedtaksperiodeTom && (
+                <Button
+                    className="mt-4"
+                    size="small"
+                    variant="primary"
+                    loading={oppdaterTom.isPending}
+                    onClick={() => {
+                        oppdaterTom.mutate({
+                            request: {
+                                id: periode.id,
+                                vedtaksperiodeTom: formattertSelected,
+                            },
+                            fnr: periode.fnr,
+                        })
+                    }}
+                >
+                    Lagre ny Vedtaksperiode til
+                </Button>
+            )}
+        </div>
+    )
+}
 
 // Komponent for å vise periodebekreftelsene i en egen tabell
 const PeriodebekreftelserTable: React.FC<{ periodebekreftelser: PeriodebekreftelseResponse[] }> = ({
@@ -119,7 +161,8 @@ const ArbeidssokerperioderTable: React.FC<ArbeidssokerperioderTableProps> = ({ f
                             </Table.Row>
                             {expandedRows.has(periode.id) && (
                                 <Table.Row>
-                                    <Table.DataCell colSpan={7}>
+                                    <Table.DataCell colSpan={11}>
+                                        <EndreVedtaksperiodeTom periode={periode} />
                                         {periode.periodebekreftelser && periode.periodebekreftelser.length > 0 ? (
                                             <PeriodebekreftelserTable
                                                 periodebekreftelser={periode.periodebekreftelser}
