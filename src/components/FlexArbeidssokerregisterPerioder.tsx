@@ -9,6 +9,7 @@ import {
     ArbeidssokerperiodeResponse,
 } from '../queryhooks/useFlexArbeidssokerperioder'
 import { useOppdaterArbeidssokerperiodeTomMutation } from '../queryhooks/useOppdaterArbeidssokerperiodeTom'
+import { useOppdaterArbeidssokerperiodeIdMutation } from '../queryhooks/useOppdaterArbeidssokerperiodeId'
 
 // Komponent for å endre vedtaksperiodeTom
 const EndreVedtaksperiodeTom: React.FC<{ periode: ArbeidssokerperiodeResponse }> = ({ periode }) => {
@@ -42,6 +43,50 @@ const EndreVedtaksperiodeTom: React.FC<{ periode: ArbeidssokerperiodeResponse }>
                     Lagre ny Vedtaksperiode til
                 </Button>
             )}
+        </div>
+    )
+}
+
+// Komponent for å endre arbeidssokerperiodeId
+const EndreArbeidssokerperiodeId: React.FC<{ periode: ArbeidssokerperiodeResponse }> = ({ periode }) => {
+    const [arbeidssokerperiodeId, setArbeidssokerperiodeId] = useState(periode.arbeidssokerperiodeId || '')
+    const oppdaterArbeidssokerperiodeId = useOppdaterArbeidssokerperiodeIdMutation()
+    const isChanged = arbeidssokerperiodeId !== periode.arbeidssokerperiodeId
+
+    return (
+        <div className="mt-4 mb-4">
+            <div className="flex items-end gap-4">
+                <div>
+                    <label htmlFor="arbeidssokerperiodeId" className="text-sm font-medium mb-1 block">
+                        Endre Arbeidssøkerperiode ID
+                    </label>
+                    <input
+                        id="arbeidssokerperiodeId"
+                        type="text"
+                        className="border border-gray-300 rounded-md p-2 text-sm"
+                        value={arbeidssokerperiodeId}
+                        onChange={(e) => setArbeidssokerperiodeId(e.target.value)}
+                    />
+                </div>
+                {isChanged && (
+                    <Button
+                        size="small"
+                        variant="primary"
+                        loading={oppdaterArbeidssokerperiodeId.isPending}
+                        onClick={() => {
+                            oppdaterArbeidssokerperiodeId.mutate({
+                                request: {
+                                    id: periode.id,
+                                    arbeidssokerperiodeId: arbeidssokerperiodeId,
+                                },
+                                fnr: periode.fnr,
+                            })
+                        }}
+                    >
+                        Lagre ny Arbeidssøkerperiode ID
+                    </Button>
+                )}
+            </div>
         </div>
     )
 }
@@ -162,7 +207,10 @@ const ArbeidssokerperioderTable: React.FC<ArbeidssokerperioderTableProps> = ({ f
                             {expandedRows.has(periode.id) && (
                                 <Table.Row>
                                     <Table.DataCell colSpan={11}>
-                                        <EndreVedtaksperiodeTom periode={periode} />
+                                        <div className="flex flex-col md:flex-row md:gap-8">
+                                            <EndreVedtaksperiodeTom periode={periode} />
+                                            <EndreArbeidssokerperiodeId periode={periode} />
+                                        </div>
                                         {periode.periodebekreftelser && periode.periodebekreftelser.length > 0 ? (
                                             <PeriodebekreftelserTable
                                                 periodebekreftelser={periode.periodebekreftelser}
