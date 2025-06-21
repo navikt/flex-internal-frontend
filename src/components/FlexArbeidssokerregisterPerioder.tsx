@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Alert, Button, Detail, Heading, Table } from '@navikt/ds-react'
+import { Alert, Button, Detail, Heading, Table, TextField } from '@navikt/ds-react'
 import dayjs from 'dayjs'
 import { DatePicker, useDatepicker } from '@navikt/ds-react'
 
@@ -47,27 +47,22 @@ const EndreVedtaksperiodeTom: React.FC<{ periode: ArbeidssokerperiodeResponse }>
     )
 }
 
-// Komponent for å endre arbeidssokerperiodeId
 const EndreArbeidssokerperiodeId: React.FC<{ periode: ArbeidssokerperiodeResponse }> = ({ periode }) => {
-    const [arbeidssokerperiodeId, setArbeidssokerperiodeId] = useState(periode.arbeidssokerperiodeId || '')
+    const [arbeidssokerperiodeId, setArbeidssokerperiodeId] = useState('')
     const oppdaterArbeidssokerperiodeId = useOppdaterArbeidssokerperiodeIdMutation()
     const isChanged = arbeidssokerperiodeId !== periode.arbeidssokerperiodeId
 
     return (
         <div className="mt-4 mb-4">
             <div className="flex items-end gap-4">
-                <div>
-                    <label htmlFor="arbeidssokerperiodeId" className="text-sm font-medium mb-1 block">
-                        Endre Arbeidssøkerperiode ID
-                    </label>
-                    <input
-                        id="arbeidssokerperiodeId"
-                        type="text"
-                        className="border border-gray-300 rounded-md p-2 text-sm"
-                        value={arbeidssokerperiodeId}
-                        onChange={(e) => setArbeidssokerperiodeId(e.target.value)}
-                    />
-                </div>
+                <TextField
+                    id="arbeidssokerperiodeId"
+                    type="text"
+                    label="Endre Arbeidssøkerperiode ID"
+                    size="small"
+                    value={arbeidssokerperiodeId}
+                    onChange={(e) => setArbeidssokerperiodeId(e.target.value)}
+                />
                 {isChanged && (
                     <Button
                         size="small"
@@ -140,7 +135,6 @@ const ArbeidssokerperioderTable: React.FC<ArbeidssokerperioderTableProps> = ({ f
         return <Alert variant="error">Det oppsto en feil ved henting av arbeidssøkerperioder.</Alert>
     }
 
-    // Sorterer periodene basert på vedtaksperiodeFom
     const sortedPerioder = data.arbeidssokerperioder.sort((a, b) =>
         dayjs(a.vedtaksperiodeFom).diff(dayjs(b.vedtaksperiodeFom)),
     )
