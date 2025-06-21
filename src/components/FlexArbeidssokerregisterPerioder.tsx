@@ -11,7 +11,6 @@ import {
 import { useOppdaterArbeidssokerperiodeTomMutation } from '../queryhooks/useOppdaterArbeidssokerperiodeTom'
 import { useOppdaterArbeidssokerperiodeIdMutation } from '../queryhooks/useOppdaterArbeidssokerperiodeId'
 
-// Komponent for å endre vedtaksperiodeTom
 const EndreVedtaksperiodeTom: React.FC<{ periode: ArbeidssokerperiodeResponse }> = ({ periode }) => {
     const { datepickerProps, inputProps, selectedDay } = useDatepicker({
         defaultSelected: new Date(periode.vedtaksperiodeTom),
@@ -50,11 +49,11 @@ const EndreVedtaksperiodeTom: React.FC<{ periode: ArbeidssokerperiodeResponse }>
 const EndreArbeidssokerperiodeId: React.FC<{ periode: ArbeidssokerperiodeResponse }> = ({ periode }) => {
     const [arbeidssokerperiodeId, setArbeidssokerperiodeId] = useState('')
     const oppdaterArbeidssokerperiodeId = useOppdaterArbeidssokerperiodeIdMutation()
-    const isChanged = arbeidssokerperiodeId !== periode.arbeidssokerperiodeId
+    const erEndret = arbeidssokerperiodeId.trim() !== '' && arbeidssokerperiodeId !== periode.arbeidssokerperiodeId
 
     return (
         <div className="mt-4 mb-4">
-            <div className="flex items-end gap-4">
+            <div className="flex flex-col">
                 <TextField
                     id="arbeidssokerperiodeId"
                     type="text"
@@ -63,8 +62,9 @@ const EndreArbeidssokerperiodeId: React.FC<{ periode: ArbeidssokerperiodeRespons
                     value={arbeidssokerperiodeId}
                     onChange={(e) => setArbeidssokerperiodeId(e.target.value)}
                 />
-                {isChanged && (
+                {erEndret && (
                     <Button
+                        className="mt-4"
                         size="small"
                         variant="primary"
                         loading={oppdaterArbeidssokerperiodeId.isPending}
@@ -86,7 +86,6 @@ const EndreArbeidssokerperiodeId: React.FC<{ periode: ArbeidssokerperiodeRespons
     )
 }
 
-// Komponent for å vise periodebekreftelsene i en egen tabell
 const PeriodebekreftelserTable: React.FC<{ periodebekreftelser: PeriodebekreftelseResponse[] }> = ({
     periodebekreftelser,
 }) => {
@@ -118,7 +117,6 @@ const PeriodebekreftelserTable: React.FC<{ periodebekreftelser: Periodebekreftel
     )
 }
 
-// Hovedkomponent som viser arbeidssøkerperiodene med mulighet for å vise periodebekreftelser
 interface ArbeidssokerperioderTableProps {
     fnr: string
 }
