@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Alert, Button, Detail, Heading, Table } from '@navikt/ds-react'
+import { Alert, Button, Detail, Heading, Table, TextField } from '@navikt/ds-react'
 import dayjs from 'dayjs'
 import { DatePicker, useDatepicker } from '@navikt/ds-react'
 
@@ -9,8 +9,8 @@ import {
     ArbeidssokerperiodeResponse,
 } from '../queryhooks/useFlexArbeidssokerperioder'
 import { useOppdaterArbeidssokerperiodeTomMutation } from '../queryhooks/useOppdaterArbeidssokerperiodeTom'
+import { useOppdaterArbeidssokerperiodeIdMutation } from '../queryhooks/useOppdaterArbeidssokerperiodeId'
 
-// Komponent for å endre vedtaksperiodeTom
 const EndreVedtaksperiodeTom: React.FC<{ periode: ArbeidssokerperiodeResponse }> = ({ periode }) => {
     const { datepickerProps, inputProps, selectedDay } = useDatepicker({
         defaultSelected: new Date(periode.vedtaksperiodeTom),
@@ -46,7 +46,46 @@ const EndreVedtaksperiodeTom: React.FC<{ periode: ArbeidssokerperiodeResponse }>
     )
 }
 
-// Komponent for å vise periodebekreftelsene i en egen tabell
+const EndreArbeidssokerperiodeId: React.FC<{ periode: ArbeidssokerperiodeResponse }> = ({ periode }) => {
+    const [arbeidssokerperiodeId, setArbeidssokerperiodeId] = useState('')
+    const oppdaterArbeidssokerperiodeId = useOppdaterArbeidssokerperiodeIdMutation()
+    const erEndret = arbeidssokerperiodeId.trim() !== '' && arbeidssokerperiodeId !== periode.arbeidssokerperiodeId
+
+    return (
+        <div className="mt-4 mb-4">
+            <div className="flex flex-col">
+                <TextField
+                    id="arbeidssokerperiodeId"
+                    type="text"
+                    label="Endre Arbeidssøkerperiode ID"
+                    size="small"
+                    value={arbeidssokerperiodeId}
+                    onChange={(e) => setArbeidssokerperiodeId(e.target.value)}
+                />
+                {erEndret && (
+                    <Button
+                        className="mt-4"
+                        size="small"
+                        variant="primary"
+                        loading={oppdaterArbeidssokerperiodeId.isPending}
+                        onClick={() => {
+                            oppdaterArbeidssokerperiodeId.mutate({
+                                request: {
+                                    id: periode.id,
+                                    arbeidssokerperiodeId: arbeidssokerperiodeId,
+                                },
+                                fnr: periode.fnr,
+                            })
+                        }}
+                    >
+                        Lagre ny Arbeidssøkerperiode ID
+                    </Button>
+                )}
+            </div>
+        </div>
+    )
+}
+
 const PeriodebekreftelserTable: React.FC<{ periodebekreftelser: PeriodebekreftelseResponse[] }> = ({
     periodebekreftelser,
 }) => {
@@ -78,7 +117,6 @@ const PeriodebekreftelserTable: React.FC<{ periodebekreftelser: Periodebekreftel
     )
 }
 
-// Hovedkomponent som viser arbeidssøkerperiodene med mulighet for å vise periodebekreftelser
 interface ArbeidssokerperioderTableProps {
     fnr: string
 }
@@ -95,7 +133,6 @@ const ArbeidssokerperioderTable: React.FC<ArbeidssokerperioderTableProps> = ({ f
         return <Alert variant="error">Det oppsto en feil ved henting av arbeidssøkerperioder.</Alert>
     }
 
-    // Sorterer periodene basert på vedtaksperiodeFom
     const sortedPerioder = data.arbeidssokerperioder.sort((a, b) =>
         dayjs(a.vedtaksperiodeFom).diff(dayjs(b.vedtaksperiodeFom)),
     )
@@ -162,7 +199,10 @@ const ArbeidssokerperioderTable: React.FC<ArbeidssokerperioderTableProps> = ({ f
                             {expandedRows.has(periode.id) && (
                                 <Table.Row>
                                     <Table.DataCell colSpan={11}>
-                                        <EndreVedtaksperiodeTom periode={periode} />
+                                        <div className="flex flex-col md:flex-row md:gap-8">
+                                            <EndreVedtaksperiodeTom periode={periode} />
+                                            <EndreArbeidssokerperiodeId periode={periode} />
+                                        </div>
                                         {periode.periodebekreftelser && periode.periodebekreftelser.length > 0 ? (
                                             <PeriodebekreftelserTable
                                                 periodebekreftelser={periode.periodebekreftelser}

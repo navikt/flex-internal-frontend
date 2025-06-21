@@ -8,7 +8,11 @@ import { mockApi } from '../../../testdata/testdata'
 
 const { serverRuntimeConfig } = getConfig()
 
-const tillatteApier = ['POST /api/v1/flex/arbeidssokerperioder', 'PUT /api/v1/flex/arbeidssokerperioder/oppdater-tom']
+const tillatteApier = [
+    'POST /api/v1/flex/arbeidssokerperioder',
+    'PUT /api/v1/flex/arbeidssokerperioder/oppdater-tom',
+    'PUT /api/v1/flex/arbeidssokerperioder/oppdater-arbeidssokerperiode-id',
+]
 
 const handler = beskyttetApi(async (req: NextApiRequest, res: NextApiResponse) => {
     const opts = {
