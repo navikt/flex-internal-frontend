@@ -13,7 +13,7 @@ import {
     Table,
     useDatepicker,
 } from '@navikt/ds-react'
-import { ArrowsCirclepathIcon, FileIcon } from '@navikt/aksel-icons'
+import { ArrowsCirclepathIcon, FileIcon, TrashIcon } from '@navikt/aksel-icons'
 import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
@@ -28,11 +28,12 @@ import { formatterTimestamp } from '../utils/formatterDatoer'
 import ArbeidssokerperioderTable from '../components/FlexArbeidssokerregisterPerioder'
 import { useFtaVedtakIgnorerArbeidssokerregister } from '../queryhooks/useFtaVedtakIgnorerArbeidssøkerregister'
 import { useEndreFtaVedtakTomMutation } from '../queryhooks/useEndreFtaVedtakTom'
+import { useDeleteFtaSoknadMutation } from '../queryhooks/useDeleteFtaSoknad'
 
 const FriskmeldtPage = () => {
     const [fnr, setFnr] = useState<string>()
     const { data: ubehandlede } = useUbehandledeFtaVedtak()
-    //
+
     useEffect(() => {
         if (fnr) {
             window.history.pushState({ personSelected: true }, '')
@@ -192,7 +193,6 @@ const FriskmeldtEnkeltPerson = ({ fnr }: { fnr: string }) => {
                     queryclient.invalidateQueries({
                         queryKey: ['fta-vedtak-for-person', fnr],
                     })
-                    // invalidate query queryKey: ['soknad', fnr],
                     queryclient.invalidateQueries({
                         queryKey: ['soknad', fnr],
                     })
@@ -213,6 +213,11 @@ const FriskmeldtEnkeltPerson = ({ fnr }: { fnr: string }) => {
 
 const Soknader = ({ fnr }: { fnr: string }) => {
     const { data: soknader, isLoading } = useSoknader(fnr, !!fnr && fnr.length == 11)
+    const [selectedSoknad, setSelectedSoknad] = useState<string | null>(null)
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
+    const deleteSoknad = useDeleteFtaSoknadMutation()
+    const ref = useRef<HTMLDialogElement>(null)
+
     if (isLoading || soknader === undefined) {
         return <div>Laster søknader...</div>
     }
@@ -232,10 +237,43 @@ const Soknader = ({ fnr }: { fnr: string }) => {
     if (friskmeldtsoknader.length == 0) {
         return <Alert variant="info">Ingen friskmeldt til arbeidsformidling søknader generert</Alert>
     }
+
+    const handleDelete = () => {
+        if (selectedSoknad) {
+            deleteSoknad.mutate({
+                request: {
+                    fnr: fnr,
+                    sykepengesoknadId: selectedSoknad,
+                },
+                fnr: fnr,
+                callback: () => {
+                    setShowDeleteModal(false)
+                    setSelectedSoknad(null)
+                },
+            })
+        }
+    }
+
+    const openDeleteModal = (soknadId: string) => {
+        setSelectedSoknad(soknadId)
+        setShowDeleteModal(true)
+        if (ref.current) {
+            ref.current.showModal()
+        }
+    }
+
+    const closeDeleteModal = () => {
+        setShowDeleteModal(false)
+        setSelectedSoknad(null)
+        if (ref.current) {
+            ref.current.close()
+        }
+    }
+
     return (
         <>
             <Heading size="small">Søknader</Heading>
-            <Detail spacing>Viser kun søknadstype friskmeldt til arbeid</Detail>
+            <Detail spacing>Viser kun søknadstype Friskmeldt Til Arbeidsformidling</Detail>
             <Table size="small">
                 <Table.Header>
                     <Table.Row>
@@ -243,6 +281,7 @@ const Soknader = ({ fnr }: { fnr: string }) => {
                         <Table.HeaderCell>Fom</Table.HeaderCell>
                         <Table.HeaderCell>Tom</Table.HeaderCell>
                         <Table.HeaderCell>Status</Table.HeaderCell>
+                        <Table.HeaderCell>Slett</Table.HeaderCell>
                     </Table.Row>
                 </Table.Header>
                 <Table.Body>
@@ -251,10 +290,34 @@ const Soknader = ({ fnr }: { fnr: string }) => {
                             <Table.DataCell>{soknad.id}</Table.DataCell>
                             <Table.DataCell>{soknad.fom}</Table.DataCell> <Table.DataCell>{soknad.tom}</Table.DataCell>
                             <Table.DataCell>{soknad.status}</Table.DataCell>
+                            <Table.DataCell>
+                                {(soknad.status === 'NY' || soknad.status === 'FREMTIDIG') && (
+                                    <Button
+                                        icon={<TrashIcon title="Slett søknad" fontSize="1.5rem" />}
+                                        size="small"
+                                        variant="tertiary"
+                                        onClick={() => openDeleteModal(soknad.id)}
+                                    />
+                                )}
+                            </Table.DataCell>
                         </Table.Row>
                     ))}
                 </Table.Body>
             </Table>
+
+            <Modal ref={ref} header={{ heading: 'Bekreft sletting' }} open={showDeleteModal} onClose={closeDeleteModal}>
+                <Modal.Body>
+                    <BodyLong>Er du sikker på at du vil slette denne søknaden?</BodyLong>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="danger" onClick={handleDelete} loading={deleteSoknad.isPending}>
+                        Slett
+                    </Button>
+                    <Button variant="secondary" onClick={closeDeleteModal}>
+                        Avbryt
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </>
     )
 }
