@@ -6,11 +6,11 @@
         "node": "20"
     },
     "dependencies": {
-        "@navikt/aksel-icons": "^7.18.0",
-        "@navikt/ds-css": "^6.16.3",
-        "@navikt/ds-react": "^6.16.3",
-        "@navikt/ds-tailwind": "^6.16.3",
-        "@navikt/ds-tokens": "^6.1.0",
+        "@navikt/aksel-icons": "^7.25.1",
+        "@navikt/ds-css": "^7.25.1",
+        "@navikt/ds-react": "^7.25.1",
+        "@navikt/ds-tailwind": "^7.25.1",
+        "@navikt/ds-tokens": "^7.25.1",
         "@navikt/next-api-proxy": "^4.1.4",
         "@navikt/next-logger": "^1.35.0",
         "@navikt/oasis": "^3.8.0",
