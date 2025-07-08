@@ -22,6 +22,7 @@ const tillatteApier = [
     'POST /api/v1/flex/fta-vedtak/endre-status',
     'POST /api/v1/flex/fta-vedtak/endre-tom',
     'POST /api/v1/flex/fta-vedtak/ignorer-arbs',
+    'DELETE /api/v1/flex/fta-soknad',
 ]
 
 const handler = beskyttetApi(async (req: NextApiRequest, res: NextApiResponse) => {
