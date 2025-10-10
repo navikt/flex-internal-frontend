@@ -28,6 +28,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
         '/': 'Tidslinje av søknader',
         '/ident': 'Slå opp fnr og aktor id',
         '/soknad-til-fnr': 'Konverter søknad id til fnr',
+        '/soknad-kafkaformat': 'Sykepengesøknad kafkaformat',
         '/friskmeldt': 'Friskmeldt til arbeidsformidling',
         '/aareg': 'Se rådata fra aareg',
         '/sigrun': 'Se rådata fra sigrun',
