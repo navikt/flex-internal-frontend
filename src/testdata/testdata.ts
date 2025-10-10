@@ -625,6 +625,19 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
+    if (validert.api == 'GET /api/v3/soknader/[uuid]/kafkaformat') {
+        res.status(200)
+        res.json({
+            versjon: 1,
+            soknadKafkaformat: {
+                id: testdata.sykepengesoknadListe[0].id,
+                data: testdata.sykepengesoknadListe[0],
+                metadata: { kilde: 'mock', format: 'kafka' },
+            },
+        })
+        res.end()
+        return
+    }
     if (validert.api == 'POST /api/v1/vedtak-og-inntektsmeldinger') {
         const inntektsmedling: InntektsmeldingDbRecord = {
             id: '123',

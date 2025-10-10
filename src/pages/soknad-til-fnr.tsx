@@ -13,7 +13,7 @@ const SoknadTilFnrPage = () => {
     return (
         <div className="flex-row space-y-4">
             <TextField
-                label="Sykepengesoknad id"
+                label="Sykepengesoknad ID"
                 onChange={(e) => (e.target.value.length == 36 ? setSoknadId(e.target.value) : setSoknadId(undefined))}
             />
             {data?.sykepengesoknad && <BodyShort>{'Fødselsnummer: ' + data.fnr}</BodyShort>}
