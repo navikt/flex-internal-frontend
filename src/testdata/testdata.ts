@@ -683,6 +683,18 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         return
     }
 
+    if (validert.api == 'POST /api/v1/flex/ventetid') {
+        const baseDate = '2025-01-01'
+        const result = {
+            fom: baseDate,
+            tom: '2025-01-15',
+        }
+        res.status(200)
+        res.json(result)
+        res.end()
+        return
+    }
+
     if (validert.api == 'POST /api/v1/flex/aareg') {
         res.status(200)
         res.json([

@@ -34,6 +34,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
         '/sigrun': 'Se rådata fra sigrun',
         '/arbeidssoker': 'Se rådata fra arbeidssøkerregisteret',
         '/vedtaksperioder': 'Vedtaksperioder i flex-inntektsmelding-status',
+        '/ventetid': 'Ventetid for næringsdrivende',
         '/amplitude': 'Amplitude',
     }
 
