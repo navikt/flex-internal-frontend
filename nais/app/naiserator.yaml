@@ -60,6 +60,7 @@ spec:
         - application: sykepengesoknad-backend
         - application: flex-arbeidssokerregister-oppdatering
         - application: flex-inntektsmelding-status
+        - application: flex-syketilfelle
       external:
         - host: reops-proxy.intern.nav.no
   env:
