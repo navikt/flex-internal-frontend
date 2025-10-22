@@ -25,15 +25,16 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
     const router = useRouter()
 
     const sider = {
-        '/': 'Tidslinje av søknader',
-        '/ident': 'Slå opp fnr og aktor id',
-        '/soknad-til-fnr': 'Konverter søknad id til fnr',
-        '/soknad-kafkaformat': 'Sykepengesøknad kafkaformat',
-        '/friskmeldt': 'Friskmeldt til arbeidsformidling',
-        '/aareg': 'Se rådata fra aareg',
-        '/sigrun': 'Se rådata fra sigrun',
+        '/': 'Vis tidslinje av søknader',
+        '/ident': 'Slå opp fnr og aktor-ID',
+        '/soknad-til-fnr': 'Konverter søknad til fnr',
+        '/soknad-kafkaformat': 'Vis sykepengesøknad på Kafka-format',
+        '/friskmeldt': 'Friskmeldt Til Arbeidsformidling',
+        '/aareg': 'Se rådata fra Aa-registeret',
+        '/sigrun': 'Se rådata fra Sigrun',
         '/arbeidssoker': 'Se rådata fra arbeidssøkerregisteret',
-        '/vedtaksperioder': 'Vedtaksperioder i flex-inntektsmelding-status',
+        '/vedtaksperioder': 'Vis vedtaksperioder fra flex-inntektsmelding-status',
+        '/ventetid': 'Vis ventetid fra flex-syketilfelle',
         '/amplitude': 'Amplitude',
     }
 

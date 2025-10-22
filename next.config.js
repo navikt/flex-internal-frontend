@@ -6,6 +6,7 @@ module.exports = {
         sykepengesoknadBackendClientId: process.env.SYKEPENGESOKNAD_BACKEND_CLIENT_ID,
         flexInntektsmeldingStatusClientId: process.env.FLEX_INNTEKTSMELDING_STATUS_CLIENT_ID,
         flexArbeidssokerregisterClientId: process.env.FLEX_ARBEIDSSOKERREGISTER_OPPDATERING_CLIENT_ID,
+        flexSyketilfelleClientId: process.env.FLEX_SYKETILFELLE_CLIENT_ID,
     },
     publicRuntimeConfig: {
         // Will be available on both server and client
