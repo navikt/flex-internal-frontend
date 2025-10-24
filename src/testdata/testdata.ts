@@ -910,6 +910,16 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
+    if (validert.api == 'GET /api/v1/internal/ventetid/[uuid]') {
+        res.status(200)
+        res.json({
+            erUtenforVentetid: true,
+            ventetid: { fom: '2025-09-01', tom: '2025-09-16' },
+            sykmeldingsperiode: { fom: '2025-09-01', tom: '2025-09-21' },
+        })
+        res.end()
+        return
+    }
     res.status(404)
     res.end()
 }
