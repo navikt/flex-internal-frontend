@@ -7,24 +7,41 @@ export interface FomTomPeriode {
     tom: string
 }
 
-export interface VentetidResponse {
+export interface Syketilfellebit {
+    syketilfellebitId: string
+    fnr: string
+    opprettet: string
+    inntruffet: string
+    orgnummer: string | null
+    tags: string
+    ressursId: string
+    korrigererSendtSoknad: string | null
+    fom: string | null
+    tom: string | null
+    publisert: boolean
+    slettet: string | null
+    tombstonePublisert: string | null
+}
+
+export interface VentetidInternalResponse {
     erUtenforVentetid: boolean
-    ventetid: FomTomPeriode | null
-    sykmeldingsperiode: FomTomPeriode | null
+    ventetid: FomTomPeriode
+    sykmeldingsperiode: FomTomPeriode
+    syketilfellebiter: Syketilfellebit[]
 }
 
 export function useVentetid(
     sykmeldingId: string | undefined,
     enabled = true,
-): UseQueryResult<VentetidResponse | null, Error> {
-    return useQuery<VentetidResponse | null, Error>({
+): UseQueryResult<VentetidInternalResponse | null, Error> {
+    return useQuery<VentetidInternalResponse | null, Error>({
         queryKey: ['ventetid', sykmeldingId],
         enabled: enabled,
         queryFn: () => {
             if (sykmeldingId === undefined) {
                 return null
             }
-            return fetchJsonMedRequestId(`/api/flex-syketilfelle/api/v1/internal/ventetid/${sykmeldingId}`, {
+            return fetchJsonMedRequestId(`/api/flex-syketilfelle/api/v1/flex/ventetid/${sykmeldingId}`, {
                 method: 'GET',
                 credentials: 'include',
             })

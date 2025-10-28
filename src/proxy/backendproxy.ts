@@ -51,7 +51,6 @@ export async function proxyKallTilBackend(opts: BackendProxyOpts): Promise<void>
         }
         return undefined
     }
-
     await proxyApiRouteRequest({ ...opts, path: validert.rewritedPath, bearerToken: await bearerToken(), https: false })
 }
 

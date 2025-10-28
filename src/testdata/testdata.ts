@@ -910,12 +910,29 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
-    if (validert.api == 'GET /api/v1/internal/ventetid/[uuid]') {
+    if (validert.api == 'GET /api/v1/flex/ventetid/[uuid]') {
         res.status(200)
         res.json({
             erUtenforVentetid: true,
             ventetid: { fom: '2025-09-01', tom: '2025-09-16' },
             sykmeldingsperiode: { fom: '2025-09-01', tom: '2025-09-21' },
+            syketilfellebiter: [
+                {
+                    syketilfellebitId: '43e1c0c8-6a73-419a-8a20-42a77461d1ad',
+                    fnr: '11111111111',
+                    opprettet: '2025-09-01T00:00:00.000000Z',
+                    inntruffet: '2025-09-01T00:00:00.000000Z',
+                    orgnummer: null,
+                    tags: 'SYKMELDING,BEKREFTET,PERIODE,INGEN_AKTIVITET',
+                    ressursId: '70df59fa-e1a3-4f38-bc3d-6a1fb2349c04',
+                    korrigererSendtSoknad: null,
+                    fom: '2025-09-01',
+                    tom: '2025-09-21',
+                    publisert: true,
+                    slettet: null,
+                    tombstonePublisert: null,
+                },
+            ],
         })
         res.end()
         return

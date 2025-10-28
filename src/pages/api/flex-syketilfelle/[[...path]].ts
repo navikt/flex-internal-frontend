@@ -8,7 +8,7 @@ import { mockApi } from '../../../testdata/testdata'
 
 const { serverRuntimeConfig } = getConfig()
 
-const tillatteApier = ['GET /api/v1/internal/ventetid/[uuid]']
+const tillatteApier = ['GET /api/v1/flex/ventetid/[uuid]']
 
 const handler = beskyttetApi(async (req: NextApiRequest, res: NextApiResponse) => {
     const opts = {
@@ -22,6 +22,7 @@ const handler = beskyttetApi(async (req: NextApiRequest, res: NextApiResponse) =
     if (isMockBackend()) {
         return mockApi(opts)
     }
+
     await proxyKallTilBackend(opts)
 })
 

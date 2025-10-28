@@ -3,6 +3,7 @@ azureTenant: trygdeetaten.no
 allowAllUsers: true
 env:
   SYKEPENGESOKNAD_BACKEND_CLIENT_ID: api://dev-gcp.flex.sykepengesoknad-backend/.default
+  FLEX_SYKETILFELLE_CLIENT_ID: api://dev-gcp.flex.flex-syketilfelle/.default
   FLEX_INNTEKTSMELDING_STATUS_CLIENT_ID: api://dev-gcp.flex.flex-inntektsmelding-status/.default
   FLEX_ARBEIDSSOKERREGISTER_OPPDATERING_CLIENT_ID: api://dev-gcp.flex.flex-arbeidssokerregister-oppdatering/.default
   SPLEIS_SPORING_URL: https://sporing.ansatt.dev.nav.no
