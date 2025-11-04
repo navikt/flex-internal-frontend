@@ -2,7 +2,7 @@ import '../style/global.css'
 import 'react-json-view-lite/dist/index.css'
 
 import type { AppProps } from 'next/app'
-import React, { useState } from 'react'
+import React, { JSX, useState } from 'react'
 import Head from 'next/head'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Dropdown, InternalHeader } from '@navikt/ds-react'
