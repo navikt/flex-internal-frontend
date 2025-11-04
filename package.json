@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "engines": {
-        "node": "20"
+        "node": "25"
     },
     "dependencies": {
         "@navikt/aksel-icons": "^7.33.0",
