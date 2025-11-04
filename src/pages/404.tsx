@@ -1,7 +1,7 @@
 import { Page } from '@navikt/ds-react'
-import React from 'react'
+import React, { JSX } from 'react'
 
-function NotFound(): JSX.Element | boolean {
+function NotFound(): JSX.Element {
     return (
         <Page>
             <Page.Block width="xl">
