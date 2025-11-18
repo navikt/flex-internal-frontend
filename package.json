@@ -26,8 +26,8 @@
     "devDependencies": {
         "@navikt/eslint-config-teamsykmelding": "^7.1.0",
         "@types/node": "^20.14.10",
-        "@types/react": "^19.2.2",
-        "@types/react-dom": "^19.2.2",
+        "@types/react": "^19.2.6",
+        "@types/react-dom": "^19.2.3",
         "@types/uuid": "^10.0.0",
         "autoprefixer": "^10.4.22",
         "eslint": "^8.57.1",
