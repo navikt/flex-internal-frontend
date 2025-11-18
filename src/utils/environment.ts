@@ -1,19 +1,18 @@
-import getConfig from 'next/config'
-
-const { publicRuntimeConfig } = getConfig()
-
 export function isMockBackend(): boolean {
-    return publicRuntimeConfig.mockBackend === 'true'
+    return process.env.MOCK_BACKEND === 'true'
 }
-export function spleisSporingUrl(): boolean {
-    return publicRuntimeConfig.spleisSporingUrl
+
+export function spleisSporingUrl(): string {
+    return process.env.NEXT_PUBLIC_SPLEIS_SPORING_URL || process.env.SPLEIS_SPORING_URL || ''
 }
-export function spannerUrl(): boolean {
-    return publicRuntimeConfig.spannerUrl
+
+export function spannerUrl(): string {
+    return process.env.NEXT_PUBLIC_SPANNER_URL || process.env.SPANNER_URL || ''
 }
 
 export function isProd(): boolean {
-    return publicRuntimeConfig.naisClusterName === 'prod-gcp'
+    const cluster = process.env.NEXT_PUBLIC_NAIS_CLUSTER_NAME || process.env.NAIS_CLUSTER_NAME
+    return cluster === 'prod-gcp'
 }
 export function isNotProd(): boolean {
     return !isProd()
