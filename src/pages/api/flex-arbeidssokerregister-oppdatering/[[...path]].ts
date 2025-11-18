@@ -1,12 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import getConfig from 'next/config'
 
 import { beskyttetApi } from '../../../auth/beskyttetApi'
 import { isMockBackend } from '../../../utils/environment'
 import { proxyKallTilBackend } from '../../../proxy/backendproxy'
 import { mockApi } from '../../../testdata/testdata'
-
-const { serverRuntimeConfig } = getConfig()
 
 const tillatteApier = [
     'POST /api/v1/flex/arbeidssokerperioder',
@@ -21,7 +18,7 @@ const handler = beskyttetApi(async (req: NextApiRequest, res: NextApiResponse) =
         tillatteApier,
         backend: 'flex-arbeidssokerregister-oppdatering',
         hostname: 'flex-arbeidssokerregister-oppdatering',
-        backendClientId: serverRuntimeConfig.flexArbeidssokerregisterClientId,
+        backendClientId: process.env.FLEX_ARBEIDSSOKERREGISTER_OPPDATERING_CLIENT_ID || '',
     }
     if (isMockBackend()) {
         return mockApi(opts)
