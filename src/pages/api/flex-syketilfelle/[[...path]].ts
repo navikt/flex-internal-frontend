@@ -1,12 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import getConfig from 'next/config'
 
 import { beskyttetApi } from '../../../auth/beskyttetApi'
 import { isMockBackend } from '../../../utils/environment'
 import { proxyKallTilBackend } from '../../../proxy/backendproxy'
 import { mockApi } from '../../../testdata/testdata'
 
-const { serverRuntimeConfig } = getConfig()
+const FLEX_SYKETILFELLE_CLIENT_ID = process.env.FLEX_SYKETILFELLE_CLIENT_ID || ''
 
 const tillatteApier = ['GET /api/v1/flex/ventetid/[uuid]']
 
@@ -17,7 +16,7 @@ const handler = beskyttetApi(async (req: NextApiRequest, res: NextApiResponse) =
         tillatteApier,
         backend: 'flex-syketilfelle',
         hostname: 'flex-syketilfelle',
-        backendClientId: serverRuntimeConfig.flexSyketilfelleClientId,
+        backendClientId: FLEX_SYKETILFELLE_CLIENT_ID,
     }
     if (isMockBackend()) {
         return mockApi(opts)

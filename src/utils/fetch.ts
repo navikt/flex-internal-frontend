@@ -26,7 +26,6 @@ export const fetchMedRequestId = async (
         ? { ...options.headers, 'x-request-id': requestId }
         : { 'x-request-id': requestId }
 
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     const fetchUrl = async () => {
         try {
             return await fetch(url, options)
