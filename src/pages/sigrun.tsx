@@ -11,37 +11,31 @@ const SigrunPage = () => {
 
     const { data: data } = useSigrun(fnr, aar, !!fnr && !!aar)
 
-    function AarButton({ aar }: { aar: string }) {
-        return (
-            <Button
-                size="small"
-                variant="secondary"
-                onClick={() => {
-                    setAar(aar)
-                }}
-            >
-                {aar}
-            </Button>
-        )
-    }
-
     return (
         <div className="flex-row space-y-4">
             <TextField
                 label="Fnr"
                 onChange={(e) => (e.target.value.length == 11 ? setFnr(e.target.value) : setFnr(undefined))}
             />
-            <AarButton aar="2024" />
-            <AarButton aar="2023" />
-            <AarButton aar="2022" />
-            <AarButton aar="2021" />
-            <AarButton aar="2020" />
-            <AarButton aar="2019" />
+            <AarButton aar="2024" setAar={setAar} />
+            <AarButton aar="2023" setAar={setAar} />
+            <AarButton aar="2022" setAar={setAar} />
+            <AarButton aar="2021" setAar={setAar} />
+            <AarButton aar="2020" setAar={setAar} />
+            <AarButton aar="2019" setAar={setAar} />
             <div>
                 <Label>{aar}</Label>
                 {data && <JsonView data={data} shouldExpandNode={allExpanded} style={defaultStyles} />}
             </div>
         </div>
+    )
+}
+
+function AarButton({ aar, setAar }: { aar: string; setAar: (value: string) => void }) {
+    return (
+        <Button size="small" variant="secondary" onClick={() => setAar(aar)}>
+            {aar}
+        </Button>
     )
 }
 
