@@ -17,8 +17,8 @@
         "@tanstack/react-query": "^5.90",
         "classnames": "^2.5.1",
         "dayjs": "^1.11.19",
-        "react": "^19.2.1",
-        "react-dom": "^19.2.1",
+        "react": "^19.2.3",
+        "react-dom": "^19.2.3",
         "react-json-view-lite": "^2.5.0",
         "tailwind-merge": "^3.4.0",
         "uuid": "^13.0.0"
