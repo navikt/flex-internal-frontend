@@ -106,7 +106,6 @@ const VentetidPage = () => {
                                 </>
                             )}
                         </div>
-
                         {syketilfellebiter && (
                             <div className="mt-4">
                                 <Label>Syketilfellebiter:</Label>
