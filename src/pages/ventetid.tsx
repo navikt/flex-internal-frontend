@@ -75,7 +75,7 @@ const VentetidPage = () => {
                         <Loader size="small" title="Laster" aria-live="polite" />
                         <BodyShort>Henter ventetid...</BodyShort>
                     </div>
-                ) : (
+                ) : data ? (
                     <Box>
                         {erUtenforVentetid && <Label className="mt-5">Ventetid:</Label>}
                         <div className="grid grid-cols-[auto,1fr] items-center gap-x-4 gap-y-1 mt-2">
@@ -117,7 +117,7 @@ const VentetidPage = () => {
                             </div>
                         )}
                     </Box>
-                ))}
+                ) : null)}
         </div>
     )
 }
