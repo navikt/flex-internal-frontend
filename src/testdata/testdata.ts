@@ -1,6 +1,6 @@
 import { Readable } from 'stream'
+import { Stream } from 'node:stream'
 
-import { stream2buffer } from '@navikt/next-api-proxy/dist/proxyUtils'
 import { NextApiRequest } from 'next'
 
 import {
@@ -591,6 +591,15 @@ const vedtaksperiodeTestdata: FullVedtaksperiodeBehandling[] = [
         ],
     },
 ]
+
+export async function stream2buffer(stream: Stream): Promise<Buffer> {
+    return new Promise<Buffer>((resolve, reject) => {
+        const buffer = Array<Uint8Array>()
+        stream.on('data', (chunk) => buffer.push(chunk))
+        stream.on('end', () => resolve(Buffer.concat(buffer)))
+        stream.on('error', (err) => reject(`error converting stream - ${err}`))
+    })
+}
 
 async function parseRequest<T>(req: NextApiRequest): Promise<T> {
     const stream = Readable.from(req)
