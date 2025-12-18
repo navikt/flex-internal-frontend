@@ -9,10 +9,10 @@
         "jiti": "^2.6.1"
     },
     "dependencies": {
-        "@navikt/aksel-icons": "^7.35.2",
-        "@navikt/ds-css": "^7.35.2",
-        "@navikt/ds-react": "^7.35.2",
-        "@navikt/ds-tailwind": "^7.35.2",
+        "@navikt/aksel-icons": "^7.35.3",
+        "@navikt/ds-css": "^7.35.3",
+        "@navikt/ds-react": "^7.35.3",
+        "@navikt/ds-tailwind": "^7.35.3",
         "@navikt/ds-tokens": "^7.25.1",
         "@navikt/next-api-proxy": "5.0.2",
         "@navikt/next-logger": "^4.4.4",
