@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const naviktTailwindPreset = require('@navikt/ds-tailwind')
 
 /** @type {import('tailwindcss').Config} */
