@@ -5,7 +5,7 @@ on:
 
 jobs:
   felles-workflow:
-    uses: navikt/flex-github-actions-workflows/.github/workflows/next-js-lightweight-pnpm.yml@main
+    uses: navikt/flex-github-actions-workflows/.github/workflows/next-js-lightweight-pnpm.yml@pnpm
     permissions:
       packages: read
       contents: read
