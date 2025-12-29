@@ -1,11 +1,12 @@
 FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/node:24-slim
+WORKDIR /app
 
 ENV NODE_ENV=production
-
-COPY /.next ./.next
-COPY /public ./public
-COPY /node_modules ./node_modules
-
 ENV PORT=8080
 
-CMD ["./node_modules/next/dist/bin/next", "start"]
+COPY .next/standalone ./
+COPY .next/static ./.next/static
+COPY public ./public
+
+ENTRYPOINT ["node"]
+CMD ["server.js"]
