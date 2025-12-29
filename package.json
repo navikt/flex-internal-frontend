@@ -5,8 +5,11 @@
     "engines": {
         "node": "24"
     },
-    "overrides": {
-        "jiti": "^2.6.1"
+    "packageManager": "pnpm@10.26.2",
+    "pnpm": {
+        "overrides": {
+            "jiti": "^2.6.1"
+        }
     },
     "dependencies": {
         "@navikt/aksel-icons": "^7.36.0",
@@ -34,7 +37,7 @@
         "@types/react-dom": "^19.2.3",
         "@types/uuid": "^11.0.0",
         "autoprefixer": "^10.4.23",
-        "eslint": "^9.39.1",
+        "eslint": "^9.39.2",
         "eslint-config-next": "^16.1.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-prettier": "^5.5.4",
@@ -53,7 +56,7 @@
         "prettier:check": "prettier --check .",
         "lint": "eslint --ext=ts,tsx src",
         "lint:fix": "eslint --ext=ts,tsx src --fix",
-        "format": "npm run prettier:write && npm run lint:fix"
+        "format": "pnpm run prettier:write && pnpm run lint:fix"
     },
     "prettier": "@navikt/tsm-prettier"
 }
