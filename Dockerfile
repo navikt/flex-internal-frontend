@@ -8,5 +8,5 @@ COPY .next/standalone ./
 COPY .next/static ./.next/static
 COPY public ./public
 
-ENTRYPOINT ["node"]
+ENTRYPOINT ["/nodejs/bin/node"]
 CMD ["server.js"]
