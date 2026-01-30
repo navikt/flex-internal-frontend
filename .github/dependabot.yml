@@ -3,7 +3,7 @@ version: 2
 registries:
   npm-github:
     type: npm-registry
-    url: https://npm.pkg.github.com
+    url: https://npm.pkg.github.com/
     token: ${{ secrets.READER_TOKEN }}
 
 updates:
@@ -18,7 +18,7 @@ updates:
     directory: '/'
     schedule:
       interval: daily
-      time: '11:00'
+      time: '12:00'
     open-pull-requests-limit: 20
     registries: '*'
     groups:
@@ -32,3 +32,5 @@ updates:
           - 'react-dom'
           - '@types/react'
           - '@types/react-dom'
+    ignore:
+      - dependency-name: '@types/node'
