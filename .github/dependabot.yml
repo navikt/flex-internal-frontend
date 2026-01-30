@@ -11,14 +11,14 @@ updates:
     directory: '/'
     schedule:
       interval: daily
-      time: '03:00'
+      time: '04:00'
     open-pull-requests-limit: 10
 
   - package-ecosystem: npm
     directory: '/'
     schedule:
       interval: daily
-      time: '12:00'
+      time: '04:00'
     open-pull-requests-limit: 20
     registries: '*'
     groups:
