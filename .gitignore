@@ -1,30 +1,24 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# tools
+# Tools
 .idea
 *.iml
 .next
 next-env.d.ts
 
-# dependencies
+# Claude Code
+.claude
+Claude.md
+
+# Dependencies
 /node_modules
 /.pnp
 .pnp.js
 
-# testing
-/coverage
-
-# production
+# Production
 /build
 /dist
 settings.json
 
-# misc
+# Misc
 .DS_Store
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Sentry
-.sentryclirc
