@@ -33,8 +33,8 @@ importers:
         specifier: ^4.5.1
         version: 4.5.1(next@16.1.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(pino@10.1.0)
       '@navikt/oasis':
-        specifier: ^4.1.2
-        version: 4.1.2
+        specifier: ^4.1.4
+        version: 4.1.4
       '@tanstack/react-query':
         specifier: ^5.90.20
         version: 5.90.20(react@19.2.4)
@@ -473,8 +473,8 @@ packages:
       next: 14 || 15 || 16
       pino: 8 || 9 || 10
 
-  '@navikt/oasis@4.1.2':
-    resolution: {integrity: sha512-RD6C3TGhEoAxDYh20iK6iIdIY1gAtOgqM08O/W2RKjEadxWVTBDuN8FFJLr8Qoibg6ZQzYsSBXluRuJmoQvirg==, tarball: https://npm.pkg.github.com/download/@navikt/oasis/4.1.2/71dd8c0ce6b1e944771e742fb6db0e2898e4bb43}
+  '@navikt/oasis@4.1.4':
+    resolution: {integrity: sha512-v+LW8V5CTiHkfIXhceQ8RXRtrBktCK8wSFYmiR6hmzl9CJRYRLUpFC7YbLiC7jwHIuLHKUyl+Zawf8zQm6fDeQ==, tarball: https://npm.pkg.github.com/download/@navikt/oasis/4.1.4/0d9c93820b9b6d93b1bd9da134feb95461ad8a47}
     engines: {node: ^20.19.0 || >= 22.12.0 || 24.x || 25.x}
 
   '@navikt/pino-logger@4.5.1':
@@ -483,8 +483,8 @@ packages:
     peerDependencies:
       pino: 8 || 9 || 10
 
-  '@navikt/texas@4.1.2':
-    resolution: {integrity: sha512-x35tbJoWmMwNi2OdIDoJdeFiUGpjJpjcqkMhxO3hdZWMNirMXhfGE/CV5Cy0/5whVU7NZXuRx2Ak4L3FWMWj+Q==, tarball: https://npm.pkg.github.com/download/@navikt/texas/4.1.2/1186a3e4a52af4b774eb768a5081821f02f28605}
+  '@navikt/texas@4.1.4':
+    resolution: {integrity: sha512-WS+agfWCqHyCtIpn/iQHNBRwn1gzCQDe0NY9Tz5ErrBsWHNxtqIV7W2eAmRUa3DLrZGHczoQhup+PYT6UX/SpQ==, tarball: https://npm.pkg.github.com/download/@navikt/texas/4.1.4/1725aca0fa0b803e0048212c3e202d24c10f3c3b}
     engines: {node: ^20.19.0 || >= 22.12.0 || 24.x || 25.x}
 
   '@navikt/tsm-eslint-react@1.0.0':
@@ -2678,9 +2678,9 @@ snapshots:
       next: 16.1.6(@babel/core@7.28.6)(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       pino: 10.1.0
 
-  '@navikt/oasis@4.1.2':
+  '@navikt/oasis@4.1.4':
     dependencies:
-      '@navikt/texas': 4.1.2
+      '@navikt/texas': 4.1.4
       '@opentelemetry/api': 1.9.0
       jose: 6.1.3
       prom-client: 15.1.3
@@ -2692,7 +2692,7 @@ snapshots:
     optionalDependencies:
       pino-socket: 7.4.0
 
-  '@navikt/texas@4.1.2': {}
+  '@navikt/texas@4.1.4': {}
 
   '@navikt/tsm-eslint-react@1.0.0(eslint@9.39.2(jiti@2.6.1))':
     dependencies:
