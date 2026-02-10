@@ -4,6 +4,6 @@ const baseConfig = require('@navikt/tsm-prettier')
 module.exports = {
     ...baseConfig,
     plugins: ['prettier-plugin-tailwindcss'],
-    tailwindStylesheet: './src/styles/globals.css',
+    tailwindStylesheet: './src/styles/global.css',
     tailwindFunctions: ['clsx', 'cn'],
 }
