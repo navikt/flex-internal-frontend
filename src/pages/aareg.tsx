@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-import { ReadMore, TextField } from '@navikt/ds-react'
+import { ReadMore, Search } from '@navikt/ds-react'
 import { allExpanded, defaultStyles, JsonView } from 'react-json-view-lite'
 
 import { initialProps } from '../initialprops/initialProps'
 import { useAareg } from '../queryhooks/useAareg'
 import { TidslinjeAareg } from '../components/TidslinjeAareg'
+import { handterFnrValidering } from '../utils/inputValidering'
 
 const AaregPage = () => {
     const [fnr, setFnr] = useState<string>()
@@ -13,9 +14,17 @@ const AaregPage = () => {
 
     return (
         <div className="flex-row space-y-4">
-            <TextField
-                label="Fnr"
-                onChange={(e) => (e.target.value.length == 11 ? setFnr(e.target.value) : setFnr(undefined))}
+            <Search
+                htmlSize="20"
+                label="Fødselsnummer"
+                onSearchClick={(input) => {
+                    handterFnrValidering(input, setFnr)
+                }}
+                onKeyDown={(evt) => {
+                    if (evt.key === 'Enter') {
+                        handterFnrValidering(evt.currentTarget.value, setFnr)
+                    }
+                }}
             />
             {data && <TidslinjeAareg aaregresponse={data} />}
             {data && (

@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import { Alert, BodyShort, Button, Link, Radio, RadioGroup, ReadMore, TextField } from '@navikt/ds-react'
+import { Alert, BodyShort, Button, Link, Radio, RadioGroup, ReadMore, Search } from '@navikt/ds-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
 import { initialProps } from '../initialprops/initialProps'
-import FnrInput from '../components/FnrInput'
 import {
     FullVedtaksperiodeBehandling,
     useVedtaksperioderMedInntektsmeldinger,
@@ -14,6 +13,7 @@ import { fetchJsonMedRequestId } from '../utils/fetch'
 import { InntektsmeldingView } from '../components/Inntektsmeldinger'
 import { isNotProd, spannerUrl, spleisSporingUrl } from '../utils/environment'
 import { useIdenter } from '../queryhooks/useIdenter'
+import { handterFnrValidering, handterUuidValidering } from '../utils/inputValidering'
 
 const Vedtaksperioder = () => {
     const [fnr, setFnr] = useState<string>()
@@ -126,15 +126,47 @@ const Vedtaksperioder = () => {
                 <Radio value="vedtaksperiodeid">VedtaksperiodeId</Radio>
                 <Radio value="fnr">Fødselsnummer</Radio>
             </RadioGroup>
-            {sokeinput === 'fnr' && <FnrInput setFnr={setFnr} />}
+            {sokeinput === 'fnr' && (
+                <Search
+                    htmlSize="20"
+                    label="Fødselsnummer"
+                    onSearchClick={(input) => {
+                        handterFnrValidering(input, setFnr)
+                    }}
+                    onKeyDown={(evt) => {
+                        if (evt.key === 'Enter') {
+                            handterFnrValidering(evt.currentTarget.value, setFnr)
+                        }
+                    }}
+                />
+            )}
             {sokeinput === 'vedtaksperiodeid' && (
-                <TextField
+                <Search
+                    className="w-80"
                     label="VedtaksperiodeID"
-                    onChange={(e) => {
+                    onSearchClick={(input) => {
                         queryClient.removeQueries({
                             queryKey: ['vedtaksperioder'],
                         })
-                        setVedtaksperiodeId(e.target.value)
+                        handterUuidValidering(
+                            input,
+                            setVedtaksperiodeId,
+                            undefined,
+                            'VedtaksperiodeID må være en UUID på 36 tegn',
+                        )
+                    }}
+                    onKeyDown={(evt) => {
+                        if (evt.key === 'Enter') {
+                            queryClient.removeQueries({
+                                queryKey: ['vedtaksperioder'],
+                            })
+                            handterUuidValidering(
+                                evt.currentTarget.value,
+                                setVedtaksperiodeId,
+                                undefined,
+                                'VedtaksperiodeID må være en UUID på 36 tegn',
+                            )
+                        }
                     }}
                 />
             )}

@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { BodyShort, TextField } from '@navikt/ds-react'
+import { BodyShort, Search } from '@navikt/ds-react'
 import { JsonView, allExpanded, defaultStyles } from 'react-json-view-lite'
 
 import { initialProps } from '../initialprops/initialProps'
 import { useSoknad } from '../queryhooks/useSoknad'
+import { handterUuidValidering } from '../utils/inputValidering'
 
 const SoknadTilFnrPage = () => {
     const [soknadId, setSoknadId] = useState<string>()
@@ -12,9 +13,27 @@ const SoknadTilFnrPage = () => {
 
     return (
         <div className="flex-row space-y-4">
-            <TextField
+            <Search
+                htmlSize="20"
                 label="Sykepengesoknad ID"
-                onChange={(e) => (e.target.value.length == 36 ? setSoknadId(e.target.value) : setSoknadId(undefined))}
+                onSearchClick={(input) => {
+                    handterUuidValidering(
+                        input,
+                        setSoknadId,
+                        undefined,
+                        'Sykepengesoknad ID må være en UUID på 36 tegn',
+                    )
+                }}
+                onKeyDown={(evt) => {
+                    if (evt.key === 'Enter') {
+                        handterUuidValidering(
+                            evt.currentTarget.value,
+                            setSoknadId,
+                            undefined,
+                            'Sykepengesoknad ID må være en UUID på 36 tegn',
+                        )
+                    }
+                }}
             />
             {data?.sykepengesoknad && <BodyShort>{'Fødselsnummer: ' + data.fnr}</BodyShort>}
             {data?.sykepengesoknad && (

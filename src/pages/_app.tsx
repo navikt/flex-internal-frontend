@@ -26,13 +26,13 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
 
     const sider = {
         '/': 'Vis tidslinje av søknader',
-        '/ident': 'Slå opp fnr og aktor-ID',
+        '/ident': 'Konverter mellom aktørId og fnr',
         '/soknad-til-fnr': 'Konverter søknad til fnr',
         '/soknad-kafkaformat': 'Vis sykepengesøknad på Kafka-format',
         '/friskmeldt': 'Friskmeldt Til Arbeidsformidling',
         '/aareg': 'Se rådata fra Aa-registeret',
         '/sigrun': 'Se rådata fra Sigrun',
-        '/arbeidssoker': 'Se rådata fra arbeidssøkerregisteret',
+        '/arbeidssoker': 'Se rådata fra Arbeidssøkerregisteret',
         '/vedtaksperioder': 'Vis vedtaksperioder fra flex-inntektsmelding-status',
         '/ventetid': 'Vis ventetid fra flex-syketilfelle',
     }

@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
+import { Search } from '@navikt/ds-react'
 
 import { initialProps } from '../initialprops/initialProps'
 import { useSoknader } from '../queryhooks/useSoknader'
-import FnrInput from '../components/FnrInput'
 import Tidslinje from '../components/Tidslinje'
+import { handterFnrValidering } from '../utils/inputValidering'
 
 const Index = () => {
     const [fnr, setFnr] = useState<string>()
@@ -14,7 +15,18 @@ const Index = () => {
 
     return (
         <div className="flex-row space-y-4">
-            <FnrInput setFnr={setFnr} />
+            <Search
+                htmlSize="20"
+                label="Fødselsnummer"
+                onSearchClick={(input) => {
+                    handterFnrValidering(input, setFnr)
+                }}
+                onKeyDown={(evt) => {
+                    if (evt.key === 'Enter') {
+                        handterFnrValidering(evt.currentTarget.value, setFnr)
+                    }
+                }}
+            />
             <Tidslinje soknader={soknader} klipp={klipp} />
         </div>
     )
