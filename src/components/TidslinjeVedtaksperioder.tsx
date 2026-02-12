@@ -149,11 +149,11 @@ export function TidslinjeVedtaksperioder({
                                         icon={iconTekst}
                                     >
                                         <Fragment>
-                                            <BodyShort className="font-bold" spacing>
+                                            <BodyShort className="font-ax-bold" spacing>
                                                 {nyeste.vedtaksperiode.sisteSpleisstatus}
                                             </BodyShort>
                                             <BodyShort spacing={true}>{vedtaksperiodeLesbar}</BodyShort>
-                                            <BodyShort className="font-bold" spacing>
+                                            <BodyShort className="font-ax-bold" spacing>
                                                 Behandlinger
                                             </BodyShort>
                                             {sortertEtterOppdatert.map((behandling) => {

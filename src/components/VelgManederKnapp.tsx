@@ -10,9 +10,10 @@ export function VelgManederKnapp(props: {
     return (
         <li className="navds-detail">
             <Button
+                data-color="neutral"
                 type="button"
                 size="small"
-                variant="secondary-neutral"
+                variant="secondary"
                 className="navds-timeline__zoom-button font-normal"
                 onClick={() => {
                     props.setFraSelected(dayjs().subtract(props.maneder, 'month').toDate())

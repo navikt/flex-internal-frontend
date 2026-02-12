@@ -25,7 +25,7 @@ const VentetidPage = () => {
 
     const erUtenforVentetidenIkon = (
         <CheckmarkCircleFillIcon
-            className="text-green-600"
+            className="text-ax-success-700"
             aria-label="Utenfor ventetiden"
             title="Utenfor ventetiden"
             fontSize="1.5rem"
@@ -34,7 +34,7 @@ const VentetidPage = () => {
 
     const erInnenforVentetidenIkon = (
         <CircleSlashFillIcon
-            className="text-red-600"
+            className="text-ax-danger-700"
             aria-label="Innenfor ventetiden"
             title="Innenfor ventetiden"
             fontSize="1.5rem"
@@ -109,7 +109,7 @@ const VentetidPage = () => {
                         {syketilfellebiter && (
                             <div className="mt-4">
                                 <Label>Syketilfellebiter:</Label>
-                                <div className="mt-2 rounded-sm bg-gray-100 p-3">
+                                <div className="mt-2 rounded-sm bg-ax-neutral-200 p-3">
                                     <pre className="whitespace-pre-wrap font-mono text-xs">
                                         {JSON.stringify(syketilfellebiter, null, 2)}
                                     </pre>

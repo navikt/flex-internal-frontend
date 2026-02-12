@@ -86,15 +86,16 @@ export const AmplitudeScreenshotView = ({ data }: { data: AmplitudeResponse }) =
                     <Screenshot eventgruppe={eventGruppe} mobil={mobil}></Screenshot>
                 </div>
             )}
-            <div className="space-x-4 fixed items-center inset-x-0 bottom-0 bg-gray-200 p-4 flex">
-                <Button variant="primary-neutral" onClick={handlePrevious} disabled={currentIndex === 0}>
+            <div className="space-x-4 fixed items-center inset-x-0 bottom-0 bg-ax-neutral-300 p-4 flex">
+                <Button data-color="neutral" variant="primary" onClick={handlePrevious} disabled={currentIndex === 0}>
                     Forrige
                 </Button>
                 <BodyShort>
                     {currentIndex + 1}/{parsedEvents.length}
                 </BodyShort>
                 <Button
-                    variant="primary-neutral"
+                    data-color="neutral"
+                    variant="primary"
                     onClick={handleNext}
                     disabled={currentIndex === parsedEvents.length - 1}
                 >

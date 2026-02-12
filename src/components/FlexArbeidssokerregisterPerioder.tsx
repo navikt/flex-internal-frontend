@@ -199,7 +199,7 @@ const ArbeidssokerperioderTable: React.FC<ArbeidssokerperioderTableProps> = ({ f
                             {expandedRows.has(periode.id) && (
                                 <Table.Row>
                                     <Table.DataCell colSpan={11}>
-                                        <div className="flex flex-col md:flex-row md:gap-8">
+                                        <div className="flex flex-col ax-md:flex-row ax-md:gap-8">
                                             <EndreVedtaksperiodeTom periode={periode} />
                                             <EndreArbeidssokerperiodeId periode={periode} />
                                         </div>

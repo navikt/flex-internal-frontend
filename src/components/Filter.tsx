@@ -42,12 +42,12 @@ export function ValgteFilter({ filter, setFilter }: { filter: Filter[]; setFilte
     return (
         <Chips>
             {filter.map((f) => (
-                <Chips.Removable key={f.prop} variant="action" onClick={(e) => filterOnClick(e, f)}>
+                <Chips.Removable data-color="accent" key={f.prop} onClick={(e) => filterOnClick(e, f)}>
                     {f.prop + (f.inkluder ? ' = ' : ' != ') + f.verdi}
                 </Chips.Removable>
             ))}
             {deaktiverteFilter.map((f) => (
-                <Chips.Removable key={f.prop + '_deaktivert'} variant="neutral" onClick={(e) => filterOnClick(e, f)}>
+                <Chips.Removable data-color="neutral" key={f.prop + '_deaktivert'} onClick={(e) => filterOnClick(e, f)}>
                     {f.prop + (f.inkluder ? ' = ' : ' != ') + f.verdi}
                 </Chips.Removable>
             ))}

@@ -11,7 +11,7 @@ export function InntektsmeldingView({ inntektsmeldinger }: { inntektsmeldinger: 
     return (
         <ReadMore header={inntektsmeldinger.length + ' inntektsmelding' + (inntektsmeldinger.length > 1 ? 'er' : '')}>
             {inntektsmeldinger.map((inntektsmelding) => (
-                <div key={inntektsmelding.id} className="mb-2 bg-bg-subtle rounded-2xl p-4">
+                <div key={inntektsmelding.id} className="mb-2 bg-ax-bg-neutral-soft rounded-2xl p-4">
                     <div>InntektsmeldingId: {inntektsmelding.inntektsmeldingId}</div>
                     <div>Arbeidsgivertype: {inntektsmelding.arbeidsgivertype}</div>
                     <div>Virksomhetsnummer: {inntektsmelding.virksomhetsnummer}</div>

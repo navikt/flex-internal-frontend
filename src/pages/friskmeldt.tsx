@@ -144,7 +144,7 @@ function ArbeidssokerDetaljerVisning({ arbeidssokerdata }: { arbeidssokerdata: A
         if (arbeidssokerdata!.length == 0) {
             return {
                 tekst: 'Ikke registrert arbeidssoker',
-                color: 'bg-red-300 p-8 rounded-sm',
+                color: 'bg-ax-danger-400 p-8 rounded-sm',
             }
         }
         if (arbeidssokerdata![0].avsluttet) {
@@ -154,7 +154,7 @@ function ArbeidssokerDetaljerVisning({ arbeidssokerdata }: { arbeidssokerdata: A
                     arbeidssokerdata![0].periodeId +
                     ' avsluttet ' +
                     formatterTimestamp(arbeidssokerdata![0].avsluttet.tidspunkt),
-                color: 'bg-red-300 p-8 rounded-sm',
+                color: 'bg-ax-danger-400 p-8 rounded-sm',
             }
         }
         return {
@@ -304,13 +304,17 @@ const Soknader = ({ fnr }: { fnr: string }) => {
                     ))}
                 </Table.Body>
             </Table>
-
             <Modal ref={ref} header={{ heading: 'Bekreft sletting' }} open={showDeleteModal} onClose={closeDeleteModal}>
                 <Modal.Body>
                     <BodyLong>Er du sikker på at du vil slette denne søknaden?</BodyLong>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger" onClick={handleDelete} loading={deleteSoknad.isPending}>
+                    <Button
+                        data-color="danger"
+                        variant="primary"
+                        onClick={handleDelete}
+                        loading={deleteSoknad.isPending}
+                    >
                         Slett
                     </Button>
                     <Button variant="secondary" onClick={closeDeleteModal}>
@@ -423,11 +427,11 @@ const FtaVedtakComp = ({ fnr }: { fnr: string }) => {
                                     case 'NY':
                                         return 'bg-yellow-100'
                                     case 'OVERLAPP':
-                                        return 'bg-red-100'
+                                        return 'bg-ax-danger-200'
                                     case 'OVERLAPP_OK':
                                         return ''
                                     default:
-                                        return 'bg-red-100'
+                                        return 'bg-ax-danger-200'
                                 }
                             }
 
@@ -444,8 +448,9 @@ const FtaVedtakComp = ({ fnr }: { fnr: string }) => {
                                             <div className="flex gap-8">
                                                 {vedtak.behandletStatus == 'OVERLAPP' && (
                                                     <Button
+                                                        data-color="neutral"
                                                         size="small"
-                                                        variant="secondary-neutral"
+                                                        variant="secondary"
                                                         onClick={() => {
                                                             endreStatus.mutate({
                                                                 request: {
@@ -461,8 +466,9 @@ const FtaVedtakComp = ({ fnr }: { fnr: string }) => {
                                                 )}
                                                 {vedtak.behandletStatus == 'BEHANDLET' && (
                                                     <Button
+                                                        data-color="neutral"
                                                         size="small"
-                                                        variant="secondary-neutral"
+                                                        variant="secondary"
                                                         onClick={() => {
                                                             endreStatus.mutate({
                                                                 request: {
@@ -478,8 +484,9 @@ const FtaVedtakComp = ({ fnr }: { fnr: string }) => {
                                                 )}
                                                 {!vedtak.ignorerArbeidssokerregister && (
                                                     <Button
+                                                        data-color="neutral"
                                                         size="small"
-                                                        variant="secondary-neutral"
+                                                        variant="secondary"
                                                         onClick={() => {
                                                             ignorerArbs.mutate({
                                                                 request: {
@@ -495,8 +502,9 @@ const FtaVedtakComp = ({ fnr }: { fnr: string }) => {
                                                 )}
                                                 {rebehandle && (
                                                     <Button
+                                                        data-color="neutral"
                                                         size="small"
-                                                        variant="secondary-neutral"
+                                                        variant="secondary"
                                                         onClick={() => {
                                                             endreStatus.mutate({
                                                                 request: {
@@ -531,8 +539,9 @@ const FtaVedtakComp = ({ fnr }: { fnr: string }) => {
             )}
             <div className="mb-8 flex gap-8">
                 <Button
+                    data-color="neutral"
                     size="small"
-                    variant="secondary-neutral"
+                    variant="secondary"
                     onClick={() => {
                         ref.current?.showModal()
                     }}
