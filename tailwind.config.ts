@@ -1,13 +1,12 @@
-import naviktTailwindPreset from '@navikt/ds-tailwind'
+import dsTailwind from '@navikt/ds-tailwind'
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
-    presets: [naviktTailwindPreset],
-    content: ['./src/**/*.{js,ts,jsx,tsx}'],
+    presets: [dsTailwind],
+    content: ['./src/**'],
     theme: {
         extend: {},
     },
-    plugins: [],
 }
 
 export default config
