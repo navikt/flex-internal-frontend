@@ -74,7 +74,7 @@ export function TidslinjeAareg({ aaregresponse }: { aaregresponse: AaregResponse
                                         icon={ao.arbeidssted.identer[0].ident}
                                     >
                                         <Fragment>
-                                            <pre className="text-small">{JSON.stringify(ao, null, 2)}</pre>
+                                            <pre className="text-ax-small">{JSON.stringify(ao, null, 2)}</pre>
                                         </Fragment>
                                     </Timeline.Period>
                                 )
