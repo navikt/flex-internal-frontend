@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import { Table, TextField } from '@navikt/ds-react'
+import { Search, Table } from '@navikt/ds-react'
 
 import { initialProps } from '../initialprops/initialProps'
 import { useIdenter } from '../queryhooks/useIdenter'
+import { handterIdentValidering } from '../utils/inputValidering'
 
 const IdentPage = () => {
     const [ident, setIdent] = useState<string>()
@@ -11,14 +12,17 @@ const IdentPage = () => {
 
     return (
         <div className="flex-row space-y-4">
-            <TextField
-                type="number"
-                label="ident"
-                onChange={(e) =>
-                    e.target.value.length == 11 || e.target.value.length == 13
-                        ? setIdent(e.target.value)
-                        : setIdent(undefined)
-                }
+            <Search
+                htmlSize="20"
+                label="Ident"
+                onSearchClick={(input) => {
+                    handterIdentValidering(input, setIdent)
+                }}
+                onKeyDown={(evt) => {
+                    if (evt.key === 'Enter') {
+                        handterIdentValidering(evt.currentTarget.value, setIdent)
+                    }
+                }}
             />
             <Table>
                 <Table.Header>

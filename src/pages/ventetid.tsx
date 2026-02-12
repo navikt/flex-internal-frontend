@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 
 import { initialProps } from '../initialprops/initialProps'
 import { useVentetid } from '../queryhooks/useVentetid'
+import { handterUuidValidering } from '../utils/inputValidering'
 
 const VentetidPage = () => {
     const [sykmeldingId, setSykmeldingId] = useState<string>()
@@ -44,26 +45,24 @@ const VentetidPage = () => {
     return (
         <div className="flex-row space-y-4">
             <Search
-                className="w-72"
+                htmlSize="40"
                 label="Søk sykmeldingId"
                 onSearchClick={(input) => {
-                    const id = input.trim()
-                    if (id.length === 36) {
-                        setSykmeldingId(id)
-                    } else {
-                        setSykmeldingId(undefined)
-                        window.alert('SykmeldingId må være en UUID på 36 tegn')
-                    }
+                    handterUuidValidering(
+                        input,
+                        setSykmeldingId,
+                        () => setSykmeldingId(undefined),
+                        'SykmeldingId må være en UUID på 36 tegn',
+                    )
                 }}
                 onKeyDown={(evt) => {
                     if (evt.key === 'Enter') {
-                        const id = evt.currentTarget.value.trim()
-                        if (id.length === 36) {
-                            setSykmeldingId(id)
-                        } else {
-                            setSykmeldingId(undefined)
-                            window.alert('SykmeldingId må være en UUID på 36 tegn')
-                        }
+                        handterUuidValidering(
+                            evt.currentTarget.value,
+                            setSykmeldingId,
+                            () => setSykmeldingId(undefined),
+                            'SykmeldingId må være en UUID på 36 tegn',
+                        )
                     }
                 }}
             />

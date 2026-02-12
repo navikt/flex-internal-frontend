@@ -18,6 +18,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
 import { initialProps } from '../initialprops/initialProps'
+import { handterFnrValidering } from '../utils/inputValidering'
 import { useArbeidssoker, ArbeidssokerDetaljer } from '../queryhooks/useArbeidssoker'
 import { useSoknader } from '../queryhooks/useSoknader'
 import { FtaVedtak, useFtaVedtak } from '../queryhooks/useFtaVedtak'
@@ -54,27 +55,14 @@ const FriskmeldtPage = () => {
         return (
             <>
                 <Search
-                    className="w-56"
-                    label="Søk opp person"
+                    htmlSize="20"
+                    label="Fødselsnummer"
                     onSearchClick={(input) => {
-                        let fnr = input.trim()
-                        if (fnr.length == 10) {
-                            fnr = '0' + fnr
-                        }
-
-                        if (fnr.length == 11) {
-                            setFnr(fnr)
-                        } else {
-                            window.alert('Fnr må være 11 siffer')
-                        }
+                        handterFnrValidering(input, setFnr)
                     }}
                     onKeyDown={(evt) => {
                         if (evt.key === 'Enter') {
-                            if (evt.currentTarget.value.length == 11) {
-                                setFnr(evt.currentTarget.value)
-                            } else {
-                                window.alert('Fnr må være 11 siffer')
-                            }
+                            handterFnrValidering(evt.currentTarget.value, setFnr)
                         }
                     }}
                 />
