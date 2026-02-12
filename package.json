@@ -2,14 +2,11 @@
     "name": "flex-internal-frontend",
     "version": "0.1.0",
     "private": true,
-    "engines": {
-        "node": "24"
-    },
     "packageManager": "pnpm@10.29.2",
-    "pnpm": {
-        "overrides": {
-            "jiti": "^2.6.1"
-        }
+    "type": "module",
+    "engines": {
+        "node": "24",
+        "pnpm": ">=10"
     },
     "dependencies": {
         "@navikt/aksel-icons": "^7.4.0",
@@ -35,12 +32,12 @@
         "@types/node": "^24.10.8",
         "@types/react": "^19.2.13",
         "@types/react-dom": "^19.2.3",
-        "@types/uuid": "^11.0.0",
         "autoprefixer": "^10.4.24",
         "eslint": "^9.39.2",
         "eslint-config-next": "^16.1.6",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-prettier": "^5.5.5",
+        "jiti": "^2.6.1",
         "next": "^16.1.6",
         "prettier": "^3.8.1",
         "prettier-plugin-tailwindcss": "^0.7.2",
