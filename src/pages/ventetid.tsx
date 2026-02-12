@@ -78,7 +78,7 @@ const VentetidPage = () => {
                 ) : data ? (
                     <Box>
                         {erUtenforVentetid && <Label className="mt-5">Ventetid:</Label>}
-                        <div className="grid grid-cols-[auto,1fr] items-center gap-x-4 gap-y-1 mt-2">
+                        <div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-1 mt-2">
                             {erUtenforVentetid && (
                                 <>
                                     <BodyShort>Utenfor ventetiden:</BodyShort>
@@ -109,7 +109,7 @@ const VentetidPage = () => {
                         {syketilfellebiter && (
                             <div className="mt-4">
                                 <Label>Syketilfellebiter:</Label>
-                                <div className="mt-2 rounded bg-gray-100 p-3">
+                                <div className="mt-2 rounded-sm bg-gray-100 p-3">
                                     <pre className="whitespace-pre-wrap font-mono text-xs">
                                         {JSON.stringify(syketilfellebiter, null, 2)}
                                     </pre>

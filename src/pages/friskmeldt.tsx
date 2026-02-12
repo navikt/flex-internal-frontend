@@ -144,7 +144,7 @@ function ArbeidssokerDetaljerVisning({ arbeidssokerdata }: { arbeidssokerdata: A
         if (arbeidssokerdata!.length == 0) {
             return {
                 tekst: 'Ikke registrert arbeidssoker',
-                color: 'bg-red-300 p-8 rounded',
+                color: 'bg-red-300 p-8 rounded-sm',
             }
         }
         if (arbeidssokerdata![0].avsluttet) {
@@ -154,7 +154,7 @@ function ArbeidssokerDetaljerVisning({ arbeidssokerdata }: { arbeidssokerdata: A
                     arbeidssokerdata![0].periodeId +
                     ' avsluttet ' +
                     formatterTimestamp(arbeidssokerdata![0].avsluttet.tidspunkt),
-                color: 'bg-red-300 p-8 rounded',
+                color: 'bg-red-300 p-8 rounded-sm',
             }
         }
         return {
