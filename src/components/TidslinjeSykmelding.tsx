@@ -19,7 +19,7 @@ export default function TidslinjeSykmelding({
     soknaderGruppertPaArbeidsgiver: Map<string, ArbeidsgiverGruppering>
     arbeidsgiver: string
     filter: Filter[]
-    setFilter: (val: any) => void
+    setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
 }) {
     const [sortering, setSortering] = useState<Sortering>('sykmelding skrevet')
     const soknaderGruppertPaSykmeldinger = new Map<string, SykmeldingGruppering>()

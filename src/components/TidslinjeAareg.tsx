@@ -8,10 +8,13 @@ import { VelgManederKnapp } from './VelgManederKnapp'
 
 export function TidslinjeAareg({ aaregresponse }: { aaregresponse: AaregResponse }) {
     const datoer = [] as dayjs.Dayjs[]
-    const ao = aaregresponse
-    ao.forEach((vp) => {
-        vp.ansettelsesperiode.startdato && datoer.push(dayjs(vp.ansettelsesperiode.startdato))
-        vp.ansettelsesperiode.sluttdato && datoer.push(dayjs(vp.ansettelsesperiode.sluttdato))
+    aaregresponse.forEach((arbeidsforhold) => {
+        if (arbeidsforhold.ansettelsesperiode.startdato) {
+            datoer.push(dayjs(arbeidsforhold.ansettelsesperiode.startdato))
+        }
+        if (arbeidsforhold.ansettelsesperiode.sluttdato) {
+            datoer.push(dayjs(arbeidsforhold.ansettelsesperiode.sluttdato))
+        }
     })
     datoer.push(dayjs().add(1, 'week'))
 
@@ -39,7 +42,7 @@ export function TidslinjeAareg({ aaregresponse }: { aaregresponse: AaregResponse
     // grupper perioder per soknad.orgnummer
     // Map med orgnummer som key og FullVedtaksperiode[] som value
     const mappet = new Map<string, Arbeidsforhold[]>()
-    ao.forEach((a) => {
+    aaregresponse.forEach((a) => {
         const org = a.opplysningspliktig.identer[0].ident + ' - ' + a.arbeidssted.identer[0].ident
         if (mappet.has(org)) {
             mappet.get(org)?.push(a)

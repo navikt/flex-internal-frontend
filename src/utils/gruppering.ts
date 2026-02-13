@@ -5,7 +5,7 @@ import { KlippetSykepengesoknadRecord, Soknad } from '../queryhooks/useSoknader'
 import { Sortering } from '../components/ValgtSortering'
 import { Filter } from '../components/Filter'
 
-import { Klipp, perioderSomMangler, sykmeldingDager, sykmeldingOverlappendeDager } from './overlapp'
+import { Klipp, maxTom, minFom, perioderSomMangler, sykmeldingDager, sykmeldingOverlappendeDager } from './overlapp'
 
 export interface SoknadGruppering {
     soknad: Soknad
@@ -24,18 +24,19 @@ export interface ArbeidsgiverGruppering {
 function filtrer(filter: Filter[], soknader: Soknad[]) {
     let filtrerteSoknader = soknader
     filter.forEach((f: Filter) => {
-        filtrerteSoknader = filtrerteSoknader.filter((sok: any) => {
+        filtrerteSoknader = filtrerteSoknader.filter((sok: Soknad) => {
+            const value = (sok as unknown as Record<string, unknown>)[f.prop]
             return (
-                (f.inkluder && f.verdi === JSON.stringify(sok[f.prop])) ||
-                (!f.inkluder && f.verdi !== JSON.stringify(sok[f.prop]))
+                (f.inkluder && f.verdi === JSON.stringify(value)) || (!f.inkluder && f.verdi !== JSON.stringify(value))
             )
         })
     })
     return filtrerteSoknader
 }
 
-function grupperPaSykmelding(soknader: Soknad[], klipp: KlippetSykepengesoknadRecord[]) {
+function grupperPaSykmelding(soknader: Soknad[], klipp: KlippetSykepengesoknadRecord[], alleSoknader: Soknad[]) {
     const sykmeldingGruppering = new Map<string, SykmeldingGruppering>()
+    const alleSoknaderIds = new Set(alleSoknader.map((s) => s.id))
 
     soknader
         .sort((a, b) => dayjs(a.opprettetDato).diff(b.opprettetDato))
@@ -91,11 +92,19 @@ function grupperPaSykmelding(soknader: Soknad[], klipp: KlippetSykepengesoknadRe
 
             // Når hele søknaden er klippet bort og det ikke fantes flere søknader på samme sykmelding
             if (!sykmeldingEksisterte) {
+                if (alleSoknaderIds.has(k.sykepengesoknadUuid)) {
+                    return
+                }
+
                 const ghostSoknad = new Soknad({
+                    soknadPerioder: [],
+                    status: 'SENDT',
                     id: k.sykepengesoknadUuid,
                     sykmeldingId: k.sykmeldingUuid + '_GHOST',
                     soknadstype: 'ARBEIDSTAKERE',
                     arbeidssituasjon: 'ARBEIDSTAKER',
+                    fom: minFom(perioderSomErKlippet),
+                    tom: maxTom(perioderSomErKlippet),
                 })
 
                 if (!sykmeldingGruppering.has(ghostSoknad.sykmeldingId!)) {
@@ -181,18 +190,24 @@ export function sortert(a: [string, SykmeldingGruppering], b: [string, Sykmeldin
     const bSykmeldingGruppering = b.at(1) as SykmeldingGruppering
 
     function mapTilSoknadProp(syk: SykmeldingGruppering, prop: string) {
-        return Array.from(syk.soknader.values()).map((sok) => (sok.soknad as any)[prop])
+        return Array.from(syk.soknader.values()).map((sok) => (sok.soknad as unknown as Record<string, unknown>)[prop])
     }
 
     function mapTilKlippProp(syk: SykmeldingGruppering, prop: string) {
         return Array.from(syk.soknader.values())
             .flatMap((sok) => sok.klippingAvSoknad)
             .concat(syk.klippingAvSykmelding)
-            .map((klipp) => (klipp as any)[prop])
+            .map((klipp) => (klipp as unknown as Record<string, unknown>)[prop])
     }
 
-    function maximum(previousValue: any, currentValue: any) {
-        if (currentValue > previousValue) return currentValue
+    function isGreater(a: unknown, b: unknown): boolean {
+        if (typeof a === 'string' && typeof b === 'string') return a > b
+        if (a instanceof Date && b instanceof Date) return a.getTime() > b.getTime()
+        return false
+    }
+
+    function maximum(previousValue: unknown, currentValue: unknown) {
+        if (isGreater(currentValue, previousValue)) return currentValue
         else return previousValue
     }
 
@@ -200,7 +215,7 @@ export function sortert(a: [string, SykmeldingGruppering], b: [string, Sykmeldin
         case 'sykmelding skrevet': {
             const verdiA = mapTilSoknadProp(aSykmeldingGruppering, 'sykmeldingUtskrevet').reduce(maximum, new Date(0))
             const verdiB = mapTilSoknadProp(bSykmeldingGruppering, 'sykmeldingUtskrevet').reduce(maximum, new Date(0))
-            return verdiA > verdiB ? -1 : 1
+            return isGreater(verdiA, verdiB) ? -1 : 1
         }
         case 'opprettet': {
             const verdiA = aSykmeldingId.endsWith('_GHOST')
@@ -209,7 +224,7 @@ export function sortert(a: [string, SykmeldingGruppering], b: [string, Sykmeldin
             const verdiB = bSykmeldingId.endsWith('_GHOST')
                 ? mapTilKlippProp(bSykmeldingGruppering, 'timestamp').reduce(maximum, new Date(0))
                 : mapTilSoknadProp(bSykmeldingGruppering, 'opprettetDato').reduce(maximum, new Date(0))
-            return verdiA > verdiB ? -1 : 1
+            return isGreater(verdiA, verdiB) ? -1 : 1
         }
         default:
         case 'tom': {
@@ -219,7 +234,7 @@ export function sortert(a: [string, SykmeldingGruppering], b: [string, Sykmeldin
             const verdiB = bSykmeldingId.endsWith('_GHOST')
                 ? mapTilKlippProp(bSykmeldingGruppering, 'tom').reduce(maximum, '2000-01-01')
                 : mapTilSoknadProp(bSykmeldingGruppering, 'tom').reduce(maximum, '2000-01-01')
-            return verdiA > verdiB ? -1 : 1
+            return isGreater(verdiA, verdiB) ? -1 : 1
         }
     }
 }
@@ -230,6 +245,6 @@ export default function gruppertOgFiltrert(
     klipp: KlippetSykepengesoknadRecord[],
 ): Map<string, ArbeidsgiverGruppering> {
     const filtrerteSoknader = filtrer(filter, soknader)
-    const gruppertPaSykmelding = grupperPaSykmelding(filtrerteSoknader, klipp)
+    const gruppertPaSykmelding = grupperPaSykmelding(filtrerteSoknader, klipp, soknader)
     return grupperPaArbeidsgiver(gruppertPaSykmelding)
 }

@@ -10,11 +10,6 @@ const config = defineConfig([
     ...tsmEslintReact,
     {
         rules: {
-            'postcss-modules/no-undef-class': 'off',
-            'postcss-modules/no-unused-class': 'off',
-            '@typescript-eslint/no-explicit-any': 'off',
-            '@typescript-eslint/no-non-null-assertion': 'off',
-            '@typescript-eslint/no-unused-expressions': 'off',
             '@typescript-eslint/explicit-function-return-type': 'off',
         },
     },
@@ -22,11 +17,6 @@ const config = defineConfig([
         extends: [prettierRecommended],
         rules: {
             'prettier/prettier': 'warn',
-        },
-    },
-    {
-        rules: {
-            'react-hooks/refs': 'off',
         },
     },
 ])
