@@ -9,7 +9,7 @@ function finnUglerIMosen(sykmeldingGruppering: Map<string, SykmeldingGruppering>
 
     Array.from(sykmeldingGruppering.entries()).forEach(([, syk]) => {
         Array.from(syk.soknader.entries()).forEach(([sokId, sok]) => {
-            if (sok.soknad.soknadPerioder === undefined) {
+            if (sok.soknad.soknadPerioder === undefined || sok.soknad.soknadPerioder.length === 0) {
                 return
             }
             const forventetFom = minFom(sok.soknad.soknadPerioder)

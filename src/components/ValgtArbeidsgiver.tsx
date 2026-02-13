@@ -9,7 +9,7 @@ export default function ValgtArbeidsgiver({
     soknaderGruppertPaArbeidsgiver,
 }: {
     arbeidsgiver: string
-    setArbeidsgiver: (val: any) => void
+    setArbeidsgiver: (val: string) => void
     soknaderGruppertPaArbeidsgiver: Map<string, ArbeidsgiverGruppering>
 }) {
     const arbeidsgivere = Array.from(soknaderGruppertPaArbeidsgiver.keys()).filter((org) => org.length === 9)

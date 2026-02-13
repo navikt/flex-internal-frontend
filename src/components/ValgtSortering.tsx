@@ -8,13 +8,13 @@ export default function ValgtSortering({
     setSortering,
 }: {
     sortering: Sortering
-    setSortering: (v: any) => void
+    setSortering: (sortering: Sortering) => void
 }) {
     return (
         <ToggleGroup
             label="Sorter nyeste øverst:"
             defaultValue={sortering}
-            onChange={(v: any) => setSortering(v)}
+            onChange={(sortering) => setSortering(sortering as Sortering)}
             size="small"
         >
             <ToggleGroup.Item value="sykmelding skrevet">sykmelding skrevet</ToggleGroup.Item>
