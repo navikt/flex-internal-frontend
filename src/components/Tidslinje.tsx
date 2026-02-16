@@ -26,7 +26,7 @@ export function SoknadDetaljer({
 }: {
     soknad: Soknad
     filter: Filter[]
-    setFilter: (val: any) => void
+    setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
 }) {
     return (
         <Fragment>

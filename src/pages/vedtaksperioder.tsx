@@ -30,7 +30,7 @@ const Vedtaksperioder = () => {
     } = useVedtaksperioderMedInntektsmeldinger(fnr, vedtaksperiodeId, enabled)
     const queryClient = useQueryClient()
 
-    const cronJobMutation = useMutation<object, any, dayjs.Dayjs>({
+    const cronJobMutation = useMutation<object, Error, dayjs.Dayjs>({
         mutationFn: async (dato) => {
             return await fetchJsonMedRequestId<object>(
                 `/api/flex-inntektsmelding-status/api/v1/cronjob?now=${dato.toISOString()}`,

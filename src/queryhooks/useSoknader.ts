@@ -20,19 +20,22 @@ export function useSoknader(fnr: string | undefined, enabled = true): UseQueryRe
                     klippetSykepengesoknadRecord: [],
                 }
             }
-            return fetchJsonMedRequestId('/api/sykepengesoknad-backend/api/v1/flex/sykepengesoknader', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ fnr: fnr }),
-            }).then((jsonResponse: any) => {
+            return fetchJsonMedRequestId<RSSoknaderResponse>(
+                '/api/sykepengesoknad-backend/api/v1/flex/sykepengesoknader',
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fnr: fnr }),
+                },
+            ).then((jsonResponse) => {
                 const response: SoknaderResponse = {
                     sykepengesoknadListe: [],
                     klippetSykepengesoknadRecord: [],
                 }
                 jsonResponse.sykepengesoknadListe
-                    .filter((soknad: any) => soknad.soknadstype !== 'OPPHOLD_UTLAND')
-                    .map((soknad: any) => response.sykepengesoknadListe.push(new Soknad(soknad)))
-                jsonResponse.klippetSykepengesoknadRecord.map((klipp: any) =>
+                    .filter((soknad) => soknad.soknadstype !== 'OPPHOLD_UTLAND')
+                    .map((soknad) => response.sykepengesoknadListe.push(new Soknad(soknad)))
+                jsonResponse.klippetSykepengesoknadRecord.map((klipp) =>
                     response.klippetSykepengesoknadRecord.push(new KlippetSykepengesoknadRecord(klipp)),
                 )
                 return response
@@ -46,6 +49,21 @@ interface SoknaderResponse {
     klippetSykepengesoknadRecord: KlippetSykepengesoknadRecord[]
 }
 
+interface RSSoknaderResponse {
+    sykepengesoknadListe: RSSoknad[]
+    klippetSykepengesoknadRecord: RSKlippetSykepengesoknadRecord[]
+}
+
+export interface RSKlippetSykepengesoknadRecord {
+    id: string
+    sykepengesoknadUuid: string
+    sykmeldingUuid: string
+    klippVariant: KlippVariant
+    periodeFor: RSSoknadsperiode[] | string
+    periodeEtter: RSSoknadsperiode[] | string
+    timestamp?: string
+}
+
 export class KlippetSykepengesoknadRecord {
     id: string
     sykepengesoknadUuid: string
@@ -55,15 +73,38 @@ export class KlippetSykepengesoknadRecord {
     periodeEtter: RSSoknadsperiode[]
     timestamp?: Date
 
-    constructor(json: any) {
+    constructor(json: RSKlippetSykepengesoknadRecord) {
         this.id = json.id
         this.sykepengesoknadUuid = json.sykepengesoknadUuid
         this.sykmeldingUuid = json.sykmeldingUuid
         this.klippVariant = json.klippVariant
-        this.periodeFor = JSON.parse(json.periodeFor)
-        this.periodeEtter = JSON.parse(json.periodeEtter)
-        this.timestamp = dayjsToDate(json.timestamp)
+        this.periodeFor = typeof json.periodeFor === 'string' ? JSON.parse(json.periodeFor) : json.periodeFor
+        this.periodeEtter = typeof json.periodeEtter === 'string' ? JSON.parse(json.periodeEtter) : json.periodeEtter
+        this.timestamp = json.timestamp ? dayjs(json.timestamp).toDate() : undefined
     }
+}
+
+export interface RSSoknad {
+    id: string
+    sykmeldingId?: string
+    soknadstype: RSSoknadstypeType
+    status: RSSoknadstatusType
+    arbeidssituasjon?: RSArbeidssituasjonType
+    fom?: string
+    tom?: string
+    korrigerer?: string
+    korrigertAv?: string
+    avbruttDato?: string
+    sykmeldingUtskrevet?: string
+    sykmeldingSignaturDato?: string
+    startSykeforlop?: string
+    opprettetDato?: string
+    sendtTilNAVDato?: string
+    sendtTilArbeidsgiverDato?: string
+    arbeidsgiverNavn?: string
+    arbeidsgiverOrgnummer?: string
+    soknadPerioder: RSSoknadsperiode[]
+    merknaderFraSykmelding?: RSMerknad[]
 }
 
 export class Soknad {
@@ -88,7 +129,7 @@ export class Soknad {
     soknadPerioder: RSSoknadsperiode[]
     merknaderFraSykmelding?: RSMerknad[]
 
-    constructor(json: any) {
+    constructor(json: RSSoknad) {
         this.id = json.id
         this.sykmeldingId = json.sykmeldingId
         this.soknadstype = json.soknadstype
@@ -99,12 +140,12 @@ export class Soknad {
         this.korrigerer = json.korrigerer
         this.korrigertAv = json.korrigertAv
         this.avbruttDato = json.avbruttDato
-        this.sykmeldingUtskrevet = dayjsToDate(json.sykmeldingUtskrevet)
-        this.sykmeldingSignaturDato = dayjsToDate(json.sykmeldingSignaturDato)
+        this.sykmeldingUtskrevet = dayjsToDate(json.sykmeldingUtskrevet!)
+        this.sykmeldingSignaturDato = dayjsToDate(json.sykmeldingSignaturDato!)
         this.startSykeforlop = json.startSykeforlop
-        this.opprettetDato = dayjsToDate(json.opprettetDato)
-        this.sendtTilNAVDato = dayjsToDate(json.sendtTilNAVDato)
-        this.sendtTilArbeidsgiverDato = dayjsToDate(json.sendtTilArbeidsgiverDato)
+        this.opprettetDato = dayjsToDate(json.opprettetDato!)
+        this.sendtTilNAVDato = dayjsToDate(json.sendtTilNAVDato!)
+        this.sendtTilArbeidsgiverDato = dayjsToDate(json.sendtTilArbeidsgiverDato!)
         this.arbeidsgiverNavn = json.arbeidsgiverNavn
         this.arbeidsgiverOrgnummer = json.arbeidsgiverOrgnummer
         this.soknadPerioder = json.soknadPerioder

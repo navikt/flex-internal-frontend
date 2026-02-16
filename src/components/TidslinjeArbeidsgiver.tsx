@@ -16,7 +16,7 @@ export default function TidslinjeArbeidsgiver({
     soknaderGruppertPaArbeidsgiver: Map<string, ArbeidsgiverGruppering>
     arbeidsgiver: string
     filter: Filter[]
-    setFilter: (val: any) => void
+    setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
 }) {
     if (arbeidsgiver !== 'alle') {
         return <Fragment />

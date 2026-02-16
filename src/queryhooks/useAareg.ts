@@ -57,7 +57,7 @@ export interface Arbeidssted {
 export interface Identer2 {
     type: string
     ident: string
-    gjeldende: any
+    gjeldende: boolean
 }
 
 export interface Opplysningspliktig {
@@ -68,7 +68,7 @@ export interface Opplysningspliktig {
 export interface Identer3 {
     type: string
     ident: string
-    gjeldende: any
+    gjeldende: boolean
 }
 
 export interface Yrke {
