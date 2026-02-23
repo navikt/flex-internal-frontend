@@ -28,7 +28,7 @@
     "devDependencies": {
         "@navikt/tsm-eslint-react": "^1.0.0",
         "@navikt/tsm-prettier": "^2.0.0",
-        "@tailwindcss/postcss": "^4.1.18",
+        "@tailwindcss/postcss": "^4.2.0",
         "tailwindcss": "^4.1.18",
         "@types/node": "^24.10.8",
         "@types/react": "^19.2.14",
