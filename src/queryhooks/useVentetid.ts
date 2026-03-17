@@ -23,16 +23,19 @@ export interface Syketilfellebit {
     tombstonePublisert: string | null
 }
 
+export interface SyketilfellebitResponse {
+    syketilfellebiter: Syketilfellebit[]
+}
+
 export interface VentetidInternalResponse {
     erUtenforVentetid: boolean
     ventetid: FomTomPeriode
     sykmeldingsperiode: FomTomPeriode
-    syketilfellebiter: Syketilfellebit[]
 }
 
 export function useVentetid(
     sykmeldingId: string | undefined,
-    enabled = true,
+    enabled: boolean,
 ): UseQueryResult<VentetidInternalResponse | null, Error> {
     return useQuery<VentetidInternalResponse | null, Error>({
         queryKey: ['ventetid', sykmeldingId],
@@ -45,6 +48,28 @@ export function useVentetid(
                 method: 'GET',
                 credentials: 'include',
             })
+        },
+    })
+}
+
+export function useSyketilfellebiter(
+    fnr: string | undefined,
+    enabled: boolean,
+): UseQueryResult<SyketilfellebitResponse, Error> {
+    return useQuery<SyketilfellebitResponse, Error>({
+        queryKey: ['syketilfellebiter', fnr],
+        enabled: enabled,
+        queryFn: () => {
+            if (fnr == null) {
+                return Promise.resolve({ syketilfellebiter: [] })
+            }
+            return fetchJsonMedRequestId<SyketilfellebitResponse>(
+                '/api/flex-syketilfelle/api/v1/flex/syketilfellebiter',
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', fnr: fnr },
+                },
+            )
         },
     })
 }
