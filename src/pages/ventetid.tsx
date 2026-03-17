@@ -13,7 +13,6 @@ const VentetidPage = () => {
     const erUtenforVentetid = data?.erUtenforVentetid
     const ventetid = data?.ventetid
     const sykmeldingsperiode = data?.sykmeldingsperiode
-    const syketilfellebiter = data?.syketilfellebiter
     const antallVentetidsdager = ventetid ? dayjs(ventetid.tom).diff(dayjs(ventetid.fom), 'day') + 1 : null
     const antallSykmeldingsdager = sykmeldingsperiode
         ? dayjs(sykmeldingsperiode.tom).diff(dayjs(sykmeldingsperiode.fom), 'day') + 1
@@ -105,16 +104,6 @@ const VentetidPage = () => {
                                 </>
                             )}
                         </div>
-                        {syketilfellebiter && (
-                            <div className="mt-4">
-                                <Label>Syketilfellebiter:</Label>
-                                <div className="mt-2 rounded-sm bg-ax-neutral-200 p-3">
-                                    <pre className="whitespace-pre-wrap font-mono text-xs">
-                                        {JSON.stringify(syketilfellebiter, null, 2)}
-                                    </pre>
-                                </div>
-                            </div>
-                        )}
                     </Box>
                 ) : null)}
         </div>

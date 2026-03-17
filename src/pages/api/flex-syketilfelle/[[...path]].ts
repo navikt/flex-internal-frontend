@@ -7,7 +7,7 @@ import { mockApi } from '../../../testdata/testdata'
 
 const FLEX_SYKETILFELLE_CLIENT_ID = process.env.FLEX_SYKETILFELLE_CLIENT_ID || ''
 
-const tillatteApier = ['GET /api/v1/flex/ventetid/[uuid]']
+const tillatteApier = ['GET /api/v1/flex/ventetid/[uuid]', 'POST /api/v1/flex/syketilfellebiter']
 
 const handler = beskyttetApi(async (req: NextApiRequest, res: NextApiResponse) => {
     const opts = {

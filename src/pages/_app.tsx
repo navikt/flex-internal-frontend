@@ -34,7 +34,8 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
         '/sigrun': 'Se rådata fra Sigrun',
         '/arbeidssoker': 'Se rådata fra Arbeidssøkerregisteret',
         '/vedtaksperioder': 'Vis vedtaksperioder fra flex-inntektsmelding-status',
-        '/ventetid': 'Vis ventetid fra flex-syketilfelle',
+        '/ventetid': 'Vis ventetidsberegning fra flex-syketilfelle',
+        '/syketilfellebiter': 'Vis syketilfellebiter fra flex-syketilfelle',
     }
 
     return (

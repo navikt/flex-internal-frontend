@@ -925,6 +925,13 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
             erUtenforVentetid: true,
             ventetid: { fom: '2025-09-01', tom: '2025-09-16' },
             sykmeldingsperiode: { fom: '2025-09-01', tom: '2025-09-21' },
+        })
+        res.end()
+        return
+    }
+    if (validert.api == 'POST /api/v1/flex/syketilfellebiter') {
+        res.status(200)
+        res.json({
             syketilfellebiter: [
                 {
                     syketilfellebitId: '43e1c0c8-6a73-419a-8a20-42a77461d1ad',
