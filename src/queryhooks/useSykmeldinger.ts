@@ -10,14 +10,11 @@ export function useSykmeldinger(fnr: string | undefined, enabled = true): UseQue
             if (fnr === undefined) {
                 return []
             }
-            return fetchJsonMedRequestId<Sykmelding[]>(
-                '/api/flex-sykmeldinger-backend/api/v1/flex/sykmeldinger',
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ fnr }),
-                },
-            )
+            return fetchJsonMedRequestId<Sykmelding[]>('/api/flex-sykmeldinger-backend/api/v1/flex/sykmeldinger', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fnr }),
+            })
         },
     })
 }
@@ -33,11 +30,4 @@ export interface Sykmelding {
     diagnose?: string
 }
 
-export type SykmeldingStatusType =
-    | 'NY'
-    | 'APEN'
-    | 'SENDT'
-    | 'AVVIST'
-    | 'UTGATT'
-    | 'BEKREFTET'
-    | 'AVBRUTT'
+export type SykmeldingStatusType = 'NY' | 'APEN' | 'SENDT' | 'AVVIST' | 'UTGATT' | 'BEKREFTET' | 'AVBRUTT'
