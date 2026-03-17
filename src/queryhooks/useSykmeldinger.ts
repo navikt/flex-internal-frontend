@@ -11,7 +11,7 @@ export function useSykmeldinger(fnr: string | undefined, enabled = true): UseQue
                 return []
             }
             return fetchJsonMedRequestId<Sykmelding[]>(
-                '/api/sykepengesoknad-backend/api/v1/flex/sykmeldinger',
+                '/api/flex-sykmeldinger-backend/api/v1/flex/sykmeldinger',
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
