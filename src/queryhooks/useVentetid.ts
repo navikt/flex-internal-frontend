@@ -67,8 +67,7 @@ export function useSyketilfellebiter(
                 '/api/flex-syketilfelle/api/v1/flex/syketilfellebiter',
                 {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ fnr: fnr }),
+                    headers: { 'Content-Type': 'application/json', fnr: fnr },
                 },
             )
         },
