@@ -59,9 +59,6 @@ spec:
       rules:
         - application: sykepengesoknad-backend
         - application: flex-sykmeldinger-backend
-          permissions:
-            roles:
-              - "role-flex-internal-frontend"
         - application: flex-arbeidssokerregister-oppdatering
         - application: flex-inntektsmelding-status
         - application: flex-syketilfelle
