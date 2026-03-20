@@ -681,12 +681,14 @@ const sykmeldingerTestdata = [
                     restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
                 },
                 '6.5.2': {
-                    sporsmal: 'Beskriv pågående og planlagt utredning og/eller behandling. Lar dette seg kombinere med delvis arbeid?',
+                    sporsmal:
+                        'Beskriv pågående og planlagt utredning og/eller behandling. Lar dette seg kombinere med delvis arbeid?',
                     svar: 'Henvist til fysio.',
                     restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
                 },
                 '6.5.3': {
-                    sporsmal: 'Kan arbeidsevnen bedres gjennom medisinsk behandling og/eller arbeidsrelatert aktivitet? I så fall hvordan? Angi tidsperspektiv',
+                    sporsmal:
+                        'Kan arbeidsevnen bedres gjennom medisinsk behandling og/eller arbeidsrelatert aktivitet? I så fall hvordan? Angi tidsperspektiv',
                     svar: 'Nei',
                     restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
                 },

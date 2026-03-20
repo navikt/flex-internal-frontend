@@ -89,12 +89,7 @@ export interface Sykmeldingsperiode {
     reisetilskudd: boolean
 }
 
-export type Periodetype =
-    | 'AKTIVITET_IKKE_MULIG'
-    | 'AVVENTENDE'
-    | 'BEHANDLINGSDAGER'
-    | 'GRADERT'
-    | 'REISETILSKUDD'
+export type Periodetype = 'AKTIVITET_IKKE_MULIG' | 'AVVENTENDE' | 'BEHANDLINGSDAGER' | 'GRADERT' | 'REISETILSKUDD'
 
 export interface GradertPeriode {
     grad: number
