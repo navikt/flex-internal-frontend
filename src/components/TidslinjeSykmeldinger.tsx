@@ -2,12 +2,24 @@ import React, { Fragment } from 'react'
 import { BodyShort, Timeline } from '@navikt/ds-react'
 import dayjs from 'dayjs'
 
-import { Sykmelding } from '../queryhooks/useSykmeldinger'
+import { Sykmelding, SykmeldingStatusType } from '../queryhooks/useSykmeldinger'
 
-function sykmeldingStatus(status: Sykmelding['status']): 'success' | 'warning' | 'info' {
+function sykmeldingStatus(status: SykmeldingStatusType): 'success' | 'warning' | 'info' {
     if (['SENDT', 'BEKREFTET'].includes(status)) return 'success'
     if (['AVVIST', 'UTGATT', 'AVBRUTT'].includes(status)) return 'warning'
     return 'info'
+}
+
+function behandlerNavn(sykmelding: Sykmelding): string {
+    if (sykmelding.behandler) {
+        const deler = [
+            sykmelding.behandler.fornavn,
+            sykmelding.behandler.mellomnavn,
+            sykmelding.behandler.etternavn,
+        ].filter(Boolean)
+        if (deler.length > 0) return deler.join(' ')
+    }
+    return sykmelding.navnFastlege ?? 'Sykmelding'
 }
 
 function SykmeldingDetaljer({ sykmelding }: { sykmelding: Sykmelding }) {
@@ -30,14 +42,17 @@ export default function TidslinjeSykmeldinger({ sykmeldinger }: { sykmeldinger: 
             <BodyShort className="mb-2 font-semibold">{`${sykmeldinger.length} sykmelding(er)`}</BodyShort>
             <Timeline>
                 {sykmeldinger.map((sykmelding) => (
-                    <Timeline.Row key={sykmelding.id} label={sykmelding.behandlerNavn ?? 'Sykmelding'}>
-                        <Timeline.Period
-                            start={dayjs(sykmelding.fom).toDate()}
-                            end={dayjs(sykmelding.tom).toDate()}
-                            status={sykmeldingStatus(sykmelding.status)}
-                        >
-                            <SykmeldingDetaljer sykmelding={sykmelding} />
-                        </Timeline.Period>
+                    <Timeline.Row key={sykmelding.id} label={behandlerNavn(sykmelding)}>
+                        {sykmelding.sykmeldingsperioder.map((periode, idx) => (
+                            <Timeline.Period
+                                key={`${sykmelding.id}-${idx}`}
+                                start={dayjs(periode.fom).toDate()}
+                                end={dayjs(periode.tom).toDate()}
+                                status={sykmeldingStatus(sykmelding.sykmeldingStatus.statusEvent)}
+                            >
+                                <SykmeldingDetaljer sykmelding={sykmelding} />
+                            </Timeline.Period>
+                        ))}
                     </Timeline.Row>
                 ))}
                 <Timeline.Zoom>
