@@ -3,8 +3,8 @@ import { Search } from '@navikt/ds-react'
 
 import { initialProps } from '../initialprops/initialProps'
 import { useSykmeldinger } from '../queryhooks/useSykmeldinger'
-import TidslinjeSykmeldinger from '../components/TidslinjeSykmeldinger'
 import { handterFnrValidering } from '../utils/inputValidering'
+import TidslinjeSykmeldinger from '../components/sykmelding/TidslinjeSykmeldinger'
 
 const Sykmeldinger = () => {
     const [fnr, setFnr] = useState<string>()

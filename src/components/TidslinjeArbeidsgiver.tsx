@@ -86,7 +86,7 @@ export default function TidslinjeArbeidsgiver({
                     <Timeline.Zoom.Button label="3 mnd" interval="month" count={3} />
                     <Timeline.Zoom.Button label="7 mnd" interval="month" count={7} />
                     <Timeline.Zoom.Button label="9 mnd" interval="month" count={9} />
-                    <Timeline.Zoom.Button label="1.5 år" interval="year" count={1.5} />
+                    <Timeline.Zoom.Button label="2 år" interval="year" count={2} />
                 </Timeline.Zoom>
             </Timeline>
         </div>
