@@ -105,6 +105,7 @@ export interface RSSoknad {
     arbeidsgiverOrgnummer?: string
     soknadPerioder: RSSoknadsperiode[]
     merknaderFraSykmelding?: RSMerknad[]
+    ventetidSykmeldingUuid?: string
 }
 
 export class Soknad {
@@ -128,6 +129,7 @@ export class Soknad {
     arbeidsgiverOrgnummer?: string
     soknadPerioder: RSSoknadsperiode[]
     merknaderFraSykmelding?: RSMerknad[]
+    ventetidSykmeldingUuid?: string
 
     constructor(json: RSSoknad) {
         this.id = json.id
@@ -150,6 +152,7 @@ export class Soknad {
         this.arbeidsgiverOrgnummer = json.arbeidsgiverOrgnummer
         this.soknadPerioder = json.soknadPerioder
         this.merknaderFraSykmelding = json.merknaderFraSykmelding
+        this.ventetidSykmeldingUuid = json.ventetidSykmeldingUuid
     }
 }
 
