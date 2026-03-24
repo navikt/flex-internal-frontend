@@ -24,29 +24,18 @@ export interface Sykmelding {
     pasient: Pasient
     mottattTidspunkt: string
     behandlingsutfall: Behandlingsutfall
-    legekontorOrgnummer: string | null
     arbeidsgiver: Arbeidsgiver
     sykmeldingsperioder: Sykmeldingsperiode[]
     sykmeldingStatus: SykmeldingStatus
-    medisinskVurdering: MedisinskVurdering | null
     skjermesForPasient: boolean
-    prognose: Prognose | null
-    utdypendeOpplysninger: Record<string, Record<string, SporsmalSvar>>
-    tiltakArbeidsplassen: string | null
-    tiltakNAV: string | null
-    andreTiltak: string | null
-    meldingTilNAV: MeldingTilNAV | null
-    meldingTilArbeidsgiver: string | null
     kontaktMedPasient: KontaktMedPasient
     behandletTidspunkt: string
-    behandler: Behandler | null
     syketilfelleStartDato: string | null
-    navnFastlege: string | null
     egenmeldt: boolean
     papirsykmelding: boolean
     harRedusertArbeidsgiverperiode: boolean
     merknader: Merknad[] | null
-    rulesetVersion: string | null
+    signaturDato: string | null
     utenlandskSykmelding: UtenlandskSykmelding | null
 }
 
@@ -146,15 +135,6 @@ export interface FormSporsmalSvar<T> {
     svar: T
 }
 
-export interface MedisinskVurdering {
-    hovedDiagnose: Diagnose | null
-    biDiagnoser: Diagnose[]
-    annenFraversArsak: AnnenFraversArsak | null
-    svangerskap: boolean
-    yrkesskade: boolean
-    yrkesskadeDato: string | null
-}
-
 export interface Diagnose {
     kode: string
     system: string
@@ -164,13 +144,6 @@ export interface Diagnose {
 export interface AnnenFraversArsak {
     beskrivelse: string | null
     grunn: string[]
-}
-
-export interface Prognose {
-    arbeidsforEtterPeriode: boolean
-    hensynArbeidsplassen: string | null
-    erIArbeid: ErIArbeid | null
-    erIkkeIArbeid: ErIkkeIArbeid | null
 }
 
 export interface ErIArbeid {
@@ -185,37 +158,9 @@ export interface ErIkkeIArbeid {
     arbeidsforFOM: string | null
     vurderingsdato: string | null
 }
-
-export interface SporsmalSvar {
-    sporsmal: string | null
-    svar: string
-    restriksjoner: string[]
-}
-
-export interface MeldingTilNAV {
-    bistandUmiddelbart: boolean
-    beskrivBistand: string | null
-}
-
 export interface KontaktMedPasient {
     kontaktDato: string | null
     begrunnelseIkkeKontakt: string | null
-}
-
-export interface Behandler {
-    fornavn: string
-    mellomnavn: string | null
-    etternavn: string
-    adresse: Adresse
-    tlf: string | null
-}
-
-export interface Adresse {
-    gate: string | null
-    postnummer: number | null
-    kommune: string | null
-    postboks: string | null
-    land: string | null
 }
 
 export interface Merknad {

@@ -1,5 +1,7 @@
 // Testdata for sykmeldinger
-export const sykmeldingerTestdata = [
+import { Sykmelding } from '../queryhooks/useSykmeldinger'
+
+export const sykmeldingerTestdata: Sykmelding[] = [
     {
         id: 'bc3c9e72-58c0-4d24-91ba-d712fdd8c712',
         pasient: {
@@ -15,7 +17,6 @@ export const sykmeldingerTestdata = [
             ruleHits: [],
             erUnderBehandling: false,
         },
-        legekontorOrgnummer: null,
         arbeidsgiver: {
             navn: 'NAV IT',
             stillingsprosent: 100,
@@ -64,68 +65,13 @@ export const sykmeldingerTestdata = [
                 fisker: null,
             },
         },
-        medisinskVurdering: {
-            hovedDiagnose: { kode: 'N80', system: 'ICPC2', tekst: 'Hodeskade IKA' },
-            biDiagnoser: [],
-            annenFraversArsak: null,
-            svangerskap: false,
-            yrkesskade: false,
-            yrkesskadeDato: null,
-        },
         skjermesForPasient: false,
-        prognose: {
-            arbeidsforEtterPeriode: true,
-            hensynArbeidsplassen: 'Må ta det pent',
-            erIArbeid: null,
-            erIkkeIArbeid: null,
-        },
-        utdypendeOpplysninger: {
-            '6.5': {
-                '6.5.1': {
-                    sporsmal:
-                        'Beskriv kort sykdomsutviklingen, symptomer og funn. Hvordan påvirker helsetilstanden funksjonen i arbeid og dagligliv?',
-                    svar: 'Har ikke blitt noe bedre. Klarer ikke å jobbe eller drive med aktiviteter',
-                    restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
-                },
-                '6.5.2': {
-                    sporsmal:
-                        'Beskriv pågående og planlagt utredning og/eller behandling. Lar dette seg kombinere med delvis arbeid?',
-                    svar: 'Henvist til fysio.',
-                    restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
-                },
-                '6.5.3': {
-                    sporsmal:
-                        'Kan arbeidsevnen bedres gjennom medisinsk behandling og/eller arbeidsrelatert aktivitet? I så fall hvordan? Angi tidsperspektiv',
-                    svar: 'Nei',
-                    restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
-                },
-            },
-        },
-        tiltakArbeidsplassen: null,
-        tiltakNAV: null,
-        andreTiltak: null,
-        meldingTilNAV: null,
-        meldingTilArbeidsgiver: null,
         kontaktMedPasient: {
             kontaktDato: null,
             begrunnelseIkkeKontakt: 'Eksempel på begrunnelse for tilbakedatering',
         },
         behandletTidspunkt: '2026-02-02T00:00:00Z',
-        behandler: {
-            fornavn: 'TRIVIELL',
-            mellomnavn: 'MÅPENDE',
-            etternavn: 'FLOSKEL',
-            adresse: {
-                gate: null,
-                postnummer: null,
-                kommune: null,
-                postboks: null,
-                land: null,
-            },
-            tlf: null,
-        },
         syketilfelleStartDato: '2026-01-10',
-        navnFastlege: null,
         egenmeldt: false,
         papirsykmelding: false,
         harRedusertArbeidsgiverperiode: false,
@@ -133,8 +79,8 @@ export const sykmeldingerTestdata = [
             { type: 'UNDER_BEHANDLING', beskrivelse: null },
             { type: 'UNDER_BEHANDLING', beskrivelse: 'Sykmeldingen blir manuelt behandlet fordi den er tilbakedatert' },
         ],
-        rulesetVersion: '3',
         utenlandskSykmelding: null,
+        signaturDato: null,
     },
     {
         id: 'bc3c9e72-58c0-4d24-91ba-d712fdd8c713',
@@ -151,7 +97,6 @@ export const sykmeldingerTestdata = [
             ruleHits: [],
             erUnderBehandling: false,
         },
-        legekontorOrgnummer: null,
         arbeidsgiver: {
             navn: 'NAV IT',
             stillingsprosent: 100,
@@ -200,68 +145,13 @@ export const sykmeldingerTestdata = [
                 fisker: null,
             },
         },
-        medisinskVurdering: {
-            hovedDiagnose: { kode: 'N80', system: 'ICPC2', tekst: 'Hodeskade IKA' },
-            biDiagnoser: [],
-            annenFraversArsak: null,
-            svangerskap: false,
-            yrkesskade: false,
-            yrkesskadeDato: null,
-        },
         skjermesForPasient: false,
-        prognose: {
-            arbeidsforEtterPeriode: true,
-            hensynArbeidsplassen: 'Må ta det pent',
-            erIArbeid: null,
-            erIkkeIArbeid: null,
-        },
-        utdypendeOpplysninger: {
-            '6.5': {
-                '6.5.1': {
-                    sporsmal:
-                        'Beskriv kort sykdomsutviklingen, symptomer og funn. Hvordan påvirker helsetilstanden funksjonen i arbeid og dagligliv?',
-                    svar: 'Har ikke blitt noe bedre. Klarer ikke å jobbe eller drive med aktiviteter',
-                    restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
-                },
-                '6.5.2': {
-                    sporsmal:
-                        'Beskriv pågående og planlagt utredning og/eller behandling. Lar dette seg kombinere med delvis arbeid?',
-                    svar: 'Henvist til fysio.',
-                    restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
-                },
-                '6.5.3': {
-                    sporsmal:
-                        'Kan arbeidsevnen bedres gjennom medisinsk behandling og/eller arbeidsrelatert aktivitet? I så fall hvordan? Angi tidsperspektiv',
-                    svar: 'Nei',
-                    restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
-                },
-            },
-        },
-        tiltakArbeidsplassen: null,
-        tiltakNAV: null,
-        andreTiltak: null,
-        meldingTilNAV: null,
-        meldingTilArbeidsgiver: null,
         kontaktMedPasient: {
             kontaktDato: null,
             begrunnelseIkkeKontakt: 'Eksempel på begrunnelse for tilbakedatering',
         },
         behandletTidspunkt: '2026-02-02T00:00:00Z',
-        behandler: {
-            fornavn: 'TRIVIELL',
-            mellomnavn: 'MÅPENDE',
-            etternavn: 'FLOSKEL',
-            adresse: {
-                gate: null,
-                postnummer: null,
-                kommune: null,
-                postboks: null,
-                land: null,
-            },
-            tlf: null,
-        },
         syketilfelleStartDato: '2026-01-10',
-        navnFastlege: null,
         egenmeldt: false,
         papirsykmelding: false,
         harRedusertArbeidsgiverperiode: false,
@@ -269,8 +159,8 @@ export const sykmeldingerTestdata = [
             { type: 'UNDER_BEHANDLING', beskrivelse: null },
             { type: 'UNDER_BEHANDLING', beskrivelse: 'Sykmeldingen blir manuelt behandlet fordi den er tilbakedatert' },
         ],
-        rulesetVersion: '3',
         utenlandskSykmelding: null,
+        signaturDato: null,
     },
     {
         id: 'ac4d9e72-58c0-4d24-91ba-d712fdd8c714',
@@ -287,7 +177,6 @@ export const sykmeldingerTestdata = [
             ruleHits: [],
             erUnderBehandling: false,
         },
-        legekontorOrgnummer: null,
         arbeidsgiver: {
             navn: 'Acme Konsult',
             stillingsprosent: 100,
@@ -336,73 +225,18 @@ export const sykmeldingerTestdata = [
                 fisker: null,
             },
         },
-        medisinskVurdering: {
-            hovedDiagnose: { kode: 'M54', system: 'ICPC2', tekst: 'Ryggsmerter' },
-            biDiagnoser: [],
-            annenFraversArsak: null,
-            svangerskap: false,
-            yrkesskade: false,
-            yrkesskadeDato: null,
-        },
         skjermesForPasient: false,
-        prognose: {
-            arbeidsforEtterPeriode: true,
-            hensynArbeidsplassen: 'Tilrettelegging av arbeidsplassen',
-            erIArbeid: null,
-            erIkkeIArbeid: null,
-        },
-        utdypendeOpplysninger: {
-            '6.5': {
-                '6.5.1': {
-                    sporsmal:
-                        'Beskriv kort sykdomsutviklingen, symptomer og funn. Hvordan påvirker helsetilstanden funksjonen i arbeid og dagligliv?',
-                    svar: 'Vedvarende ryggsmerter som påvirker arbeidsevnen',
-                    restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
-                },
-                '6.5.2': {
-                    sporsmal:
-                        'Beskriv pågående og planlagt utredning og/eller behandling. Lar dette seg kombinere med delvis arbeid?',
-                    svar: 'Fysioterapi og medisinsk oppfølging',
-                    restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
-                },
-                '6.5.3': {
-                    sporsmal:
-                        'Kan arbeidsevnen bedres gjennom medisinsk behandling og/eller arbeidsrelatert aktivitet? I så fall hvordan? Angi tidsperspektiv',
-                    svar: 'Ja, med tilrettelegging og behandling innen 4-6 uker',
-                    restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
-                },
-            },
-        },
-        tiltakArbeidsplassen: 'Ergonomisk tilrettelegging av arbeidsplassen',
-        tiltakNAV: null,
-        andreTiltak: null,
-        meldingTilNAV: null,
-        meldingTilArbeidsgiver: 'Anbefaler tilrettelegging av arbeidsstillingen',
         kontaktMedPasient: {
             kontaktDato: null,
             begrunnelseIkkeKontakt: 'Konsultasjon gjennomført',
         },
         behandletTidspunkt: '2026-03-02T00:00:00Z',
-        behandler: {
-            fornavn: 'TRIVIELL',
-            mellomnavn: 'MÅPENDE',
-            etternavn: 'FLOSKEL',
-            adresse: {
-                gate: null,
-                postnummer: null,
-                kommune: null,
-                postboks: null,
-                land: null,
-            },
-            tlf: null,
-        },
         syketilfelleStartDato: '2026-01-10',
-        navnFastlege: null,
         egenmeldt: false,
         papirsykmelding: false,
         harRedusertArbeidsgiverperiode: false,
         merknader: [{ type: 'UNDER_BEHANDLING', beskrivelse: 'Oppfølging av langvarig sykmelding' }],
-        rulesetVersion: '3',
+        signaturDato: null,
         utenlandskSykmelding: null,
     },
     {
@@ -420,7 +254,6 @@ export const sykmeldingerTestdata = [
             ruleHits: [],
             erUnderBehandling: false,
         },
-        legekontorOrgnummer: null,
         arbeidsgiver: {
             navn: 'Optimal Partner',
             stillingsprosent: 100,
@@ -454,7 +287,7 @@ export const sykmeldingerTestdata = [
             brukerSvar: {
                 erOpplysningeneRiktige: { sporsmaltekst: 'Stemmer opplysningene?', svar: 'NEI' },
                 arbeidssituasjon: { sporsmaltekst: 'Jeg er sykmeldt som', svar: 'ARBEIDSTAKER' },
-                uriktigeOpplysninger: { sporsmaltekst: 'Hva stemmer ikke?', svar: 'Periode for lang' },
+                uriktigeOpplysninger: { sporsmaltekst: 'Hva stemmer ikke?', svar: ['Periode for lang'] },
                 arbeidsgiverOrgnummer: { sporsmaltekst: 'Velg arbeidsgiver', svar: '947064649' },
                 arbeidsledig: null,
                 riktigNarmesteLeder: null,
@@ -466,61 +299,18 @@ export const sykmeldingerTestdata = [
                 fisker: null,
             },
         },
-        medisinskVurdering: {
-            hovedDiagnose: { kode: 'R50', system: 'ICPC2', tekst: 'Feber' },
-            biDiagnoser: [{ kode: 'R05', system: 'ICPC2', tekst: 'Hoste' }],
-            annenFraversArsak: null,
-            svangerskap: false,
-            yrkesskade: false,
-            yrkesskadeDato: null,
-        },
         skjermesForPasient: false,
-        prognose: {
-            arbeidsforEtterPeriode: true,
-            hensynArbeidsplassen: null,
-            erIArbeid: null,
-            erIkkeIArbeid: null,
-        },
-        utdypendeOpplysninger: {
-            '6.5': {
-                '6.5.1': {
-                    sporsmal:
-                        'Beskriv kort sykdomsutviklingen, symptomer og funn. Hvordan påvirker helsetilstanden funksjonen i arbeid og dagligliv?',
-                    svar: 'Alvorlig influensa med langvarig rekonvalesens',
-                    restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
-                },
-            },
-        },
-        tiltakArbeidsplassen: null,
-        tiltakNAV: null,
-        andreTiltak: null,
-        meldingTilNAV: null,
-        meldingTilArbeidsgiver: null,
         kontaktMedPasient: {
             kontaktDato: '2024-12-10',
             begrunnelseIkkeKontakt: null,
         },
         behandletTidspunkt: '2024-12-10T00:00:00Z',
-        behandler: {
-            fornavn: 'KYNDIG',
-            mellomnavn: null,
-            etternavn: 'ALLMENNLEGE',
-            adresse: {
-                gate: 'Legeveien 1',
-                postnummer: '0123',
-                kommune: 'Oslo',
-                postboks: null,
-                land: 'Norge',
-            },
-            tlf: '12345678',
-        },
         syketilfelleStartDato: '2024-11-25',
-        navnFastlege: 'Dr. Allmennlege',
         egenmeldt: false,
         papirsykmelding: false,
         harRedusertArbeidsgiverperiode: false,
         merknader: [{ type: 'TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER', beskrivelse: 'Tilbakedatert sykmelding' }],
-        rulesetVersion: '3',
+        signaturDato: null,
         utenlandskSykmelding: null,
     },
     {
@@ -538,7 +328,6 @@ export const sykmeldingerTestdata = [
             ruleHits: [],
             erUnderBehandling: false,
         },
-        legekontorOrgnummer: null,
         arbeidsgiver: {
             navn: 'Optimal Partner',
             stillingsprosent: 100,
@@ -572,7 +361,7 @@ export const sykmeldingerTestdata = [
             brukerSvar: {
                 erOpplysningeneRiktige: { sporsmaltekst: 'Stemmer opplysningene?', svar: 'NEI' },
                 arbeidssituasjon: { sporsmaltekst: 'Jeg er sykmeldt som', svar: 'ARBEIDSTAKER' },
-                uriktigeOpplysninger: { sporsmaltekst: 'Hva stemmer ikke?', svar: 'Periode for lang' },
+                uriktigeOpplysninger: { sporsmaltekst: 'Hva stemmer ikke?', svar: ['Periode for lang'] },
                 arbeidsgiverOrgnummer: { sporsmaltekst: 'Velg arbeidsgiver', svar: '947064649' },
                 arbeidsledig: null,
                 riktigNarmesteLeder: null,
@@ -584,61 +373,18 @@ export const sykmeldingerTestdata = [
                 fisker: null,
             },
         },
-        medisinskVurdering: {
-            hovedDiagnose: { kode: 'R50', system: 'ICPC2', tekst: 'Feber' },
-            biDiagnoser: [{ kode: 'R05', system: 'ICPC2', tekst: 'Hoste' }],
-            annenFraversArsak: null,
-            svangerskap: false,
-            yrkesskade: false,
-            yrkesskadeDato: null,
-        },
         skjermesForPasient: false,
-        prognose: {
-            arbeidsforEtterPeriode: true,
-            hensynArbeidsplassen: null,
-            erIArbeid: null,
-            erIkkeIArbeid: null,
-        },
-        utdypendeOpplysninger: {
-            '6.5': {
-                '6.5.1': {
-                    sporsmal:
-                        'Beskriv kort sykdomsutviklingen, symptomer og funn. Hvordan påvirker helsetilstanden funksjonen i arbeid og dagligliv?',
-                    svar: 'Alvorlig influensa med langvarig rekonvalesens',
-                    restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
-                },
-            },
-        },
-        tiltakArbeidsplassen: null,
-        tiltakNAV: null,
-        andreTiltak: null,
-        meldingTilNAV: null,
-        meldingTilArbeidsgiver: null,
         kontaktMedPasient: {
             kontaktDato: '2024-12-10',
             begrunnelseIkkeKontakt: null,
         },
         behandletTidspunkt: '2024-12-10T00:00:00Z',
-        behandler: {
-            fornavn: 'KYNDIG',
-            mellomnavn: null,
-            etternavn: 'ALLMENNLEGE',
-            adresse: {
-                gate: 'Legeveien 1',
-                postnummer: '0123',
-                kommune: 'Oslo',
-                postboks: null,
-                land: 'Norge',
-            },
-            tlf: '12345678',
-        },
         syketilfelleStartDato: '2024-11-25',
-        navnFastlege: 'Dr. Allmennlege',
         egenmeldt: false,
         papirsykmelding: false,
         harRedusertArbeidsgiverperiode: false,
         merknader: [{ type: 'TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER', beskrivelse: 'Tilbakedatert sykmelding' }],
-        rulesetVersion: '3',
+        signaturDato: null,
         utenlandskSykmelding: null,
     },
     {
@@ -656,7 +402,6 @@ export const sykmeldingerTestdata = [
             ruleHits: [],
             erUnderBehandling: false,
         },
-        legekontorOrgnummer: null,
         arbeidsgiver: {
             navn: null,
             stillingsprosent: null,
@@ -698,61 +443,18 @@ export const sykmeldingerTestdata = [
                 fisker: null,
             },
         },
-        medisinskVurdering: {
-            hovedDiagnose: { kode: 'L92', system: 'ICPC2', tekst: 'Skuldersmerte' },
-            biDiagnoser: [],
-            annenFraversArsak: null,
-            svangerskap: false,
-            yrkesskade: false,
-            yrkesskadeDato: null,
-        },
         skjermesForPasient: false,
-        prognose: {
-            arbeidsforEtterPeriode: true,
-            hensynArbeidsplassen: null,
-            erIArbeid: null,
-            erIkkeIArbeid: null,
-        },
-        utdypendeOpplysninger: {
-            '6.5': {
-                '6.5.1': {
-                    sporsmal:
-                        'Beskriv kort sykdomsutviklingen, symptomer og funn. Hvordan påvirker helsetilstanden funksjonen i arbeid og dagligliv?',
-                    svar: 'Smerter ved løft og ensidig belastning i eget arbeid',
-                    restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
-                },
-            },
-        },
-        tiltakArbeidsplassen: null,
-        tiltakNAV: null,
-        andreTiltak: null,
-        meldingTilNAV: null,
-        meldingTilArbeidsgiver: null,
         kontaktMedPasient: {
             kontaktDato: null,
             begrunnelseIkkeKontakt: null,
         },
         behandletTidspunkt: '2026-04-11T00:00:00Z',
-        behandler: {
-            fornavn: 'KYNDIG',
-            mellomnavn: null,
-            etternavn: 'ALLMENNLEGE',
-            adresse: {
-                gate: 'Legeveien 1',
-                postnummer: '0123',
-                kommune: 'Oslo',
-                postboks: null,
-                land: 'Norge',
-            },
-            tlf: '12345678',
-        },
         syketilfelleStartDato: '2026-04-28',
-        navnFastlege: 'Dr. Allmennlege',
         egenmeldt: false,
         papirsykmelding: false,
         harRedusertArbeidsgiverperiode: false,
         merknader: [],
-        rulesetVersion: '3',
+        signaturDato: null,
         utenlandskSykmelding: null,
     },
 ]
