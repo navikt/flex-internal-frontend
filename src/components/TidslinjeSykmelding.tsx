@@ -6,9 +6,10 @@ import { dayjsToDate } from '../queryhooks/useSoknader'
 
 import ValgtSortering, { Sortering } from './ValgtSortering'
 import OverlappendeTidslinjeRad from './OverlappendeTidslinjeRad'
-import { KlippDetaljer, SoknadDetaljer, timelinePeriodeStatus } from './Tidslinje'
+import { KlippDetaljer, timelinePeriodeStatus } from './Tidslinje'
 import { Filter } from './Filter'
 import KlippBugInfo from './KlippBugInfo'
+import { Detaljer } from './Detaljer'
 
 export default function TidslinjeSykmelding({
     soknaderGruppertPaArbeidsgiver,
@@ -87,8 +88,8 @@ export default function TidslinjeSykmelding({
                                                     status={timelinePeriodeStatus(sok.soknad.status)}
                                                     key={sok.soknad.tom}
                                                 >
-                                                    <SoknadDetaljer
-                                                        soknad={sok.soknad}
+                                                    <Detaljer
+                                                        objekt={sok.soknad}
                                                         filter={filter}
                                                         setFilter={setFilter}
                                                     />

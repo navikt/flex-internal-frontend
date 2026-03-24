@@ -1,13 +1,10 @@
 import React, { Fragment, useState } from 'react'
-import { BodyShort, Button, HStack, Timeline } from '@navikt/ds-react'
+import { BodyShort, Timeline } from '@navikt/ds-react'
 
 import { Sykmelding, SykmeldingStatusType } from '../../queryhooks/useSykmeldinger'
 import { dagerMellomUtcDatoer, datostrengTilUtcDato } from '../../utils/dato'
-import { dayjsToDate } from '../../queryhooks/useSoknader'
-import { SoknadDetaljer, timelinePeriodeStatus } from '../Tidslinje'
-
-import TidslinjeErrorBoundary from './TidslinjeErrorBoundary'
-import SykmeldingDetaljer from './SykmeldingDetaljer'
+import { Detaljer } from '../Detaljer'
+import { Filter } from '../Filter'
 
 const sykmeldingStatus = (status?: SykmeldingStatusType): 'success' | 'warning' | 'info' => {
     if (!status) return 'info'
@@ -22,13 +19,6 @@ const MAKS_DAGER_I_PERIODE = 3660
 const MAKS_DAGER_I_TIDSLINJE = 20000
 
 type Visningsintervall = '3-mnd' | '7-mnd' | '9-mnd' | '2-ar'
-
-const visningsintervaller: { verdi: Visningsintervall; etikett: string }[] = [
-    { verdi: '3-mnd', etikett: '3 mnd' },
-    { verdi: '7-mnd', etikett: '7 mnd' },
-    { verdi: '9-mnd', etikett: '9 mnd' },
-    { verdi: '2-ar', etikett: '2 år' },
-]
 
 type UgyldigPeriodeArsak =
     | 'mangler-fom-eller-tom'
@@ -118,7 +108,12 @@ const filtrerGyldigeSykmeldinger = (sykmeldinger: Sykmelding[]): Sykmelding[] =>
     return sykmeldinger.filter((s) => s?.id && Array.isArray(s.sykmeldingsperioder) && s.sykmeldingsperioder.length > 0)
 }
 
-const TidslinjeSykmeldinger = ({ sykmeldinger }: { sykmeldinger: Sykmelding[] }) => {
+interface TidslinjeSykmeldingerProps {
+    sykmeldinger: Sykmelding[]
+    filter: Filter[]
+    setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
+}
+const TidslinjeSykmeldinger = ({ sykmeldinger, filter, setFilter }: TidslinjeSykmeldingerProps) => {
     const sykmeldingsliste = Array.isArray(sykmeldinger) ? sykmeldinger : []
     const gyldigeSykmeldinger = filtrerGyldigeSykmeldinger(validerSykmeldingsDatoer(sykmeldingsliste))
     const datospenn = hentDatospenn(gyldigeSykmeldinger)
@@ -129,7 +124,7 @@ const TidslinjeSykmeldinger = ({ sykmeldinger }: { sykmeldinger: Sykmelding[] })
     if (gyldigeSykmeldinger.length === 0 || !datospenn || !visningsstartDato) return <Fragment />
 
     return (
-        <div className="min-w-[800px] overflow-x-auto">
+        <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <BodyShort className="mb-2 font-semibold">{`${gyldigeSykmeldinger.length} sykmelding(er)`}</BodyShort>
 
             <Timeline key={`${valgtIntervall}-${datospenn.sluttDato.toISOString()}`}>
@@ -156,7 +151,7 @@ const TidslinjeSykmeldinger = ({ sykmeldinger }: { sykmeldinger: Sykmelding[] })
                                         status={status}
                                         key={startDato.toString()}
                                     >
-                                        <SykmeldingDetaljer sykmelding={sykmelding} />
+                                        <Detaljer objekt={sykmelding} filter={filter} setFilter={setFilter} />
                                     </Timeline.Period>
                                 )
                             })}

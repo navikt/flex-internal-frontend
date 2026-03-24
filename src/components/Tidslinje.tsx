@@ -4,7 +4,7 @@ import { KlippetSykepengesoknadRecord, RSSoknadstatusType, Soknad } from '../que
 import gruppertOgFiltrert, { ArbeidsgiverGruppering } from '../utils/gruppering'
 import { Klipp } from '../utils/overlapp'
 
-import { Filter, FilterFelt, ValgteFilter } from './Filter'
+import { Filter, ValgteFilter } from './Filter'
 import TidslinjeSykmelding from './TidslinjeSykmelding'
 import ValgtArbeidsgiver from './ValgtArbeidsgiver'
 import TidslinjeArbeidsgiver from './TidslinjeArbeidsgiver'
@@ -17,27 +17,6 @@ export function timelinePeriodeStatus(status: RSSoknadstatusType) {
         return 'success'
     }
     return 'info'
-}
-
-export function SoknadDetaljer({
-    soknad,
-    filter,
-    setFilter,
-}: {
-    soknad: Soknad
-    filter: Filter[]
-    setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
-}) {
-    return (
-        <Fragment>
-            {Object.entries(soknad).map(([key, val], idx) => (
-                <div key={key + idx}>
-                    <FilterFelt prop={key} verdi={val} filter={filter} setFilter={setFilter} />
-                    {` ${key}: ${JSON.stringify(val)}`}
-                </div>
-            ))}
-        </Fragment>
-    )
 }
 
 export function KlippDetaljer({ klipp }: { klipp: Klipp }) {
