@@ -114,15 +114,33 @@ const filtrerGyldigeSykmeldinger = (sykmeldinger: Sykmelding[]): Sykmelding[] =>
     return sykmeldinger.filter((s) => s?.id && Array.isArray(s.sykmeldingsperioder) && s.sykmeldingsperioder.length > 0)
 }
 
+const arbeidssituasjonForSykmelding = (sykmelding: Sykmelding): string | null => {
+    const arbeidssituasjon = sykmelding.sykmeldingStatus?.brukerSvar?.arbeidssituasjon?.svar
+    if (typeof arbeidssituasjon !== 'string') return null
+
+    const trimmetArbeidssituasjon = arbeidssituasjon.trim()
+    return trimmetArbeidssituasjon.length > 0 ? trimmetArbeidssituasjon : null
+}
+
+const arbeidssituasjonLabel = (arbeidssituasjon: string): string => {
+    const label = arbeidssituasjon.toLowerCase().replaceAll('_', ' ')
+    return label.charAt(0).toUpperCase() + label.slice(1)
+}
+
 const arbeidsgiverIdForSykmelding = (sykmelding: Sykmelding): string => {
     const orgnummer = sykmelding.sykmeldingStatus?.arbeidsgiver?.orgnummer?.trim() ?? ''
     const arbeidsgiverNavn = sykmelding.arbeidsgiver?.navn?.trim() ?? ''
+    const arbeidssituasjon = arbeidssituasjonForSykmelding(sykmelding)
 
-    if (!orgnummer && !arbeidsgiverNavn) {
-        return 'arbeidsgiver_ukjent'
+    if (orgnummer || arbeidsgiverNavn) {
+        return `${orgnummer}__${arbeidsgiverNavn}`
     }
 
-    return `${orgnummer}__${arbeidsgiverNavn}`
+    if (arbeidssituasjon) {
+        return `arbeidssituasjon__${arbeidssituasjon}`
+    }
+
+    return 'arbeidsgiver_ukjent'
 }
 
 const arbeidsgiverNavnForSykmelding = (sykmelding: Sykmelding): string => {
@@ -131,6 +149,9 @@ const arbeidsgiverNavnForSykmelding = (sykmelding: Sykmelding): string => {
 
     const orgnummer = sykmelding.sykmeldingStatus?.arbeidsgiver?.orgnummer
     if (orgnummer) return orgnummer
+
+    const arbeidssituasjon = arbeidssituasjonForSykmelding(sykmelding)
+    if (arbeidssituasjon) return arbeidssituasjonLabel(arbeidssituasjon)
 
     return 'Ukjent arbeidsgiver'
 }
