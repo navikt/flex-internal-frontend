@@ -3,8 +3,11 @@ import { BodyShort, Button, HStack, Timeline } from '@navikt/ds-react'
 
 import { Sykmelding, SykmeldingStatusType } from '../../queryhooks/useSykmeldinger'
 import { dagerMellomUtcDatoer, datostrengTilUtcDato } from '../../utils/dato'
+import { dayjsToDate } from '../../queryhooks/useSoknader'
+import { SoknadDetaljer, timelinePeriodeStatus } from '../Tidslinje'
 
 import TidslinjeErrorBoundary from './TidslinjeErrorBoundary'
+import SykmeldingDetaljer from './SykmeldingDetaljer'
 
 const sykmeldingStatus = (status?: SykmeldingStatusType): 'success' | 'warning' | 'info' => {
     if (!status) return 'info'
@@ -128,60 +131,45 @@ const TidslinjeSykmeldinger = ({ sykmeldinger }: { sykmeldinger: Sykmelding[] })
     return (
         <div className="min-w-[800px] overflow-x-auto">
             <BodyShort className="mb-2 font-semibold">{`${gyldigeSykmeldinger.length} sykmelding(er)`}</BodyShort>
-            <HStack gap="space-4" className="mb-3">
-                {visningsintervaller.map((intervall) => {
-                    const erValgt = valgtIntervall === intervall.verdi
+
+            <Timeline key={`${valgtIntervall}-${datospenn.sluttDato.toISOString()}`}>
+                {gyldigeSykmeldinger.map((sykmelding) => {
+                    const status = sykmeldingStatus(sykmelding.sykmeldingStatus?.statusEvent)
 
                     return (
-                        <Button
-                            key={intervall.verdi}
-                            size="small"
-                            variant={erValgt ? 'primary' : 'secondary'}
-                            aria-pressed={erValgt}
-                            disabled={erValgt}
-                            onClick={() => setValgtIntervall(intervall.verdi)}
+                        <Timeline.Row
+                            key={sykmelding.id}
+                            label={sykmelding.arbeidsgiver?.navn ?? 'Ukjent arbeidsgiver'}
                         >
-                            {intervall.etikett}
-                        </Button>
+                            {sykmelding.sykmeldingsperioder.map((periode, idx) => {
+                                const startDato = datostrengTilUtcDato(periode.fom)
+                                const sluttDato = datostrengTilUtcDato(periode.tom)
+
+                                if (!startDato || !sluttDato || sluttDato < startDato) {
+                                    return <Fragment key={`${sykmelding.id}-${idx}`} />
+                                }
+
+                                return (
+                                    <Timeline.Period
+                                        start={startDato}
+                                        end={sluttDato}
+                                        status={status}
+                                        key={startDato.toString()}
+                                    >
+                                        <SykmeldingDetaljer sykmelding={sykmelding} />
+                                    </Timeline.Period>
+                                )
+                            })}
+                        </Timeline.Row>
                     )
                 })}
-            </HStack>
-            <TidslinjeErrorBoundary>
-                <Timeline
-                    key={`${valgtIntervall}-${datospenn.sluttDato.toISOString()}`}
-                    startDate={visningsstartDato}
-                    endDate={datospenn.sluttDato}
-                >
-                    {gyldigeSykmeldinger.map((sykmelding) => {
-                        const status = sykmeldingStatus(sykmelding.sykmeldingStatus?.statusEvent)
-
-                        return (
-                            <Timeline.Row
-                                key={sykmelding.id}
-                                label={sykmelding.arbeidsgiver?.navn ?? 'Ukjent arbeidsgiver'}
-                            >
-                                {sykmelding.sykmeldingsperioder.map((periode, idx) => {
-                                    const startDato = datostrengTilUtcDato(periode.fom)
-                                    const sluttDato = datostrengTilUtcDato(periode.tom)
-
-                                    if (!startDato || !sluttDato || sluttDato < startDato) {
-                                        return <Fragment key={`${sykmelding.id}-${idx}`} />
-                                    }
-
-                                    return (
-                                        <Timeline.Period
-                                            key={`${sykmelding.id}-${idx}`}
-                                            start={startDato}
-                                            end={sluttDato}
-                                            status={status}
-                                        />
-                                    )
-                                })}
-                            </Timeline.Row>
-                        )
-                    })}
-                </Timeline>
-            </TidslinjeErrorBoundary>
+                <Timeline.Zoom>
+                    <Timeline.Zoom.Button label="3 mnd" interval="month" count={3} />
+                    <Timeline.Zoom.Button label="7 mnd" interval="month" count={7} />
+                    <Timeline.Zoom.Button label="9 mnd" interval="month" count={9} />
+                    <Timeline.Zoom.Button label="2 år" interval="year" count={2} />
+                </Timeline.Zoom>
+            </Timeline>
         </div>
     )
 }
