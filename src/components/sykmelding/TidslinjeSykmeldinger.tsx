@@ -3,6 +3,7 @@ import { BodyShort, Timeline } from '@navikt/ds-react'
 
 import { Sykmelding, SykmeldingStatusType } from '../../queryhooks/useSykmeldinger'
 import { dagerMellomUtcDatoer, datostrengTilUtcDato } from '../../utils/dato'
+import { filtrerPaFilter } from '../../utils/filterlogikk'
 import { Detaljer } from '../Detaljer'
 import { Filter } from '../Filter'
 
@@ -112,46 +113,6 @@ const validerSykmeldingsDatoer = (sykmeldinger: Sykmelding[]): Sykmelding[] => {
 
 const filtrerGyldigeSykmeldinger = (sykmeldinger: Sykmelding[]): Sykmelding[] => {
     return sykmeldinger.filter((s) => s?.id && Array.isArray(s.sykmeldingsperioder) && s.sykmeldingsperioder.length > 0)
-}
-
-const hentVerdiFraSti = (objekt: unknown, sti: string): { finnes: boolean; verdi: unknown } => {
-    const deler = sti.match(/[^.[\]]+/g) ?? []
-    let verdi: unknown = objekt
-
-    for (const del of deler) {
-        if (verdi === null || verdi === undefined) return { finnes: false, verdi: undefined }
-
-        if (Array.isArray(verdi)) {
-            const indeks = Number(del)
-            if (Number.isNaN(indeks) || !(indeks in verdi)) return { finnes: false, verdi: undefined }
-            verdi = verdi[indeks]
-            continue
-        }
-
-        if (typeof verdi === 'object') {
-            if (!(del in (verdi as Record<string, unknown>))) return { finnes: false, verdi: undefined }
-            verdi = (verdi as Record<string, unknown>)[del]
-            continue
-        }
-
-        return { finnes: false, verdi: undefined }
-    }
-
-    return { finnes: true, verdi }
-}
-
-const passerAlleFilter = (objekt: unknown, filter: Filter[]): boolean => {
-    return filter.every((f) => {
-        const oppslag = hentVerdiFraSti(objekt, f.prop)
-        if (!oppslag.finnes) return false
-
-        const verdi = JSON.stringify(oppslag.verdi)
-        return (f.inkluder && f.verdi === verdi) || (!f.inkluder && f.verdi !== verdi)
-    })
-}
-
-const filtrerPaValgteFilter = (sykmeldinger: Sykmelding[], filter: Filter[]): Sykmelding[] => {
-    return sykmeldinger.filter((sykmelding) => passerAlleFilter(sykmelding, filter))
 }
 
 const arbeidssituasjonForSykmelding = (sykmelding: Sykmelding): string | null => {
@@ -273,7 +234,7 @@ interface TidslinjeSykmeldingerProps {
 const TidslinjeSykmeldinger = ({ sykmeldinger, filter, setFilter }: TidslinjeSykmeldingerProps) => {
     const sykmeldingsliste = Array.isArray(sykmeldinger) ? sykmeldinger : []
     const gyldigeSykmeldinger = filtrerGyldigeSykmeldinger(validerSykmeldingsDatoer(sykmeldingsliste))
-    const filtrerteSykmeldinger = filtrerPaValgteFilter(gyldigeSykmeldinger, filter)
+    const filtrerteSykmeldinger = filtrerPaFilter(gyldigeSykmeldinger, filter)
     const datospenn = hentDatospenn(filtrerteSykmeldinger)
     const valgtIntervall: Visningsintervall = '9-mnd'
     const sykmeldingerGruppertPaArbeidsgiver = grupperSykmeldingerPaArbeidsgiver(filtrerteSykmeldinger)

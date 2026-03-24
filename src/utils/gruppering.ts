@@ -6,6 +6,7 @@ import { Sortering } from '../components/ValgtSortering'
 import { Filter } from '../components/Filter'
 
 import { Klipp, maxTom, minFom, perioderSomMangler, sykmeldingDager, sykmeldingOverlappendeDager } from './overlapp'
+import { passerAlleFilter } from './filterlogikk'
 
 export interface SoknadGruppering {
     soknad: Soknad
@@ -19,42 +20,6 @@ export interface SykmeldingGruppering {
 
 export interface ArbeidsgiverGruppering {
     sykmeldinger: Map<string, SykmeldingGruppering>
-}
-
-function hentVerdiFraSti(objekt: unknown, sti: string): { finnes: boolean; verdi: unknown } {
-    const deler = sti.match(/[^.[\]]+/g) ?? []
-    let verdi: unknown = objekt
-
-    for (const del of deler) {
-        if (verdi === null || verdi === undefined) return { finnes: false, verdi: undefined }
-
-        if (Array.isArray(verdi)) {
-            const indeks = Number(del)
-            if (Number.isNaN(indeks) || !(indeks in verdi)) return { finnes: false, verdi: undefined }
-            verdi = verdi[indeks]
-            continue
-        }
-
-        if (typeof verdi === 'object') {
-            if (!(del in (verdi as Record<string, unknown>))) return { finnes: false, verdi: undefined }
-            verdi = (verdi as Record<string, unknown>)[del]
-            continue
-        }
-
-        return { finnes: false, verdi: undefined }
-    }
-
-    return { finnes: true, verdi: verdi }
-}
-
-function passerAlleFilter(sok: Soknad, filter: Filter[]) {
-    return filter.every((f: Filter) => {
-        const oppslag = hentVerdiFraSti(sok, f.prop)
-        if (!oppslag.finnes) return false
-
-        const verdi = oppslag.verdi
-        return (f.inkluder && f.verdi === JSON.stringify(verdi)) || (!f.inkluder && f.verdi !== JSON.stringify(verdi))
-    })
 }
 
 function filtrer(filter: Filter[], soknader: Soknad[]) {
