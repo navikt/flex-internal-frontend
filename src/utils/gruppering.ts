@@ -21,45 +21,52 @@ export interface ArbeidsgiverGruppering {
     sykmeldinger: Map<string, SykmeldingGruppering>
 }
 
-function hentVerdiFraSti(objekt: unknown, sti: string): unknown {
+function hentVerdiFraSti(objekt: unknown, sti: string): { finnes: boolean; verdi: unknown } {
     const deler = sti.match(/[^.[\]]+/g) ?? []
     let verdi: unknown = objekt
 
     for (const del of deler) {
-        if (verdi === null || verdi === undefined) return undefined
+        if (verdi === null || verdi === undefined) return { finnes: false, verdi: undefined }
 
         if (Array.isArray(verdi)) {
             const indeks = Number(del)
-            if (Number.isNaN(indeks)) return undefined
+            if (Number.isNaN(indeks) || !(indeks in verdi)) return { finnes: false, verdi: undefined }
             verdi = verdi[indeks]
             continue
         }
 
         if (typeof verdi === 'object') {
+            if (!(del in (verdi as Record<string, unknown>))) return { finnes: false, verdi: undefined }
             verdi = (verdi as Record<string, unknown>)[del]
             continue
         }
 
-        return undefined
+        return { finnes: false, verdi: undefined }
     }
 
-    return verdi
+    return { finnes: true, verdi: verdi }
+}
+
+function passerAlleFilter(sok: Soknad, filter: Filter[]) {
+    return filter.every((f: Filter) => {
+        const oppslag = hentVerdiFraSti(sok, f.prop)
+        if (!oppslag.finnes) return false
+
+        const verdi = oppslag.verdi
+        return (f.inkluder && f.verdi === JSON.stringify(verdi)) || (!f.inkluder && f.verdi !== JSON.stringify(verdi))
+    })
 }
 
 function filtrer(filter: Filter[], soknader: Soknad[]) {
-    let filtrerteSoknader = soknader
-    filter.forEach((f: Filter) => {
-        filtrerteSoknader = filtrerteSoknader.filter((sok: Soknad) => {
-            const value = hentVerdiFraSti(sok, f.prop)
-            return (
-                (f.inkluder && f.verdi === JSON.stringify(value)) || (!f.inkluder && f.verdi !== JSON.stringify(value))
-            )
-        })
-    })
-    return filtrerteSoknader
+    return soknader.filter((sok: Soknad) => passerAlleFilter(sok, filter))
 }
 
-function grupperPaSykmelding(soknader: Soknad[], klipp: KlippetSykepengesoknadRecord[], alleSoknader: Soknad[]) {
+function grupperPaSykmelding(
+    soknader: Soknad[],
+    klipp: KlippetSykepengesoknadRecord[],
+    alleSoknader: Soknad[],
+    filter: Filter[],
+) {
     const sykmeldingGruppering = new Map<string, SykmeldingGruppering>()
     const alleSoknaderIds = new Set(alleSoknader.map((s) => s.id))
 
@@ -97,6 +104,9 @@ function grupperPaSykmelding(soknader: Soknad[], klipp: KlippetSykepengesoknadRe
         const perioderSomErKlippet = perioderSomMangler(k)
 
         if (k.klippVariant.startsWith('SYKMELDING')) {
+            if (filter.length > 0) {
+                return
+            }
             // Sykmeldingen ble klippet før vi opprettet søknader for den
             sykmeldingGruppering.set(k.sykmeldingUuid, {
                 soknader: new Map<string, SoknadGruppering>(),
@@ -137,6 +147,10 @@ function grupperPaSykmelding(soknader: Soknad[], klipp: KlippetSykepengesoknadRe
                         soknader: new Map<string, SoknadGruppering>(),
                         klippingAvSykmelding: [],
                     })
+                }
+
+                if (!passerAlleFilter(ghostSoknad, filter)) {
+                    return
                 }
 
                 sykmeldingGruppering.get(ghostSoknad.sykmeldingId!)?.soknader.set(k.sykepengesoknadUuid, {
@@ -270,6 +284,6 @@ export default function gruppertOgFiltrert(
     klipp: KlippetSykepengesoknadRecord[],
 ): Map<string, ArbeidsgiverGruppering> {
     const filtrerteSoknader = filtrer(filter, soknader)
-    const gruppertPaSykmelding = grupperPaSykmelding(filtrerteSoknader, klipp, soknader)
+    const gruppertPaSykmelding = grupperPaSykmelding(filtrerteSoknader, klipp, soknader, filter)
     return grupperPaArbeidsgiver(gruppertPaSykmelding)
 }
