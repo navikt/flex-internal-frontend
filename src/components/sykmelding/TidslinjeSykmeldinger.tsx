@@ -114,6 +114,46 @@ const filtrerGyldigeSykmeldinger = (sykmeldinger: Sykmelding[]): Sykmelding[] =>
     return sykmeldinger.filter((s) => s?.id && Array.isArray(s.sykmeldingsperioder) && s.sykmeldingsperioder.length > 0)
 }
 
+const hentVerdiFraSti = (objekt: unknown, sti: string): { finnes: boolean; verdi: unknown } => {
+    const deler = sti.match(/[^.[\]]+/g) ?? []
+    let verdi: unknown = objekt
+
+    for (const del of deler) {
+        if (verdi === null || verdi === undefined) return { finnes: false, verdi: undefined }
+
+        if (Array.isArray(verdi)) {
+            const indeks = Number(del)
+            if (Number.isNaN(indeks) || !(indeks in verdi)) return { finnes: false, verdi: undefined }
+            verdi = verdi[indeks]
+            continue
+        }
+
+        if (typeof verdi === 'object') {
+            if (!(del in (verdi as Record<string, unknown>))) return { finnes: false, verdi: undefined }
+            verdi = (verdi as Record<string, unknown>)[del]
+            continue
+        }
+
+        return { finnes: false, verdi: undefined }
+    }
+
+    return { finnes: true, verdi }
+}
+
+const passerAlleFilter = (objekt: unknown, filter: Filter[]): boolean => {
+    return filter.every((f) => {
+        const oppslag = hentVerdiFraSti(objekt, f.prop)
+        if (!oppslag.finnes) return false
+
+        const verdi = JSON.stringify(oppslag.verdi)
+        return (f.inkluder && f.verdi === verdi) || (!f.inkluder && f.verdi !== verdi)
+    })
+}
+
+const filtrerPaValgteFilter = (sykmeldinger: Sykmelding[], filter: Filter[]): Sykmelding[] => {
+    return sykmeldinger.filter((sykmelding) => passerAlleFilter(sykmelding, filter))
+}
+
 const arbeidssituasjonForSykmelding = (sykmelding: Sykmelding): string | null => {
     const arbeidssituasjon = sykmelding.sykmeldingStatus?.brukerSvar?.arbeidssituasjon?.svar
     if (typeof arbeidssituasjon !== 'string') return null
@@ -233,17 +273,18 @@ interface TidslinjeSykmeldingerProps {
 const TidslinjeSykmeldinger = ({ sykmeldinger, filter, setFilter }: TidslinjeSykmeldingerProps) => {
     const sykmeldingsliste = Array.isArray(sykmeldinger) ? sykmeldinger : []
     const gyldigeSykmeldinger = filtrerGyldigeSykmeldinger(validerSykmeldingsDatoer(sykmeldingsliste))
-    const datospenn = hentDatospenn(gyldigeSykmeldinger)
+    const filtrerteSykmeldinger = filtrerPaValgteFilter(gyldigeSykmeldinger, filter)
+    const datospenn = hentDatospenn(filtrerteSykmeldinger)
     const valgtIntervall: Visningsintervall = '9-mnd'
-    const sykmeldingerGruppertPaArbeidsgiver = grupperSykmeldingerPaArbeidsgiver(gyldigeSykmeldinger)
+    const sykmeldingerGruppertPaArbeidsgiver = grupperSykmeldingerPaArbeidsgiver(filtrerteSykmeldinger)
 
     const visningsstartDato = !datospenn ? null : startDatoForIntervall(datospenn.sluttDato, valgtIntervall)
 
-    if (gyldigeSykmeldinger.length === 0 || !datospenn || !visningsstartDato) return <Fragment />
+    if (filtrerteSykmeldinger.length === 0 || !datospenn || !visningsstartDato) return <Fragment />
 
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
-            <BodyShort className="mb-2 font-semibold">{`${gyldigeSykmeldinger.length} sykmelding(er)`}</BodyShort>
+            <BodyShort className="mb-2 font-semibold">{`${filtrerteSykmeldinger.length} sykmelding(er)`}</BodyShort>
 
             <Timeline key={`${valgtIntervall}-${datospenn.sluttDato.toISOString()}`}>
                 {Array.from(sykmeldingerGruppertPaArbeidsgiver.entries()).map(([arbeidsgiverId, arbeidsgiver]) => {
