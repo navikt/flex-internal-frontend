@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment } from 'react'
 import { BodyShort, Timeline } from '@navikt/ds-react'
 
 import { Sykmelding, SykmeldingStatusType } from '../../queryhooks/useSykmeldinger'
@@ -25,6 +25,12 @@ type UgyldigPeriodeArsak =
     | 'ugyldig-datoformat'
     | 'aar-utenfor-grenser'
     | 'for-lang-eller-negativ-periode'
+
+interface SykmeldingerPerArbeidsgiver {
+    navn: string
+    sykmeldinger: Sykmelding[]
+    dagNokler: Set<string>
+}
 
 const finnUgyldigPeriodeArsak = (periode?: { fom?: string; tom?: string }): UgyldigPeriodeArsak | null => {
     if (!periode?.fom || !periode?.tom) return 'mangler-fom-eller-tom'
@@ -108,6 +114,96 @@ const filtrerGyldigeSykmeldinger = (sykmeldinger: Sykmelding[]): Sykmelding[] =>
     return sykmeldinger.filter((s) => s?.id && Array.isArray(s.sykmeldingsperioder) && s.sykmeldingsperioder.length > 0)
 }
 
+const arbeidsgiverIdForSykmelding = (sykmelding: Sykmelding): string => {
+    const orgnummer = sykmelding.sykmeldingStatus?.arbeidsgiver?.orgnummer?.trim() ?? ''
+    const arbeidsgiverNavn = sykmelding.arbeidsgiver?.navn?.trim() ?? ''
+
+    if (!orgnummer && !arbeidsgiverNavn) {
+        return 'arbeidsgiver_ukjent'
+    }
+
+    return `${orgnummer}__${arbeidsgiverNavn}`
+}
+
+const arbeidsgiverNavnForSykmelding = (sykmelding: Sykmelding): string => {
+    const arbeidsgiverNavn = sykmelding.arbeidsgiver?.navn?.trim()
+    if (arbeidsgiverNavn) return arbeidsgiverNavn
+
+    const orgnummer = sykmelding.sykmeldingStatus?.arbeidsgiver?.orgnummer
+    if (orgnummer) return orgnummer
+
+    return 'Ukjent arbeidsgiver'
+}
+
+const dagNoklerForSykmelding = (sykmelding: Sykmelding): Set<string> => {
+    const dagNokler = new Set<string>()
+
+    sykmelding.sykmeldingsperioder.forEach((periode) => {
+        const fom = datostrengTilUtcDato(periode.fom)
+        const tom = datostrengTilUtcDato(periode.tom)
+
+        if (!fom || !tom || tom < fom) return
+
+        const dag = new Date(fom.getTime())
+        while (dag <= tom) {
+            dagNokler.add(dag.toISOString().slice(0, 10))
+            dag.setUTCDate(dag.getUTCDate() + 1)
+        }
+    })
+
+    return dagNokler
+}
+
+const harOverlappendeDag = (eksisterende: Set<string>, kandidat: Set<string>): boolean => {
+    for (const dagNokkel of kandidat) {
+        if (eksisterende.has(dagNokkel)) return true
+    }
+    return false
+}
+
+const grupperSykmeldingerPaArbeidsgiver = (sykmeldinger: Sykmelding[]): Map<string, SykmeldingerPerArbeidsgiver> => {
+    const sykmeldingerGruppertPaArbeidsgiver = new Map<string, SykmeldingerPerArbeidsgiver>()
+
+    sykmeldinger
+        .slice()
+        .sort((a, b) => a.mottattTidspunkt.localeCompare(b.mottattTidspunkt))
+        .forEach((sykmelding) => {
+            const arbeidsgiverId = arbeidsgiverIdForSykmelding(sykmelding)
+            const arbeidsgiverNavn = arbeidsgiverNavnForSykmelding(sykmelding)
+            const dagNokler = dagNoklerForSykmelding(sykmelding)
+
+            let arbeidsgiverIndex = 0
+            let grupperingId = arbeidsgiverId
+            let sykmeldingBleLagtTil = false
+
+            while (!sykmeldingBleLagtTil) {
+                const eksisterendeArbeidsgiver = sykmeldingerGruppertPaArbeidsgiver.get(grupperingId)
+
+                if (!eksisterendeArbeidsgiver) {
+                    sykmeldingerGruppertPaArbeidsgiver.set(grupperingId, {
+                        navn: arbeidsgiverNavn,
+                        sykmeldinger: [sykmelding],
+                        dagNokler: new Set(dagNokler),
+                    })
+                    sykmeldingBleLagtTil = true
+                    continue
+                }
+
+                if (harOverlappendeDag(eksisterendeArbeidsgiver.dagNokler, dagNokler)) {
+                    arbeidsgiverIndex += 1
+                    grupperingId = `${arbeidsgiverId}(${arbeidsgiverIndex})`
+                    continue
+                }
+
+                eksisterendeArbeidsgiver.sykmeldinger.push(sykmelding)
+                dagNokler.forEach((dagNokkel) => eksisterendeArbeidsgiver.dagNokler.add(dagNokkel))
+                sykmeldingBleLagtTil = true
+            }
+        })
+
+    return sykmeldingerGruppertPaArbeidsgiver
+}
+
 interface TidslinjeSykmeldingerProps {
     sykmeldinger: Sykmelding[]
     filter: Filter[]
@@ -117,7 +213,8 @@ const TidslinjeSykmeldinger = ({ sykmeldinger, filter, setFilter }: TidslinjeSyk
     const sykmeldingsliste = Array.isArray(sykmeldinger) ? sykmeldinger : []
     const gyldigeSykmeldinger = filtrerGyldigeSykmeldinger(validerSykmeldingsDatoer(sykmeldingsliste))
     const datospenn = hentDatospenn(gyldigeSykmeldinger)
-    const [valgtIntervall, setValgtIntervall] = useState<Visningsintervall>('9-mnd')
+    const valgtIntervall: Visningsintervall = '9-mnd'
+    const sykmeldingerGruppertPaArbeidsgiver = grupperSykmeldingerPaArbeidsgiver(gyldigeSykmeldinger)
 
     const visningsstartDato = !datospenn ? null : startDatoForIntervall(datospenn.sluttDato, valgtIntervall)
 
@@ -128,32 +225,33 @@ const TidslinjeSykmeldinger = ({ sykmeldinger, filter, setFilter }: TidslinjeSyk
             <BodyShort className="mb-2 font-semibold">{`${gyldigeSykmeldinger.length} sykmelding(er)`}</BodyShort>
 
             <Timeline key={`${valgtIntervall}-${datospenn.sluttDato.toISOString()}`}>
-                {gyldigeSykmeldinger.map((sykmelding) => {
-                    const status = sykmeldingStatus(sykmelding.sykmeldingStatus?.statusEvent)
+                {Array.from(sykmeldingerGruppertPaArbeidsgiver.entries()).map(([arbeidsgiverId, arbeidsgiver]) => {
+                    const label = arbeidsgiverId.includes('(') ? `${arbeidsgiver.navn} (overlapp)` : arbeidsgiver.navn
 
                     return (
-                        <Timeline.Row
-                            key={sykmelding.id}
-                            label={sykmelding.arbeidsgiver?.navn ?? 'Ukjent arbeidsgiver'}
-                        >
-                            {sykmelding.sykmeldingsperioder.map((periode, idx) => {
-                                const startDato = datostrengTilUtcDato(periode.fom)
-                                const sluttDato = datostrengTilUtcDato(periode.tom)
+                        <Timeline.Row key={arbeidsgiverId} label={label}>
+                            {arbeidsgiver.sykmeldinger.flatMap((sykmelding) => {
+                                const status = sykmeldingStatus(sykmelding.sykmeldingStatus?.statusEvent)
 
-                                if (!startDato || !sluttDato || sluttDato < startDato) {
-                                    return <Fragment key={`${sykmelding.id}-${idx}`} />
-                                }
+                                return sykmelding.sykmeldingsperioder.map((periode, idx) => {
+                                    const startDato = datostrengTilUtcDato(periode.fom)
+                                    const sluttDato = datostrengTilUtcDato(periode.tom)
 
-                                return (
-                                    <Timeline.Period
-                                        start={startDato}
-                                        end={sluttDato}
-                                        status={status}
-                                        key={startDato.toString()}
-                                    >
-                                        <Detaljer objekt={sykmelding} filter={filter} setFilter={setFilter} />
-                                    </Timeline.Period>
-                                )
+                                    if (!startDato || !sluttDato || sluttDato < startDato) {
+                                        return <Fragment key={`${sykmelding.id}-${idx}`} />
+                                    }
+
+                                    return (
+                                        <Timeline.Period
+                                            start={startDato}
+                                            end={sluttDato}
+                                            status={status}
+                                            key={`${sykmelding.id}-${idx}-${startDato.toISOString()}-${sluttDato.toISOString()}`}
+                                        >
+                                            <Detaljer objekt={sykmelding} filter={filter} setFilter={setFilter} />
+                                        </Timeline.Period>
+                                    )
+                                })
                             })}
                         </Timeline.Row>
                     )

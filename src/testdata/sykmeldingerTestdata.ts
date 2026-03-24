@@ -1,6 +1,142 @@
 // Testdata for sykmeldinger
 export const sykmeldingerTestdata = [
     {
+        id: 'bc3c9e72-58c0-4d24-91ba-d712fdd8c712',
+        pasient: {
+            fnr: '64820175075',
+            fornavn: 'FYLDIG',
+            mellomnavn: null,
+            etternavn: 'TIRSDAG',
+            overSyttiAar: false,
+        },
+        mottattTidspunkt: '2026-02-01T23:00:00Z',
+        behandlingsutfall: {
+            status: 'OK',
+            ruleHits: [],
+            erUnderBehandling: false,
+        },
+        legekontorOrgnummer: null,
+        arbeidsgiver: {
+            navn: 'NAV IT',
+            stillingsprosent: 100,
+        },
+        sykmeldingsperioder: [
+            {
+                fom: '2026-03-01',
+                tom: '2026-03-15',
+                gradert: null,
+                behandlingsdager: null,
+                innspillTilArbeidsgiver: null,
+                type: 'AKTIVITET_IKKE_MULIG',
+                aktivitetIkkeMulig: {
+                    medisinskArsak: {
+                        beskrivelse: 'medisinske årsaker til sykefravær',
+                        arsak: ['AKTIVITET_FORHINDRER_BEDRING'],
+                    },
+                    arbeidsrelatertArsak: {
+                        beskrivelse: 'andre årsaker til sykefravær',
+                        arsak: ['ANNET'],
+                    },
+                },
+                reisetilskudd: false,
+            },
+        ],
+        sykmeldingStatus: {
+            statusEvent: 'SENDT',
+            timestamp: '2026-02-02T14:59:35.035516Z',
+            arbeidsgiver: {
+                orgnummer: '947064649',
+                juridiskOrgnummer: '963743254',
+                orgNavn: 'SJOKKERENDE ELEKTRIKER',
+            },
+            brukerSvar: {
+                erOpplysningeneRiktige: { sporsmaltekst: 'Stemmer opplysningene?', svar: 'JA' },
+                arbeidssituasjon: { sporsmaltekst: 'Jeg er sykmeldt som', svar: 'ARBEIDSTAKER' },
+                uriktigeOpplysninger: null,
+                arbeidsgiverOrgnummer: { sporsmaltekst: 'Velg arbeidsgiver', svar: '947064649' },
+                arbeidsledig: null,
+                riktigNarmesteLeder: null,
+                harBruktEgenmelding: null,
+                egenmeldingsperioder: null,
+                harForsikring: null,
+                egenmeldingsdager: null,
+                harBruktEgenmeldingsdager: null,
+                fisker: null,
+            },
+        },
+        medisinskVurdering: {
+            hovedDiagnose: { kode: 'N80', system: 'ICPC2', tekst: 'Hodeskade IKA' },
+            biDiagnoser: [],
+            annenFraversArsak: null,
+            svangerskap: false,
+            yrkesskade: false,
+            yrkesskadeDato: null,
+        },
+        skjermesForPasient: false,
+        prognose: {
+            arbeidsforEtterPeriode: true,
+            hensynArbeidsplassen: 'Må ta det pent',
+            erIArbeid: null,
+            erIkkeIArbeid: null,
+        },
+        utdypendeOpplysninger: {
+            '6.5': {
+                '6.5.1': {
+                    sporsmal:
+                        'Beskriv kort sykdomsutviklingen, symptomer og funn. Hvordan påvirker helsetilstanden funksjonen i arbeid og dagligliv?',
+                    svar: 'Har ikke blitt noe bedre. Klarer ikke å jobbe eller drive med aktiviteter',
+                    restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
+                },
+                '6.5.2': {
+                    sporsmal:
+                        'Beskriv pågående og planlagt utredning og/eller behandling. Lar dette seg kombinere med delvis arbeid?',
+                    svar: 'Henvist til fysio.',
+                    restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
+                },
+                '6.5.3': {
+                    sporsmal:
+                        'Kan arbeidsevnen bedres gjennom medisinsk behandling og/eller arbeidsrelatert aktivitet? I så fall hvordan? Angi tidsperspektiv',
+                    svar: 'Nei',
+                    restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
+                },
+            },
+        },
+        tiltakArbeidsplassen: null,
+        tiltakNAV: null,
+        andreTiltak: null,
+        meldingTilNAV: null,
+        meldingTilArbeidsgiver: null,
+        kontaktMedPasient: {
+            kontaktDato: null,
+            begrunnelseIkkeKontakt: 'Eksempel på begrunnelse for tilbakedatering',
+        },
+        behandletTidspunkt: '2026-02-02T00:00:00Z',
+        behandler: {
+            fornavn: 'TRIVIELL',
+            mellomnavn: 'MÅPENDE',
+            etternavn: 'FLOSKEL',
+            adresse: {
+                gate: null,
+                postnummer: null,
+                kommune: null,
+                postboks: null,
+                land: null,
+            },
+            tlf: null,
+        },
+        syketilfelleStartDato: '2026-01-10',
+        navnFastlege: null,
+        egenmeldt: false,
+        papirsykmelding: false,
+        harRedusertArbeidsgiverperiode: false,
+        merknader: [
+            { type: 'UNDER_BEHANDLING', beskrivelse: null },
+            { type: 'UNDER_BEHANDLING', beskrivelse: 'Sykmeldingen blir manuelt behandlet fordi den er tilbakedatert' },
+        ],
+        rulesetVersion: '3',
+        utenlandskSykmelding: null,
+    },
+    {
         id: 'bc3c9e72-58c0-4d24-91ba-d712fdd8c713',
         pasient: {
             fnr: '64820175075',
@@ -293,6 +429,124 @@ export const sykmeldingerTestdata = [
             {
                 fom: '2026-03-01',
                 tom: '2026-03-31',
+                gradert: null,
+                behandlingsdager: null,
+                innspillTilArbeidsgiver: null,
+                type: 'AKTIVITET_IKKE_MULIG',
+                aktivitetIkkeMulig: {
+                    medisinskArsak: {
+                        beskrivelse: 'Influensa med komplikasjoner',
+                        arsak: ['AKTIVITET_FORHINDRER_BEDRING'],
+                    },
+                    arbeidsrelatertArsak: null,
+                },
+                reisetilskudd: false,
+            },
+        ],
+        sykmeldingStatus: {
+            statusEvent: 'AVBRUTT',
+            timestamp: '2024-12-20T14:59:35.035516Z',
+            arbeidsgiver: {
+                orgnummer: '947064649',
+                juridiskOrgnummer: '963743254',
+                orgNavn: 'SJOKKERENDE ELEKTRIKER',
+            },
+            brukerSvar: {
+                erOpplysningeneRiktige: { sporsmaltekst: 'Stemmer opplysningene?', svar: 'NEI' },
+                arbeidssituasjon: { sporsmaltekst: 'Jeg er sykmeldt som', svar: 'ARBEIDSTAKER' },
+                uriktigeOpplysninger: { sporsmaltekst: 'Hva stemmer ikke?', svar: 'Periode for lang' },
+                arbeidsgiverOrgnummer: { sporsmaltekst: 'Velg arbeidsgiver', svar: '947064649' },
+                arbeidsledig: null,
+                riktigNarmesteLeder: null,
+                harBruktEgenmelding: null,
+                egenmeldingsperioder: null,
+                harForsikring: null,
+                egenmeldingsdager: null,
+                harBruktEgenmeldingsdager: null,
+                fisker: null,
+            },
+        },
+        medisinskVurdering: {
+            hovedDiagnose: { kode: 'R50', system: 'ICPC2', tekst: 'Feber' },
+            biDiagnoser: [{ kode: 'R05', system: 'ICPC2', tekst: 'Hoste' }],
+            annenFraversArsak: null,
+            svangerskap: false,
+            yrkesskade: false,
+            yrkesskadeDato: null,
+        },
+        skjermesForPasient: false,
+        prognose: {
+            arbeidsforEtterPeriode: true,
+            hensynArbeidsplassen: null,
+            erIArbeid: null,
+            erIkkeIArbeid: null,
+        },
+        utdypendeOpplysninger: {
+            '6.5': {
+                '6.5.1': {
+                    sporsmal:
+                        'Beskriv kort sykdomsutviklingen, symptomer og funn. Hvordan påvirker helsetilstanden funksjonen i arbeid og dagligliv?',
+                    svar: 'Alvorlig influensa med langvarig rekonvalesens',
+                    restriksjoner: ['SKJERMET_FOR_ARBEIDSGIVER'],
+                },
+            },
+        },
+        tiltakArbeidsplassen: null,
+        tiltakNAV: null,
+        andreTiltak: null,
+        meldingTilNAV: null,
+        meldingTilArbeidsgiver: null,
+        kontaktMedPasient: {
+            kontaktDato: '2024-12-10',
+            begrunnelseIkkeKontakt: null,
+        },
+        behandletTidspunkt: '2024-12-10T00:00:00Z',
+        behandler: {
+            fornavn: 'KYNDIG',
+            mellomnavn: null,
+            etternavn: 'ALLMENNLEGE',
+            adresse: {
+                gate: 'Legeveien 1',
+                postnummer: '0123',
+                kommune: 'Oslo',
+                postboks: null,
+                land: 'Norge',
+            },
+            tlf: '12345678',
+        },
+        syketilfelleStartDato: '2024-11-25',
+        navnFastlege: 'Dr. Allmennlege',
+        egenmeldt: false,
+        papirsykmelding: false,
+        harRedusertArbeidsgiverperiode: false,
+        merknader: [{ type: 'TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER', beskrivelse: 'Tilbakedatert sykmelding' }],
+        rulesetVersion: '3',
+        utenlandskSykmelding: null,
+    },
+    {
+        id: 'bd5e8f73-59c1-5d35-92cb-d812fdd8c816',
+        pasient: {
+            fnr: '64820175075',
+            fornavn: 'FYLDIG',
+            mellomnavn: null,
+            etternavn: 'TIRSDAG',
+            overSyttiAar: false,
+        },
+        mottattTidspunkt: '2024-12-15T23:00:00Z',
+        behandlingsutfall: {
+            status: 'OK',
+            ruleHits: [],
+            erUnderBehandling: false,
+        },
+        legekontorOrgnummer: null,
+        arbeidsgiver: {
+            navn: 'Optimal Partner',
+            stillingsprosent: 100,
+        },
+        sykmeldingsperioder: [
+            {
+                fom: '2026-04-01',
+                tom: '2026-04-20',
                 gradert: null,
                 behandlingsdager: null,
                 innspillTilArbeidsgiver: null,
