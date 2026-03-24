@@ -5,15 +5,48 @@ import { Filter, FilterFelt } from './Filter'
 const erObjekt = (verdi: unknown): verdi is Record<string, unknown> =>
     typeof verdi === 'object' && verdi !== null && !Array.isArray(verdi)
 
-const renderVerdi = (verdi: unknown): React.ReactNode => {
+const erBladverdi = (verdi: unknown): boolean => !Array.isArray(verdi) && !erObjekt(verdi)
+
+const formaterVerdi = (verdi: unknown): string => {
+    if (typeof verdi === 'string') return verdi
+    if (verdi === null) return 'null'
+    if (verdi === undefined) return 'undefined'
+    return String(verdi)
+}
+
+const renderVerdi = (
+    verdi: unknown,
+    filter: Filter[],
+    setFilter: React.Dispatch<React.SetStateAction<Filter[]>>,
+    sti: string,
+    erRot = false,
+): React.ReactNode => {
     if (Array.isArray(verdi)) {
         if (verdi.length === 0) return '[]'
 
         return (
-            <ul className="ml-6 list-disc">
-                {verdi.map((element, indeks) => (
-                    <li key={indeks}>{renderVerdi(element)}</li>
-                ))}
+            <ul className="ml-4 list-disc">
+                {verdi.map((element, indeks) => {
+                    const elementSti = `${sti}[${indeks}]`
+
+                    if (erBladverdi(element)) {
+                        return (
+                            <li key={elementSti}>
+                                <span className="inline-flex items-start gap-1">
+                                    <FilterFelt
+                                        prop={elementSti}
+                                        verdi={element}
+                                        filter={filter}
+                                        setFilter={setFilter}
+                                    />
+                                    <span>{formaterVerdi(element)}</span>
+                                </span>
+                            </li>
+                        )
+                    }
+
+                    return <li key={elementSti}>{renderVerdi(element, filter, setFilter, elementSti)}</li>
+                })}
             </ul>
         )
     }
@@ -23,20 +56,31 @@ const renderVerdi = (verdi: unknown): React.ReactNode => {
         if (nøkler.length === 0) return '{}'
 
         return (
-            <div className="ml-4">
-                {nøkler.map(([nøkkel, nestetVerdi]) => (
-                    <div key={nøkkel}>
-                        <span className="font-semibold">{nøkkel}:</span> {renderVerdi(nestetVerdi)}
-                    </div>
-                ))}
+            <div className={erRot ? '' : 'ml-3'}>
+                {nøkler.map(([nøkkel, nestetVerdi]) => {
+                    const nestetSti = sti ? `${sti}.${nøkkel}` : nøkkel
+                    const bladverdi = erBladverdi(nestetVerdi)
+
+                    return (
+                        <div key={nestetSti} className="flex items-start gap-1">
+                            {bladverdi && (
+                                <FilterFelt
+                                    prop={nestetSti}
+                                    verdi={nestetVerdi}
+                                    filter={filter}
+                                    setFilter={setFilter}
+                                />
+                            )}
+                            <span className="font-semibold">{nøkkel}:</span>
+                            {renderVerdi(nestetVerdi, filter, setFilter, nestetSti)}
+                        </div>
+                    )
+                })}
             </div>
         )
     }
 
-    if (typeof verdi === 'string') return verdi
-    if (verdi === null) return 'null'
-
-    return String(verdi)
+    return <span>{formaterVerdi(verdi)}</span>
 }
 
 export const Detaljer = ({
@@ -47,13 +91,4 @@ export const Detaljer = ({
     objekt: object
     filter: Filter[]
     setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
-}) => (
-    <Fragment>
-        {Object.entries(objekt).map(([nøkkel, verdi], indeks) => (
-            <div key={nøkkel + indeks}>
-                <FilterFelt prop={nøkkel} verdi={verdi} filter={filter} setFilter={setFilter} />
-                <span className="font-semibold"> {nøkkel}:</span> {renderVerdi(verdi)}
-            </div>
-        ))}
-    </Fragment>
-)
+}) => <Fragment>{renderVerdi(objekt, filter, setFilter, '', true)}</Fragment>

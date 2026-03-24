@@ -21,11 +21,36 @@ export interface ArbeidsgiverGruppering {
     sykmeldinger: Map<string, SykmeldingGruppering>
 }
 
+function hentVerdiFraSti(objekt: unknown, sti: string): unknown {
+    const deler = sti.match(/[^.[\]]+/g) ?? []
+    let verdi: unknown = objekt
+
+    for (const del of deler) {
+        if (verdi === null || verdi === undefined) return undefined
+
+        if (Array.isArray(verdi)) {
+            const indeks = Number(del)
+            if (Number.isNaN(indeks)) return undefined
+            verdi = verdi[indeks]
+            continue
+        }
+
+        if (typeof verdi === 'object') {
+            verdi = (verdi as Record<string, unknown>)[del]
+            continue
+        }
+
+        return undefined
+    }
+
+    return verdi
+}
+
 function filtrer(filter: Filter[], soknader: Soknad[]) {
     let filtrerteSoknader = soknader
     filter.forEach((f: Filter) => {
         filtrerteSoknader = filtrerteSoknader.filter((sok: Soknad) => {
-            const value = (sok as unknown as Record<string, unknown>)[f.prop]
+            const value = hentVerdiFraSti(sok, f.prop)
             return (
                 (f.inkluder && f.verdi === JSON.stringify(value)) || (!f.inkluder && f.verdi !== JSON.stringify(value))
             )
