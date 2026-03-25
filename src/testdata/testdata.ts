@@ -620,7 +620,7 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
     await sleep(200)
     if (validert.api == 'POST /api/v1/flex/sykmeldinger') {
         res.status(200)
-        res.json(sykmeldingerTestdata)
+        res.json({ sykmeldinger: sykmeldingerTestdata })
         res.end()
         return
     }

@@ -2,6 +2,10 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query'
 
 import { fetchJsonMedRequestId } from '../utils/fetch'
 
+interface SykmeldingerResponse {
+    sykmeldinger: Sykmelding[]
+}
+
 export function useSykmeldinger(fnr: string | undefined, enabled = true): UseQueryResult<Sykmelding[], Error> {
     return useQuery<Sykmelding[], Error>({
         queryKey: ['sykmeldinger', fnr],
@@ -10,11 +14,14 @@ export function useSykmeldinger(fnr: string | undefined, enabled = true): UseQue
             if (fnr === undefined) {
                 return []
             }
-            return fetchJsonMedRequestId<Sykmelding[]>('/api/flex-sykmeldinger-backend/api/v1/flex/sykmeldinger', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ fnr }),
-            })
+            return fetchJsonMedRequestId<SykmeldingerResponse>(
+                '/api/flex-sykmeldinger-backend/api/v1/flex/sykmeldinger',
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fnr }),
+                },
+            ).then((data) => data.sykmeldinger)
         },
     })
 }
