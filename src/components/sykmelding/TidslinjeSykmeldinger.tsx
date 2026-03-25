@@ -242,6 +242,7 @@ const TidslinjeSykmeldinger = ({ sykmeldinger, filter, setFilter }: TidslinjeSyk
     const visningsstartDato = !datospenn ? null : startDatoForIntervall(datospenn.sluttDato, valgtIntervall)
 
     if (filtrerteSykmeldinger.length === 0 || !datospenn || !visningsstartDato) return <Fragment />
+    console.log('Sykmeldinger som skal vises', sykmeldinger)
 
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">

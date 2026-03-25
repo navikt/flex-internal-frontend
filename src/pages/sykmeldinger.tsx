@@ -12,6 +12,7 @@ const Sykmeldinger = () => {
     const [filter, setFilter] = useState<Filter[]>([])
 
     const { data: sykmeldinger = [] } = useSykmeldinger(fnr, fnr !== undefined)
+    console.log('sykmeldinger', sykmeldinger)
 
     return (
         <div className="flex-row space-y-4">
