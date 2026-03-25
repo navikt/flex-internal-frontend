@@ -1,5 +1,5 @@
-import React from 'react'
-import { BodyShort, Timeline } from '@navikt/ds-react'
+import React, { useState } from 'react'
+import { BodyShort, Button, Timeline } from '@navikt/ds-react'
 
 import type { Sykmelding } from '../../queryhooks/useSykmeldinger'
 import { Detaljer } from '../Detaljer'
@@ -23,13 +23,15 @@ const SykmeldingPeriodePopover = ({
     filter,
     setFilter,
 }: SykmeldingPeriodePopoverProps) => {
+    const [visAlleDetaljer, setVisAlleDetaljer] = useState(false)
     const forstePeriode = perioder[0]
     const sistePeriode = perioder[perioder.length - 1]
     const harFlerePerioder = perioder.length > 1
     const antallDager = antallKalenderdager(forstePeriode.startDato, sistePeriode.sluttDato)
+    const breddeKlasse = visAlleDetaljer ? 'w-screen max-w-screen' : 'w-[460px] max-w-[80vw]'
 
     return (
-        <div className="w-[460px] max-w-[80vw] space-y-3">
+        <div className={`${breddeKlasse} space-y-3`}>
             <div>
                 <BodyShort size="small" className="font-semibold">
                     Oversikt for sykmelding
@@ -69,7 +71,15 @@ const SykmeldingPeriodePopover = ({
                     </Timeline>
                 </>
             ) : null}
-            <Detaljer objekt={sykmelding} filter={filter} setFilter={setFilter} />
+            <Button
+                size="small"
+                variant="tertiary"
+                onClick={() => setVisAlleDetaljer((forrige) => !forrige)}
+                aria-expanded={visAlleDetaljer}
+            >
+                {visAlleDetaljer ? 'Skjul alle detaljer' : 'Vis alle detaljer'}
+            </Button>
+            {visAlleDetaljer ? <Detaljer objekt={sykmelding} filter={filter} setFilter={setFilter} /> : null}
         </div>
     )
 }
