@@ -20,30 +20,27 @@ export function useSykmeldinger(fnr: string | undefined, enabled = true): UseQue
 }
 
 export interface Sykmelding {
-    id: string
-    pasient: Pasient
-    mottattTidspunkt: string
-    behandlingsutfall: Behandlingsutfall
     arbeidsgiver: Arbeidsgiver
-    sykmeldingsperioder: Sykmeldingsperiode[]
-    sykmeldingStatus: SykmeldingStatus
-    skjermesForPasient: boolean
-    kontaktMedPasient: KontaktMedPasient
     behandletTidspunkt: string
-    syketilfelleStartDato: string | null
+    behandlingsutfall: Behandlingsutfall
     egenmeldt: boolean
-    papirsykmelding: boolean
     harRedusertArbeidsgiverperiode: boolean
+    id: string
+    kontaktMedPasient: KontaktMedPasient
     merknader: Merknad[] | null
+    mottattTidspunkt: string
+    papirsykmelding: boolean
+    pasient: Pasient
     signaturDato: string | null
+    skjermesForPasient: boolean
+    syketilfelleStartDato: string | null
+    sykmeldingStatus: SykmeldingStatus
+    sykmeldingsperioder: Sykmeldingsperiode[]
     utenlandskSykmelding: UtenlandskSykmelding | null
 }
 
 export interface Pasient {
     fnr: string | null
-    fornavn: string | null
-    mellomnavn: string | null
-    etternavn: string | null
     overSyttiAar: boolean | null
 }
 
@@ -135,29 +132,6 @@ export interface FormSporsmalSvar<T> {
     svar: T
 }
 
-export interface Diagnose {
-    kode: string
-    system: string
-    tekst: string | null
-}
-
-export interface AnnenFraversArsak {
-    beskrivelse: string | null
-    grunn: string[]
-}
-
-export interface ErIArbeid {
-    egetArbeidPaSikt: boolean
-    annetArbeidPaSikt: boolean
-    arbeidFOM: string | null
-    vurderingsdato: string | null
-}
-
-export interface ErIkkeIArbeid {
-    arbeidsforPaSikt: boolean
-    arbeidsforFOM: string | null
-    vurderingsdato: string | null
-}
 export interface KontaktMedPasient {
     kontaktDato: string | null
     begrunnelseIkkeKontakt: string | null

@@ -6,9 +6,6 @@ export const sykmeldingerTestdata: Sykmelding[] = [
         id: 'bc3c9e72-58c0-4d24-91ba-d712fdd8c712',
         pasient: {
             fnr: '64820175075',
-            fornavn: 'FYLDIG',
-            mellomnavn: null,
-            etternavn: 'TIRSDAG',
             overSyttiAar: false,
         },
         mottattTidspunkt: '2026-02-01T23:00:00Z',
@@ -86,9 +83,6 @@ export const sykmeldingerTestdata: Sykmelding[] = [
         id: 'bc3c9e72-58c0-4d24-91ba-d712fdd8c713',
         pasient: {
             fnr: '64820175075',
-            fornavn: 'FYLDIG',
-            mellomnavn: null,
-            etternavn: 'TIRSDAG',
             overSyttiAar: false,
         },
         mottattTidspunkt: '2026-02-01T23:00:00Z',
@@ -166,9 +160,6 @@ export const sykmeldingerTestdata: Sykmelding[] = [
         id: 'ac4d9e72-58c0-4d24-91ba-d712fdd8c714',
         pasient: {
             fnr: '64820175075',
-            fornavn: 'FYLDIG',
-            mellomnavn: null,
-            etternavn: 'TIRSDAG',
             overSyttiAar: false,
         },
         mottattTidspunkt: '2026-02-20T23:00:00Z',
@@ -243,9 +234,6 @@ export const sykmeldingerTestdata: Sykmelding[] = [
         id: 'bd5e8f73-59c1-5d35-92cb-d812fdd8c815',
         pasient: {
             fnr: '64820175075',
-            fornavn: 'FYLDIG',
-            mellomnavn: null,
-            etternavn: 'TIRSDAG',
             overSyttiAar: false,
         },
         mottattTidspunkt: '2024-12-15T23:00:00Z',
@@ -317,9 +305,6 @@ export const sykmeldingerTestdata: Sykmelding[] = [
         id: 'bd5e8f73-59c1-5d35-92cb-d812fdd8c816',
         pasient: {
             fnr: '64820175075',
-            fornavn: 'FYLDIG',
-            mellomnavn: null,
-            etternavn: 'TIRSDAG',
             overSyttiAar: false,
         },
         mottattTidspunkt: '2024-12-15T23:00:00Z',
@@ -391,9 +376,7 @@ export const sykmeldingerTestdata: Sykmelding[] = [
         id: 'ce6f0a84-60d2-6e46-a3dc-e923fee9d926',
         pasient: {
             fnr: '64820175075',
-            fornavn: 'FYLDIG',
-            mellomnavn: null,
-            etternavn: 'TIRSDAG',
+
             overSyttiAar: false,
         },
         mottattTidspunkt: '2026-04-10T09:00:00Z',
