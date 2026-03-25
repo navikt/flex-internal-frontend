@@ -38,6 +38,25 @@ export const sykmeldingerTestdata: Sykmelding[] = [
                 },
                 reisetilskudd: false,
             },
+            {
+                fom: '2026-03-20',
+                tom: '2026-03-29',
+                gradert: null,
+                behandlingsdager: null,
+                innspillTilArbeidsgiver: null,
+                type: 'AKTIVITET_IKKE_MULIG',
+                aktivitetIkkeMulig: {
+                    medisinskArsak: {
+                        beskrivelse: 'medisinske årsaker til sykefravær',
+                        arsak: ['AKTIVITET_FORHINDRER_BEDRING'],
+                    },
+                    arbeidsrelatertArsak: {
+                        beskrivelse: 'andre årsaker til sykefravær',
+                        arsak: ['ANNET'],
+                    },
+                },
+                reisetilskudd: false,
+            },
         ],
         sykmeldingStatus: {
             statusEvent: 'SENDT',
@@ -321,6 +340,22 @@ export const sykmeldingerTestdata: Sykmelding[] = [
             {
                 fom: '2026-04-01',
                 tom: '2026-04-20',
+                gradert: null,
+                behandlingsdager: null,
+                innspillTilArbeidsgiver: null,
+                type: 'AKTIVITET_IKKE_MULIG',
+                aktivitetIkkeMulig: {
+                    medisinskArsak: {
+                        beskrivelse: 'Influensa med komplikasjoner',
+                        arsak: ['AKTIVITET_FORHINDRER_BEDRING'],
+                    },
+                    arbeidsrelatertArsak: null,
+                },
+                reisetilskudd: false,
+            },
+            {
+                fom: '2026-04-23',
+                tom: '2026-04-30',
                 gradert: null,
                 behandlingsdager: null,
                 innspillTilArbeidsgiver: null,
