@@ -58,6 +58,7 @@ spec:
     outbound:
       rules:
         - application: sykepengesoknad-backend
+        - application: flex-sykmeldinger-backend
         - application: flex-arbeidssokerregister-oppdatering
         - application: flex-inntektsmelding-status
         - application: flex-syketilfelle

@@ -6,6 +6,7 @@ import { Sortering } from '../components/ValgtSortering'
 import { Filter } from '../components/Filter'
 
 import { Klipp, maxTom, minFom, perioderSomMangler, sykmeldingDager, sykmeldingOverlappendeDager } from './overlapp'
+import { passerAlleFilter } from './filterlogikk'
 
 export interface SoknadGruppering {
     soknad: Soknad
@@ -22,19 +23,15 @@ export interface ArbeidsgiverGruppering {
 }
 
 function filtrer(filter: Filter[], soknader: Soknad[]) {
-    let filtrerteSoknader = soknader
-    filter.forEach((f: Filter) => {
-        filtrerteSoknader = filtrerteSoknader.filter((sok: Soknad) => {
-            const value = (sok as unknown as Record<string, unknown>)[f.prop]
-            return (
-                (f.inkluder && f.verdi === JSON.stringify(value)) || (!f.inkluder && f.verdi !== JSON.stringify(value))
-            )
-        })
-    })
-    return filtrerteSoknader
+    return soknader.filter((sok: Soknad) => passerAlleFilter(sok, filter))
 }
 
-function grupperPaSykmelding(soknader: Soknad[], klipp: KlippetSykepengesoknadRecord[], alleSoknader: Soknad[]) {
+function grupperPaSykmelding(
+    soknader: Soknad[],
+    klipp: KlippetSykepengesoknadRecord[],
+    alleSoknader: Soknad[],
+    filter: Filter[],
+) {
     const sykmeldingGruppering = new Map<string, SykmeldingGruppering>()
     const alleSoknaderIds = new Set(alleSoknader.map((s) => s.id))
 
@@ -72,6 +69,9 @@ function grupperPaSykmelding(soknader: Soknad[], klipp: KlippetSykepengesoknadRe
         const perioderSomErKlippet = perioderSomMangler(k)
 
         if (k.klippVariant.startsWith('SYKMELDING')) {
+            if (filter.length > 0) {
+                return
+            }
             // Sykmeldingen ble klippet før vi opprettet søknader for den
             sykmeldingGruppering.set(k.sykmeldingUuid, {
                 soknader: new Map<string, SoknadGruppering>(),
@@ -112,6 +112,10 @@ function grupperPaSykmelding(soknader: Soknad[], klipp: KlippetSykepengesoknadRe
                         soknader: new Map<string, SoknadGruppering>(),
                         klippingAvSykmelding: [],
                     })
+                }
+
+                if (!passerAlleFilter(ghostSoknad, filter)) {
+                    return
                 }
 
                 sykmeldingGruppering.get(ghostSoknad.sykmeldingId!)?.soknader.set(k.sykepengesoknadUuid, {
@@ -245,6 +249,6 @@ export default function gruppertOgFiltrert(
     klipp: KlippetSykepengesoknadRecord[],
 ): Map<string, ArbeidsgiverGruppering> {
     const filtrerteSoknader = filtrer(filter, soknader)
-    const gruppertPaSykmelding = grupperPaSykmelding(filtrerteSoknader, klipp, soknader)
+    const gruppertPaSykmelding = grupperPaSykmelding(filtrerteSoknader, klipp, soknader, filter)
     return grupperPaArbeidsgiver(gruppertPaSykmelding)
 }

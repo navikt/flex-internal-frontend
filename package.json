@@ -29,7 +29,6 @@
         "@navikt/tsm-eslint-react": "^1.0.0",
         "@navikt/tsm-prettier": "^2.0.0",
         "@tailwindcss/postcss": "^4.2.1",
-        "tailwindcss": "^4.2.1",
         "@types/node": "^24.10.8",
         "@types/react": "^19.2.14",
         "@types/react-dom": "^19.2.3",
@@ -41,13 +40,17 @@
         "next": "^16.1.6",
         "prettier": "^3.8.1",
         "prettier-plugin-tailwindcss": "^0.7.2",
-        "typescript": "^5.9.3"
+        "tailwindcss": "^4.2.1",
+        "typescript": "^5.9.3",
+        "vitest": "^4.1.0"
     },
     "scripts": {
         "dev": "MOCK_BACKEND=true next dev -p 8080",
         "local": "LOCAL_BACKEND=true MOCK_BACKEND=true next dev -p 8080",
         "start": "next start -p 8080",
         "build": "next build",
+        "test": "vitest run",
+        "test:watch": "vitest",
         "prettier:write": "prettier --write .",
         "prettier:check": "prettier --check .",
         "lint": "eslint --ext=ts,tsx src",

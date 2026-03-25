@@ -592,6 +592,8 @@ const vedtaksperiodeTestdata: FullVedtaksperiodeBehandling[] = [
     },
 ]
 
+import { sykmeldingerTestdata } from './sykmeldingerTestdata'
+
 export async function stream2buffer(stream: Stream): Promise<Buffer> {
     return new Promise<Buffer>((resolve, reject) => {
         const buffer = Array<Uint8Array>()
@@ -616,6 +618,12 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
     const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
     await sleep(200)
+    if (validert.api == 'POST /api/v1/flex/sykmeldinger') {
+        res.status(200)
+        res.json({ sykmeldinger: sykmeldingerTestdata })
+        res.end()
+        return
+    }
     if (validert.api == 'POST /api/v1/flex/sykepengesoknader') {
         res.status(200)
         res.json(testdata)

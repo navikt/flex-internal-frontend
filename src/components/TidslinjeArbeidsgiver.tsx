@@ -4,8 +4,9 @@ import React, { Fragment } from 'react'
 import { ArbeidsgiverGruppering, SoknadGruppering } from '../utils/gruppering'
 import { dayjsToDate } from '../queryhooks/useSoknader'
 
-import { KlippDetaljer, SoknadDetaljer, timelinePeriodeStatus } from './Tidslinje'
+import { KlippDetaljer, timelinePeriodeStatus } from './Tidslinje'
 import { Filter } from './Filter'
+import { Detaljer } from './Detaljer'
 
 export default function TidslinjeArbeidsgiver({
     soknaderGruppertPaArbeidsgiver,
@@ -54,8 +55,8 @@ export default function TidslinjeArbeidsgiver({
                                                     status={timelinePeriodeStatus(sok.soknad.status)}
                                                     key={sok.soknad.tom}
                                                 >
-                                                    <SoknadDetaljer
-                                                        soknad={sok.soknad}
+                                                    <Detaljer
+                                                        objekt={sok.soknad}
                                                         filter={filter}
                                                         setFilter={setFilter}
                                                     />
@@ -86,7 +87,7 @@ export default function TidslinjeArbeidsgiver({
                     <Timeline.Zoom.Button label="3 mnd" interval="month" count={3} />
                     <Timeline.Zoom.Button label="7 mnd" interval="month" count={7} />
                     <Timeline.Zoom.Button label="9 mnd" interval="month" count={9} />
-                    <Timeline.Zoom.Button label="1.5 år" interval="year" count={1.5} />
+                    <Timeline.Zoom.Button label="2 år" interval="year" count={2} />
                 </Timeline.Zoom>
             </Timeline>
         </div>

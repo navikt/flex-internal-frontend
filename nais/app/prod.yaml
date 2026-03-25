@@ -6,5 +6,6 @@ env:
   FLEX_SYKETILFELLE_CLIENT_ID: api://prod-gcp.flex.flex-syketilfelle/.default
   FLEX_INNTEKTSMELDING_STATUS_CLIENT_ID: api://prod-gcp.flex.flex-inntektsmelding-status/.default
   FLEX_ARBEIDSSOKERREGISTER_OPPDATERING_CLIENT_ID: api://prod-gcp.flex.flex-arbeidssokerregister-oppdatering/.default
+  FLEX_SYKMELDINGER_BACKEND_CLIENT_ID: api://prod-gcp.flex.flex-sykmeldinger-backend/.default
   SPLEIS_SPORING_URL: https://sporing.ansatt.nav.no
   SPANNER_URL: https://spanner.ansatt.nav.no

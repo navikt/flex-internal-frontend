@@ -16,6 +16,8 @@ export function ValgteFilter({
 }) {
     const [deaktiverteFilter, setDeaktiverteFilter] = useState<Filter[]>([])
 
+    const filterNokkel = (f: Filter) => `${f.prop}_${f.inkluder ? 'inkluder' : 'ekskluder'}_${f.verdi}`
+
     function filterOnClick(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, f: Filter) {
         if (e.target instanceof HTMLSpanElement) {
             if (filter.some((f2) => f2 === f)) {
@@ -48,12 +50,16 @@ export function ValgteFilter({
     return (
         <Chips>
             {filter.map((f) => (
-                <Chips.Removable data-color="accent" key={f.prop} onClick={(e) => filterOnClick(e, f)}>
+                <Chips.Removable data-color="accent" key={filterNokkel(f)} onClick={(e) => filterOnClick(e, f)}>
                     {f.prop + (f.inkluder ? ' = ' : ' != ') + f.verdi}
                 </Chips.Removable>
             ))}
             {deaktiverteFilter.map((f) => (
-                <Chips.Removable data-color="neutral" key={f.prop + '_deaktivert'} onClick={(e) => filterOnClick(e, f)}>
+                <Chips.Removable
+                    data-color="neutral"
+                    key={filterNokkel(f) + '_deaktivert'}
+                    onClick={(e) => filterOnClick(e, f)}
+                >
                     {f.prop + (f.inkluder ? ' = ' : ' != ') + f.verdi}
                 </Chips.Removable>
             ))}
