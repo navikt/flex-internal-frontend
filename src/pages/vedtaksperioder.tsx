@@ -25,11 +25,7 @@ const Vedtaksperioder = () => {
     const enabled =
         (sokeinput == 'fnr' && fnr !== undefined) ||
         (sokeinput == 'vedtaksperiodeid' && vedtaksperiodeId?.length === 36)
-    const {
-        data: data,
-        isLoading,
-        isRefetching,
-    } = useVedtaksperioderMedInntektsmeldinger(fnr, vedtaksperiodeId, enabled)
+    const { data: data, isRefetching } = useVedtaksperioderMedInntektsmeldinger(fnr, vedtaksperiodeId, enabled)
     const queryClient = useQueryClient()
 
     const cronJobMutation = useMutation<object, Error, dayjs.Dayjs>({
@@ -199,7 +195,6 @@ const Vedtaksperioder = () => {
                 </Alert>
             )}
             {isRefetching && enabled && <span>Oppdaterer...</span>}
-            {isLoading && enabled && <span>Laster...</span>}
             {!isRefetching && data && data.vedtaksperioder.length === 0 && <span>Ingen vedtaksperioder</span>}
             {!isRefetching && typeof data !== 'undefined' && (
                 <InntektsmeldingView inntektsmeldinger={data.inntektsmeldinger} />
