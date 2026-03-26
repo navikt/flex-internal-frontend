@@ -4,11 +4,26 @@ import 'react-json-view-lite/dist/index.css'
 import type { AppProps } from 'next/app'
 import React, { JSX, useState } from 'react'
 import Head from 'next/head'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider, useIsFetching } from '@tanstack/react-query'
 import { Dropdown, InternalHeader } from '@navikt/ds-react'
 import { useRouter } from 'next/router'
 
+import LasterInnhold from '../components/LasterInnhold'
 import { ValgtFnrProvider } from '../utils/useValgtFnr'
+
+const GlobalLasterInnhold = () => {
+    const antallAktiveSporringer = useIsFetching()
+
+    if (antallAktiveSporringer === 0) {
+        return null
+    }
+
+    return (
+        <div className="px-4 pt-2">
+            <LasterInnhold />
+        </div>
+    )
+}
 
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
     const [queryClient] = useState(
@@ -79,6 +94,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
                         </Dropdown>
                     </InternalHeader>
                     <div id="root" className="mx-auto p-4 pb-32">
+                        <GlobalLasterInnhold />
                         <Component {...pageProps} />
                     </div>
                 </ValgtFnrProvider>
