@@ -1,29 +1,19 @@
-import React, { useState } from 'react'
-import { Search, Table } from '@navikt/ds-react'
+import React from 'react'
+import { Table } from '@navikt/ds-react'
 
+import FnrSokefelt from '../components/FnrSokefelt'
 import { initialProps } from '../initialprops/initialProps'
 import { useIdenter } from '../queryhooks/useIdenter'
-import { handterIdentValidering } from '../utils/inputValidering'
+import { useValgtFnr } from '../utils/useValgtFnr'
 
 const IdentPage = () => {
-    const [ident, setIdent] = useState<string>()
+    const { fnr } = useValgtFnr()
 
-    const { data: data } = useIdenter(ident, ident !== undefined)
+    const { data: data } = useIdenter(fnr, fnr !== undefined)
 
     return (
         <div className="flex-row space-y-4">
-            <Search
-                htmlSize="20"
-                label="Ident"
-                onSearchClick={(input) => {
-                    handterIdentValidering(input, setIdent)
-                }}
-                onKeyDown={(evt) => {
-                    if (evt.key === 'Enter') {
-                        handterIdentValidering(evt.currentTarget.value, setIdent)
-                    }
-                }}
-            />
+            <FnrSokefelt />
             <Table>
                 <Table.Header>
                     <Table.Row>

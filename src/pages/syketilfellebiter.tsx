@@ -1,28 +1,18 @@
-import React, { useState } from 'react'
-import { Alert, BodyShort, Box, Label, Loader, Search } from '@navikt/ds-react'
+import React from 'react'
+import { Alert, BodyShort, Box, Label, Loader } from '@navikt/ds-react'
 
+import FnrSokefelt from '../components/FnrSokefelt'
 import { initialProps } from '../initialprops/initialProps'
 import { useSyketilfellebiter } from '../queryhooks/useVentetid'
-import { handterFnrValidering } from '../utils/inputValidering'
+import { useValgtFnr } from '../utils/useValgtFnr'
 
 const SyketilfellebiterPage = () => {
-    const [fnr, setFnr] = useState<string>()
+    const { fnr } = useValgtFnr()
     const { data, isError, error, isLoading } = useSyketilfellebiter(fnr, fnr !== undefined)
 
     return (
         <div className="flex-row space-y-4">
-            <Search
-                htmlSize="20"
-                label="Fødselsnummer"
-                onSearchClick={(input) => {
-                    handterFnrValidering(input, setFnr)
-                }}
-                onKeyDown={(evt) => {
-                    if (evt.key === 'Enter') {
-                        handterFnrValidering(evt.currentTarget.value, setFnr)
-                    }
-                }}
-            />
+            <FnrSokefelt />
             {isError && <Alert variant="error">Feil ved henting av ventetid: {String(error)}</Alert>}
 
             {!isError &&

@@ -1,31 +1,21 @@
 import React, { useState } from 'react'
-import { Button, Label, Search } from '@navikt/ds-react'
+import { Button, Label } from '@navikt/ds-react'
 import { allExpanded, defaultStyles, JsonView } from 'react-json-view-lite'
 
+import FnrSokefelt from '../components/FnrSokefelt'
 import { initialProps } from '../initialprops/initialProps'
 import { useSigrun } from '../queryhooks/useSigrun'
-import { handterFnrValidering } from '../utils/inputValidering'
+import { useValgtFnr } from '../utils/useValgtFnr'
 
 const SigrunPage = () => {
-    const [fnr, setFnr] = useState<string>()
+    const { fnr } = useValgtFnr()
     const [aar, setAar] = useState<string>()
 
     const { data: data } = useSigrun(fnr, aar, !!fnr && !!aar)
 
     return (
         <div className="flex-row space-y-4">
-            <Search
-                htmlSize="20"
-                label="Fødselsnummer"
-                onSearchClick={(input) => {
-                    handterFnrValidering(input, setFnr)
-                }}
-                onKeyDown={(evt) => {
-                    if (evt.key === 'Enter') {
-                        handterFnrValidering(evt.currentTarget.value, setFnr)
-                    }
-                }}
-            />
+            <FnrSokefelt />
             <AarButton aar="2024" setAar={setAar} />
             <AarButton aar="2023" setAar={setAar} />
             <AarButton aar="2022" setAar={setAar} />
