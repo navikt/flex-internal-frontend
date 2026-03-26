@@ -1,13 +1,13 @@
-import React, { useState } from 'react'
-import { Search } from '@navikt/ds-react'
+import React from 'react'
 
 import { initialProps } from '../initialprops/initialProps'
+import FnrSokefelt from '../components/FnrSokefelt'
 import { useSoknader } from '../queryhooks/useSoknader'
 import Tidslinje from '../components/Tidslinje'
-import { handterFnrValidering } from '../utils/inputValidering'
+import { useValgtFnr } from '../utils/useValgtFnr'
 
 const Index = () => {
-    const [fnr, setFnr] = useState<string>()
+    const { fnr } = useValgtFnr()
 
     const { data: data } = useSoknader(fnr, fnr !== undefined)
     const soknader = data?.sykepengesoknadListe || []
@@ -15,18 +15,7 @@ const Index = () => {
 
     return (
         <div className="flex-row space-y-4">
-            <Search
-                htmlSize="20"
-                label="Fødselsnummer"
-                onSearchClick={(input) => {
-                    handterFnrValidering(input, setFnr)
-                }}
-                onKeyDown={(evt) => {
-                    if (evt.key === 'Enter') {
-                        handterFnrValidering(evt.currentTarget.value, setFnr)
-                    }
-                }}
-            />
+            <FnrSokefelt />
             <Tidslinje soknader={soknader} klipp={klipp} />
         </div>
     )

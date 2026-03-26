@@ -9,8 +9,8 @@ import {
     Modal,
     Radio,
     RadioGroup,
-    Search,
     Table,
+    VStack,
     useDatepicker,
 } from '@navikt/ds-react'
 import { ArrowsCirclepathIcon, FileIcon, TrashIcon } from '@navikt/aksel-icons'
@@ -18,7 +18,6 @@ import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
 import { initialProps } from '../initialprops/initialProps'
-import { handterFnrValidering } from '../utils/inputValidering'
 import { useArbeidssoker, ArbeidssokerDetaljer } from '../queryhooks/useArbeidssoker'
 import { useSoknader } from '../queryhooks/useSoknader'
 import { FtaVedtak, useFtaVedtak } from '../queryhooks/useFtaVedtak'
@@ -27,12 +26,14 @@ import { useUbehandledeFtaVedtak } from '../queryhooks/useUbehandledeFtaVedtak'
 import { useEndreStatusMutation } from '../queryhooks/useEndreFtaVedtakStatus'
 import { formatterTimestamp } from '../utils/formatterDatoer'
 import ArbeidssokerperioderTable from '../components/FlexArbeidssokerregisterPerioder'
+import FnrSokefelt from '../components/FnrSokefelt'
 import { useFtaVedtakIgnorerArbeidssokerregister } from '../queryhooks/useFtaVedtakIgnorerArbeidssøkerregister'
 import { useEndreFtaVedtakTomMutation } from '../queryhooks/useEndreFtaVedtakTom'
 import { useDeleteFtaSoknadMutation } from '../queryhooks/useDeleteFtaSoknad'
+import { useValgtFnr } from '../utils/useValgtFnr'
 
 const FriskmeldtPage = () => {
-    const [fnr, setFnr] = useState<string>()
+    const { fnr, settFnr, nullstillFnr } = useValgtFnr()
     const { data: ubehandlede } = useUbehandledeFtaVedtak()
 
     useEffect(() => {
@@ -44,28 +45,17 @@ const FriskmeldtPage = () => {
     useEffect(() => {
         const onPopState = () => {
             if (fnr) {
-                setFnr('')
+                nullstillFnr()
             }
         }
         window.addEventListener('popstate', onPopState)
         return () => window.removeEventListener('popstate', onPopState)
-    }, [fnr])
+    }, [fnr, nullstillFnr])
 
     if (!fnr) {
         return (
             <>
-                <Search
-                    htmlSize="20"
-                    label="Fødselsnummer"
-                    onSearchClick={(input) => {
-                        handterFnrValidering(input, setFnr)
-                    }}
-                    onKeyDown={(evt) => {
-                        if (evt.key === 'Enter') {
-                            handterFnrValidering(evt.currentTarget.value, setFnr)
-                        }
-                    }}
-                />
+                <FnrSokefelt />
                 {ubehandlede && ubehandlede.length > 0 && (
                     <Table>
                         <Table.Header>
@@ -86,7 +76,7 @@ const FriskmeldtPage = () => {
                                     className="cursor-pointer"
                                     key={vedtak.id}
                                     onClick={() => {
-                                        setFnr(vedtak.fnr)
+                                        settFnr(vedtak.fnr)
                                     }}
                                 >
                                     <Table.DataCell>{i + 1}</Table.DataCell>
@@ -107,19 +97,19 @@ const FriskmeldtPage = () => {
     }
 
     return (
-        <div>
+        <VStack gap="space-16">
+            <FnrSokefelt />
             <Button
-                className="mb-8"
                 size="small"
                 variant="secondary"
                 onClick={() => {
-                    setFnr('')
+                    nullstillFnr()
                 }}
             >
                 Tilbake
             </Button>
             <FriskmeldtEnkeltPerson fnr={fnr} />
-        </div>
+        </VStack>
     )
 }
 

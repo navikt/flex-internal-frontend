@@ -1,31 +1,21 @@
-import React, { useState } from 'react'
-import { ReadMore, Search } from '@navikt/ds-react'
+import React from 'react'
+import { ReadMore } from '@navikt/ds-react'
 import { allExpanded, defaultStyles, JsonView } from 'react-json-view-lite'
 
+import FnrSokefelt from '../components/FnrSokefelt'
 import { initialProps } from '../initialprops/initialProps'
 import { useAareg } from '../queryhooks/useAareg'
 import { TidslinjeAareg } from '../components/TidslinjeAareg'
-import { handterFnrValidering } from '../utils/inputValidering'
+import { useValgtFnr } from '../utils/useValgtFnr'
 
 const AaregPage = () => {
-    const [fnr, setFnr] = useState<string>()
+    const { fnr } = useValgtFnr()
 
     const { data: data } = useAareg(fnr, fnr !== undefined)
 
     return (
         <div className="flex-row space-y-4">
-            <Search
-                htmlSize="20"
-                label="Fødselsnummer"
-                onSearchClick={(input) => {
-                    handterFnrValidering(input, setFnr)
-                }}
-                onKeyDown={(evt) => {
-                    if (evt.key === 'Enter') {
-                        handterFnrValidering(evt.currentTarget.value, setFnr)
-                    }
-                }}
-            />
+            <FnrSokefelt />
             {data && <TidslinjeAareg aaregresponse={data} />}
             {data && (
                 <ReadMore header="rådata">

@@ -8,6 +8,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Dropdown, InternalHeader } from '@navikt/ds-react'
 import { useRouter } from 'next/router'
 
+import { ValgtFnrProvider } from '../utils/useValgtFnr'
+
 function MyApp({ Component, pageProps }: AppProps): JSX.Element {
     const [queryClient] = useState(
         () =>
@@ -47,31 +49,39 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
             </Head>
             <QueryClientProvider client={queryClient}>
-                <InternalHeader>
-                    <InternalHeader.Title as="h1">Flex internal frontend</InternalHeader.Title>
-                    <InternalHeader.Title as="h2">{sider[router.pathname as keyof typeof sider]}</InternalHeader.Title>
+                <ValgtFnrProvider>
+                    <InternalHeader>
+                        <InternalHeader.Title as="h1">Flex internal frontend</InternalHeader.Title>
+                        <InternalHeader.Title as="h2">
+                            {sider[router.pathname as keyof typeof sider]}
+                        </InternalHeader.Title>
 
-                    <Dropdown>
-                        <InternalHeader.UserButton as={Dropdown.Toggle} name="Velg en underside" className="ml-auto" />
-                        <Dropdown.Menu>
-                            <Dropdown.Menu.List>
-                                {Object.entries(sider).map(([url, side]) => (
-                                    <Dropdown.Menu.List.Item
-                                        key={url}
-                                        onClick={() => {
-                                            router.push(url)
-                                        }}
-                                    >
-                                        {side}
-                                    </Dropdown.Menu.List.Item>
-                                ))}
-                            </Dropdown.Menu.List>
-                        </Dropdown.Menu>
-                    </Dropdown>
-                </InternalHeader>
-                <div id="root" className="mx-auto p-4 pb-32">
-                    <Component {...pageProps} />
-                </div>
+                        <Dropdown>
+                            <InternalHeader.UserButton
+                                as={Dropdown.Toggle}
+                                name="Velg en underside"
+                                className="ml-auto"
+                            />
+                            <Dropdown.Menu>
+                                <Dropdown.Menu.List>
+                                    {Object.entries(sider).map(([url, side]) => (
+                                        <Dropdown.Menu.List.Item
+                                            key={url}
+                                            onClick={() => {
+                                                void router.push(url)
+                                            }}
+                                        >
+                                            {side}
+                                        </Dropdown.Menu.List.Item>
+                                    ))}
+                                </Dropdown.Menu.List>
+                            </Dropdown.Menu>
+                        </Dropdown>
+                    </InternalHeader>
+                    <div id="root" className="mx-auto p-4 pb-32">
+                        <Component {...pageProps} />
+                    </div>
+                </ValgtFnrProvider>
             </QueryClientProvider>
         </>
     )

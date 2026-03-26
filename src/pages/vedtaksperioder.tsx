@@ -8,15 +8,17 @@ import {
     FullVedtaksperiodeBehandling,
     useVedtaksperioderMedInntektsmeldinger,
 } from '../queryhooks/useVedtaksperioderMedInntektsmeldinger'
+import FnrSokefelt from '../components/FnrSokefelt'
 import { TidslinjeVedtaksperioder } from '../components/TidslinjeVedtaksperioder'
 import { fetchJsonMedRequestId } from '../utils/fetch'
 import { InntektsmeldingView } from '../components/Inntektsmeldinger'
 import { isNotProd, spannerUrl, spleisSporingUrl } from '../utils/environment'
 import { useIdenter } from '../queryhooks/useIdenter'
-import { handterFnrValidering, handterUuidValidering } from '../utils/inputValidering'
+import { handterUuidValidering } from '../utils/inputValidering'
+import { useValgtFnr } from '../utils/useValgtFnr'
 
 const Vedtaksperioder = () => {
-    const [fnr, setFnr] = useState<string>()
+    const { fnr, nullstillFnr } = useValgtFnr()
     const [vedtaksperiodeId, setVedtaksperiodeId] = useState<string>()
     const [sokeinput, setSokeinput] = useState<'vedtaksperiodeid' | 'fnr'>('vedtaksperiodeid')
 
@@ -115,7 +117,7 @@ const Vedtaksperioder = () => {
                 onChange={(v) => {
                     setSokeinput(v)
                     setVedtaksperiodeId(undefined)
-                    setFnr(undefined)
+                    nullstillFnr()
 
                     queryClient.removeQueries({
                         queryKey: ['vedtaksperioder'],
@@ -126,20 +128,7 @@ const Vedtaksperioder = () => {
                 <Radio value="vedtaksperiodeid">VedtaksperiodeId</Radio>
                 <Radio value="fnr">Fødselsnummer</Radio>
             </RadioGroup>
-            {sokeinput === 'fnr' && (
-                <Search
-                    htmlSize="20"
-                    label="Fødselsnummer"
-                    onSearchClick={(input) => {
-                        handterFnrValidering(input, setFnr)
-                    }}
-                    onKeyDown={(evt) => {
-                        if (evt.key === 'Enter') {
-                            handterFnrValidering(evt.currentTarget.value, setFnr)
-                        }
-                    }}
-                />
-            )}
+            {sokeinput === 'fnr' && <FnrSokefelt />}
             {sokeinput === 'vedtaksperiodeid' && (
                 <Search
                     className="w-80"
