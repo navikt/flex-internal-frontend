@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Search } from '@navikt/ds-react'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { handterFnrValidering } from '../utils/inputValidering'
 import { useValgtFnr } from '../utils/useValgtFnr'
@@ -12,11 +13,19 @@ type Props = {
 
 const FnrSokefelt = ({ className, htmlSize = '20', label = 'Fødselsnummer' }: Props) => {
     const { fnr, settFnr } = useValgtFnr()
+    const queryClient = useQueryClient()
     const [sokeverdi, setSokeverdi] = useState(fnr ?? '')
 
     const handterSok = (input: string) => {
         setSokeverdi(input)
-        handterFnrValidering(input, settFnr)
+        handterFnrValidering(input, (nyttFnr) => {
+            const erSammeFnr = nyttFnr === fnr
+            settFnr(nyttFnr)
+
+            if (erSammeFnr) {
+                void queryClient.invalidateQueries({ refetchType: 'active' })
+            }
+        })
     }
 
     return (
