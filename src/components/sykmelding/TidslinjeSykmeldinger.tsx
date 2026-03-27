@@ -45,6 +45,8 @@ const TidslinjeSykmeldinger = ({ sykmeldinger, filter, setFilter }: TidslinjeSyk
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <BodyShort className="mb-2 font-semibold">{`${filtrerteSykmeldinger.length} sykmelding(er)`}</BodyShort>
 
+            <VelgZoomPeriode setFraDato={setVisningsFraDato} setTilDato={setVisningstilDato} />
+
             <Timeline
                 endDate={aktivTidsvindu.til}
                 startDate={aktivTidsvindu.fra}
@@ -106,9 +108,6 @@ const TidslinjeSykmeldinger = ({ sykmeldinger, filter, setFilter }: TidslinjeSyk
                         </Timeline.Row>,
                     ]
                 })}
-                <Timeline.Zoom>
-                    <VelgZoomPeriode setFraDato={setVisningsFraDato} setTilDato={setVisningstilDato} />
-                </Timeline.Zoom>
             </Timeline>
         </div>
     )

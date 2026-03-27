@@ -20,35 +20,37 @@ export default function VelgZoomPeriode({ setFraDato, setTilDato, maxTilDato }: 
     }
 
     return (
-        <HStack gap="space-4" wrap={false}>
-            <Button size="small" variant="secondary" onClick={() => handleZoom(3)} aria-label="Zoom 3 måneder">
-                3 mnd
-            </Button>
-            <Button size="small" variant="secondary" onClick={() => handleZoom(7)} aria-label="Zoom 7 måneder">
-                7 mnd
-            </Button>
-            <Button size="small" variant="secondary" onClick={() => handleZoom(9)} aria-label="Zoom 9 måneder">
-                9 mnd
-            </Button>
-            <Button
+        <div className="mb-4">
+            <HStack gap="space-4" wrap={false}>
+                <Button size="small" variant="secondary" onClick={() => handleZoom(3)} aria-label="Zoom 3 måneder">
+                    3 mnd
+                </Button>
+                <Button size="small" variant="secondary" onClick={() => handleZoom(7)} aria-label="Zoom 7 måneder">
+                    7 mnd
+                </Button>
+                <Button size="small" variant="secondary" onClick={() => handleZoom(9)} aria-label="Zoom 9 måneder">
+                    9 mnd
+                </Button>
+                <Button
                     size="small"
                     variant="secondary"
                     onClick={() => handleZoom(undefined, 2)}
                     aria-label="Zoom 2 år"
                 >
-                2 år
-            </Button>
-            <Button
-                size="small"
-                variant="secondary"
-                onClick={() => {
-                    setFraDato(null)
-                    setTilDato(null)
-                }}
-                aria-label="Vis alle perioder"
-            >
-                Alle
-            </Button>
-        </HStack>
+                    2 år
+                </Button>
+                <Button
+                    size="small"
+                    variant="secondary"
+                    onClick={() => {
+                        setFraDato(null)
+                        setTilDato(null)
+                    }}
+                    aria-label="Vis alle perioder"
+                >
+                    Alle
+                </Button>
+            </HStack>
+        </div>
     )
 }

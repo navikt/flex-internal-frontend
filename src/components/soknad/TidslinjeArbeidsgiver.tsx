@@ -56,6 +56,7 @@ export default function TidslinjeArbeidsgiver({
 
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
+            <VelgZoomPeriode setFraDato={setVisningsFraDato} setTilDato={setVisningstilDato} />
             <Timeline
                 endDate={aktivTidsvindu.til}
                 startDate={aktivTidsvindu.fra}
@@ -152,10 +153,6 @@ export default function TidslinjeArbeidsgiver({
                         </Timeline.Row>,
                     ]
                 })}
-
-                <Timeline.Zoom>
-                    <VelgZoomPeriode setFraDato={setVisningsFraDato} setTilDato={setVisningstilDato} />
-                </Timeline.Zoom>
             </Timeline>
         </div>
     )

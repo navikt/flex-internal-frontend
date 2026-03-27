@@ -86,6 +86,7 @@ export default function TidslinjeSykmelding({
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <ValgtSortering sortering={sortering} setSortering={setSortering} />
+            <VelgZoomPeriode setFraDato={setVisningsFraDato} setTilDato={setVisningstilDato} />
             <OverlappendeTidslinjeRad sykmeldingGruppering={soknaderGruppertPaSykmeldinger} />
             <KlippBugInfo sykmeldingGruppering={soknaderGruppertPaSykmeldinger} />
             <Timeline
@@ -182,10 +183,6 @@ export default function TidslinjeSykmelding({
                             </Timeline.Row>,
                         ]
                     })}
-
-                <Timeline.Zoom>
-                    <VelgZoomPeriode setFraDato={setVisningsFraDato} setTilDato={setVisningstilDato} />
-                </Timeline.Zoom>
             </Timeline>
         </div>
     )
