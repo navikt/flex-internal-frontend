@@ -1,8 +1,8 @@
 import { Fragment } from 'react'
 import { Alert } from '@navikt/ds-react'
 
-import { SykmeldingGruppering } from '../utils/gruppering'
-import { maxTom, minFom } from '../utils/overlapp'
+import { SykmeldingGruppering } from '../../utils/gruppering'
+import { maxTom, minFom } from '../../utils/overlapp'
 
 function finnUglerIMosen(sykmeldingGruppering: Map<string, SykmeldingGruppering>) {
     const ugler: string[] = []

@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import { logger } from '@navikt/next-logger'
 
 import { KlippetSykepengesoknadRecord, Soknad } from '../queryhooks/useSoknader'
-import { Sortering } from '../components/ValgtSortering'
+import { Sortering } from '../components/soknad/ValgtSortering'
 import { Filter } from '../components/Filter'
 
 import { Klipp, maxTom, minFom, perioderSomMangler, sykmeldingDager, sykmeldingOverlappendeDager } from './overlapp'

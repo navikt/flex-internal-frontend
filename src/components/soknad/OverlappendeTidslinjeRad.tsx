@@ -1,8 +1,8 @@
 import { Fragment } from 'react'
 import { Alert } from '@navikt/ds-react'
 
-import { SykmeldingGruppering } from '../utils/gruppering'
-import { overlappendePeriodeInnenforTimelineRad } from '../utils/overlapp'
+import { SykmeldingGruppering } from '../../utils/gruppering'
+import { overlappendePeriodeInnenforTimelineRad } from '../../utils/overlapp'
 
 export default function OverlappendeTidslinjeRad({
     sykmeldingGruppering,

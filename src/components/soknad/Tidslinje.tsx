@@ -1,10 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react'
 
-import { KlippetSykepengesoknadRecord, RSSoknadstatusType, Soknad } from '../queryhooks/useSoknader'
-import gruppertOgFiltrert, { ArbeidsgiverGruppering } from '../utils/gruppering'
-import { Klipp } from '../utils/overlapp'
+import { KlippetSykepengesoknadRecord, RSSoknadstatusType, Soknad } from '../../queryhooks/useSoknader'
+import gruppertOgFiltrert, { ArbeidsgiverGruppering } from '../../utils/gruppering'
+import { Klipp } from '../../utils/overlapp'
+import { Filter, ValgteFilter } from '../Filter'
 
-import { Filter, ValgteFilter } from './Filter'
 import TidslinjeSykmelding from './TidslinjeSykmelding'
 import ValgtArbeidsgiver from './ValgtArbeidsgiver'
 import TidslinjeArbeidsgiver from './TidslinjeArbeidsgiver'

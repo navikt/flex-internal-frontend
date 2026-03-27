@@ -1,17 +1,14 @@
-import React, { Fragment, useState } from 'react'
 import { Timeline } from '@navikt/ds-react'
+import React, { Fragment } from 'react'
 
-import { ArbeidsgiverGruppering, SoknadGruppering, sortert, SykmeldingGruppering } from '../utils/gruppering'
-import { dayjsToDate } from '../queryhooks/useSoknader'
+import { ArbeidsgiverGruppering, SoknadGruppering } from '../../utils/gruppering'
+import { dayjsToDate } from '../../queryhooks/useSoknader'
+import { Filter } from '../Filter'
+import { Detaljer } from '../Detaljer'
 
-import ValgtSortering, { Sortering } from './ValgtSortering'
-import OverlappendeTidslinjeRad from './OverlappendeTidslinjeRad'
 import { KlippDetaljer, timelinePeriodeStatus } from './Tidslinje'
-import { Filter } from './Filter'
-import KlippBugInfo from './KlippBugInfo'
-import { Detaljer } from './Detaljer'
 
-export default function TidslinjeSykmelding({
+export default function TidslinjeArbeidsgiver({
     soknaderGruppertPaArbeidsgiver,
     arbeidsgiver,
     filter,
@@ -22,52 +19,22 @@ export default function TidslinjeSykmelding({
     filter: Filter[]
     setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
 }) {
-    const [sortering, setSortering] = useState<Sortering>('sykmelding skrevet')
-    const soknaderGruppertPaSykmeldinger = new Map<string, SykmeldingGruppering>()
-
-    function sykmeldingLabel(sykId: string) {
-        if (sykId.includes('_GHOST')) {
-            return 'Sykmelding 👻'
-        }
-        if (sykId.includes('_KORRIGERT')) {
-            return 'Korrigert '
-        }
-        return 'Sykmelding'
-    }
-
-    if (arbeidsgiver === 'alle') {
-        return <Fragment />
-    }
-
-    Array.from(soknaderGruppertPaArbeidsgiver.entries())
-        .filter(([arbId]) => arbId.includes(arbeidsgiver) || arbId.endsWith('_GHOST'))
-        .forEach(([arbId, arb]) => {
-            const overlappIndex = arbId.slice(8)
-
-            Array.from(arb.sykmeldinger).forEach(([sykId, syk]) => {
-                const id = sykId + overlappIndex
-                soknaderGruppertPaSykmeldinger.set(id, syk)
-            })
-        })
-
-    if (soknaderGruppertPaSykmeldinger.size === 0) {
+    if (arbeidsgiver !== 'alle') {
         return <Fragment />
     }
 
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
-            <ValgtSortering sortering={sortering} setSortering={setSortering} />
-            <OverlappendeTidslinjeRad sykmeldingGruppering={soknaderGruppertPaSykmeldinger} />
-            <KlippBugInfo sykmeldingGruppering={soknaderGruppertPaSykmeldinger} />
             <Timeline>
-                {Array.from(soknaderGruppertPaSykmeldinger.entries())
-                    .sort((a, b) => sortert(a, b, sortering))
-                    .map(([sykId, syk]) => {
-                        const erGhostSykmelding = sykId.includes('_GHOST')
+                {Array.from(soknaderGruppertPaArbeidsgiver.entries()).map(([arbId, arb]) => {
+                    const erGhostArbeidsgiver = arbId.includes('_GHOST')
 
-                        return (
-                            <Timeline.Row key={sykId} label={sykmeldingLabel(sykId)}>
-                                {Array.from(syk.soknader.values())
+                    return (
+                        <Timeline.Row key={arbId} label={erGhostArbeidsgiver ? 'Arbeidsgiver 👻' : arbId}>
+                            {Array.from(arb.sykmeldinger.entries()).flatMap(([sykId, syk]) => {
+                                const erGhostSykmelding = sykId.endsWith('_GHOST')
+
+                                return Array.from(syk.soknader.values())
                                     .flatMap((sok: SoknadGruppering) => {
                                         const klippingAvSoknad = sok.klippingAvSoknad.map((k) => (
                                             <Timeline.Period
@@ -110,10 +77,11 @@ export default function TidslinjeSykmelding({
                                                 <KlippDetaljer klipp={k} />
                                             </Timeline.Period>
                                         )),
-                                    )}
-                            </Timeline.Row>
-                        )
-                    })}
+                                    )
+                            })}
+                        </Timeline.Row>
+                    )
+                })}
 
                 <Timeline.Zoom>
                     <Timeline.Zoom.Button label="3 mnd" interval="month" count={3} />

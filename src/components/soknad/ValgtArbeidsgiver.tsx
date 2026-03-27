@@ -1,7 +1,7 @@
 import { ToggleGroup } from '@navikt/ds-react'
 import React from 'react'
 
-import { ArbeidsgiverGruppering } from '../utils/gruppering'
+import { ArbeidsgiverGruppering } from '../../utils/gruppering'
 
 export default function ValgtArbeidsgiver({
     arbeidsgiver,

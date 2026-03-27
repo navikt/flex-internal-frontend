@@ -3,7 +3,7 @@ import React from 'react'
 import { initialProps } from '../initialprops/initialProps'
 import FnrSokefelt from '../components/FnrSokefelt'
 import { useSoknader } from '../queryhooks/useSoknader'
-import Tidslinje from '../components/Tidslinje'
+import Tidslinje from '../components/soknad/Tidslinje'
 import { useValgtFnr } from '../utils/useValgtFnr'
 
 const Index = () => {
