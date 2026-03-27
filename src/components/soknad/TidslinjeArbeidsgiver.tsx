@@ -2,6 +2,7 @@ import { Timeline } from '@navikt/ds-react'
 import React, { Fragment } from 'react'
 
 import { ArbeidsgiverGruppering, SoknadGruppering } from '../../utils/gruppering'
+import { arbeidsgiverLabelForSoknader } from '../../utils/soknadArbeidsgiverLabel'
 import { dayjsToDate } from '../../queryhooks/useSoknader'
 import { beregnAktivTidsvindu, erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
 import { Filter } from '../Filter'
@@ -9,20 +10,6 @@ import { Detaljer } from '../Detaljer'
 import VelgZoomPeriode from '../VelgZoomPeriode'
 
 import { KlippDetaljer, timelinePeriodeStatus } from './Tidslinje'
-
-const arbeidsgiverLabel = (arbeidsgiverId: string, arbeidsgiver: ArbeidsgiverGruppering) => {
-    const harNaeringsdrivendeSoknad = Array.from(arbeidsgiver.sykmeldinger.values()).some((sykmelding) =>
-        Array.from(sykmelding.soknader.values()).some(
-            (soknad) => soknad.soknad.arbeidssituasjon === 'NAERINGSDRIVENDE',
-        ),
-    )
-
-    if (harNaeringsdrivendeSoknad) {
-        return 'Næringsdrivende'
-    }
-
-    return arbeidsgiverId.includes('_GHOST') ? 'Arbeidsgiver 👻' : arbeidsgiverId
-}
 
 export default function TidslinjeArbeidsgiver({
     soknaderGruppertPaArbeidsgiver,
@@ -77,7 +64,7 @@ export default function TidslinjeArbeidsgiver({
                 key={`${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
             >
                 {Array.from(soknaderGruppertPaArbeidsgiver.entries()).flatMap(([arbId, arb]) => {
-                    const label = arbeidsgiverLabel(arbId, arb)
+                    const label = arbeidsgiverLabelForSoknader(arbId, arb, soknaderGruppertPaArbeidsgiver)
 
                     const perioder_med_innhold = Array.from(arb.sykmeldinger.entries()).flatMap(([sykId, syk]) => {
                         const erGhostSykmelding = sykId.endsWith('_GHOST')
