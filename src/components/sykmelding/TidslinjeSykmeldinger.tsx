@@ -53,8 +53,6 @@ const TidslinjeSykmeldinger = ({ sykmeldinger, filter, setFilter }: TidslinjeSyk
                 key={`${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
             >
                 {Array.from(sykmeldingerGruppertPaArbeidsgiver.entries()).flatMap(([arbeidsgiverId, arbeidsgiver]) => {
-                    const label = arbeidsgiverId.includes('(') ? `${arbeidsgiver.navn} (overlapp)` : arbeidsgiver.navn
-
                     const perioder_med_innhold = arbeidsgiver.sykmeldinger.flatMap((sykmelding) => {
                         const status = sykmeldingStatus(sykmelding.sykmeldingStatus?.statusEvent)
                         const perioder = sorterPerioder(perioderMedDatoer(sykmelding))
@@ -103,7 +101,7 @@ const TidslinjeSykmeldinger = ({ sykmeldinger, filter, setFilter }: TidslinjeSyk
                     }
 
                     return [
-                        <Timeline.Row key={arbeidsgiverId} label={label}>
+                        <Timeline.Row key={arbeidsgiverId} label={arbeidsgiver.label}>
                             {perioder_med_innhold}
                         </Timeline.Row>,
                     ]
