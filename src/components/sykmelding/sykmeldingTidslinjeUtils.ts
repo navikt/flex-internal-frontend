@@ -2,7 +2,7 @@ import type { Sykmelding, SykmeldingStatusType } from '../../queryhooks/useSykme
 import { datostrengTilUtcDato } from '../../utils/dato'
 
 export interface SykmeldingerPerArbeidsgiver {
-    navn: string
+    label: string
     sykmeldinger: Sykmelding[]
     dagNokler: Set<string>
 }
@@ -51,11 +51,11 @@ const arbeidsgiverIdForSykmelding = (sykmelding: Sykmelding): string => {
 }
 
 const arbeidsgiverNavnForSykmelding = (sykmelding: Sykmelding): string => {
+    const orgnummer = sykmelding.sykmeldingStatus?.arbeidsgiver?.orgnummer?.trim()
+    if (orgnummer) return orgnummer
+
     const arbeidsgiverNavn = sykmelding.arbeidsgiver?.navn?.trim()
     if (arbeidsgiverNavn) return arbeidsgiverNavn
-
-    const orgnummer = sykmelding.sykmeldingStatus?.arbeidsgiver?.orgnummer
-    if (orgnummer) return orgnummer
 
     const arbeidssituasjon = arbeidssituasjonForSykmelding(sykmelding)
     if (arbeidssituasjon) return arbeidssituasjonLabel(arbeidssituasjon)
@@ -110,8 +110,11 @@ export const grupperSykmeldingerPaArbeidsgiver = (
                 const eksisterendeArbeidsgiver = sykmeldingerGruppertPaArbeidsgiver.get(grupperingId)
 
                 if (!eksisterendeArbeidsgiver) {
+                    const arbeidsgiverLabel =
+                        arbeidsgiverIndex > 0 ? `${arbeidsgiverNavn} (overlapp)` : arbeidsgiverNavn
+
                     sykmeldingerGruppertPaArbeidsgiver.set(grupperingId, {
-                        navn: arbeidsgiverNavn,
+                        label: arbeidsgiverLabel,
                         sykmeldinger: [sykmelding],
                         dagNokler: new Set(dagNokler),
                     })
