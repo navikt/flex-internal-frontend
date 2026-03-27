@@ -150,10 +150,12 @@ function grupperPaArbeidsgiver(gruppertPaSykmelding: Map<string, SykmeldingGrupp
     sykmeldingArray.forEach(([sykId, syk]) => {
         let arbeidsgiverIndex = 0
         let sykmeldingBleLagtTil = false
-        const orgnummer =
-            Array.from(syk.soknader.values()).find((sok) => sok.soknad.arbeidsgiverOrgnummer !== undefined)?.soknad
-                .arbeidsgiverOrgnummer || 'arbeidsgiver_GHOST'
-        let grupperingOrgnummer = orgnummer
+        const soknader = Array.from(syk.soknader.values()).map((sok) => sok.soknad)
+        const orgnummer = soknader.find((soknad) => soknad.arbeidsgiverOrgnummer !== undefined)?.arbeidsgiverOrgnummer
+        const harNaeringsdrivende = soknader.some((soknad) => soknad.arbeidssituasjon === 'NAERINGSDRIVENDE')
+
+        const grupperingNokkel = orgnummer ?? (harNaeringsdrivende ? 'naeringsdrivende' : 'arbeidsgiver_GHOST')
+        let grupperingOrgnummer = grupperingNokkel
         let iterationCount = 0
         const maxIterations = 20
         while (!sykmeldingBleLagtTil && iterationCount < maxIterations) {
@@ -173,7 +175,7 @@ function grupperPaArbeidsgiver(gruppertPaSykmelding: Map<string, SykmeldingGrupp
             const overlappendeDager = sykmeldingOverlappendeDager(alleDager)
             if (overlappendeDager.length > 0) {
                 arbeidsgiverIndex += 1
-                grupperingOrgnummer = `${orgnummer}(${arbeidsgiverIndex})`
+                grupperingOrgnummer = `${grupperingNokkel}(${arbeidsgiverIndex})`
             } else {
                 arbeidsgiver.sykmeldinger.set(sykId, syk)
                 sykmeldingBleLagtTil = true

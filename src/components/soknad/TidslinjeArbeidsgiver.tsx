@@ -10,6 +10,20 @@ import VelgZoomPeriode from '../VelgZoomPeriode'
 
 import { KlippDetaljer, timelinePeriodeStatus } from './Tidslinje'
 
+const arbeidsgiverLabel = (arbeidsgiverId: string, arbeidsgiver: ArbeidsgiverGruppering) => {
+    const harNaeringsdrivendeSoknad = Array.from(arbeidsgiver.sykmeldinger.values()).some((sykmelding) =>
+        Array.from(sykmelding.soknader.values()).some(
+            (soknad) => soknad.soknad.arbeidssituasjon === 'NAERINGSDRIVENDE',
+        ),
+    )
+
+    if (harNaeringsdrivendeSoknad) {
+        return 'Næringsdrivende'
+    }
+
+    return arbeidsgiverId.includes('_GHOST') ? 'Arbeidsgiver 👻' : arbeidsgiverId
+}
+
 export default function TidslinjeArbeidsgiver({
     soknaderGruppertPaArbeidsgiver,
     arbeidsgiver,
@@ -63,7 +77,7 @@ export default function TidslinjeArbeidsgiver({
                 key={`${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
             >
                 {Array.from(soknaderGruppertPaArbeidsgiver.entries()).flatMap(([arbId, arb]) => {
-                    const erGhostArbeidsgiver = arbId.includes('_GHOST')
+                    const label = arbeidsgiverLabel(arbId, arb)
 
                     const perioder_med_innhold = Array.from(arb.sykmeldinger.entries()).flatMap(([sykId, syk]) => {
                         const erGhostSykmelding = sykId.endsWith('_GHOST')
@@ -148,7 +162,7 @@ export default function TidslinjeArbeidsgiver({
                     }
 
                     return [
-                        <Timeline.Row key={arbId} label={erGhostArbeidsgiver ? 'Arbeidsgiver 👻' : arbId}>
+                        <Timeline.Row key={arbId} label={label}>
                             {perioder_med_innhold}
                         </Timeline.Row>,
                     ]
