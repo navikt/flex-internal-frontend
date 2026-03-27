@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table } from '@navikt/ds-react'
+import { Table, VStack } from '@navikt/ds-react'
 
 import FnrSokefelt from '../components/FnrSokefelt'
 import { initialProps } from '../initialprops/initialProps'
@@ -12,8 +12,8 @@ const IdentPage = () => {
     const { data: data } = useIdenter(fnr, fnr !== undefined)
 
     return (
-        <div className="flex-row space-y-4">
-            <FnrSokefelt />
+        <VStack gap="space-4">
+            <FnrSokefelt label="Ident" valideringstype="ident" />
             <Table>
                 <Table.Header>
                     <Table.Row>
@@ -33,7 +33,7 @@ const IdentPage = () => {
                     })}
                 </Table.Body>
             </Table>
-        </div>
+        </VStack>
     )
 }
 
