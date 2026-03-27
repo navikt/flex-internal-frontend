@@ -1,10 +1,10 @@
 import { DatePicker, ReadMore, Timeline, useDatepicker } from '@navikt/ds-react'
-import React, { Fragment } from 'react'
+import React from 'react'
 import dayjs from 'dayjs'
 
 import { AaregResponse, Arbeidsforhold } from '../queryhooks/useAareg'
 
-import { VelgManederKnapp } from './VelgManederKnapp'
+import VelgZoomPeriode from './VelgZoomPeriode'
 
 export function TidslinjeAareg({ aaregresponse }: { aaregresponse: AaregResponse }) {
     const datoer = [] as dayjs.Dayjs[]
@@ -18,8 +18,11 @@ export function TidslinjeAareg({ aaregresponse }: { aaregresponse: AaregResponse
     })
     datoer.push(dayjs().add(1, 'week'))
 
-    const eldsteDato = datoer.sort((a, b) => (dayjs(a).isBefore(dayjs(b)) ? -1 : 1))[0]
-    const nyesteDato = datoer.sort((a, b) => (dayjs(a).isBefore(dayjs(b)) ? 1 : -1))[0]
+    const sorterteDatoer = datoer.slice().sort((a, b) => a.valueOf() - b.valueOf())
+    const eldsteDato = sorterteDatoer[0]
+    const nyesteDato = sorterteDatoer[sorterteDatoer.length - 1]
+    const defaultFraDato = eldsteDato.toDate()
+    const defaultTilDato = nyesteDato.add(1, 'week').toDate()
 
     const {
         datepickerProps: fraDatepickerProps,
@@ -27,7 +30,7 @@ export function TidslinjeAareg({ aaregresponse }: { aaregresponse: AaregResponse
         selectedDay: fraSelectedDay,
         setSelected: setFraSelected,
     } = useDatepicker({
-        defaultSelected: eldsteDato.toDate(),
+        defaultSelected: defaultFraDato,
     })
 
     const {
@@ -36,49 +39,65 @@ export function TidslinjeAareg({ aaregresponse }: { aaregresponse: AaregResponse
         selectedDay: tilSelectedDay,
         setSelected: setTilSelected,
     } = useDatepicker({
-        defaultSelected: nyesteDato.add(1, 'week').toDate(),
+        defaultSelected: defaultTilDato,
     })
 
-    // grupper perioder per soknad.orgnummer
-    // Map med orgnummer som key og FullVedtaksperiode[] som value
-    const mappet = new Map<string, Arbeidsforhold[]>()
-    aaregresponse.forEach((a) => {
-        const org = a.opplysningspliktig.identer[0].ident + ' - ' + a.arbeidssted.identer[0].ident
-        if (mappet.has(org)) {
-            mappet.get(org)?.push(a)
+    const arbeidsforholdPerOrgnummer = new Map<string, Arbeidsforhold[]>()
+    aaregresponse.forEach((arbeidsforhold) => {
+        const orgnummer =
+            arbeidsforhold.opplysningspliktig.identer[0].ident + ' - ' + arbeidsforhold.arbeidssted.identer[0].ident
+
+        if (arbeidsforholdPerOrgnummer.has(orgnummer)) {
+            arbeidsforholdPerOrgnummer.get(orgnummer)?.push(arbeidsforhold)
         } else {
-            mappet.set(org, [a])
+            arbeidsforholdPerOrgnummer.set(orgnummer, [arbeidsforhold])
         }
     })
 
+    const sluttDatoEllerToUkerTil = (arbeidsforhold: Arbeidsforhold) => {
+        if (arbeidsforhold.ansettelsesperiode.sluttdato) {
+            return dayjs(arbeidsforhold.ansettelsesperiode.sluttdato).toDate()
+        }
+
+        return dayjs().add(2, 'week').toDate()
+    }
+
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
+            <VelgZoomPeriode
+                setFraDato={(dato) => {
+                    setFraSelected(dato ?? defaultFraDato)
+                }}
+                setTilDato={(dato) => {
+                    setTilSelected(dato ?? defaultTilDato)
+                }}
+                maxTilDato={defaultTilDato}
+            />
             <Timeline endDate={tilSelectedDay} startDate={fraSelectedDay}>
-                {Array.from(mappet.keys()).map((orgnummer) => {
-                    const gruppert = mappet.get(orgnummer)
-
+                {Array.from(arbeidsforholdPerOrgnummer.entries()).map(([orgnummer, arbeidsforhold]) => {
                     return (
                         <Timeline.Row key={orgnummer} label={orgnummer}>
-                            {gruppert?.map((ao, i) => {
-                                function sluttDatoEllerToUkerTil() {
-                                    if (ao.ansettelsesperiode.sluttdato) {
-                                        return dayjs(ao.ansettelsesperiode.sluttdato).toDate()
-                                    }
-
-                                    return dayjs().add(2, 'week').toDate()
+                            {arbeidsforhold.map((ao) => {
+                                if (!ao.ansettelsesperiode.startdato) {
+                                    return null
                                 }
+
+                                const periodeNokkel =
+                                    ao.arbeidssted.identer[0].ident +
+                                    '-' +
+                                    ao.ansettelsesperiode.startdato +
+                                    '-' +
+                                    (ao.ansettelsesperiode.sluttdato ?? 'aktiv')
 
                                 return (
                                     <Timeline.Period
                                         start={dayjs(ao.ansettelsesperiode.startdato).toDate()}
-                                        end={sluttDatoEllerToUkerTil()}
+                                        end={sluttDatoEllerToUkerTil(ao)}
                                         status="neutral"
-                                        key={i}
+                                        key={periodeNokkel}
                                         icon={ao.arbeidssted.identer[0].ident}
                                     >
-                                        <Fragment>
-                                            <pre className="text-ax-small">{JSON.stringify(ao, null, 2)}</pre>
-                                        </Fragment>
+                                        <pre className="text-ax-small">{JSON.stringify(ao, null, 2)}</pre>
                                     </Timeline.Period>
                                 )
                             })}
@@ -86,20 +105,12 @@ export function TidslinjeAareg({ aaregresponse }: { aaregresponse: AaregResponse
                     )
                 })}
             </Timeline>
-            <div>
-                <ul className="flex navds-timeline__zoom" style={{ float: 'none' }}>
-                    <VelgManederKnapp maneder={1} setFraSelected={setFraSelected} setTilSelected={setTilSelected} />
-                    <VelgManederKnapp maneder={3} setFraSelected={setFraSelected} setTilSelected={setTilSelected} />
-                    <VelgManederKnapp maneder={6} setFraSelected={setFraSelected} setTilSelected={setTilSelected} />
-                    <VelgManederKnapp maneder={12} setFraSelected={setFraSelected} setTilSelected={setTilSelected} />
-                </ul>
-            </div>
             <ReadMore header="Velg datoer">
                 <div className="mt-4 flex gap-x-2">
-                    <DatePicker {...fraDatepickerProps}>
+                    <DatePicker {...fraDatepickerProps} dropdownCaption>
                         <DatePicker.Input {...fraInputprops} label="Fra" />
                     </DatePicker>
-                    <DatePicker {...tilDatepickerProps}>
+                    <DatePicker {...tilDatepickerProps} dropdownCaption>
                         <DatePicker.Input {...tilInputprops} label="Til" />
                     </DatePicker>
                 </div>
