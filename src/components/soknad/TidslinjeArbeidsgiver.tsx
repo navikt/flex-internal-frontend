@@ -2,6 +2,7 @@ import { Timeline } from '@navikt/ds-react'
 import React, { Fragment } from 'react'
 
 import { ArbeidsgiverGruppering, SoknadGruppering } from '../../utils/gruppering'
+import { arbeidsgiverLabelForSoknader } from '../../utils/soknadArbeidsgiverLabel'
 import { dayjsToDate } from '../../queryhooks/useSoknader'
 import { beregnAktivTidsvindu, erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
 import { Filter } from '../Filter'
@@ -63,7 +64,7 @@ export default function TidslinjeArbeidsgiver({
                 key={`${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
             >
                 {Array.from(soknaderGruppertPaArbeidsgiver.entries()).flatMap(([arbId, arb]) => {
-                    const erGhostArbeidsgiver = arbId.includes('_GHOST')
+                    const label = arbeidsgiverLabelForSoknader(arbId, arb, soknaderGruppertPaArbeidsgiver)
 
                     const perioder_med_innhold = Array.from(arb.sykmeldinger.entries()).flatMap(([sykId, syk]) => {
                         const erGhostSykmelding = sykId.endsWith('_GHOST')
@@ -148,7 +149,7 @@ export default function TidslinjeArbeidsgiver({
                     }
 
                     return [
-                        <Timeline.Row key={arbId} label={erGhostArbeidsgiver ? 'Arbeidsgiver 👻' : arbId}>
+                        <Timeline.Row key={arbId} label={label}>
                             {perioder_med_innhold}
                         </Timeline.Row>,
                     ]
