@@ -5,6 +5,7 @@ import { BodyShort, Timeline } from '@navikt/ds-react'
 import type { Sykmelding } from '../../queryhooks/useSykmeldinger'
 import { filtrerPaFilter } from '../../utils/filterlogikk'
 import { hentDatospenn, validerSykmeldingsDatoer } from '../../utils/sykmeldingValidering'
+import { beregnAktivTidsvindu, erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
 import type { Filter } from '../Filter'
 import VelgZoomPeriode from '../VelgZoomPeriode'
 
@@ -22,15 +23,6 @@ interface TidslinjeSykmeldingerProps {
     setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
 }
 
-const erPeriodeInnenforTidsvindu = (
-    periodeFra: Date,
-    periodeTil: Date,
-    visningsFra: Date,
-    visningstil: Date,
-): boolean => {
-    return periodeFra <= visningstil && periodeTil >= visningsFra
-}
-
 const TidslinjeSykmeldinger = ({ sykmeldinger, filter, setFilter }: TidslinjeSykmeldingerProps) => {
     const gyldigeSykmeldinger = validerSykmeldingsDatoer(sykmeldinger)
     const filtrerteSykmeldinger = filtrerPaFilter(gyldigeSykmeldinger, filter)
@@ -40,12 +32,12 @@ const TidslinjeSykmeldinger = ({ sykmeldinger, filter, setFilter }: TidslinjeSyk
     const [visningsFraDato, setVisningsFraDato] = useState<Date | null>(null)
     const [visningstilDato, setVisningstilDato] = useState<Date | null>(null)
 
-    let aktivTidsvindu: { fra: Date; til: Date } | null = null
-    if (visningsFraDato && visningstilDato) {
-        aktivTidsvindu = { fra: visningsFraDato, til: visningstilDato }
-    } else if (datospenn) {
-        aktivTidsvindu = { fra: datospenn.startDato, til: datospenn.sluttDato }
-    }
+    const aktivTidsvindu = beregnAktivTidsvindu(
+        visningsFraDato,
+        visningstilDato,
+        datospenn?.startDato ?? null,
+        datospenn?.sluttDato ?? null,
+    )
 
     if (filtrerteSykmeldinger.length === 0 || !datospenn || !aktivTidsvindu) return <Fragment />
 

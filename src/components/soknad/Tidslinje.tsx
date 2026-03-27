@@ -35,6 +35,8 @@ export default function Tidslinje({ soknader, klipp }: { soknader: Soknad[]; kli
     )
     const [arbeidsgiver, setArbeidsgiver] = useState<string>('alle')
     const [filter, setFilter] = useState<Filter[]>([])
+    const [visningsFraDato, setVisningsFraDato] = useState<Date | null>(null)
+    const [visningstilDato, setVisningstilDato] = useState<Date | null>(null)
 
     useEffect(() => {
         setSoknaderGruppertPaArbeidsgiver(gruppertOgFiltrert(filter, soknader, klipp))
@@ -57,12 +59,20 @@ export default function Tidslinje({ soknader, klipp }: { soknader: Soknad[]; kli
                 arbeidsgiver={arbeidsgiver}
                 filter={filter}
                 setFilter={setFilter}
+                visningsFraDato={visningsFraDato}
+                visningstilDato={visningstilDato}
+                setVisningsFraDato={setVisningsFraDato}
+                setVisningstilDato={setVisningstilDato}
             />
             <TidslinjeSykmelding
                 soknaderGruppertPaArbeidsgiver={soknaderGruppertPaArbeidsgiver}
                 arbeidsgiver={arbeidsgiver}
                 filter={filter}
                 setFilter={setFilter}
+                visningsFraDato={visningsFraDato}
+                visningstilDato={visningstilDato}
+                setVisningsFraDato={setVisningsFraDato}
+                setVisningstilDato={setVisningstilDato}
             />
         </>
     )

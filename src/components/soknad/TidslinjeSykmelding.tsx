@@ -3,8 +3,10 @@ import { Timeline } from '@navikt/ds-react'
 
 import { ArbeidsgiverGruppering, SoknadGruppering, sortert, SykmeldingGruppering } from '../../utils/gruppering'
 import { dayjsToDate } from '../../queryhooks/useSoknader'
+import { beregnAktivTidsvindu, erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
 import { Filter } from '../Filter'
 import { Detaljer } from '../Detaljer'
+import VelgZoomPeriode from '../VelgZoomPeriode'
 
 import ValgtSortering, { Sortering } from './ValgtSortering'
 import OverlappendeTidslinjeRad from './OverlappendeTidslinjeRad'
@@ -16,11 +18,19 @@ export default function TidslinjeSykmelding({
     arbeidsgiver,
     filter,
     setFilter,
+    visningsFraDato,
+    visningstilDato,
+    setVisningsFraDato,
+    setVisningstilDato,
 }: {
     soknaderGruppertPaArbeidsgiver: Map<string, ArbeidsgiverGruppering>
     arbeidsgiver: string
     filter: Filter[]
     setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
+    visningsFraDato: Date | null
+    visningstilDato: Date | null
+    setVisningsFraDato: (date: Date | null) => void
+    setVisningstilDato: (date: Date | null) => void
 }) {
     const [sortering, setSortering] = useState<Sortering>('sykmelding skrevet')
     const soknaderGruppertPaSykmeldinger = new Map<string, SykmeldingGruppering>()
@@ -54,72 +64,127 @@ export default function TidslinjeSykmelding({
         return <Fragment />
     }
 
+    // Beregn default tidsvindu hvis ikke satt
+    let eldsteFra: Date | null = null
+    let nysteTil: Date | null = null
+
+    for (const { soknader } of soknaderGruppertPaSykmeldinger.values()) {
+        for (const sok of soknader.values()) {
+            const fom = dayjsToDate(sok.soknad.fom!)
+            const tom = dayjsToDate(sok.soknad.tom!)
+            if (fom && (!eldsteFra || fom < eldsteFra)) eldsteFra = fom
+            if (tom && (!nysteTil || tom > nysteTil)) nysteTil = tom
+        }
+    }
+
+    const aktivTidsvindu = beregnAktivTidsvindu(visningsFraDato, visningstilDato, eldsteFra, nysteTil)
+
+    if (!aktivTidsvindu) {
+        return <Fragment />
+    }
+
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <ValgtSortering sortering={sortering} setSortering={setSortering} />
             <OverlappendeTidslinjeRad sykmeldingGruppering={soknaderGruppertPaSykmeldinger} />
             <KlippBugInfo sykmeldingGruppering={soknaderGruppertPaSykmeldinger} />
-            <Timeline>
+            <Timeline
+                endDate={aktivTidsvindu.til}
+                startDate={aktivTidsvindu.fra}
+                key={`${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
+            >
                 {Array.from(soknaderGruppertPaSykmeldinger.entries())
                     .sort((a, b) => sortert(a, b, sortering))
-                    .map(([sykId, syk]) => {
+                    .flatMap(([sykId, syk]) => {
                         const erGhostSykmelding = sykId.includes('_GHOST')
 
-                        return (
-                            <Timeline.Row key={sykId} label={sykmeldingLabel(sykId)}>
-                                {Array.from(syk.soknader.values())
-                                    .flatMap((sok: SoknadGruppering) => {
-                                        const klippingAvSoknad = sok.klippingAvSoknad.map((k) => (
-                                            <Timeline.Period
-                                                start={dayjsToDate(k.fom)!}
-                                                end={dayjsToDate(k.tom)!}
-                                                status="neutral"
-                                                key={k.tom}
-                                            >
-                                                <KlippDetaljer klipp={k} />
-                                            </Timeline.Period>
-                                        ))
-
-                                        if (!erGhostSykmelding) {
-                                            klippingAvSoknad.push(
-                                                <Timeline.Period
-                                                    start={dayjsToDate(sok.soknad.fom!)!}
-                                                    end={dayjsToDate(sok.soknad.tom!)!}
-                                                    status={timelinePeriodeStatus(sok.soknad.status)}
-                                                    key={sok.soknad.tom}
-                                                >
-                                                    <Detaljer
-                                                        objekt={sok.soknad}
-                                                        filter={filter}
-                                                        setFilter={setFilter}
-                                                    />
-                                                </Timeline.Period>,
-                                            )
-                                        }
-
-                                        return klippingAvSoknad
+                        const perioder_med_innhold = Array.from(syk.soknader.values())
+                            .flatMap((sok: SoknadGruppering) => {
+                                const klippingAvSoknad = sok.klippingAvSoknad
+                                    .filter((k) => {
+                                        const fom = dayjsToDate(k.fom)
+                                        const tom = dayjsToDate(k.tom)
+                                        return (
+                                            fom &&
+                                            tom &&
+                                            erPeriodeInnenforTidsvindu(fom, tom, aktivTidsvindu.fra, aktivTidsvindu.til)
+                                        )
                                     })
-                                    .concat(
-                                        syk.klippingAvSykmelding.map((k) => (
+                                    .map((k) => (
+                                        <Timeline.Period
+                                            start={dayjsToDate(k.fom)!}
+                                            end={dayjsToDate(k.tom)!}
+                                            status="neutral"
+                                            key={k.tom}
+                                        >
+                                            <KlippDetaljer klipp={k} />
+                                        </Timeline.Period>
+                                    ))
+
+                                if (!erGhostSykmelding) {
+                                    const sokFom = dayjsToDate(sok.soknad.fom!)
+                                    const sokTom = dayjsToDate(sok.soknad.tom!)
+                                    if (
+                                        sokFom &&
+                                        sokTom &&
+                                        erPeriodeInnenforTidsvindu(
+                                            sokFom,
+                                            sokTom,
+                                            aktivTidsvindu.fra,
+                                            aktivTidsvindu.til,
+                                        )
+                                    ) {
+                                        klippingAvSoknad.push(
                                             <Timeline.Period
-                                                start={dayjsToDate(k.fom)!}
-                                                end={dayjsToDate(k.tom)!}
-                                                status="neutral"
-                                                key={k.tom}
+                                                start={sokFom}
+                                                end={sokTom}
+                                                status={timelinePeriodeStatus(sok.soknad.status)}
+                                                key={sok.soknad.tom}
                                             >
-                                                <KlippDetaljer klipp={k} />
-                                            </Timeline.Period>
-                                        )),
-                                    )}
-                            </Timeline.Row>
-                        )
+                                                <Detaljer objekt={sok.soknad} filter={filter} setFilter={setFilter} />
+                                            </Timeline.Period>,
+                                        )
+                                    }
+                                }
+
+                                return klippingAvSoknad
+                            })
+                            .concat(
+                                syk.klippingAvSykmelding
+                                    .filter((k) => {
+                                        const fom = dayjsToDate(k.fom)
+                                        const tom = dayjsToDate(k.tom)
+                                        return (
+                                            fom &&
+                                            tom &&
+                                            erPeriodeInnenforTidsvindu(fom, tom, aktivTidsvindu.fra, aktivTidsvindu.til)
+                                        )
+                                    })
+                                    .map((k) => (
+                                        <Timeline.Period
+                                            start={dayjsToDate(k.fom)!}
+                                            end={dayjsToDate(k.tom)!}
+                                            status="neutral"
+                                            key={k.tom}
+                                        >
+                                            <KlippDetaljer klipp={k} />
+                                        </Timeline.Period>
+                                    )),
+                            )
+
+                        if (perioder_med_innhold.length === 0) {
+                            return []
+                        }
+
+                        return [
+                            <Timeline.Row key={sykId} label={sykmeldingLabel(sykId)}>
+                                {perioder_med_innhold}
+                            </Timeline.Row>,
+                        ]
                     })}
 
                 <Timeline.Zoom>
-                    <Timeline.Zoom.Button label="3 mnd" interval="month" count={3} />
-                    <Timeline.Zoom.Button label="7 mnd" interval="month" count={7} />
-                    <Timeline.Zoom.Button label="9 mnd" interval="month" count={9} />
-                    <Timeline.Zoom.Button label="2 år" interval="year" count={2} />
+                    <VelgZoomPeriode setFraDato={setVisningsFraDato} setTilDato={setVisningstilDato} />
                 </Timeline.Zoom>
             </Timeline>
         </div>
