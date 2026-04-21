@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-interface EndreTomRequest {
+interface EndreFomRequest {
     id: string
     dato: string
 }
@@ -12,17 +12,17 @@ interface FriskTilArbeidVedtakDbRecord {
 }
 
 interface MutationProps {
-    request: EndreTomRequest
+    request: EndreFomRequest
     fnr: string
     callback?: () => void
 }
 
-export function useEndreFtaVedtakTomMutation() {
+export function useEndreFtaVedtakFomMutation() {
     const queryClient = useQueryClient()
 
     return useMutation<FriskTilArbeidVedtakDbRecord, Error, MutationProps>({
         mutationFn: async ({ request }) => {
-            const response = await fetch('/api/sykepengesoknad-backend/api/v1/flex/fta-vedtak/endre-tom', {
+            const response = await fetch('/api/sykepengesoknad-backend/api/v1/flex/fta-vedtak/endre-fom', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(request),
@@ -30,7 +30,7 @@ export function useEndreFtaVedtakTomMutation() {
 
             if (!response.ok) {
                 const errorData = await response.json()
-                throw new Error(errorData.message || 'Klarte ikke å endre tom')
+                throw new Error(errorData.message || 'Klarte ikke å endre fom')
             }
             return (await response.json()) as Promise<FriskTilArbeidVedtakDbRecord>
         },

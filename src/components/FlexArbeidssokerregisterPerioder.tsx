@@ -9,7 +9,43 @@ import {
     ArbeidssokerperiodeResponse,
 } from '../queryhooks/useFlexArbeidssokerperioder'
 import { useOppdaterArbeidssokerperiodeTomMutation } from '../queryhooks/useOppdaterArbeidssokerperiodeTom'
+import { useOppdaterArbeidssokerperiodeFomMutation } from '../queryhooks/useOppdaterArbeidssokerperiodeFom'
 import { useOppdaterArbeidssokerperiodeIdMutation } from '../queryhooks/useOppdaterArbeidssokerperiodeId'
+
+const EndreVedtaksperiodeFom: React.FC<{ periode: ArbeidssokerperiodeResponse }> = ({ periode }) => {
+    const { datepickerProps, inputProps, selectedDay } = useDatepicker({
+        defaultSelected: new Date(periode.vedtaksperiodeFom),
+    })
+    const formattertSelected = dayjs(selectedDay).format('YYYY-MM-DD')
+    const oppdaterFom = useOppdaterArbeidssokerperiodeFomMutation()
+
+    return (
+        <div className="mt-4 mb-4">
+            <DatePicker {...datepickerProps}>
+                <DatePicker.Input {...inputProps} label="Endre Vedtaksperiode fra" size="small" />
+            </DatePicker>
+            {formattertSelected !== periode.vedtaksperiodeFom && (
+                <Button
+                    className="mt-4"
+                    size="small"
+                    variant="primary"
+                    loading={oppdaterFom.isPending}
+                    onClick={() => {
+                        oppdaterFom.mutate({
+                            request: {
+                                id: periode.id,
+                                vedtaksperiodeFom: formattertSelected,
+                            },
+                            fnr: periode.fnr,
+                        })
+                    }}
+                >
+                    Lagre ny Vedtaksperiode fra
+                </Button>
+            )}
+        </div>
+    )
+}
 
 const EndreVedtaksperiodeTom: React.FC<{ periode: ArbeidssokerperiodeResponse }> = ({ periode }) => {
     const { datepickerProps, inputProps, selectedDay } = useDatepicker({
@@ -200,6 +236,7 @@ const ArbeidssokerperioderTable: React.FC<ArbeidssokerperioderTableProps> = ({ f
                                 <Table.Row>
                                     <Table.DataCell colSpan={11}>
                                         <div className="flex flex-col ax-md:flex-row ax-md:gap-8">
+                                            <EndreVedtaksperiodeFom periode={periode} />
                                             <EndreVedtaksperiodeTom periode={periode} />
                                             <EndreArbeidssokerperiodeId periode={periode} />
                                         </div>

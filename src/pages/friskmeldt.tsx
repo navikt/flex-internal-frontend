@@ -29,6 +29,7 @@ import ArbeidssokerperioderTable from '../components/FlexArbeidssokerregisterPer
 import FnrSokefelt from '../components/FnrSokefelt'
 import { useFtaVedtakIgnorerArbeidssokerregister } from '../queryhooks/useFtaVedtakIgnorerArbeidssøkerregister'
 import { useEndreFtaVedtakTomMutation } from '../queryhooks/useEndreFtaVedtakTom'
+import { useEndreFtaVedtakFomMutation } from '../queryhooks/useEndreFtaVedtakFom'
 import { useDeleteFtaSoknadMutation } from '../queryhooks/useDeleteFtaSoknad'
 import { useValgtFnr } from '../utils/useValgtFnr'
 
@@ -304,6 +305,40 @@ const Soknader = ({ fnr }: { fnr: string }) => {
     )
 }
 
+const EndreFomDato = ({ vedtak }: { vedtak: FtaVedtak }) => {
+    const { datepickerProps, inputProps, selectedDay } = useDatepicker({
+        defaultSelected: new Date(vedtak.fom),
+    })
+    const formattertSelected = dayjs(selectedDay).format('YYYY-MM-DD')
+    const endreFom = useEndreFtaVedtakFomMutation()
+    return (
+        <div className="mt-8">
+            <DatePicker {...datepickerProps}>
+                <DatePicker.Input {...inputProps} label="Endre fom" size="small" />
+            </DatePicker>
+            {formattertSelected !== vedtak.fom && (
+                <Button
+                    className="mt-8"
+                    size="small"
+                    variant="primary"
+                    loading={endreFom.isPending}
+                    onClick={() => {
+                        endreFom.mutate({
+                            request: {
+                                id: vedtak.id,
+                                dato: formattertSelected,
+                            },
+                            fnr: vedtak.fnr,
+                        })
+                    }}
+                >
+                    Lagre ny fom
+                </Button>
+            )}
+        </div>
+    )
+}
+
 const EndreTomDato = ({ vedtak }: { vedtak: FtaVedtak }) => {
     const { datepickerProps, inputProps, selectedDay } = useDatepicker({
         defaultSelected: new Date(vedtak.tom),
@@ -325,7 +360,7 @@ const EndreTomDato = ({ vedtak }: { vedtak: FtaVedtak }) => {
                         endreTom.mutate({
                             request: {
                                 id: vedtak.id,
-                                tom: formattertSelected,
+                                dato: formattertSelected,
                             },
                             fnr: vedtak.fnr,
                         })
@@ -497,7 +532,10 @@ const FtaVedtakComp = ({ fnr }: { fnr: string }) => {
                                                     </Button>
                                                 )}
                                             </div>
-                                            <EndreTomDato vedtak={vedtak} />
+                                            <div className="flex gap-4">
+                                                <EndreFomDato vedtak={vedtak} />
+                                                <EndreTomDato vedtak={vedtak} />
+                                            </div>
                                         </div>
                                     }
                                 >

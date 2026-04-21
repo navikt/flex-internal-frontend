@@ -7,6 +7,7 @@ import { mockApi } from '../../../testdata/testdata'
 
 const tillatteApier = [
     'POST /api/v1/flex/arbeidssokerperioder',
+    'PUT /api/v1/flex/arbeidssokerperioder/oppdater-fom',
     'PUT /api/v1/flex/arbeidssokerperioder/oppdater-tom',
     'PUT /api/v1/flex/arbeidssokerperioder/oppdater-arbeidssokerperiode-id',
 ]
