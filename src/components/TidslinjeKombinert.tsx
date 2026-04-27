@@ -180,11 +180,8 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                             sokTom &&
                             erPeriodeInnenforTidsvindu(sokFom, sokTom, aktivTidsvindu.fra, aktivTidsvindu.til)
                         ) {
-                            const soknadId = sok.soknad.id
-                            const sykmeldingId = sok.soknad.sykmeldingId
-                            const erAktiv =
-                                aktivPeriodeId === soknadId ||
-                                (aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId)
+                            const sykmeldingId = sok.soknad.sykmeldingId ?? null
+                            const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
                             klippingAvSoknad.push(
                                 <Timeline.Period
                                     start={sokFom}
@@ -193,7 +190,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                     key={sok.soknad.tom}
                                     isActive={erAktiv}
                                     onSelectPeriod={() => {
-                                        const nyId = aktivPeriodeId === soknadId ? null : soknadId
+                                        const nyId = aktivPeriodeId === sykmeldingId ? null : sykmeldingId
                                         setAktivPeriodeId(nyId)
                                         setDrawerInnhold(
                                             nyId ? lagSoknadDrawerInnhold(sok.soknad, filter, setFilter) : null,
