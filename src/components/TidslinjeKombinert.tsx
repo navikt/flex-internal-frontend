@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react'
-import { SplitHorizontalIcon } from '@navikt/aksel-icons'
+import { StethoscopeIcon, TasklistIcon, SplitHorizontalIcon } from '@navikt/aksel-icons'
 import { BodyShort, Timeline } from '@navikt/ds-react'
 
 import { KlippetSykepengesoknadRecord, Soknad, dayjsToDate } from '../queryhooks/useSoknader'
@@ -138,7 +138,11 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
             if (perioder_med_innhold.length === 0) return []
 
             return [
-                <Timeline.Row key={`syk-${arbeidsgiverId}`} label={`🩺 ${arbeidsgiver.label}`}>
+                <Timeline.Row
+                    key={`syk-${arbeidsgiverId}`}
+                    label={arbeidsgiver.label}
+                    icon={<StethoscopeIcon aria-hidden fontSize="1.5rem" />}
+                >
                     {perioder_med_innhold}
                 </Timeline.Row>,
             ]
@@ -249,7 +253,11 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
         if (perioder_med_innhold.length === 0) return []
 
         return [
-            <Timeline.Row key={`sok-${arbId}`} label={`📋 ${label}`}>
+            <Timeline.Row
+                key={`sok-${arbId}`}
+                label={label}
+                icon={<TasklistIcon aria-hidden fontSize="1.5rem" />}
+            >
                 {perioder_med_innhold}
             </Timeline.Row>,
         ]
@@ -260,20 +268,18 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
     }
 
     return (
-        <div className="flex-row space-y-4">
+        <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <ValgteFilter filter={filter} setFilter={setFilter} />
             <BodyShort className="font-semibold">{`${filtrerteSykmeldinger.length} sykmelding(er) · ${soknader.length} søknad(er)`}</BodyShort>
-            <div className="min-w-[800px] overflow-x-auto">
-                <VelgZoomPeriode setFraDato={setVisningsFraDato} setTilDato={setVisningstilDato} />
-                <Timeline
-                    endDate={aktivTidsvindu.til}
-                    startDate={aktivTidsvindu.fra}
-                    key={`${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
-                >
-                    {sykmeldingRader}
-                    {soknadRader}
-                </Timeline>
-            </div>
+            <VelgZoomPeriode setFraDato={setVisningsFraDato} setTilDato={setVisningstilDato} />
+            <Timeline
+                endDate={aktivTidsvindu.til}
+                startDate={aktivTidsvindu.fra}
+                key={`${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
+            >
+                {sykmeldingRader}
+                {soknadRader}
+            </Timeline>
             <DetaljerDrawer
                 innhold={drawerInnhold}
                 onLukk={() => {
