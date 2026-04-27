@@ -13,14 +13,15 @@ import { arbeidsgiverLabelForSoknader } from '../utils/soknadArbeidsgiverLabel'
 import { Filter, ValgteFilter } from './Filter'
 import VelgZoomPeriode from './VelgZoomPeriode'
 import { KlippDetaljer, timelinePeriodeStatus } from './soknad/Tidslinje'
-import { Detaljer } from './Detaljer'
 import {
     grupperSykmeldingerPaArbeidsgiver,
     perioderMedDatoer,
     sorterPerioder,
     sykmeldingStatus,
+    antallKalenderdager,
+    formaterDato,
 } from './sykmelding/sykmeldingTidslinjeUtils'
-import SykmeldingPeriodePopover from './sykmelding/SykmeldingPeriodePopover'
+import DetaljerDrawer, { lagSykmeldingDrawerInnhold, lagSoknadDrawerInnhold } from './DetaljerDrawer'
 
 interface Props {
     sykmeldinger: Sykmelding[]
@@ -33,6 +34,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
     const [visningsFraDato, setVisningsFraDato] = useState<Date | null>(null)
     const [visningstilDato, setVisningstilDato] = useState<Date | null>(null)
     const [aktivPeriodeId, setAktivPeriodeId] = useState<string | null>(null)
+    const [drawerInnhold, setDrawerInnhold] = useState<ReturnType<typeof lagSykmeldingDrawerInnhold> | null>(null)
 
     const gyldigeSykmeldinger = validerSykmeldingsDatoer(sykmeldinger)
     const filtrerteSykmeldinger = filtrerPaFilter(gyldigeSykmeldinger, filter)
@@ -87,6 +89,26 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                 const ikon = harFlerePerioder ? <SplitHorizontalIcon aria-hidden /> : undefined
                 const periodeKey = `${sykmelding.id}-${forstePeriode.fom}-${sistePeriode.tom}`
 
+                const periodeInfo = (
+                    <div className="space-y-1">
+                        <ul className="list-disc pl-5 text-sm">
+                            <li>{`Fra: ${formaterDato(forstePeriode.startDato)}`}</li>
+                            <li>{`Til: ${formaterDato(sistePeriode.sluttDato)}`}</li>
+                            <li>{`Antall delperioder: ${perioder.length}`}</li>
+                            <li>{`Antall kalenderdager: ${antallKalenderdager(forstePeriode.startDato, sistePeriode.sluttDato)}`}</li>
+                        </ul>
+                        {harFlerePerioder && (
+                            <ul className="list-disc pl-5 text-sm">
+                                {perioder.map((periode, idx) => (
+                                    <li
+                                        key={idx}
+                                    >{`Periode ${idx + 1}: ${formaterDato(periode.startDato)} – ${formaterDato(periode.sluttDato)}`}</li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                )
+
                 return [
                     <Timeline.Period
                         start={forstePeriode.startDato}
@@ -96,18 +118,14 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                         className="ring-1 ring-inset ring-white/95"
                         key={periodeKey}
                         isActive={aktivPeriodeId === sykmelding.id}
-                        onSelectPeriod={() =>
-                            setAktivPeriodeId((prev) => (prev === sykmelding.id ? null : sykmelding.id))
-                        }
-                    >
-                        <SykmeldingPeriodePopover
-                            sykmelding={sykmelding}
-                            perioder={perioder}
-                            status={status}
-                            filter={filter}
-                            setFilter={setFilter}
-                        />
-                    </Timeline.Period>,
+                        onSelectPeriod={() => {
+                            const nyId = aktivPeriodeId === sykmelding.id ? null : sykmelding.id
+                            setAktivPeriodeId(nyId)
+                            setDrawerInnhold(
+                                nyId ? lagSykmeldingDrawerInnhold(sykmelding, periodeInfo, filter, setFilter) : null,
+                            )
+                        }}
+                    />,
                 ]
             })
 
@@ -145,7 +163,10 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                 end={dayjsToDate(k.tom)!}
                                 status="neutral"
                                 key={k.tom}
-                                onSelectPeriod={() => setAktivPeriodeId(null)}
+                                onSelectPeriod={() => {
+                                    setAktivPeriodeId(null)
+                                    setDrawerInnhold(null)
+                                }}
                             >
                                 <KlippDetaljer klipp={k} />
                             </Timeline.Period>
@@ -171,12 +192,14 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                     status={timelinePeriodeStatus(sok.soknad.status)}
                                     key={sok.soknad.tom}
                                     isActive={erAktiv}
-                                    onSelectPeriod={() =>
-                                        setAktivPeriodeId((prev) => (prev === soknadId ? null : soknadId))
-                                    }
-                                >
-                                    <Detaljer objekt={sok.soknad} filter={filter} setFilter={setFilter} />
-                                </Timeline.Period>,
+                                    onSelectPeriod={() => {
+                                        const nyId = aktivPeriodeId === soknadId ? null : soknadId
+                                        setAktivPeriodeId(nyId)
+                                        setDrawerInnhold(
+                                            nyId ? lagSoknadDrawerInnhold(sok.soknad, filter, setFilter) : null,
+                                        )
+                                    }}
+                                />,
                             )
                         }
                     }
@@ -200,7 +223,10 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                 end={dayjsToDate(k.tom)!}
                                 status="neutral"
                                 key={k.tom}
-                                onSelectPeriod={() => setAktivPeriodeId(null)}
+                                onSelectPeriod={() => {
+                                    setAktivPeriodeId(null)
+                                    setDrawerInnhold(null)
+                                }}
                             >
                                 <KlippDetaljer klipp={k} />
                             </Timeline.Period>
@@ -236,6 +262,13 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                     {soknadRader}
                 </Timeline>
             </div>
+            <DetaljerDrawer
+                innhold={drawerInnhold}
+                onLukk={() => {
+                    setAktivPeriodeId(null)
+                    setDrawerInnhold(null)
+                }}
+            />
         </div>
     )
 }
