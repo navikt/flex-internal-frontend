@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { BodyShort, Search } from '@navikt/ds-react'
-import { JsonView, allExpanded, defaultStyles } from 'react-json-view-lite'
+import { JsonView, defaultStyles } from 'react-json-view-lite'
 
 import { initialProps } from '../initialprops/initialProps'
 import { useSoknad } from '../queryhooks/useSoknad'
 import { handterUuidValidering } from '../utils/inputValidering'
+
+const holdNoderLukket = () => false
 
 const SoknadTilFnrPage = () => {
     const [soknadId, setSoknadId] = useState<string>()
@@ -37,7 +39,7 @@ const SoknadTilFnrPage = () => {
             />
             {soknadData?.sykepengesoknad && <BodyShort>{'Fødselsnummer: ' + soknadData.fnr}</BodyShort>}
             {soknadData?.sykepengesoknad && (
-                <JsonView data={soknadData.sykepengesoknad} shouldExpandNode={allExpanded} style={defaultStyles} />
+                <JsonView data={soknadData.sykepengesoknad} shouldExpandNode={holdNoderLukket} style={defaultStyles} />
             )}
         </div>
     )

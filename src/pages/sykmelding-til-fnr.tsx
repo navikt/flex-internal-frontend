@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { BodyShort, Search } from '@navikt/ds-react'
-import { JsonView, allExpanded, defaultStyles } from 'react-json-view-lite'
+import { JsonView, defaultStyles } from 'react-json-view-lite'
 
 import { initialProps } from '../initialprops/initialProps'
 import { useSykmelding } from '../queryhooks/useSykmelding'
 import { handterUuidValidering } from '../utils/inputValidering'
+
+const holdNoderLukket = () => false
 
 const SykmeldingTilFnrPage = () => {
     const [sykmeldingId, setSykmeldingId] = useState<string>()
@@ -33,7 +35,7 @@ const SykmeldingTilFnrPage = () => {
             />
             {sykmeldingData?.sykmelding && <BodyShort>{'Fødselsnummer: ' + (fnrForSykmelding ?? 'mangler')}</BodyShort>}
             {sykmeldingData?.sykmelding && (
-                <JsonView data={sykmeldingData.sykmelding} shouldExpandNode={allExpanded} style={defaultStyles} />
+                <JsonView data={sykmeldingData.sykmelding} shouldExpandNode={holdNoderLukket} style={defaultStyles} />
             )}
         </div>
     )
