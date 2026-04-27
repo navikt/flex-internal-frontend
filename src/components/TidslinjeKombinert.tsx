@@ -21,7 +21,11 @@ import {
     antallKalenderdager,
     formaterDato,
 } from './sykmelding/sykmeldingTidslinjeUtils'
-import DetaljerDrawer, { lagSykmeldingDrawerInnhold, lagSoknadDrawerInnhold } from './DetaljerDrawer'
+import DetaljerDrawer, {
+    lagKlippetSoknadDrawerInnhold,
+    lagSykmeldingDrawerInnhold,
+    lagSoknadDrawerInnhold,
+} from './DetaljerDrawer'
 
 interface Props {
     sykmeldinger: Sykmelding[]
@@ -109,6 +113,8 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                     </div>
                 )
 
+                const sykmeldingAktivId = sykmelding.id
+
                 return [
                     <Timeline.Period
                         start={forstePeriode.startDato}
@@ -117,9 +123,9 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                         icon={ikon}
                         className="ring-1 ring-inset ring-white/95"
                         key={periodeKey}
-                        isActive={aktivPeriodeId === sykmelding.id}
+                        isActive={aktivPeriodeId === sykmeldingAktivId}
                         onSelectPeriod={() => {
-                            const nyId = aktivPeriodeId === sykmelding.id ? null : sykmelding.id
+                            const nyId = aktivPeriodeId === sykmeldingAktivId ? null : sykmeldingAktivId
                             setAktivPeriodeId(nyId)
                             setDrawerInnhold(
                                 nyId ? lagSykmeldingDrawerInnhold(sykmelding, periodeInfo, filter, setFilter) : null,
@@ -157,20 +163,29 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                 erPeriodeInnenforTidsvindu(fom, tom, aktivTidsvindu.fra, aktivTidsvindu.til)
                             )
                         })
-                        .map((k) => (
-                            <Timeline.Period
-                                start={dayjsToDate(k.fom)!}
-                                end={dayjsToDate(k.tom)!}
-                                status="neutral"
-                                key={k.tom}
-                                onSelectPeriod={() => {
-                                    setAktivPeriodeId(null)
-                                    setDrawerInnhold(null)
-                                }}
-                            >
-                                <KlippDetaljer klipp={k} />
-                            </Timeline.Period>
-                        ))
+                        .map((k) => {
+                            const sykmeldingId = k.sykmeldingUuid ?? null
+                            const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
+
+                            return (
+                                <Timeline.Period
+                                    start={dayjsToDate(k.fom)!}
+                                    end={dayjsToDate(k.tom)!}
+                                    status="neutral"
+                                    key={k.tom}
+                                    isActive={erAktiv}
+                                    onSelectPeriod={() => {
+                                        const nyId = aktivPeriodeId === sykmeldingId ? null : sykmeldingId
+                                        setAktivPeriodeId(nyId)
+                                        setDrawerInnhold(
+                                            nyId ? lagKlippetSoknadDrawerInnhold(k, filter, setFilter) : null,
+                                        )
+                                    }}
+                                >
+                                    <KlippDetaljer klipp={k} />
+                                </Timeline.Period>
+                            )
+                        })
 
                     if (!erGhostSykmelding) {
                         const sokFom = dayjsToDate(sok.soknad.fom!)

@@ -47,6 +47,17 @@ export function lagSoknadDrawerInnhold(
     }
 }
 
+export function lagKlippetSoknadDrawerInnhold(
+    klippetSoknad: object,
+    filter: Filter[],
+    setFilter: React.Dispatch<React.SetStateAction<Filter[]>>,
+): DrawerInnhold {
+    return {
+        tittel: 'Klippet søknad',
+        innhold: <Detaljer objekt={klippetSoknad} filter={filter} setFilter={setFilter} />,
+    }
+}
+
 export default function DetaljerDrawer({ innhold, onLukk }: DetaljerDrawerProps) {
     const mounted = useSyncExternalStore(
         () => () => {},
