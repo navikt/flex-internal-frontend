@@ -32,6 +32,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
     const [filter, setFilter] = useState<Filter[]>([])
     const [visningsFraDato, setVisningsFraDato] = useState<Date | null>(null)
     const [visningstilDato, setVisningstilDato] = useState<Date | null>(null)
+    const [aktivPeriodeId, setAktivPeriodeId] = useState<string | null>(null)
 
     const gyldigeSykmeldinger = validerSykmeldingsDatoer(sykmeldinger)
     const filtrerteSykmeldinger = filtrerPaFilter(gyldigeSykmeldinger, filter)
@@ -84,6 +85,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
 
                 const harFlerePerioder = perioder.length > 1
                 const ikon = harFlerePerioder ? <SplitHorizontalIcon aria-hidden /> : undefined
+                const periodeKey = `${sykmelding.id}-${forstePeriode.fom}-${sistePeriode.tom}`
 
                 return [
                     <Timeline.Period
@@ -92,7 +94,11 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                         status={status}
                         icon={ikon}
                         className="ring-1 ring-inset ring-white/95"
-                        key={`${sykmelding.id}-${forstePeriode.fom}-${sistePeriode.tom}`}
+                        key={periodeKey}
+                        isActive={aktivPeriodeId === sykmelding.id}
+                        onSelectPeriod={() =>
+                            setAktivPeriodeId((prev) => (prev === sykmelding.id ? null : sykmelding.id))
+                        }
                     >
                         <SykmeldingPeriodePopover
                             sykmelding={sykmelding}
@@ -139,6 +145,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                 end={dayjsToDate(k.tom)!}
                                 status="neutral"
                                 key={k.tom}
+                                onSelectPeriod={() => setAktivPeriodeId(null)}
                             >
                                 <KlippDetaljer klipp={k} />
                             </Timeline.Period>
@@ -152,12 +159,21 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                             sokTom &&
                             erPeriodeInnenforTidsvindu(sokFom, sokTom, aktivTidsvindu.fra, aktivTidsvindu.til)
                         ) {
+                            const soknadId = sok.soknad.id
+                            const sykmeldingId = sok.soknad.sykmeldingId
+                            const erAktiv =
+                                aktivPeriodeId === soknadId ||
+                                (aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId)
                             klippingAvSoknad.push(
                                 <Timeline.Period
                                     start={sokFom}
                                     end={sokTom}
                                     status={timelinePeriodeStatus(sok.soknad.status)}
                                     key={sok.soknad.tom}
+                                    isActive={erAktiv}
+                                    onSelectPeriod={() =>
+                                        setAktivPeriodeId((prev) => (prev === soknadId ? null : soknadId))
+                                    }
                                 >
                                     <Detaljer objekt={sok.soknad} filter={filter} setFilter={setFilter} />
                                 </Timeline.Period>,
@@ -184,6 +200,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                 end={dayjsToDate(k.tom)!}
                                 status="neutral"
                                 key={k.tom}
+                                onSelectPeriod={() => setAktivPeriodeId(null)}
                             >
                                 <KlippDetaljer klipp={k} />
                             </Timeline.Period>
