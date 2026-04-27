@@ -12,7 +12,7 @@ import { arbeidsgiverLabelForSoknader } from '../utils/soknadArbeidsgiverLabel'
 
 import { Filter, ValgteFilter } from './Filter'
 import VelgZoomPeriode from './VelgZoomPeriode'
-import { KlippDetaljer, timelinePeriodeStatus } from './soknad/Tidslinje'
+import { timelinePeriodeStatus } from './soknad/Tidslinje'
 import {
     grupperSykmeldingerPaArbeidsgiver,
     perioderMedDatoer,
@@ -185,9 +185,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                             nyId ? lagKlippetSoknadDrawerInnhold(k, filter, setFilter) : null,
                                         )
                                     }}
-                                >
-                                    <KlippDetaljer klipp={k} />
-                                </Timeline.Period>
+                                />
                             )
                         })
 
@@ -233,31 +231,34 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                 erPeriodeInnenforTidsvindu(fom, tom, aktivTidsvindu.fra, aktivTidsvindu.til)
                             )
                         })
-                        .map((k) => (
-                            <Timeline.Period
-                                start={dayjsToDate(k.fom)!}
-                                end={dayjsToDate(k.tom)!}
-                                status="neutral"
-                                key={k.tom}
-                                onSelectPeriod={() => {
-                                    setAktivPeriodeId(null)
-                                    setDrawerInnhold(null)
-                                }}
-                            >
-                                <KlippDetaljer klipp={k} />
-                            </Timeline.Period>
-                        )),
+                        .map((k) => {
+                            const sykmeldingId = k.sykmeldingUuid ?? null
+                            const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
+
+                            return (
+                                <Timeline.Period
+                                    start={dayjsToDate(k.fom)!}
+                                    end={dayjsToDate(k.tom)!}
+                                    status="neutral"
+                                    key={k.tom}
+                                    isActive={erAktiv}
+                                    onSelectPeriod={() => {
+                                        const nyId = aktivPeriodeId === sykmeldingId ? null : sykmeldingId
+                                        setAktivPeriodeId(nyId)
+                                        setDrawerInnhold(
+                                            nyId ? lagKlippetSoknadDrawerInnhold(k, filter, setFilter) : null,
+                                        )
+                                    }}
+                                />
+                            )
+                        }),
                 )
         })
 
         if (perioder_med_innhold.length === 0) return []
 
         return [
-            <Timeline.Row
-                key={`sok-${arbId}`}
-                label={label}
-                icon={<TasklistIcon aria-hidden fontSize="1.5rem" />}
-            >
+            <Timeline.Row key={`sok-${arbId}`} label={label} icon={<TasklistIcon aria-hidden fontSize="1.5rem" />}>
                 {perioder_med_innhold}
             </Timeline.Row>,
         ]
