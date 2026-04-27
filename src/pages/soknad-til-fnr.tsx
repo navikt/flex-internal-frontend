@@ -9,7 +9,7 @@ import { handterUuidValidering } from '../utils/inputValidering'
 const SoknadTilFnrPage = () => {
     const [soknadId, setSoknadId] = useState<string>()
 
-    const { data: data } = useSoknad(soknadId, soknadId !== undefined)
+    const { data: soknadData } = useSoknad(soknadId, soknadId !== undefined)
 
     return (
         <div className="flex-row space-y-4">
@@ -35,9 +35,9 @@ const SoknadTilFnrPage = () => {
                     }
                 }}
             />
-            {data?.sykepengesoknad && <BodyShort>{'Fødselsnummer: ' + data.fnr}</BodyShort>}
-            {data?.sykepengesoknad && (
-                <JsonView data={data.sykepengesoknad} shouldExpandNode={allExpanded} style={defaultStyles} />
+            {soknadData?.sykepengesoknad && <BodyShort>{'Fødselsnummer: ' + soknadData.fnr}</BodyShort>}
+            {soknadData?.sykepengesoknad && (
+                <JsonView data={soknadData.sykepengesoknad} shouldExpandNode={allExpanded} style={defaultStyles} />
             )}
         </div>
     )

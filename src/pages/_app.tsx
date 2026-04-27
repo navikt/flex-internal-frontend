@@ -46,6 +46,7 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
         '/sykmeldinger': 'Vis tidslinje av sykmeldinger',
         '/ident': 'Konverter mellom aktørId og fnr',
         '/soknad-til-fnr': 'Konverter søknad til fnr',
+        '/sykmelding-til-fnr': 'Konverter sykmelding til fnr',
         '/soknad-kafkaformat': 'Vis sykepengesøknad på Kafka-format',
         '/friskmeldt': 'Friskmeldt Til Arbeidsformidling',
         '/aareg': 'Se rådata fra Aa-registeret',
