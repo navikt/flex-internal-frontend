@@ -21,7 +21,7 @@ export function useSykmelding(
                 return null
             }
             return fetchJsonMedRequestId<Sykmelding>(
-                `/api/flex-sykmeldinger-backend/api/v1/sykmeldinger/${sykmeldingId}`,
+                `/api/flex-sykmeldinger-backend/api/v1/flex/sykmeldinger/${sykmeldingId}`,
                 {
                     method: 'GET',
                     credentials: 'include',

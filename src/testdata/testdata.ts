@@ -274,7 +274,7 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
-    if (validert.api == 'GET /api/v1/sykmeldinger/[uuid]') {
+    if (validert.api == 'GET /api/v1/flex/sykmeldinger/[uuid]') {
         res.status(200)
         res.json(sykmeldingerTestdata[0])
         res.end()
