@@ -7,7 +7,7 @@ import { mockApi } from '../../../testdata/testdata'
 
 const FLEX_SYKMELDINGER_BACKEND_CLIENT_ID = process.env.FLEX_SYKMELDINGER_BACKEND_CLIENT_ID || ''
 
-const tillatteApier = ['POST /api/v1/flex/sykmeldinger']
+const tillatteApier = ['POST /api/v1/flex/sykmeldinger', 'GET /api/v1/flex/sykmeldinger/[uuid]']
 
 const handler = beskyttetApi(async (req: NextApiRequest, res: NextApiResponse) => {
     const opts = {
