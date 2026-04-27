@@ -20,7 +20,7 @@ export function useSykmelding(
                 return null
             }
             return fetchJsonMedRequestId<SykmeldingResponse>(
-                `/api/flex-sykmeldinger-backend/api/v1/flex/sykmeldinger/${sykmeldingId}`,
+                `/api/flex-sykmeldinger-backend/api/v1/sykmeldinger/${sykmeldingId}`,
                 {
                     method: 'GET',
                     credentials: 'include',
