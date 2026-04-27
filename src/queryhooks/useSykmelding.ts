@@ -8,6 +8,7 @@ export interface SykmeldingResponse {
     sykmelding: Sykmelding
     fnr?: string | null
 }
+
 export function useSykmelding(
     sykmeldingId: string | undefined,
     enabled = true,
@@ -19,13 +20,18 @@ export function useSykmelding(
             if (sykmeldingId === undefined) {
                 return null
             }
-            return fetchJsonMedRequestId<SykmeldingResponse>(
+            return fetchJsonMedRequestId<Sykmelding>(
                 `/api/flex-sykmeldinger-backend/api/v1/sykmeldinger/${sykmeldingId}`,
                 {
                     method: 'GET',
                     credentials: 'include',
                 },
-            )
+            ).then((response) => {
+                return {
+                    sykmelding: response,
+                    fnr: response.pasient?.fnr,
+                }
+            })
         },
     })
 }
