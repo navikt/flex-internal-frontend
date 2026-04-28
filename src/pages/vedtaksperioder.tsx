@@ -12,7 +12,7 @@ import FnrSokefelt from '../components/FnrSokefelt'
 import { TidslinjeVedtaksperioder } from '../components/TidslinjeVedtaksperioder'
 import { fetchJsonMedRequestId } from '../utils/fetch'
 import { InntektsmeldingView } from '../components/Inntektsmeldinger'
-import { isNotProd, spannerUrl, spleisSporingUrl } from '../utils/environment'
+import { isNotProd, spannerUrl, sporingUrl } from '../utils/environment'
 import { useIdenter } from '../queryhooks/useIdenter'
 import { handterUuidValidering } from '../utils/inputValidering'
 import { useValgtFnr } from '../utils/useValgtFnr'
@@ -67,7 +67,7 @@ const Vedtaksperioder = () => {
                 <ReadMore header="AktørID">
                     <BodyShort>{aktorid}</BodyShort>
                 </ReadMore>
-                <Link href={`${spleisSporingUrl()}/person/${aktorid}`} target="_blank">
+                <Link href={`${sporingUrl()}/person/${aktorid}`} target="_blank">
                     Spleis sporing
                 </Link>
                 <Link className="block" href={`${spannerUrl()}/person/${aktorid}`} target="_blank">

@@ -7,7 +7,7 @@ import {
     FullVedtaksperiodeBehandling,
     VedtaksperiodeBehandlingStatusDbRecord,
 } from '../queryhooks/useVedtaksperioderMedInntektsmeldinger'
-import { spleisSporingUrl } from '../utils/environment'
+import { sporingUrl } from '../utils/environment'
 import { formatterTimestamp } from '../utils/formatterDatoer'
 
 import { VelgManederKnapp } from './VelgManederKnapp'
@@ -241,7 +241,7 @@ export function TidslinjeVedtaksperioder({
                                                                     <Table.DataCell>VedtaksperiodeId</Table.DataCell>
                                                                     <Table.DataCell>
                                                                         <Link
-                                                                            href={`${spleisSporingUrl()}/tilstandsmaskin/${behandling.vedtaksperiode.vedtaksperiodeId}`}
+                                                                            href={`${sporingUrl()}/tilstandsmaskin/${behandling.vedtaksperiode.vedtaksperiodeId}`}
                                                                         >
                                                                             {behandling.vedtaksperiode.vedtaksperiodeId}
                                                                         </Link>
