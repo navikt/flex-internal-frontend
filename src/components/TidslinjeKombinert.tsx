@@ -38,6 +38,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
     const [visningsFraDato, setVisningsFraDato] = useState<Date | null>(null)
     const [visningstilDato, setVisningstilDato] = useState<Date | null>(null)
     const [aktivPeriodeId, setAktivPeriodeId] = useState<string | null>(null)
+    const [aktivDrawerKildeId, setAktivDrawerKildeId] = useState<string | null>(null)
     const [drawerInnhold, setDrawerInnhold] = useState<ReturnType<typeof lagSykmeldingDrawerInnhold> | null>(null)
 
     const gyldigeSykmeldinger = validerSykmeldingsDatoer(sykmeldinger)
@@ -125,11 +126,15 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                         key={periodeKey}
                         isActive={aktivPeriodeId === sykmeldingAktivId}
                         onSelectPeriod={() => {
-                            const nyId = aktivPeriodeId === sykmeldingAktivId ? null : sykmeldingAktivId
-                            setAktivPeriodeId(nyId)
-                            setDrawerInnhold(
-                                nyId ? lagSykmeldingDrawerInnhold(sykmelding, periodeInfo, filter, setFilter) : null,
-                            )
+                            if (aktivDrawerKildeId === sykmeldingAktivId) {
+                                setAktivPeriodeId(null)
+                                setAktivDrawerKildeId(null)
+                                setDrawerInnhold(null)
+                            } else {
+                                setAktivPeriodeId(sykmeldingAktivId)
+                                setAktivDrawerKildeId(sykmeldingAktivId)
+                                setDrawerInnhold(lagSykmeldingDrawerInnhold(sykmelding, periodeInfo, filter, setFilter))
+                            }
                         }}
                     />,
                 ]
@@ -170,6 +175,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                         .map((k) => {
                             const sykmeldingId = k.sykmeldingUuid ?? null
                             const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
+                            const kildeId = k.id
 
                             return (
                                 <Timeline.Period
@@ -179,11 +185,15 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                     key={k.tom}
                                     isActive={erAktiv}
                                     onSelectPeriod={() => {
-                                        const nyId = aktivPeriodeId === sykmeldingId ? null : sykmeldingId
-                                        setAktivPeriodeId(nyId)
-                                        setDrawerInnhold(
-                                            nyId ? lagKlippetSoknadDrawerInnhold(k, filter, setFilter) : null,
-                                        )
+                                        if (aktivDrawerKildeId === kildeId) {
+                                            setAktivPeriodeId(null)
+                                            setAktivDrawerKildeId(null)
+                                            setDrawerInnhold(null)
+                                        } else {
+                                            setAktivPeriodeId(sykmeldingId)
+                                            setAktivDrawerKildeId(kildeId)
+                                            setDrawerInnhold(lagKlippetSoknadDrawerInnhold(k, filter, setFilter))
+                                        }
                                     }}
                                 />
                             )
@@ -199,6 +209,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                         ) {
                             const sykmeldingId = sok.soknad.sykmeldingId ?? null
                             const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
+                            const kildeId = sok.soknad.id
                             klippingAvSoknad.push(
                                 <Timeline.Period
                                     start={sokFom}
@@ -207,11 +218,15 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                     key={sok.soknad.tom}
                                     isActive={erAktiv}
                                     onSelectPeriod={() => {
-                                        const nyId = aktivPeriodeId === sykmeldingId ? null : sykmeldingId
-                                        setAktivPeriodeId(nyId)
-                                        setDrawerInnhold(
-                                            nyId ? lagSoknadDrawerInnhold(sok.soknad, filter, setFilter) : null,
-                                        )
+                                        if (aktivDrawerKildeId === kildeId) {
+                                            setAktivPeriodeId(null)
+                                            setAktivDrawerKildeId(null)
+                                            setDrawerInnhold(null)
+                                        } else {
+                                            setAktivPeriodeId(sykmeldingId)
+                                            setAktivDrawerKildeId(kildeId)
+                                            setDrawerInnhold(lagSoknadDrawerInnhold(sok.soknad, filter, setFilter))
+                                        }
                                     }}
                                 />,
                             )
@@ -234,6 +249,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                         .map((k) => {
                             const sykmeldingId = k.sykmeldingUuid ?? null
                             const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
+                            const kildeId = k.id
 
                             return (
                                 <Timeline.Period
@@ -243,11 +259,15 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                     key={k.tom}
                                     isActive={erAktiv}
                                     onSelectPeriod={() => {
-                                        const nyId = aktivPeriodeId === sykmeldingId ? null : sykmeldingId
-                                        setAktivPeriodeId(nyId)
-                                        setDrawerInnhold(
-                                            nyId ? lagKlippetSoknadDrawerInnhold(k, filter, setFilter) : null,
-                                        )
+                                        if (aktivDrawerKildeId === kildeId) {
+                                            setAktivPeriodeId(null)
+                                            setAktivDrawerKildeId(null)
+                                            setDrawerInnhold(null)
+                                        } else {
+                                            setAktivPeriodeId(sykmeldingId)
+                                            setAktivDrawerKildeId(kildeId)
+                                            setDrawerInnhold(lagKlippetSoknadDrawerInnhold(k, filter, setFilter))
+                                        }
                                     }}
                                 />
                             )
@@ -284,7 +304,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
             <DetaljerDrawer
                 innhold={drawerInnhold}
                 onLukk={() => {
-                    setAktivPeriodeId(null)
+                    setAktivDrawerKildeId(null)
                     setDrawerInnhold(null)
                 }}
             />
