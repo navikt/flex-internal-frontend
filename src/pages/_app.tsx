@@ -42,9 +42,8 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
     const router = useRouter()
 
     const sider = {
-        '/': 'Vis tidslinje av søknader',
+        '/': 'Vis kombinert tidslinje',
         '/sykmeldinger': 'Vis tidslinje av sykmeldinger',
-        '/kombinert': 'Vis kombinert tidslinje',
         '/ident': 'Konverter mellom aktørId og fnr',
         '/soknad-til-fnr': 'Konverter søknad til fnr',
         '/sykmelding-til-fnr': 'Konverter sykmelding til fnr',
