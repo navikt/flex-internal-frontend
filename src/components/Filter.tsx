@@ -94,8 +94,9 @@ export function FilterFelt({
     }
 
     return (
-        <Chips className="inline-flex">
+        <Chips className="inline-flex" size="small">
             <Chips.Toggle
+                checkmark={false}
                 selected={finnes(filter, inkluder)}
                 onClick={() => {
                     setFilter((prev: Filter[]) =>
@@ -106,6 +107,7 @@ export function FilterFelt({
                 +
             </Chips.Toggle>
             <Chips.Toggle
+                checkmark={false}
                 selected={finnes(filter, ekskluder)}
                 onClick={() => {
                     setFilter((prev: Filter[]) =>
