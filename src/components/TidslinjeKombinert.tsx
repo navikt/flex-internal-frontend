@@ -288,12 +288,20 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
         return <Fragment />
     }
 
+    const labelKlasse = 'kombinert-tidslinje-boks'
+
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <ValgteFilter filter={filter} setFilter={setFilter} />
             <BodyShort className="font-semibold">{`${filtrerteSykmeldinger.length} sykmelding(er) · ${soknader.length} søknad(er)`}</BodyShort>
             <VelgZoomPeriode setFraDato={setVisningsFraDato} setTilDato={setVisningstilDato} />
-            <Box borderColor="brand-blue" borderWidth="2" padding="space-16" borderRadius="12" className="mb-4">
+            <Box
+                borderColor="brand-blue"
+                borderWidth="2"
+                padding="space-16"
+                borderRadius="12"
+                className={`mb-4 ${labelKlasse}`}
+            >
                 <BodyShort className="font-semibold mb-2">Sykmeldinger</BodyShort>
                 <Timeline
                     endDate={aktivTidsvindu.til}
@@ -303,7 +311,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                     {sykmeldingRader}
                 </Timeline>
             </Box>
-            <Box borderColor="brand-blue" borderWidth="2" padding="space-16" borderRadius="12">
+            <Box borderColor="brand-blue" borderWidth="2" padding="space-16" borderRadius="12" className={labelKlasse}>
                 <BodyShort className="font-semibold mb-2">Søknader</BodyShort>
                 <Timeline
                     endDate={aktivTidsvindu.til}
