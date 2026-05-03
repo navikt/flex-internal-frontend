@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react'
 import { StethoscopeIcon, TasklistIcon, SplitHorizontalIcon } from '@navikt/aksel-icons'
-import { BodyShort, Timeline } from '@navikt/ds-react'
+import { BodyShort, Box, Timeline } from '@navikt/ds-react'
 
 import { KlippetSykepengesoknadRecord, Soknad, dayjsToDate } from '../queryhooks/useSoknader'
 import type { Sykmelding } from '../queryhooks/useSykmeldinger'
@@ -293,14 +293,26 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
             <ValgteFilter filter={filter} setFilter={setFilter} />
             <BodyShort className="font-semibold">{`${filtrerteSykmeldinger.length} sykmelding(er) · ${soknader.length} søknad(er)`}</BodyShort>
             <VelgZoomPeriode setFraDato={setVisningsFraDato} setTilDato={setVisningstilDato} />
-            <Timeline
-                endDate={aktivTidsvindu.til}
-                startDate={aktivTidsvindu.fra}
-                key={`${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
-            >
-                {sykmeldingRader}
-                {soknadRader}
-            </Timeline>
+            <Box borderColor="brand-blue" borderWidth="2" padding="space-16" borderRadius="12" className="mb-4">
+                <BodyShort className="font-semibold mb-2">Sykmeldinger</BodyShort>
+                <Timeline
+                    endDate={aktivTidsvindu.til}
+                    startDate={aktivTidsvindu.fra}
+                    key={`syk-${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
+                >
+                    {sykmeldingRader}
+                </Timeline>
+            </Box>
+            <Box borderColor="brand-blue" borderWidth="2" padding="space-16" borderRadius="12">
+                <BodyShort className="font-semibold mb-2">Søknader</BodyShort>
+                <Timeline
+                    endDate={aktivTidsvindu.til}
+                    startDate={aktivTidsvindu.fra}
+                    key={`sok-${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
+                >
+                    {soknadRader}
+                </Timeline>
+            </Box>
             <DetaljerDrawer
                 innhold={drawerInnhold}
                 onLukk={() => {
