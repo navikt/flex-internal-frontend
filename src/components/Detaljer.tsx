@@ -5,7 +5,10 @@ import { Filter, FilterFelt } from './Filter'
 const erObjekt = (verdi: unknown): verdi is Record<string, unknown> =>
     typeof verdi === 'object' && verdi !== null && !Array.isArray(verdi)
 
-const erBladverdi = (verdi: unknown): boolean => !Array.isArray(verdi) && !erObjekt(verdi)
+const erTom = (verdi: unknown): boolean =>
+    (Array.isArray(verdi) && verdi.length === 0) || (erObjekt(verdi) && Object.keys(verdi).length === 0)
+
+const erBladverdi = (verdi: unknown): boolean => (!Array.isArray(verdi) && !erObjekt(verdi)) || erTom(verdi)
 
 const formaterVerdi = (verdi: unknown): string => {
     if (typeof verdi === 'string') return verdi
@@ -56,23 +59,26 @@ const renderVerdi = (
         if (nøkler.length === 0) return '{}'
 
         return (
-            <div className={erRot ? '' : 'ml-3'}>
+            <div className={erRot ? '' : 'ml-4'}>
                 {nøkler.map(([nøkkel, nestetVerdi]) => {
                     const nestetSti = sti ? `${sti}.${nøkkel}` : nøkkel
                     const bladverdi = erBladverdi(nestetVerdi)
 
                     return (
-                        <div key={nestetSti} className="flex items-start gap-1">
-                            {bladverdi && (
-                                <FilterFelt
-                                    prop={nestetSti}
-                                    verdi={nestetVerdi}
-                                    filter={filter}
-                                    setFilter={setFilter}
-                                />
-                            )}
-                            <span className="font-semibold">{nøkkel}:</span>
-                            {renderVerdi(nestetVerdi, filter, setFilter, nestetSti)}
+                        <div key={nestetSti} className="mt-0.5">
+                            <div className="flex items-center gap-1">
+                                {bladverdi && (
+                                    <FilterFelt
+                                        prop={nestetSti}
+                                        verdi={nestetVerdi}
+                                        filter={filter}
+                                        setFilter={setFilter}
+                                    />
+                                )}
+                                <span className="font-semibold">{nøkkel}:</span>
+                                {bladverdi && renderVerdi(nestetVerdi, filter, setFilter, nestetSti)}
+                            </div>
+                            {!bladverdi && renderVerdi(nestetVerdi, filter, setFilter, nestetSti)}
                         </div>
                     )
                 })}
