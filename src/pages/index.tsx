@@ -1,22 +1,25 @@
 import React from 'react'
 
-import { initialProps } from '../initialprops/initialProps'
 import FnrSokefelt from '../components/FnrSokefelt'
+import { initialProps } from '../initialprops/initialProps'
 import { useSoknader } from '../queryhooks/useSoknader'
-import Tidslinje from '../components/soknad/Tidslinje'
+import { useSykmeldinger } from '../queryhooks/useSykmeldinger'
+import TidslinjeKombinert from '../components/TidslinjeKombinert'
 import { useValgtFnr } from '../utils/useValgtFnr'
 
 const Index = () => {
     const { fnr } = useValgtFnr()
 
-    const { data: data } = useSoknader(fnr, fnr !== undefined)
-    const soknader = data?.sykepengesoknadListe || []
-    const klipp = data?.klippetSykepengesoknadRecord || []
+    const { data: soknadData } = useSoknader(fnr, fnr !== undefined)
+    const soknader = soknadData?.sykepengesoknadListe || []
+    const klipp = soknadData?.klippetSykepengesoknadRecord || []
+
+    const { data: sykmeldinger = [] } = useSykmeldinger(fnr, fnr !== undefined)
 
     return (
         <div className="flex-row space-y-4">
             <FnrSokefelt />
-            <Tidslinje soknader={soknader} klipp={klipp} />
+            <TidslinjeKombinert sykmeldinger={sykmeldinger} soknader={soknader} klipp={klipp} />
         </div>
     )
 }
