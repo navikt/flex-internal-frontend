@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { useState } from 'react'
 import { StethoscopeIcon, TasklistIcon, SplitHorizontalIcon } from '@navikt/aksel-icons'
 import { BodyShort, Box, Timeline } from '@navikt/ds-react'
 
@@ -64,229 +64,231 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
 
     const aktivTidsvindu = beregnAktivTidsvindu(visningsFraDato, visningstilDato, eldsteFra, nysteTil)
 
-    if (!aktivTidsvindu) {
-        return <Fragment />
-    }
+    const sykmeldingRader = aktivTidsvindu
+        ? Array.from(sykmeldingerGruppertPaArbeidsgiver.entries()).flatMap(([arbeidsgiverId, arbeidsgiver]) => {
+              const perioder_med_innhold = arbeidsgiver.sykmeldinger.flatMap((sykmelding) => {
+                  const status = sykmeldingStatus(sykmelding.sykmeldingStatus?.statusEvent)
+                  const perioder = sorterPerioder(perioderMedDatoer(sykmelding))
 
-    const sykmeldingRader = Array.from(sykmeldingerGruppertPaArbeidsgiver.entries()).flatMap(
-        ([arbeidsgiverId, arbeidsgiver]) => {
-            const perioder_med_innhold = arbeidsgiver.sykmeldinger.flatMap((sykmelding) => {
-                const status = sykmeldingStatus(sykmelding.sykmeldingStatus?.statusEvent)
-                const perioder = sorterPerioder(perioderMedDatoer(sykmelding))
+                  if (perioder.length === 0) return []
 
-                if (perioder.length === 0) return []
+                  const forstePeriode = perioder[0]
+                  const sistePeriode = perioder[perioder.length - 1]
 
-                const forstePeriode = perioder[0]
-                const sistePeriode = perioder[perioder.length - 1]
+                  if (
+                      !erPeriodeInnenforTidsvindu(
+                          forstePeriode.startDato,
+                          sistePeriode.sluttDato,
+                          aktivTidsvindu.fra,
+                          aktivTidsvindu.til,
+                      )
+                  ) {
+                      return []
+                  }
 
-                if (
-                    !erPeriodeInnenforTidsvindu(
-                        forstePeriode.startDato,
-                        sistePeriode.sluttDato,
-                        aktivTidsvindu.fra,
-                        aktivTidsvindu.til,
-                    )
-                ) {
-                    return []
-                }
+                  const harFlerePerioder = perioder.length > 1
+                  const ikon = harFlerePerioder ? <SplitHorizontalIcon aria-hidden /> : undefined
+                  const periodeKey = `${sykmelding.id}-${forstePeriode.fom}-${sistePeriode.tom}`
 
-                const harFlerePerioder = perioder.length > 1
-                const ikon = harFlerePerioder ? <SplitHorizontalIcon aria-hidden /> : undefined
-                const periodeKey = `${sykmelding.id}-${forstePeriode.fom}-${sistePeriode.tom}`
+                  const periodeInfo = (
+                      <div className="space-y-1">
+                          <ul className="list-disc pl-5 text-sm">
+                              <li>{`Fra: ${formaterDato(forstePeriode.startDato)}`}</li>
+                              <li>{`Til: ${formaterDato(sistePeriode.sluttDato)}`}</li>
+                              <li>{`Antall delperioder: ${perioder.length}`}</li>
+                              <li>{`Antall kalenderdager: ${antallKalenderdager(forstePeriode.startDato, sistePeriode.sluttDato)}`}</li>
+                          </ul>
+                          {harFlerePerioder && (
+                              <ul className="list-disc pl-5 text-sm">
+                                  {perioder.map((periode, idx) => (
+                                      <li
+                                          key={idx}
+                                      >{`Periode ${idx + 1}: ${formaterDato(periode.startDato)} – ${formaterDato(periode.sluttDato)}`}</li>
+                                  ))}
+                              </ul>
+                          )}
+                      </div>
+                  )
 
-                const periodeInfo = (
-                    <div className="space-y-1">
-                        <ul className="list-disc pl-5 text-sm">
-                            <li>{`Fra: ${formaterDato(forstePeriode.startDato)}`}</li>
-                            <li>{`Til: ${formaterDato(sistePeriode.sluttDato)}`}</li>
-                            <li>{`Antall delperioder: ${perioder.length}`}</li>
-                            <li>{`Antall kalenderdager: ${antallKalenderdager(forstePeriode.startDato, sistePeriode.sluttDato)}`}</li>
-                        </ul>
-                        {harFlerePerioder && (
-                            <ul className="list-disc pl-5 text-sm">
-                                {perioder.map((periode, idx) => (
-                                    <li
-                                        key={idx}
-                                    >{`Periode ${idx + 1}: ${formaterDato(periode.startDato)} – ${formaterDato(periode.sluttDato)}`}</li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-                )
+                  const sykmeldingAktivId = sykmelding.id
 
-                const sykmeldingAktivId = sykmelding.id
+                  return [
+                      <Timeline.Period
+                          start={forstePeriode.startDato}
+                          end={sistePeriode.sluttDato}
+                          status={status}
+                          icon={ikon}
+                          className="ring-1 ring-inset ring-white/95"
+                          key={periodeKey}
+                          isActive={aktivPeriodeId === sykmeldingAktivId}
+                          onSelectPeriod={() => {
+                              if (aktivDrawerKildeId === sykmeldingAktivId) {
+                                  setAktivPeriodeId(null)
+                                  setAktivDrawerKildeId(null)
+                                  setDrawerInnhold(null)
+                              } else {
+                                  setAktivPeriodeId(sykmeldingAktivId)
+                                  setAktivDrawerKildeId(sykmeldingAktivId)
+                                  setDrawerInnhold(
+                                      lagSykmeldingDrawerInnhold(sykmelding, periodeInfo, filter, setFilter),
+                                  )
+                              }
+                          }}
+                      />,
+                  ]
+              })
 
-                return [
-                    <Timeline.Period
-                        start={forstePeriode.startDato}
-                        end={sistePeriode.sluttDato}
-                        status={status}
-                        icon={ikon}
-                        className="ring-1 ring-inset ring-white/95"
-                        key={periodeKey}
-                        isActive={aktivPeriodeId === sykmeldingAktivId}
-                        onSelectPeriod={() => {
-                            if (aktivDrawerKildeId === sykmeldingAktivId) {
-                                setAktivPeriodeId(null)
-                                setAktivDrawerKildeId(null)
-                                setDrawerInnhold(null)
-                            } else {
-                                setAktivPeriodeId(sykmeldingAktivId)
-                                setAktivDrawerKildeId(sykmeldingAktivId)
-                                setDrawerInnhold(lagSykmeldingDrawerInnhold(sykmelding, periodeInfo, filter, setFilter))
-                            }
-                        }}
-                    />,
-                ]
-            })
+              if (perioder_med_innhold.length === 0) return []
 
-            if (perioder_med_innhold.length === 0) return []
+              return [
+                  <Timeline.Row
+                      key={`syk-${arbeidsgiverId}`}
+                      label={arbeidsgiver.label}
+                      icon={<StethoscopeIcon aria-hidden fontSize="1.5rem" />}
+                  >
+                      {perioder_med_innhold}
+                  </Timeline.Row>,
+              ]
+          })
+        : []
 
-            return [
-                <Timeline.Row
-                    key={`syk-${arbeidsgiverId}`}
-                    label={arbeidsgiver.label}
-                    icon={<StethoscopeIcon aria-hidden fontSize="1.5rem" />}
-                >
-                    {perioder_med_innhold}
-                </Timeline.Row>,
-            ]
-        },
-    )
+    const soknadRader = aktivTidsvindu
+        ? Array.from(soknaderGruppert.entries()).flatMap(([arbId, arb]) => {
+              const label = arbeidsgiverLabelForSoknader(arbId, arb, soknaderGruppert)
 
-    const soknadRader = Array.from(soknaderGruppert.entries()).flatMap(([arbId, arb]) => {
-        const label = arbeidsgiverLabelForSoknader(arbId, arb, soknaderGruppert)
+              const perioder_med_innhold = Array.from(arb.sykmeldinger.entries()).flatMap(([sykId, syk]) => {
+                  const erGhostSykmelding = sykId.endsWith('_GHOST')
 
-        const perioder_med_innhold = Array.from(arb.sykmeldinger.entries()).flatMap(([sykId, syk]) => {
-            const erGhostSykmelding = sykId.endsWith('_GHOST')
+                  return Array.from(syk.soknader.values())
+                      .flatMap((sok: SoknadGruppering) => {
+                          const klippingAvSoknad = sok.klippingAvSoknad
+                              .filter((k) => {
+                                  const fom = dayjsToDate(k.fom)
+                                  const tom = dayjsToDate(k.tom)
+                                  return (
+                                      fom &&
+                                      tom &&
+                                      erPeriodeInnenforTidsvindu(fom, tom, aktivTidsvindu.fra, aktivTidsvindu.til)
+                                  )
+                              })
+                              .map((k) => {
+                                  const sykmeldingId = k.sykmeldingUuid ?? null
+                                  const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
+                                  const kildeId = k.id
 
-            return Array.from(syk.soknader.values())
-                .flatMap((sok: SoknadGruppering) => {
-                    const klippingAvSoknad = sok.klippingAvSoknad
-                        .filter((k) => {
-                            const fom = dayjsToDate(k.fom)
-                            const tom = dayjsToDate(k.tom)
-                            return (
-                                fom &&
-                                tom &&
-                                erPeriodeInnenforTidsvindu(fom, tom, aktivTidsvindu.fra, aktivTidsvindu.til)
-                            )
-                        })
-                        .map((k) => {
-                            const sykmeldingId = k.sykmeldingUuid ?? null
-                            const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
-                            const kildeId = k.id
+                                  return (
+                                      <Timeline.Period
+                                          start={dayjsToDate(k.fom)!}
+                                          end={dayjsToDate(k.tom)!}
+                                          status="neutral"
+                                          key={k.tom}
+                                          isActive={erAktiv}
+                                          onSelectPeriod={() => {
+                                              if (aktivDrawerKildeId === kildeId) {
+                                                  setAktivPeriodeId(null)
+                                                  setAktivDrawerKildeId(null)
+                                                  setDrawerInnhold(null)
+                                              } else {
+                                                  setAktivPeriodeId(sykmeldingId)
+                                                  setAktivDrawerKildeId(kildeId)
+                                                  setDrawerInnhold(lagKlippetSoknadDrawerInnhold(k, filter, setFilter))
+                                              }
+                                          }}
+                                      />
+                                  )
+                              })
 
-                            return (
-                                <Timeline.Period
-                                    start={dayjsToDate(k.fom)!}
-                                    end={dayjsToDate(k.tom)!}
-                                    status="neutral"
-                                    key={k.tom}
-                                    isActive={erAktiv}
-                                    onSelectPeriod={() => {
-                                        if (aktivDrawerKildeId === kildeId) {
-                                            setAktivPeriodeId(null)
-                                            setAktivDrawerKildeId(null)
-                                            setDrawerInnhold(null)
-                                        } else {
-                                            setAktivPeriodeId(sykmeldingId)
-                                            setAktivDrawerKildeId(kildeId)
-                                            setDrawerInnhold(lagKlippetSoknadDrawerInnhold(k, filter, setFilter))
-                                        }
-                                    }}
-                                />
-                            )
-                        })
+                          if (!erGhostSykmelding) {
+                              const sokFom = dayjsToDate(sok.soknad.fom!)
+                              const sokTom = dayjsToDate(sok.soknad.tom!)
+                              if (
+                                  sokFom &&
+                                  sokTom &&
+                                  erPeriodeInnenforTidsvindu(sokFom, sokTom, aktivTidsvindu.fra, aktivTidsvindu.til)
+                              ) {
+                                  const sykmeldingId = sok.soknad.sykmeldingId ?? null
+                                  const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
+                                  const kildeId = sok.soknad.id
+                                  klippingAvSoknad.push(
+                                      <Timeline.Period
+                                          start={sokFom}
+                                          end={sokTom}
+                                          status={timelinePeriodeStatus(sok.soknad.status)}
+                                          key={sok.soknad.tom}
+                                          isActive={erAktiv}
+                                          onSelectPeriod={() => {
+                                              if (aktivDrawerKildeId === kildeId) {
+                                                  setAktivPeriodeId(null)
+                                                  setAktivDrawerKildeId(null)
+                                                  setDrawerInnhold(null)
+                                              } else {
+                                                  setAktivPeriodeId(sykmeldingId)
+                                                  setAktivDrawerKildeId(kildeId)
+                                                  setDrawerInnhold(
+                                                      lagSoknadDrawerInnhold(sok.soknad, filter, setFilter),
+                                                  )
+                                              }
+                                          }}
+                                      />,
+                                  )
+                              }
+                          }
 
-                    if (!erGhostSykmelding) {
-                        const sokFom = dayjsToDate(sok.soknad.fom!)
-                        const sokTom = dayjsToDate(sok.soknad.tom!)
-                        if (
-                            sokFom &&
-                            sokTom &&
-                            erPeriodeInnenforTidsvindu(sokFom, sokTom, aktivTidsvindu.fra, aktivTidsvindu.til)
-                        ) {
-                            const sykmeldingId = sok.soknad.sykmeldingId ?? null
-                            const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
-                            const kildeId = sok.soknad.id
-                            klippingAvSoknad.push(
-                                <Timeline.Period
-                                    start={sokFom}
-                                    end={sokTom}
-                                    status={timelinePeriodeStatus(sok.soknad.status)}
-                                    key={sok.soknad.tom}
-                                    isActive={erAktiv}
-                                    onSelectPeriod={() => {
-                                        if (aktivDrawerKildeId === kildeId) {
-                                            setAktivPeriodeId(null)
-                                            setAktivDrawerKildeId(null)
-                                            setDrawerInnhold(null)
-                                        } else {
-                                            setAktivPeriodeId(sykmeldingId)
-                                            setAktivDrawerKildeId(kildeId)
-                                            setDrawerInnhold(lagSoknadDrawerInnhold(sok.soknad, filter, setFilter))
-                                        }
-                                    }}
-                                />,
-                            )
-                        }
-                    }
+                          return klippingAvSoknad
+                      })
+                      .concat(
+                          syk.klippingAvSykmelding
+                              .filter((k) => {
+                                  const fom = dayjsToDate(k.fom)
+                                  const tom = dayjsToDate(k.tom)
+                                  return (
+                                      fom &&
+                                      tom &&
+                                      erPeriodeInnenforTidsvindu(fom, tom, aktivTidsvindu.fra, aktivTidsvindu.til)
+                                  )
+                              })
+                              .map((k) => {
+                                  const sykmeldingId = k.sykmeldingUuid ?? null
+                                  const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
+                                  const kildeId = k.id
 
-                    return klippingAvSoknad
-                })
-                .concat(
-                    syk.klippingAvSykmelding
-                        .filter((k) => {
-                            const fom = dayjsToDate(k.fom)
-                            const tom = dayjsToDate(k.tom)
-                            return (
-                                fom &&
-                                tom &&
-                                erPeriodeInnenforTidsvindu(fom, tom, aktivTidsvindu.fra, aktivTidsvindu.til)
-                            )
-                        })
-                        .map((k) => {
-                            const sykmeldingId = k.sykmeldingUuid ?? null
-                            const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
-                            const kildeId = k.id
+                                  return (
+                                      <Timeline.Period
+                                          start={dayjsToDate(k.fom)!}
+                                          end={dayjsToDate(k.tom)!}
+                                          status="neutral"
+                                          key={k.tom}
+                                          isActive={erAktiv}
+                                          onSelectPeriod={() => {
+                                              if (aktivDrawerKildeId === kildeId) {
+                                                  setAktivPeriodeId(null)
+                                                  setAktivDrawerKildeId(null)
+                                                  setDrawerInnhold(null)
+                                              } else {
+                                                  setAktivPeriodeId(sykmeldingId)
+                                                  setAktivDrawerKildeId(kildeId)
+                                                  setDrawerInnhold(lagKlippetSoknadDrawerInnhold(k, filter, setFilter))
+                                              }
+                                          }}
+                                      />
+                                  )
+                              }),
+                      )
+              })
 
-                            return (
-                                <Timeline.Period
-                                    start={dayjsToDate(k.fom)!}
-                                    end={dayjsToDate(k.tom)!}
-                                    status="neutral"
-                                    key={k.tom}
-                                    isActive={erAktiv}
-                                    onSelectPeriod={() => {
-                                        if (aktivDrawerKildeId === kildeId) {
-                                            setAktivPeriodeId(null)
-                                            setAktivDrawerKildeId(null)
-                                            setDrawerInnhold(null)
-                                        } else {
-                                            setAktivPeriodeId(sykmeldingId)
-                                            setAktivDrawerKildeId(kildeId)
-                                            setDrawerInnhold(lagKlippetSoknadDrawerInnhold(k, filter, setFilter))
-                                        }
-                                    }}
-                                />
-                            )
-                        }),
-                )
-        })
+              if (perioder_med_innhold.length === 0) return []
 
-        if (perioder_med_innhold.length === 0) return []
-
-        return [
-            <Timeline.Row key={`sok-${arbId}`} label={label} icon={<TasklistIcon aria-hidden fontSize="1.5rem" />}>
-                {perioder_med_innhold}
-            </Timeline.Row>,
-        ]
-    })
-
-    if (sykmeldingRader.length === 0 && soknadRader.length === 0) {
-        return <Fragment />
-    }
+              return [
+                  <Timeline.Row
+                      key={`sok-${arbId}`}
+                      label={label}
+                      icon={<TasklistIcon aria-hidden fontSize="1.5rem" />}
+                  >
+                      {perioder_med_innhold}
+                  </Timeline.Row>,
+              ]
+          })
+        : []
 
     const labelKlasse = 'kombinert-tidslinje-boks'
 
@@ -295,32 +297,42 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
             <ValgteFilter filter={filter} setFilter={setFilter} />
             <BodyShort className="font-semibold">{`${filtrerteSykmeldinger.length} sykmelding(er) · ${soknader.length} søknad(er)`}</BodyShort>
             <VelgZoomPeriode setFraDato={setVisningsFraDato} setTilDato={setVisningstilDato} />
-            <Box
-                borderColor="brand-blue"
-                borderWidth="2"
-                padding="space-16"
-                borderRadius="12"
-                className={`mb-4 ${labelKlasse}`}
-            >
-                <BodyShort className="font-semibold mb-2">Sykmeldinger</BodyShort>
-                <Timeline
-                    endDate={aktivTidsvindu.til}
-                    startDate={aktivTidsvindu.fra}
-                    key={`syk-${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
-                >
-                    {sykmeldingRader}
-                </Timeline>
-            </Box>
-            <Box borderColor="brand-blue" borderWidth="2" padding="space-16" borderRadius="12" className={labelKlasse}>
-                <BodyShort className="font-semibold mb-2">Søknader</BodyShort>
-                <Timeline
-                    endDate={aktivTidsvindu.til}
-                    startDate={aktivTidsvindu.fra}
-                    key={`sok-${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
-                >
-                    {soknadRader}
-                </Timeline>
-            </Box>
+            {aktivTidsvindu && (
+                <>
+                    <Box
+                        borderColor="brand-blue"
+                        borderWidth="2"
+                        padding="space-16"
+                        borderRadius="12"
+                        className={`mb-4 ${labelKlasse}`}
+                    >
+                        <BodyShort className="font-semibold mb-2">Sykmeldinger</BodyShort>
+                        <Timeline
+                            endDate={aktivTidsvindu.til}
+                            startDate={aktivTidsvindu.fra}
+                            key={`syk-${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
+                        >
+                            {sykmeldingRader}
+                        </Timeline>
+                    </Box>
+                    <Box
+                        borderColor="brand-blue"
+                        borderWidth="2"
+                        padding="space-16"
+                        borderRadius="12"
+                        className={labelKlasse}
+                    >
+                        <BodyShort className="font-semibold mb-2">Søknader</BodyShort>
+                        <Timeline
+                            endDate={aktivTidsvindu.til}
+                            startDate={aktivTidsvindu.fra}
+                            key={`sok-${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
+                        >
+                            {soknadRader}
+                        </Timeline>
+                    </Box>
+                </>
+            )}
             <DetaljerDrawer
                 innhold={drawerInnhold}
                 onLukk={() => {
