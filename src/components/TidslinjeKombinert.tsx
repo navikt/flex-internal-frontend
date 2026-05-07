@@ -47,6 +47,9 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
     const sykmeldingerGruppertPaArbeidsgiver = grupperSykmeldingerPaArbeidsgiver(filtrerteSykmeldinger)
 
     const soknaderGruppert = gruppertOgFiltrert(filter, soknader, klipp)
+    const filtrerteSoknaderAntall = [...soknaderGruppert.values()].flatMap((arb) =>
+        [...arb.sykmeldinger.values()].flatMap((syk) => [...syk.soknader.values()]),
+    ).length
 
     let eldsteFra: Date | null = datospennSyk?.startDato ?? null
     let nysteTil: Date | null = datospennSyk?.sluttDato ?? null
@@ -295,7 +298,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <ValgteFilter filter={filter} setFilter={setFilter} />
-            <BodyShort className="font-semibold">{`${filtrerteSykmeldinger.length} sykmelding(er) · ${soknader.length} søknad(er)`}</BodyShort>
+            <BodyShort className="font-semibold">{`${filtrerteSykmeldinger.length} sykmelding(er) · ${filtrerteSoknaderAntall} søknad(er)`}</BodyShort>
             <VelgZoomPeriode setFraDato={setVisningsFraDato} setTilDato={setVisningstilDato} />
             {aktivTidsvindu && (
                 <>
