@@ -106,6 +106,7 @@ export interface RSSoknad {
     soknadPerioder: RSSoknadsperiode[]
     merknaderFraSykmelding?: RSMerknad[]
     ventetidSykmeldingUuid?: string
+    meldingTilNavDagerFraSykmelding?: Periode[]
 }
 
 export class Soknad {
@@ -130,6 +131,7 @@ export class Soknad {
     soknadPerioder: RSSoknadsperiode[]
     merknaderFraSykmelding?: RSMerknad[]
     ventetidSykmeldingUuid?: string
+    meldingTilNavDagerFraSykmelding?: Periode[]
 
     constructor(json: RSSoknad) {
         this.id = json.id
@@ -153,6 +155,7 @@ export class Soknad {
         this.soknadPerioder = json.soknadPerioder
         this.merknaderFraSykmelding = json.merknaderFraSykmelding
         this.ventetidSykmeldingUuid = json.ventetidSykmeldingUuid
+        this.meldingTilNavDagerFraSykmelding = json.meldingTilNavDagerFraSykmelding
     }
 }
 
@@ -203,4 +206,9 @@ export interface RSSoknadsperiode {
 export interface RSMerknad {
     type: string
     beskrivelse?: string
+}
+
+export interface Periode {
+    fom: string
+    tom: string
 }
