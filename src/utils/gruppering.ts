@@ -217,6 +217,12 @@ export function sortert(a: [string, SykmeldingGruppering], b: [string, Sykmeldin
         else return previousValue
     }
 
+    const tilDayjsVerdi = (verdi: unknown) => {
+        if (dayjs.isDayjs(verdi)) return verdi
+        if (typeof verdi === 'string') return dayjs(verdi)
+        return dayjs(0)
+    }
+
     switch (sortering) {
         case 'sykmelding skrevet': {
             const verdiA = mapTilSoknadProp(aSykmeldingGruppering, 'sykmeldingUtskrevet').reduce(maximum, dayjs(0))
@@ -235,11 +241,11 @@ export function sortert(a: [string, SykmeldingGruppering], b: [string, Sykmeldin
         default:
         case 'tom': {
             const verdiA = aSykmeldingId.endsWith('_GHOST')
-                ? mapTilKlippProp(aSykmeldingGruppering, 'tom').reduce(maximum, '2000-01-01')
-                : mapTilSoknadProp(aSykmeldingGruppering, 'tom').reduce(maximum, '2000-01-01')
+                ? mapTilKlippProp(aSykmeldingGruppering, 'tom').map(tilDayjsVerdi).reduce(maximum, dayjs('2000-01-01'))
+                : mapTilSoknadProp(aSykmeldingGruppering, 'tom').map(tilDayjsVerdi).reduce(maximum, dayjs('2000-01-01'))
             const verdiB = bSykmeldingId.endsWith('_GHOST')
-                ? mapTilKlippProp(bSykmeldingGruppering, 'tom').reduce(maximum, '2000-01-01')
-                : mapTilSoknadProp(bSykmeldingGruppering, 'tom').reduce(maximum, '2000-01-01')
+                ? mapTilKlippProp(bSykmeldingGruppering, 'tom').map(tilDayjsVerdi).reduce(maximum, dayjs('2000-01-01'))
+                : mapTilSoknadProp(bSykmeldingGruppering, 'tom').map(tilDayjsVerdi).reduce(maximum, dayjs('2000-01-01'))
             return isGreater(verdiA, verdiB) ? -1 : 1
         }
     }

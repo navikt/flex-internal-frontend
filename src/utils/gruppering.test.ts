@@ -7,7 +7,7 @@ import {
     Soknad,
 } from '../queryhooks/useSoknader'
 
-import gruppertOgFiltrert from './gruppering'
+import gruppertOgFiltrert, { sortert, SykmeldingGruppering } from './gruppering'
 
 const lagSoknad = (overstyringer: Partial<BackendSoknad>): Soknad =>
     new Soknad({
@@ -65,3 +65,30 @@ describe('gruppertOgFiltrert', () => {
         expect(nøkler.some((nøkkel) => nøkkel.startsWith('arbeidsgiver_GHOST'))).toBe(true)
     })
 })
+
+describe('sortert', () => {
+    it('sorterer synkende pa tom for dayjs-verdier', () => {
+        const tidligSoknad = lagSoknad({ id: 'tidlig', sykmeldingId: 'syk-tidlig', tom: '2026-01-10' })
+        const senSoknad = lagSoknad({ id: 'sen', sykmeldingId: 'syk-sen', tom: '2026-01-20' })
+
+        const tidlig: [string, SykmeldingGruppering] = [
+            'syk-tidlig',
+            {
+                soknader: new Map([[tidligSoknad.id, { soknad: tidligSoknad, klippingAvSoknad: [] }]]),
+                klippingAvSykmelding: [],
+            },
+        ]
+
+        const sen: [string, SykmeldingGruppering] = [
+            'syk-sen',
+            {
+                soknader: new Map([[senSoknad.id, { soknad: senSoknad, klippingAvSoknad: [] }]]),
+                klippingAvSykmelding: [],
+            },
+        ]
+
+        expect(sortert(sen, tidlig, 'tom')).toBe(-1)
+        expect(sortert(tidlig, sen, 'tom')).toBe(1)
+    })
+})
+
