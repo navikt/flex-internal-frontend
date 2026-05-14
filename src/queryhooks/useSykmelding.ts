@@ -2,7 +2,7 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query'
 
 import { fetchJsonMedRequestId } from '../utils/fetch'
 
-import type { Sykmelding } from './useSykmeldinger'
+import { BackendSykmelding, mapTilSykmelding, Sykmelding } from './useSykmeldinger'
 
 export interface SykmeldingResponse {
     sykmelding: Sykmelding
@@ -20,16 +20,17 @@ export function useSykmelding(
             if (sykmeldingId === undefined) {
                 return null
             }
-            return fetchJsonMedRequestId<Sykmelding>(
+            return fetchJsonMedRequestId<BackendSykmelding>(
                 `/api/flex-sykmeldinger-backend/api/v1/flex/sykmeldinger/${sykmeldingId}`,
                 {
                     method: 'GET',
                     credentials: 'include',
                 },
             ).then((response) => {
+                const sykmelding = mapTilSykmelding(response)
                 return {
-                    sykmelding: response,
-                    fnr: response.pasient?.fnr,
+                    sykmelding,
+                    fnr: sykmelding.pasient?.fnr,
                 }
             })
         },

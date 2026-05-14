@@ -1,11 +1,14 @@
-import type { Sykmelding } from '../queryhooks/useSykmeldinger'
+import { Dayjs } from 'dayjs'
 
-import { dagerMellomUtcDatoer, datostrengTilUtcDato } from './dato'
+import type { Sykmelding } from '../queryhooks/useSykmeldinger'
 
 const MIN_AAR = 1900
 const MAKS_AAR = 2100
 const MAKS_DAGER_I_PERIODE = 3660
 const MAKS_DAGER_I_TIDSLINJE = 20000
+const MILLISEKUNDER_PER_DAG = 24 * 60 * 60 * 1000
+
+const utcTidForDato = (dato: Dayjs): number => Date.UTC(dato.year(), dato.month(), dato.date())
 
 export type UgyldigPeriodeArsak =
     | 'mangler-fom-eller-tom'
@@ -13,23 +16,20 @@ export type UgyldigPeriodeArsak =
     | 'aar-utenfor-grenser'
     | 'for-lang-eller-negativ-periode'
 
-export const finnUgyldigPeriodeArsak = (periode?: { fom?: string; tom?: string }): UgyldigPeriodeArsak | null => {
+export const finnUgyldigPeriodeArsak = (periode?: { fom?: Dayjs; tom?: Dayjs }): UgyldigPeriodeArsak | null => {
     if (!periode?.fom || !periode?.tom) return 'mangler-fom-eller-tom'
 
-    const fom = datostrengTilUtcDato(periode.fom)
-    const tom = datostrengTilUtcDato(periode.tom)
+    const fom = periode.fom.startOf('day')
+    const tom = periode.tom.startOf('day')
 
-    if (!fom || !tom) return 'ugyldig-datoformat'
+    if (!fom.isValid() || !tom.isValid()) return 'ugyldig-datoformat'
 
     const harGyldigAar =
-        fom.getUTCFullYear() >= MIN_AAR &&
-        fom.getUTCFullYear() <= MAKS_AAR &&
-        tom.getUTCFullYear() >= MIN_AAR &&
-        tom.getUTCFullYear() <= MAKS_AAR
+        fom.year() >= MIN_AAR && fom.year() <= MAKS_AAR && tom.year() >= MIN_AAR && tom.year() <= MAKS_AAR
 
     if (!harGyldigAar) return 'aar-utenfor-grenser'
 
-    const dagerMellom = dagerMellomUtcDatoer(fom, tom)
+    const dagerMellom = Math.floor((utcTidForDato(tom) - utcTidForDato(fom)) / MILLISEKUNDER_PER_DAG)
     const harGyldigVarighet = Number.isInteger(dagerMellom) && dagerMellom >= 0 && dagerMellom <= MAKS_DAGER_I_PERIODE
 
     if (!harGyldigVarighet) return 'for-lang-eller-negativ-periode'
@@ -51,19 +51,19 @@ export const hentDatospenn = (sykmeldinger: Sykmelding[]) => {
 
     if (perioder.length === 0) return null
 
-    const fomDatoer = perioder.map((periode) => datostrengTilUtcDato(periode.fom))
-    const tomDatoer = perioder.map((periode) => datostrengTilUtcDato(periode.tom))
+    const harUgyldigPeriode = perioder.some((periode) => !periode.fom.isValid() || !periode.tom.isValid())
+    if (harUgyldigPeriode) return null
 
-    if (fomDatoer.some((dato) => !dato) || tomDatoer.some((dato) => !dato)) return null
+    const fomDatoer = perioder.map((periode) => periode.fom).filter((dato) => dato.isValid())
+    const tomDatoer = perioder.map((periode) => periode.tom).filter((dato) => dato.isValid())
 
-    const gyldigeFomDatoer = fomDatoer.filter((dato): dato is Date => dato !== null)
-    const gyldigeTomDatoer = tomDatoer.filter((dato): dato is Date => dato !== null)
+    if (fomDatoer.length === 0 || tomDatoer.length === 0) return null
 
-    const startTid = Math.min(...gyldigeFomDatoer.map((dato) => dato.getTime()))
-    const sluttTid = Math.max(...gyldigeTomDatoer.map((dato) => dato.getTime()))
+    const startTid = Math.min(...fomDatoer.map((dato) => utcTidForDato(dato)))
+    const sluttTid = Math.max(...tomDatoer.map((dato) => utcTidForDato(dato)))
     const startDato = new Date(startTid)
     const sluttDato = new Date(sluttTid)
-    const antallDager = dagerMellomUtcDatoer(startDato, sluttDato)
+    const antallDager = Math.floor((sluttTid - startTid) / MILLISEKUNDER_PER_DAG)
 
     const harGyldigSpenn = Number.isInteger(antallDager) && antallDager >= 0 && antallDager <= MAKS_DAGER_I_TIDSLINJE
     if (!harGyldigSpenn) return null

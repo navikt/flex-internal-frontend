@@ -1,5 +1,4 @@
 import type { Sykmelding, SykmeldingStatusType } from '../../queryhooks/useSykmeldinger'
-import { datostrengTilUtcDato } from '../../utils/dato'
 
 export interface SykmeldingerPerArbeidsgiver {
     label: string
@@ -13,6 +12,9 @@ export interface PeriodeMedDatoer {
     startDato: Date
     sluttDato: Date
 }
+
+const dayjsTilUtcDato = (dato: { year: () => number; month: () => number; date: () => number }): Date =>
+    new Date(Date.UTC(dato.year(), dato.month(), dato.date()))
 
 export const sykmeldingStatus = (status?: SykmeldingStatusType): 'success' | 'warning' | 'info' => {
     if (!status) return 'info'
@@ -67,15 +69,13 @@ const dagNoklerForSykmelding = (sykmelding: Sykmelding): Set<string> => {
     const dagNokler = new Set<string>()
 
     sykmelding.sykmeldingsperioder.forEach((periode) => {
-        const fom = datostrengTilUtcDato(periode.fom)
-        const tom = datostrengTilUtcDato(periode.tom)
+        const fom = periode.fom.startOf('day')
+        const tom = periode.tom.startOf('day')
 
-        if (!fom || !tom || tom < fom) return
+        if (!fom.isValid() || !tom.isValid() || tom.isBefore(fom, 'day')) return
 
-        const dag = new Date(fom.getTime())
-        while (dag <= tom) {
-            dagNokler.add(dag.toISOString().slice(0, 10))
-            dag.setUTCDate(dag.getUTCDate() + 1)
+        for (let dag = fom; !dag.isAfter(tom, 'day'); dag = dag.add(1, 'day')) {
+            dagNokler.add(dag.format('YYYY-MM-DD'))
         }
     })
 
@@ -96,7 +96,7 @@ export const grupperSykmeldingerPaArbeidsgiver = (
 
     sykmeldinger
         .slice()
-        .sort((a, b) => a.mottattTidspunkt.localeCompare(b.mottattTidspunkt))
+        .sort((a, b) => a.mottattTidspunkt.valueOf() - b.mottattTidspunkt.valueOf())
         .forEach((sykmelding) => {
             const arbeidsgiverId = arbeidsgiverIdForSykmelding(sykmelding)
             const arbeidsgiverNavn = arbeidsgiverNavnForSykmelding(sykmelding)
@@ -139,12 +139,15 @@ export const grupperSykmeldingerPaArbeidsgiver = (
 
 export const perioderMedDatoer = (sykmelding: Sykmelding): PeriodeMedDatoer[] => {
     return sykmelding.sykmeldingsperioder.flatMap((periode) => {
-        const startDato = datostrengTilUtcDato(periode.fom)
-        const sluttDato = datostrengTilUtcDato(periode.tom)
-
-        if (!startDato || !sluttDato) return []
-
-        return [{ fom: periode.fom, tom: periode.tom, startDato, sluttDato }]
+        if (!periode.fom.isValid() || !periode.tom.isValid()) return []
+        return [
+            {
+                fom: periode.fom.format('YYYY-MM-DD'),
+                tom: periode.tom.format('YYYY-MM-DD'),
+                startDato: dayjsTilUtcDato(periode.fom),
+                sluttDato: dayjsTilUtcDato(periode.tom),
+            },
+        ]
     })
 }
 

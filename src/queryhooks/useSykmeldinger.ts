@@ -1,9 +1,13 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
+import dayjs, { Dayjs } from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 
 import { fetchJsonMedRequestId } from '../utils/fetch'
 
-interface SykmeldingerResponse {
-    sykmeldinger: Sykmelding[]
+dayjs.extend(customParseFormat)
+
+interface BackendSykmeldingerResponse {
+    sykmeldinger: BackendSykmelding[]
 }
 
 export function useSykmeldinger(fnr: string | undefined, enabled = true): UseQueryResult<Sykmelding[], Error> {
@@ -14,26 +18,65 @@ export function useSykmeldinger(fnr: string | undefined, enabled = true): UseQue
             if (fnr === undefined) {
                 return []
             }
-            return fetchJsonMedRequestId<SykmeldingerResponse>(
+            return fetchJsonMedRequestId<BackendSykmeldingerResponse>(
                 '/api/flex-sykmeldinger-backend/api/v1/flex/sykmeldinger',
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ fnr }),
                 },
-            ).then((data) => data.sykmeldinger)
+            ).then((data) => data.sykmeldinger.map(mapTilSykmelding))
         },
     })
 }
 
-export interface Sykmelding {
+export const mapTilSykmelding = (sykmelding: BackendSykmelding): Sykmelding => {
+    return {
+        ...sykmelding,
+        mottattTidspunkt: tilDayjsPaakrevd(sykmelding.mottattTidspunkt),
+        behandletTidspunkt: tilDayjsPaakrevd(sykmelding.behandletTidspunkt),
+        syketilfelleStartDato: tilDayjsDatoValgfri(sykmelding.syketilfelleStartDato),
+        signaturDato: tilDayjsValgfri(sykmelding.signaturDato),
+        kontaktMedPasient: {
+            ...sykmelding.kontaktMedPasient,
+            kontaktDato: tilDayjsDatoValgfri(sykmelding.kontaktMedPasient?.kontaktDato),
+        },
+        sykmeldingStatus: {
+            ...sykmelding.sykmeldingStatus,
+            timestamp: tilDayjsPaakrevd(sykmelding.sykmeldingStatus.timestamp),
+        },
+        sykmeldingsperioder: sykmelding.sykmeldingsperioder.map((periode) => ({
+            ...periode,
+            fom: tilDayjsDatoPaakrevd(periode.fom),
+            tom: tilDayjsDatoPaakrevd(periode.tom),
+        })),
+    }
+}
+
+const tilDayjsPaakrevd = (dato: string): Dayjs => dayjs(dato)
+
+const tilDayjsValgfri = (dato?: string | null): Dayjs | undefined => {
+    if (!dato) return undefined
+    const dayjsDato = dayjs(dato)
+    return dayjsDato.isValid() ? dayjsDato : undefined
+}
+
+const tilDayjsDatoPaakrevd = (dato: string): Dayjs => dayjs(dato, 'YYYY-MM-DD', true)
+
+const tilDayjsDatoValgfri = (dato?: string | null): Dayjs | undefined => {
+    if (!dato) return undefined
+    const dayjsDato = dayjs(dato, 'YYYY-MM-DD', true)
+    return dayjsDato.isValid() ? dayjsDato : undefined
+}
+
+export interface BackendSykmelding {
     arbeidsgiver: Arbeidsgiver
     behandletTidspunkt: string
     behandlingsutfall: Behandlingsutfall
     egenmeldt: boolean
     harRedusertArbeidsgiverperiode: boolean
     id: string
-    kontaktMedPasient: KontaktMedPasient
+    kontaktMedPasient: BackendKontaktMedPasient
     merknader: Merknad[] | null
     mottattTidspunkt: string
     papirsykmelding: boolean
@@ -41,6 +84,26 @@ export interface Sykmelding {
     signaturDato: string | null
     skjermesForPasient: boolean
     syketilfelleStartDato: string | null
+    sykmeldingStatus: BackendSykmeldingStatus
+    sykmeldingsperioder: BackendSykmeldingsperiode[]
+    utenlandskSykmelding: UtenlandskSykmelding | null
+}
+
+export interface Sykmelding {
+    arbeidsgiver: Arbeidsgiver
+    behandletTidspunkt: Dayjs
+    behandlingsutfall: Behandlingsutfall
+    egenmeldt: boolean
+    harRedusertArbeidsgiverperiode: boolean
+    id: string
+    kontaktMedPasient: KontaktMedPasient
+    merknader: Merknad[] | null
+    mottattTidspunkt: Dayjs
+    papirsykmelding: boolean
+    pasient: Pasient
+    signaturDato?: Dayjs
+    skjermesForPasient: boolean
+    syketilfelleStartDato?: Dayjs
     sykmeldingStatus: SykmeldingStatus
     sykmeldingsperioder: Sykmeldingsperiode[]
     utenlandskSykmelding: UtenlandskSykmelding | null
@@ -71,9 +134,20 @@ export interface Arbeidsgiver {
     stillingsprosent: number | null
 }
 
-export interface Sykmeldingsperiode {
+export interface BackendSykmeldingsperiode {
     fom: string
     tom: string
+    gradert: GradertPeriode | null
+    behandlingsdager: number | null
+    innspillTilArbeidsgiver: string | null
+    type: Periodetype
+    aktivitetIkkeMulig: AktivitetIkkeMulig | null
+    reisetilskudd: boolean
+}
+
+export interface Sykmeldingsperiode {
+    fom: Dayjs
+    tom: Dayjs
     gradert: GradertPeriode | null
     behandlingsdager: number | null
     innspillTilArbeidsgiver: string | null
@@ -105,6 +179,13 @@ export interface ArbeidsrelatertArsak {
 }
 
 export interface SykmeldingStatus {
+    statusEvent: SykmeldingStatusType
+    timestamp: Dayjs
+    arbeidsgiver: ArbeidsgiverStatus | null
+    brukerSvar: BrukerSvar | null
+}
+
+export interface BackendSykmeldingStatus {
     statusEvent: SykmeldingStatusType
     timestamp: string
     arbeidsgiver: ArbeidsgiverStatus | null
@@ -140,6 +221,11 @@ export interface FormSporsmalSvar<T> {
 }
 
 export interface KontaktMedPasient {
+    kontaktDato?: Dayjs
+    begrunnelseIkkeKontakt: string | null
+}
+
+export interface BackendKontaktMedPasient {
     kontaktDato: string | null
     begrunnelseIkkeKontakt: string | null
 }
