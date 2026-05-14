@@ -1,10 +1,8 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
-import dayjs, { Dayjs } from 'dayjs'
-import customParseFormat from 'dayjs/plugin/customParseFormat'
+import { Dayjs } from 'dayjs'
 
 import { fetchJsonMedRequestId } from '../utils/fetch'
-
-dayjs.extend(customParseFormat)
+import { tilDayjs, tilDayjsPaakrevd } from '../utils/dayjsValidering'
 
 interface BackendSykmeldingerResponse {
     sykmeldinger: BackendSykmelding[]
@@ -33,40 +31,24 @@ export function useSykmeldinger(fnr: string | undefined, enabled = true): UseQue
 export const mapTilSykmelding = (sykmelding: BackendSykmelding): Sykmelding => {
     return {
         ...sykmelding,
-        mottattTidspunkt: tilDayjsPaakrevd(sykmelding.mottattTidspunkt),
-        behandletTidspunkt: tilDayjsPaakrevd(sykmelding.behandletTidspunkt),
-        syketilfelleStartDato: tilDayjsDatoValgfri(sykmelding.syketilfelleStartDato),
-        signaturDato: tilDayjsValgfri(sykmelding.signaturDato),
+        mottattTidspunkt: tilDayjsPaakrevd(sykmelding.mottattTidspunkt, 'mottattTidspunkt'),
+        behandletTidspunkt: tilDayjsPaakrevd(sykmelding.behandletTidspunkt, 'behandletTidspunkt'),
+        syketilfelleStartDato: tilDayjs(sykmelding.syketilfelleStartDato, 'YYYY-MM-DD'),
+        signaturDato: tilDayjs(sykmelding.signaturDato),
         kontaktMedPasient: {
             ...sykmelding.kontaktMedPasient,
-            kontaktDato: tilDayjsDatoValgfri(sykmelding.kontaktMedPasient?.kontaktDato),
+            kontaktDato: tilDayjs(sykmelding.kontaktMedPasient?.kontaktDato, 'YYYY-MM-DD'),
         },
         sykmeldingStatus: {
             ...sykmelding.sykmeldingStatus,
-            timestamp: tilDayjsPaakrevd(sykmelding.sykmeldingStatus.timestamp),
+            timestamp: tilDayjsPaakrevd(sykmelding.sykmeldingStatus.timestamp, 'sykmeldingStatus.timestamp'),
         },
         sykmeldingsperioder: sykmelding.sykmeldingsperioder.map((periode) => ({
             ...periode,
-            fom: tilDayjsDatoPaakrevd(periode.fom),
-            tom: tilDayjsDatoPaakrevd(periode.tom),
+            fom: tilDayjsPaakrevd(periode.fom, 'sykmeldingsperioder.fom', 'YYYY-MM-DD'),
+            tom: tilDayjsPaakrevd(periode.tom, 'sykmeldingsperioder.tom', 'YYYY-MM-DD'),
         })),
     }
-}
-
-const tilDayjsPaakrevd = (dato: string): Dayjs => dayjs(dato)
-
-const tilDayjsValgfri = (dato?: string | null): Dayjs | undefined => {
-    if (!dato) return undefined
-    const dayjsDato = dayjs(dato)
-    return dayjsDato.isValid() ? dayjsDato : undefined
-}
-
-const tilDayjsDatoPaakrevd = (dato: string): Dayjs => dayjs(dato, 'YYYY-MM-DD', true)
-
-const tilDayjsDatoValgfri = (dato?: string | null): Dayjs | undefined => {
-    if (!dato) return undefined
-    const dayjsDato = dayjs(dato, 'YYYY-MM-DD', true)
-    return dayjsDato.isValid() ? dayjsDato : undefined
 }
 
 export interface BackendSykmelding {

@@ -3,6 +3,7 @@ import dayjs, { Dayjs } from 'dayjs'
 import nb from 'dayjs/locale/nb'
 
 import { fetchJsonMedRequestId } from '../utils/fetch'
+import { tilDayjs } from '../utils/dayjsValidering'
 
 dayjs.locale({
     ...nb,
@@ -159,12 +160,6 @@ export class Soknad {
         this.ventetidSykmeldingUuid = json.ventetidSykmeldingUuid
         this.meldingTilNavDagerFraSykmelding = mapTilDatoPerioder(json.meldingTilNavDagerFraSykmelding)
     }
-}
-
-export const tilDayjs = (dato?: string | null): Dayjs | undefined => {
-    if (!dato) return undefined
-    const dayjsDato = dayjs(dato)
-    return dayjsDato.isValid() ? dayjsDato : undefined
 }
 
 export const dayjsToDate = (dato?: string | Dayjs | null): Date | undefined =>

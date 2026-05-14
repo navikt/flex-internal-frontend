@@ -60,14 +60,11 @@ describe('validerSykmeldingsDatoer', () => {
         expect(validerSykmeldingsDatoer(sykmeldinger)).toHaveLength(sykmeldinger.length)
     })
 
-    it('filtrerer bort sykmelding med ugyldig datoformat', () => {
+    it('kaster feil ved ugyldig datoformat i sykmelding', () => {
         const sykmeldinger = kopierRaSykmeldinger()
         sykmeldinger[0].sykmeldingsperioder[0].fom = '2026-13-01'
 
-        const resultat = validerSykmeldingsDatoer(mapTilDomene(sykmeldinger))
-
-        expect(resultat).toHaveLength(sykmeldinger.length - 1)
-        expect(resultat.some((sykmelding) => sykmelding.id === sykmeldinger[0].id)).toBe(false)
+        expect(() => mapTilDomene(sykmeldinger)).toThrow('Ugyldig datoverdi i sykmeldingsperioder.fom')
     })
 
     it('filtrerer bort sykmelding med tom før fom', () => {
@@ -100,11 +97,11 @@ describe('hentDatospenn', () => {
         expect(datospenn?.sluttDato.toISOString().slice(0, 10)).toBe('2026-05-20')
     })
 
-    it('returnerer null når en periode har ugyldig dato', () => {
+    it('kaster feil nr en periode har ugyldig dato', () => {
         const sykmeldinger = kopierRaSykmeldinger()
         sykmeldinger[0].sykmeldingsperioder[0].tom = 'ikke-en-dato'
 
-        expect(hentDatospenn(mapTilDomene(sykmeldinger))).toBeNull()
+        expect(() => mapTilDomene(sykmeldinger)).toThrow('Ugyldig datoverdi i sykmeldingsperioder.tom')
     })
 
     it('returnerer null når tidslinjen blir ekstremt lang', () => {
