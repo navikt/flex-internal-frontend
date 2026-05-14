@@ -259,4 +259,3 @@ export interface DatoPeriode {
     fom: Dayjs
     tom: Dayjs
 }
-

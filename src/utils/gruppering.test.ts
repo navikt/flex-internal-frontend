@@ -22,9 +22,7 @@ const lagSoknad = (overstyringer: Partial<BackendSoknad>): Soknad =>
         ...overstyringer,
     })
 
-const lagKlipp = (
-    overstyringer: Partial<BackendKlippetSykepengesoknadRecord> = {},
-): KlippetSykepengesoknadRecord =>
+const lagKlipp = (overstyringer: Partial<BackendKlippetSykepengesoknadRecord> = {}): KlippetSykepengesoknadRecord =>
     new KlippetSykepengesoknadRecord({
         id: 'klipp-1',
         sykepengesoknadUuid: 'soknad-klippet',
@@ -91,4 +89,3 @@ describe('sortert', () => {
         expect(sortert(tidlig, sen, 'tom')).toBe(1)
     })
 })
-

@@ -31,7 +31,9 @@ describe('finnUgyldigPeriodeArsak', () => {
     it('returnerer aar-utenfor-grenser for år utenfor intervallet', () => {
         const periode = { fom: '1800-01-01', tom: '1800-01-10' }
 
-        expect(finnUgyldigPeriodeArsak({ fom: dayjs(periode.fom), tom: dayjs(periode.tom) })).toBe('aar-utenfor-grenser')
+        expect(finnUgyldigPeriodeArsak({ fom: dayjs(periode.fom), tom: dayjs(periode.tom) })).toBe(
+            'aar-utenfor-grenser',
+        )
     })
 
     it('returnerer for-lang-eller-negativ-periode for tom før fom', () => {
