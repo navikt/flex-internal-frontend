@@ -1,6 +1,6 @@
 import dayjs, { Dayjs } from 'dayjs'
 
-import { KlippetSykepengesoknadRecord, RSSoknadsperiode } from '../queryhooks/useSoknader'
+import { KlippetSykepengesoknadRecord, Soknadsperiode } from '../queryhooks/useSoknader'
 
 import { SykmeldingGruppering } from './gruppering'
 
@@ -32,27 +32,29 @@ export function perioderSomMangler(klipping: KlippetSykepengesoknadRecord) {
     })
 }
 
-export function minFom(perioder: { fom: string }[]) {
+export function minFom(perioder: { fom: string | Dayjs }[]) {
     let currentMin = '9999-12-31'
     perioder.forEach((p) => {
-        if (p.fom < currentMin) {
-            currentMin = p.fom
+        const fom = typeof p.fom === 'string' ? p.fom : p.fom.format('YYYY-MM-DD')
+        if (fom < currentMin) {
+            currentMin = fom
         }
     })
     return currentMin
 }
 
-export function maxTom(perioder: { tom: string }[]) {
+export function maxTom(perioder: { tom: string | Dayjs }[]) {
     let currentMax = '1111-01-01'
     perioder.forEach((p) => {
-        if (p.tom > currentMax) {
-            currentMax = p.tom
+        const tom = typeof p.tom === 'string' ? p.tom : p.tom.format('YYYY-MM-DD')
+        if (tom > currentMax) {
+            currentMax = tom
         }
     })
     return currentMax
 }
 
-function dayjsRange(from: string, to: string) {
+function dayjsRange(from: string | Dayjs, to: string | Dayjs) {
     const fom = dayjs(from)
     const tom = dayjs(to)
     const range: Dayjs[] = []
@@ -65,7 +67,7 @@ function dayjsRange(from: string, to: string) {
     return range
 }
 
-function dagErIPerioder(dag: Dayjs, perioder: RSSoknadsperiode[]) {
+function dagErIPerioder(dag: Dayjs, perioder: Soknadsperiode[] | null) {
     let iPeriode = false
 
     if (perioder === null) {
@@ -73,8 +75,8 @@ function dagErIPerioder(dag: Dayjs, perioder: RSSoknadsperiode[]) {
     }
 
     for (const periode of perioder) {
-        const fom = dayjs(periode.fom)
-        const tom = dayjs(periode.tom)
+        const fom = periode.fom
+        const tom = periode.tom
         if (dag >= fom && dag <= tom) {
             iPeriode = true
         }

@@ -240,7 +240,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                           start={sokFom}
                                           end={sokTom}
                                           status={timelinePeriodeStatus(sok.soknad.status)}
-                                          key={sok.soknad.tom}
+                                          key={sok.soknad.tom?.toISOString() ?? sok.soknad.id}
                                           isActive={erAktiv}
                                           onSelectPeriod={() => {
                                               if (aktivDrawerKildeId === kildeId) {

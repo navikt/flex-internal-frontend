@@ -140,7 +140,7 @@ export default function TidslinjeSykmelding({
                                                 start={sokFom}
                                                 end={sokTom}
                                                 status={timelinePeriodeStatus(sok.soknad.status)}
-                                                key={sok.soknad.tom}
+                                                key={sok.soknad.tom?.toISOString() ?? sok.soknad.id}
                                             >
                                                 <Detaljer objekt={sok.soknad} filter={filter} setFilter={setFilter} />
                                             </Timeline.Period>,

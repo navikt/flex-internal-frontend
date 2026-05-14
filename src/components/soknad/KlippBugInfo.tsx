@@ -14,14 +14,14 @@ function finnUglerIMosen(sykmeldingGruppering: Map<string, SykmeldingGruppering>
             }
             const forventetFom = minFom(sok.soknad.soknadPerioder)
             const forventetTom = maxTom(sok.soknad.soknadPerioder)
-            if (sok.soknad.fom !== forventetFom) {
+            if (sok.soknad.fom?.format('YYYY-MM-DD') !== forventetFom) {
                 ugler.push(
                     `Soknad ${sokId} har feil fom ${sok.soknad.fom}, perioder ${JSON.stringify(
                         sok.soknad.soknadPerioder,
                     )}`,
                 )
             }
-            if (sok.soknad.tom !== forventetTom) {
+            if (sok.soknad.tom?.format('YYYY-MM-DD') !== forventetTom) {
                 ugler.push(
                     `Soknad ${sokId} har feil tom ${sok.soknad.tom}, perioder ${JSON.stringify(
                         sok.soknad.soknadPerioder,

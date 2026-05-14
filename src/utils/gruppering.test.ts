@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+    BackendKlippetSykepengesoknadRecord,
+    BackendSoknad,
     KlippetSykepengesoknadRecord,
-    RSKlippetSykepengesoknadRecord,
-    RSSoknad,
     Soknad,
 } from '../queryhooks/useSoknader'
 
 import gruppertOgFiltrert from './gruppering'
 
-const lagSoknad = (overstyringer: Partial<RSSoknad>): Soknad =>
+const lagSoknad = (overstyringer: Partial<BackendSoknad>): Soknad =>
     new Soknad({
         id: 'soknad-1',
         sykmeldingId: 'sykmelding-1',
@@ -22,7 +22,9 @@ const lagSoknad = (overstyringer: Partial<RSSoknad>): Soknad =>
         ...overstyringer,
     })
 
-const lagKlipp = (overstyringer: Partial<RSKlippetSykepengesoknadRecord> = {}): KlippetSykepengesoknadRecord =>
+const lagKlipp = (
+    overstyringer: Partial<BackendKlippetSykepengesoknadRecord> = {},
+): KlippetSykepengesoknadRecord =>
     new KlippetSykepengesoknadRecord({
         id: 'klipp-1',
         sykepengesoknadUuid: 'soknad-klippet',
@@ -31,7 +33,7 @@ const lagKlipp = (overstyringer: Partial<RSKlippetSykepengesoknadRecord> = {}): 
         periodeFor: [{ fom: '2026-02-01', tom: '2026-02-10', grad: 100, sykmeldingstype: 'AKTIVITET_IKKE_MULIG' }],
         periodeEtter: null,
         ...overstyringer,
-    } as unknown as RSKlippetSykepengesoknadRecord)
+    } as unknown as BackendKlippetSykepengesoknadRecord)
 
 describe('gruppertOgFiltrert', () => {
     it('grupperer næringsdrivende separat fra klippet ghost-søknad', () => {

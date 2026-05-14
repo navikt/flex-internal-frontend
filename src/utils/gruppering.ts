@@ -36,7 +36,7 @@ function grupperPaSykmelding(
     const alleSoknaderIds = new Set(alleSoknader.map((s) => s.id))
 
     soknader
-        .sort((a, b) => dayjs(a.opprettetDato).diff(b.opprettetDato))
+        .sort((a, b) => (a.opprettetDato?.valueOf() ?? 0) - (b.opprettetDato?.valueOf() ?? 0))
         .forEach((sok) => {
             const key = sok.sykmeldingId!
             let sykmeldingKey = key
@@ -208,7 +208,7 @@ export function sortert(a: [string, SykmeldingGruppering], b: [string, Sykmeldin
 
     function isGreater(a: unknown, b: unknown): boolean {
         if (typeof a === 'string' && typeof b === 'string') return a > b
-        if (a instanceof Date && b instanceof Date) return a.getTime() > b.getTime()
+        if (dayjs.isDayjs(a) && dayjs.isDayjs(b)) return a.valueOf() > b.valueOf()
         return false
     }
 
@@ -219,17 +219,17 @@ export function sortert(a: [string, SykmeldingGruppering], b: [string, Sykmeldin
 
     switch (sortering) {
         case 'sykmelding skrevet': {
-            const verdiA = mapTilSoknadProp(aSykmeldingGruppering, 'sykmeldingUtskrevet').reduce(maximum, new Date(0))
-            const verdiB = mapTilSoknadProp(bSykmeldingGruppering, 'sykmeldingUtskrevet').reduce(maximum, new Date(0))
+            const verdiA = mapTilSoknadProp(aSykmeldingGruppering, 'sykmeldingUtskrevet').reduce(maximum, dayjs(0))
+            const verdiB = mapTilSoknadProp(bSykmeldingGruppering, 'sykmeldingUtskrevet').reduce(maximum, dayjs(0))
             return isGreater(verdiA, verdiB) ? -1 : 1
         }
         case 'opprettet': {
             const verdiA = aSykmeldingId.endsWith('_GHOST')
-                ? mapTilKlippProp(aSykmeldingGruppering, 'timestamp').reduce(maximum, new Date(0))
-                : mapTilSoknadProp(aSykmeldingGruppering, 'opprettetDato').reduce(maximum, new Date(0))
+                ? mapTilKlippProp(aSykmeldingGruppering, 'timestamp').reduce(maximum, dayjs(0))
+                : mapTilSoknadProp(aSykmeldingGruppering, 'opprettetDato').reduce(maximum, dayjs(0))
             const verdiB = bSykmeldingId.endsWith('_GHOST')
-                ? mapTilKlippProp(bSykmeldingGruppering, 'timestamp').reduce(maximum, new Date(0))
-                : mapTilSoknadProp(bSykmeldingGruppering, 'opprettetDato').reduce(maximum, new Date(0))
+                ? mapTilKlippProp(bSykmeldingGruppering, 'timestamp').reduce(maximum, dayjs(0))
+                : mapTilSoknadProp(bSykmeldingGruppering, 'opprettetDato').reduce(maximum, dayjs(0))
             return isGreater(verdiA, verdiB) ? -1 : 1
         }
         default:
