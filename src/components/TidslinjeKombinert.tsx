@@ -22,6 +22,7 @@ import {
 import ViktigeFeltForSoknad from './periodeinfo/ViktigeFeltForSoknad'
 import ViktigeFeltForSykmelding from './periodeinfo/ViktigeFeltForSykmelding'
 import DetaljerDrawer, {
+    DrawerInnhold,
     lagKlippetSoknadDrawerInnhold,
     lagSykmeldingDrawerInnhold,
     lagSoknadDrawerInnhold,
@@ -39,7 +40,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
     const [visningstilDato, setVisningstilDato] = useState<Date | null>(null)
     const [aktivPeriodeId, setAktivPeriodeId] = useState<string | null>(null)
     const [aktivDrawerKildeId, setAktivDrawerKildeId] = useState<string | null>(null)
-    const [drawerInnhold, setDrawerInnhold] = useState<ReturnType<typeof lagSykmeldingDrawerInnhold> | null>(null)
+    const [drawerInnhold, setDrawerInnhold] = useState<DrawerInnhold | null>(null)
 
     const gyldigeSykmeldinger = validerSykmeldingsDatoer(sykmeldinger)
     const filtrerteSykmeldinger = filtrerPaFilter(gyldigeSykmeldinger, filter)
@@ -137,9 +138,9 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                               } else {
                                   setAktivPeriodeId(sykmeldingAktivId)
                                   setAktivDrawerKildeId(sykmeldingAktivId)
-                                  setDrawerInnhold(
-                                      lagSykmeldingDrawerInnhold(sykmelding, periodeInfo, filter, setFilter),
-                                  )
+                                   setDrawerInnhold(
+                                       lagSykmeldingDrawerInnhold(sykmelding, periodeInfo),
+                                   )
                               }
                           }}
                       />,
@@ -192,14 +193,14 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                           key={k.tom}
                                           isActive={erAktiv}
                                           onSelectPeriod={() => {
-                                              if (aktivDrawerKildeId === kildeId) {
+                                               if (aktivDrawerKildeId === kildeId) {
                                                   setAktivPeriodeId(null)
                                                   setAktivDrawerKildeId(null)
                                                   setDrawerInnhold(null)
                                               } else {
                                                   setAktivPeriodeId(sykmeldingId)
                                                   setAktivDrawerKildeId(kildeId)
-                                                  setDrawerInnhold(lagKlippetSoknadDrawerInnhold(k, filter, setFilter))
+                                                  setDrawerInnhold(lagKlippetSoknadDrawerInnhold(k))
                                               }
                                           }}
                                       />
@@ -232,14 +233,12 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                               } else {
                                                   setAktivPeriodeId(sykmeldingId)
                                                   setAktivDrawerKildeId(kildeId)
-                                                  setDrawerInnhold(
-                                                      lagSoknadDrawerInnhold(
-                                                          sok.soknad,
-                                                          <ViktigeFeltForSoknad soknad={sok.soknad} />,
-                                                          filter,
-                                                          setFilter,
-                                                      ),
-                                                  )
+                                                   setDrawerInnhold(
+                                                       lagSoknadDrawerInnhold(
+                                                           sok.soknad,
+                                                           <ViktigeFeltForSoknad soknad={sok.soknad} />,
+                                                       ),
+                                                   )
                                               }
                                           }}
                                       />,
@@ -280,7 +279,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                               } else {
                                                   setAktivPeriodeId(sykmeldingId)
                                                   setAktivDrawerKildeId(kildeId)
-                                                  setDrawerInnhold(lagKlippetSoknadDrawerInnhold(k, filter, setFilter))
+                                                  setDrawerInnhold(lagKlippetSoknadDrawerInnhold(k))
                                               }
                                           }}
                                       />
@@ -348,6 +347,8 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
             )}
             <DetaljerDrawer
                 innhold={drawerInnhold}
+                filter={filter}
+                setFilter={setFilter}
                 onLukk={() => {
                     setAktivDrawerKildeId(null)
                     setDrawerInnhold(null)

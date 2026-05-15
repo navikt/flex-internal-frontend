@@ -50,7 +50,11 @@ export function ValgteFilter({
     return (
         <Chips>
             {filter.map((f) => (
-                <Chips.Removable data-color="accent" key={filterNokkel(f)} onClick={(e) => filterOnClick(e, f)}>
+                <Chips.Removable
+                    data-color={f.inkluder ? 'success' : 'danger'}
+                    key={filterNokkel(f)}
+                    onClick={(e) => filterOnClick(e, f)}
+                >
                     {f.prop + (f.inkluder ? ' = ' : ' != ') + f.verdi}
                 </Chips.Removable>
             ))}
@@ -73,13 +77,25 @@ export function FilterFelt({
     filter,
     setFilter,
     barn,
+    markerHeleRad = false,
 }: {
     prop: string
     verdi: unknown
     filter: Filter[]
     setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
     barn: React.ReactNode
+    markerHeleRad?: boolean
 }) {
+    const inkluderFarger = {
+        bakgrunn: '#ccffd8',
+        tekst: '#0f5132',
+    }
+
+    const ekskluderFarger = {
+        bakgrunn: '#ffd6d9',
+        tekst: '#842029',
+    }
+
     const inkluderFilter: Filter = {
         prop: prop,
         verdi: JSON.stringify(verdi),
@@ -107,19 +123,15 @@ export function FilterFelt({
     const markeringsstil: React.CSSProperties =
         markering === 'inkluder'
             ? {
-                  backgroundColor: 'var(--ax-bg-success-moderateA)',
-                  color: 'var(--ax-text-success)',
-                  borderColor: 'var(--ax-border-success-subtle)',
+                  backgroundColor: inkluderFarger.bakgrunn,
+                  color: inkluderFarger.tekst,
               }
             : markering === 'ekskluder'
               ? {
-                    backgroundColor: 'var(--ax-bg-danger-moderateA)',
-                    color: 'var(--ax-text-danger)',
-                    borderColor: 'var(--ax-border-danger-subtle)',
+                    backgroundColor: ekskluderFarger.bakgrunn,
+                    color: ekskluderFarger.tekst,
                 }
-              : {
-                    borderColor: 'transparent',
-                }
+              : {}
 
     function byttFilter() {
         setFilter((forrigeFilter: Filter[]) => {
@@ -144,16 +156,22 @@ export function FilterFelt({
         <button
             type="button"
             onClick={byttFilter}
-            className="inline-flex items-center gap-1 rounded text-left"
+            className={
+                markerHeleRad
+                    ? 'flex w-full items-start rounded text-left'
+                    : 'inline-flex items-center rounded text-left'
+            }
             style={{
                 ...markeringsstil,
-                borderStyle: 'solid',
-                borderWidth: '1px',
+                borderRadius: '0.35rem',
                 cursor: 'pointer',
+                paddingInline: markerHeleRad ? '0.55rem' : '0.45rem',
+                paddingBlock: markerHeleRad ? '0.3rem' : '0.2rem',
             }}
             aria-label={`Bytt filter for ${prop}`}
+            aria-pressed={markering !== 'ingen'}
         >
-            {barn}
+            <span className={markerHeleRad ? 'w-full' : undefined}>{barn}</span>
         </button>
     )
 }

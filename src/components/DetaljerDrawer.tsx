@@ -9,13 +9,20 @@ import { Filter } from './Filter'
 const Z_DRAWER = 99999
 const DRAWER_WIDTH = 500
 
-interface DrawerInnhold {
+type DrawerVariant =
+    | { type: 'sykmelding'; objekt: object; periodeInfo: React.ReactNode }
+    | { type: 'soknad'; objekt: object; periodeInfo: React.ReactNode }
+    | { type: 'klippetSoknad'; objekt: object }
+
+export interface DrawerInnhold {
     tittel: string
-    innhold: React.ReactNode
+    variant: DrawerVariant
 }
 
 interface DetaljerDrawerProps {
     innhold: DrawerInnhold | null
+    filter: Filter[]
+    setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
     onLukk: () => void
 }
 
@@ -45,52 +52,57 @@ function DetaljerMedToggle({
     )
 }
 
-export function lagSykmeldingDrawerInnhold(
-    sykmelding: object,
-    periodeInfo: React.ReactNode,
-    filter: Filter[],
-    setFilter: React.Dispatch<React.SetStateAction<Filter[]>>,
-): DrawerInnhold {
+export function lagSykmeldingDrawerInnhold(sykmelding: object, periodeInfo: React.ReactNode): DrawerInnhold {
     return {
         tittel: 'Sykmelding',
-        innhold: (
-            <div className="space-y-4">
-                {periodeInfo}
-                <DetaljerMedToggle objekt={sykmelding} filter={filter} setFilter={setFilter} />
-            </div>
-        ),
+        variant: { type: 'sykmelding', objekt: sykmelding, periodeInfo },
     }
 }
 
-export function lagSoknadDrawerInnhold(
-    soknad: object,
-    periodeInfo: React.ReactNode,
-    filter: Filter[],
-    setFilter: React.Dispatch<React.SetStateAction<Filter[]>>,
-): DrawerInnhold {
+export function lagSoknadDrawerInnhold(soknad: object, periodeInfo: React.ReactNode): DrawerInnhold {
     return {
         tittel: 'Søknad',
-        innhold: (
-            <div className="space-y-4">
-                {periodeInfo}
-                <DetaljerMedToggle objekt={soknad} filter={filter} setFilter={setFilter} />
-            </div>
-        ),
+        variant: { type: 'soknad', objekt: soknad, periodeInfo },
     }
 }
 
-export function lagKlippetSoknadDrawerInnhold(
-    klippetSoknad: object,
-    filter: Filter[],
-    setFilter: React.Dispatch<React.SetStateAction<Filter[]>>,
-): DrawerInnhold {
+export function lagKlippetSoknadDrawerInnhold(klippetSoknad: object): DrawerInnhold {
     return {
         tittel: 'Klippet søknad',
-        innhold: <Detaljer objekt={klippetSoknad} filter={filter} setFilter={setFilter} />,
+        variant: { type: 'klippetSoknad', objekt: klippetSoknad },
     }
 }
 
-export default function DetaljerDrawer({ innhold, onLukk }: DetaljerDrawerProps) {
+function DrawerInnholdRenderer({
+    variant,
+    filter,
+    setFilter,
+}: {
+    variant: DrawerVariant
+    filter: Filter[]
+    setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
+}) {
+    switch (variant.type) {
+        case 'sykmelding':
+            return (
+                <div className="space-y-4">
+                    {variant.periodeInfo}
+                    <DetaljerMedToggle objekt={variant.objekt} filter={filter} setFilter={setFilter} />
+                </div>
+            )
+        case 'soknad':
+            return (
+                <div className="space-y-4">
+                    {variant.periodeInfo}
+                    <DetaljerMedToggle objekt={variant.objekt} filter={filter} setFilter={setFilter} />
+                </div>
+            )
+        case 'klippetSoknad':
+            return <Detaljer objekt={variant.objekt} filter={filter} setFilter={setFilter} />
+    }
+}
+
+export default function DetaljerDrawer({ innhold, filter, setFilter, onLukk }: DetaljerDrawerProps) {
     const mounted = useSyncExternalStore(
         () => () => {},
         () => true,
@@ -139,7 +151,9 @@ export default function DetaljerDrawer({ innhold, onLukk }: DetaljerDrawerProps)
                 />
             </div>
             <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px', fontSize: '0.875rem' }}>
-                {innhold?.innhold}
+                {innhold && (
+                    <DrawerInnholdRenderer variant={innhold.variant} filter={filter} setFilter={setFilter} />
+                )}
             </div>
         </div>,
         document.body,
