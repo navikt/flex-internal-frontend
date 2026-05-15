@@ -12,6 +12,7 @@ import {
     CheckmarkCircleIcon,
     TimerStartIcon,
 } from '@navikt/aksel-icons'
+import { CopyButton } from '@navikt/ds-react'
 
 interface ViktigFelt {
     etikett: string
@@ -76,7 +77,13 @@ export default function ViktigePeriodefelt({ viktigeFelt, delperiodeTekster = []
                             <span className="flex shrink-0 items-center text-gray-700">{hentIkon(felt.etikett)}</span>
                             <div className="flex flex-col">
                                 <span className="font-medium text-gray-700 ">{felt.etikett}</span>
-                                <span className="text-gray-900">{felt.verdi}</span>
+                                <span className="flex items-center gap-1 text-gray-900">
+                                    {felt.verdi}
+                                    {(felt.etikett.toLowerCase().endsWith(' id') ||
+                                        felt.etikett.toLowerCase().startsWith('id')) && (
+                                        <CopyButton size="xsmall" copyText={String(felt.verdi)} />
+                                    )}
+                                </span>
                             </div>
                         </li>
                     ))}
