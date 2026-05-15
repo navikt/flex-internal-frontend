@@ -1,7 +1,7 @@
-import React, { useSyncExternalStore } from 'react'
+import React, { useSyncExternalStore, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Button, Heading } from '@navikt/ds-react'
-import { XMarkIcon } from '@navikt/aksel-icons'
+import { XMarkIcon, ChevronDownIcon, ChevronUpIcon } from '@navikt/aksel-icons'
 
 import { Detaljer } from './Detaljer'
 import { Filter } from './Filter'
@@ -19,6 +19,32 @@ interface DetaljerDrawerProps {
     onLukk: () => void
 }
 
+function DetaljerMedToggle({
+    objekt,
+    filter,
+    setFilter,
+}: {
+    objekt: object
+    filter: Filter[]
+    setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
+}) {
+    const [visDetaljer, setVisDetaljer] = useState(false)
+
+    return (
+        <div className="space-y-4">
+            <Button
+                variant="tertiary"
+                size="small"
+                onClick={() => setVisDetaljer(!visDetaljer)}
+                icon={visDetaljer ? <ChevronUpIcon aria-hidden /> : <ChevronDownIcon aria-hidden />}
+            >
+                {visDetaljer ? 'Skjul' : 'Vis'} fullstendige detaljer
+            </Button>
+            {visDetaljer && <Detaljer objekt={objekt} filter={filter} setFilter={setFilter} />}
+        </div>
+    )
+}
+
 export function lagSykmeldingDrawerInnhold(
     sykmelding: object,
     periodeInfo: React.ReactNode,
@@ -30,7 +56,7 @@ export function lagSykmeldingDrawerInnhold(
         innhold: (
             <div className="space-y-4">
                 {periodeInfo}
-                <Detaljer objekt={sykmelding} filter={filter} setFilter={setFilter} />
+                <DetaljerMedToggle objekt={sykmelding} filter={filter} setFilter={setFilter} />
             </div>
         ),
     }
@@ -47,7 +73,7 @@ export function lagSoknadDrawerInnhold(
         innhold: (
             <div className="space-y-4">
                 {periodeInfo}
-                <Detaljer objekt={soknad} filter={filter} setFilter={setFilter} />
+                <DetaljerMedToggle objekt={soknad} filter={filter} setFilter={setFilter} />
             </div>
         ),
     }

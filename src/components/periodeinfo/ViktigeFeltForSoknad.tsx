@@ -71,13 +71,11 @@ export default function ViktigeFeltForSoknad({ soknad }: Props) {
             : []),
         { etikett: 'Fra', verdi: formaterDato(forstePeriode) },
         { etikett: 'Til', verdi: formaterDato(sistePeriode) },
-        { etikett: 'Antall delperioder', verdi: perioder.length },
         { etikett: 'Antall kalenderdager', verdi: antallKalenderdager(forstePeriode, sistePeriode) },
     ]
 
     const delperiodeTekster = perioder.map(
-        (periode, indeks) =>
-            `Periode ${indeks + 1}: ${formaterDato(periode.startDato)} – ${formaterDato(periode.sluttDato)}`,
+        (periode, indeks) => `${indeks + 1}: ${formaterDato(periode.startDato)} – ${formaterDato(periode.sluttDato)}`,
     )
 
     return <ViktigePeriodefelt viktigeFelt={viktigeFelt} delperiodeTekster={delperiodeTekster} />
