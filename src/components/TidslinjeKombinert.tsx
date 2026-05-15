@@ -116,7 +116,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                   const ikon = harFlerePerioder ? <SplitHorizontalIcon aria-hidden /> : undefined
                   const periodeKey = `${sykmelding.id}-${forstePeriode.fom}-${sistePeriode.tom}`
 
-                  const periodeInfo = <ViktigeFeltForSykmelding perioder={perioder} />
+                  const periodeInfo = <ViktigeFeltForSykmelding sykmelding={sykmelding} perioder={perioder} />
 
                   const sykmeldingAktivId = sykmelding.id
 
