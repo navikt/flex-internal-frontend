@@ -18,9 +18,9 @@ import {
     perioderMedDatoer,
     sorterPerioder,
     sykmeldingStatus,
-    antallKalenderdager,
-    formaterDato,
 } from './sykmelding/sykmeldingTidslinjeUtils'
+import ViktigeFeltForSoknad from './periodeinfo/ViktigeFeltForSoknad'
+import ViktigeFeltForSykmelding from './periodeinfo/ViktigeFeltForSykmelding'
 import DetaljerDrawer, {
     lagKlippetSoknadDrawerInnhold,
     lagSykmeldingDrawerInnhold,
@@ -116,25 +116,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                   const ikon = harFlerePerioder ? <SplitHorizontalIcon aria-hidden /> : undefined
                   const periodeKey = `${sykmelding.id}-${forstePeriode.fom}-${sistePeriode.tom}`
 
-                  const periodeInfo = (
-                      <div className="space-y-1">
-                          <ul className="list-disc pl-5 text-sm">
-                              <li>{`Fra: ${formaterDato(forstePeriode.startDato)}`}</li>
-                              <li>{`Til: ${formaterDato(sistePeriode.sluttDato)}`}</li>
-                              <li>{`Antall delperioder: ${perioder.length}`}</li>
-                              <li>{`Antall kalenderdager: ${antallKalenderdager(forstePeriode.startDato, sistePeriode.sluttDato)}`}</li>
-                          </ul>
-                          {harFlerePerioder && (
-                              <ul className="list-disc pl-5 text-sm">
-                                  {perioder.map((periode, idx) => (
-                                      <li
-                                          key={idx}
-                                      >{`Periode ${idx + 1}: ${formaterDato(periode.startDato)} – ${formaterDato(periode.sluttDato)}`}</li>
-                                  ))}
-                              </ul>
-                          )}
-                      </div>
-                  )
+                  const periodeInfo = <ViktigeFeltForSykmelding perioder={perioder} />
 
                   const sykmeldingAktivId = sykmelding.id
 
@@ -251,7 +233,12 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                                   setAktivPeriodeId(sykmeldingId)
                                                   setAktivDrawerKildeId(kildeId)
                                                   setDrawerInnhold(
-                                                      lagSoknadDrawerInnhold(sok.soknad, filter, setFilter),
+                                                      lagSoknadDrawerInnhold(
+                                                          sok.soknad,
+                                                          <ViktigeFeltForSoknad soknad={sok.soknad} />,
+                                                          filter,
+                                                          setFilter,
+                                                      ),
                                                   )
                                               }
                                           }}

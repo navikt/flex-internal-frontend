@@ -38,12 +38,18 @@ export function lagSykmeldingDrawerInnhold(
 
 export function lagSoknadDrawerInnhold(
     soknad: object,
+    periodeInfo: React.ReactNode,
     filter: Filter[],
     setFilter: React.Dispatch<React.SetStateAction<Filter[]>>,
 ): DrawerInnhold {
     return {
         tittel: 'Søknad',
-        innhold: <Detaljer objekt={soknad} filter={filter} setFilter={setFilter} />,
+        innhold: (
+            <div className="space-y-4">
+                {periodeInfo}
+                <Detaljer objekt={soknad} filter={filter} setFilter={setFilter} />
+            </div>
+        ),
     }
 }
 
