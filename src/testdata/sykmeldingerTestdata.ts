@@ -1,7 +1,7 @@
 // Testdata for sykmeldinger
-import { Sykmelding } from '../queryhooks/useSykmeldinger'
+import { BackendSykmelding } from '../queryhooks/useSykmeldinger'
 
-export const sykmeldingerTestdata: Sykmelding[] = [
+export const sykmeldingerTestdata: BackendSykmelding[] = [
     {
         id: 'bc3c9e72-58c0-4d24-91ba-d712fdd8c712',
         pasient: {

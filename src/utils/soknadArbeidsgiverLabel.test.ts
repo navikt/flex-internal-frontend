@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+    BackendKlippetSykepengesoknadRecord,
+    BackendSoknad,
     KlippetSykepengesoknadRecord,
-    RSKlippetSykepengesoknadRecord,
-    RSSoknad,
     Soknad,
 } from '../queryhooks/useSoknader'
 
@@ -11,7 +11,7 @@ import { Klipp } from './overlapp'
 import { ArbeidsgiverGruppering, SoknadGruppering, SykmeldingGruppering } from './gruppering'
 import { arbeidsgiverLabelForSoknader } from './soknadArbeidsgiverLabel'
 
-const lagSoknad = (overstyringer: Partial<RSSoknad>): Soknad =>
+const lagSoknad = (overstyringer: Partial<BackendSoknad>): Soknad =>
     new Soknad({
         id: 'soknad-1',
         sykmeldingId: 'sykmelding-1',
@@ -25,7 +25,7 @@ const lagSoknad = (overstyringer: Partial<RSSoknad>): Soknad =>
         ...overstyringer,
     })
 
-const lagKlipp = (klippVariant: RSKlippetSykepengesoknadRecord['klippVariant']): Klipp => ({
+const lagKlipp = (klippVariant: BackendKlippetSykepengesoknadRecord['klippVariant']): Klipp => ({
     ...new KlippetSykepengesoknadRecord({
         id: 'klipp-1',
         sykepengesoknadUuid: 'soknad-klippet',

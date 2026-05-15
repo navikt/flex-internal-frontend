@@ -1,73 +1,84 @@
 import { describe, expect, it } from 'vitest'
+import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat'
 
 import { sykmeldingerTestdata } from '../testdata/sykmeldingerTestdata'
-import type { Sykmelding } from '../queryhooks/useSykmeldinger'
+import { BackendSykmelding, mapTilSykmelding, Sykmelding } from '../queryhooks/useSykmeldinger'
 
 import { finnUgyldigPeriodeArsak, hentDatospenn, validerSykmeldingsDatoer } from './sykmeldingValidering'
 
-const kopierSykmeldinger = (): Sykmelding[] => structuredClone(sykmeldingerTestdata)
+dayjs.extend(customParseFormat)
+
+const kopierRaSykmeldinger = (): BackendSykmelding[] => structuredClone(sykmeldingerTestdata)
+
+const mapTilDomene = (sykmeldinger: BackendSykmelding[]): Sykmelding[] => sykmeldinger.map(mapTilSykmelding)
 
 describe('finnUgyldigPeriodeArsak', () => {
     it('returnerer null for gyldig periode', () => {
         const periode = { fom: '2026-03-01', tom: '2026-03-31' }
 
-        expect(finnUgyldigPeriodeArsak(periode)).toBeNull()
+        expect(finnUgyldigPeriodeArsak({ fom: dayjs(periode.fom), tom: dayjs(periode.tom) })).toBeNull()
     })
 
     it('returnerer ugyldig-datoformat for ugyldig dato', () => {
         const periode = { fom: '2026-02-30', tom: '2026-03-31' }
 
-        expect(finnUgyldigPeriodeArsak(periode)).toBe('ugyldig-datoformat')
+        expect(finnUgyldigPeriodeArsak({ fom: dayjs(periode.fom, 'YYYY-MM-DD', true), tom: dayjs(periode.tom) })).toBe(
+            'ugyldig-datoformat',
+        )
     })
 
     it('returnerer aar-utenfor-grenser for år utenfor intervallet', () => {
         const periode = { fom: '1800-01-01', tom: '1800-01-10' }
 
-        expect(finnUgyldigPeriodeArsak(periode)).toBe('aar-utenfor-grenser')
+        expect(finnUgyldigPeriodeArsak({ fom: dayjs(periode.fom), tom: dayjs(periode.tom) })).toBe(
+            'aar-utenfor-grenser',
+        )
     })
 
     it('returnerer for-lang-eller-negativ-periode for tom før fom', () => {
         const periode = { fom: '2026-03-10', tom: '2026-03-01' }
 
-        expect(finnUgyldigPeriodeArsak(periode)).toBe('for-lang-eller-negativ-periode')
+        expect(finnUgyldigPeriodeArsak({ fom: dayjs(periode.fom), tom: dayjs(periode.tom) })).toBe(
+            'for-lang-eller-negativ-periode',
+        )
     })
 
     it('returnerer for-lang-eller-negativ-periode for ekstrem varighet', () => {
         const periode = { fom: '2026-01-01', tom: '2040-01-01' }
 
-        expect(finnUgyldigPeriodeArsak(periode)).toBe('for-lang-eller-negativ-periode')
+        expect(finnUgyldigPeriodeArsak({ fom: dayjs(periode.fom), tom: dayjs(periode.tom) })).toBe(
+            'for-lang-eller-negativ-periode',
+        )
     })
 })
 
 describe('validerSykmeldingsDatoer', () => {
     it('beholder alle gyldige sykmeldinger fra testdata', () => {
-        const sykmeldinger = kopierSykmeldinger()
+        const sykmeldinger = mapTilDomene(kopierRaSykmeldinger())
 
         expect(validerSykmeldingsDatoer(sykmeldinger)).toHaveLength(sykmeldinger.length)
     })
 
-    it('filtrerer bort sykmelding med ugyldig datoformat', () => {
-        const sykmeldinger = kopierSykmeldinger()
+    it('kaster feil ved ugyldig datoformat i sykmelding', () => {
+        const sykmeldinger = kopierRaSykmeldinger()
         sykmeldinger[0].sykmeldingsperioder[0].fom = '2026-13-01'
 
-        const resultat = validerSykmeldingsDatoer(sykmeldinger)
-
-        expect(resultat).toHaveLength(sykmeldinger.length - 1)
-        expect(resultat.some((sykmelding) => sykmelding.id === sykmeldinger[0].id)).toBe(false)
+        expect(() => mapTilDomene(sykmeldinger)).toThrow('Ugyldig datoverdi i sykmeldingsperioder.fom')
     })
 
     it('filtrerer bort sykmelding med tom før fom', () => {
-        const sykmeldinger = kopierSykmeldinger()
+        const sykmeldinger = kopierRaSykmeldinger()
         sykmeldinger[0].sykmeldingsperioder[0].fom = '2026-03-20'
         sykmeldinger[0].sykmeldingsperioder[0].tom = '2026-03-10'
 
-        const resultat = validerSykmeldingsDatoer(sykmeldinger)
+        const resultat = validerSykmeldingsDatoer(mapTilDomene(sykmeldinger))
 
         expect(resultat.some((sykmelding) => sykmelding.id === sykmeldinger[0].id)).toBe(false)
     })
 
     it('filtrerer bort sykmelding med tom id', () => {
-        const sykmeldinger = kopierSykmeldinger()
+        const sykmeldinger = mapTilDomene(kopierRaSykmeldinger())
         sykmeldinger[0].id = ' '
 
         const resultat = validerSykmeldingsDatoer(sykmeldinger)
@@ -78,7 +89,7 @@ describe('validerSykmeldingsDatoer', () => {
 
 describe('hentDatospenn', () => {
     it('finner minste fom og største tom fra gyldige sykmeldinger', () => {
-        const sykmeldinger = kopierSykmeldinger()
+        const sykmeldinger = mapTilDomene(kopierRaSykmeldinger())
 
         const datospenn = hentDatospenn(sykmeldinger)
 
@@ -86,18 +97,18 @@ describe('hentDatospenn', () => {
         expect(datospenn?.sluttDato.toISOString().slice(0, 10)).toBe('2026-05-20')
     })
 
-    it('returnerer null når en periode har ugyldig dato', () => {
-        const sykmeldinger = kopierSykmeldinger()
+    it('kaster feil nr en periode har ugyldig dato', () => {
+        const sykmeldinger = kopierRaSykmeldinger()
         sykmeldinger[0].sykmeldingsperioder[0].tom = 'ikke-en-dato'
 
-        expect(hentDatospenn(sykmeldinger)).toBeNull()
+        expect(() => mapTilDomene(sykmeldinger)).toThrow('Ugyldig datoverdi i sykmeldingsperioder.tom')
     })
 
     it('returnerer null når tidslinjen blir ekstremt lang', () => {
-        const sykmeldinger = kopierSykmeldinger()
+        const sykmeldinger = kopierRaSykmeldinger()
         sykmeldinger[0].sykmeldingsperioder[0].fom = '1900-01-01'
         sykmeldinger[0].sykmeldingsperioder[0].tom = '2099-12-31'
 
-        expect(hentDatospenn(sykmeldinger)).toBeNull()
+        expect(hentDatospenn(mapTilDomene(sykmeldinger))).toBeNull()
     })
 })

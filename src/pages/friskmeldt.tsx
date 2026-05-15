@@ -267,7 +267,8 @@ const Soknader = ({ fnr }: { fnr: string }) => {
                     {friskmeldtsoknader.map((soknad) => (
                         <Table.Row key={soknad.id}>
                             <Table.DataCell>{soknad.id}</Table.DataCell>
-                            <Table.DataCell>{soknad.fom}</Table.DataCell> <Table.DataCell>{soknad.tom}</Table.DataCell>
+                            <Table.DataCell>{soknad.fom?.format('YYYY-MM-DD')}</Table.DataCell>{' '}
+                            <Table.DataCell>{soknad.tom?.format('YYYY-MM-DD')}</Table.DataCell>
                             <Table.DataCell>{soknad.status}</Table.DataCell>
                             <Table.DataCell>
                                 {(soknad.status === 'NY' || soknad.status === 'FREMTIDIG') && (
