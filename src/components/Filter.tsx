@@ -72,51 +72,88 @@ export function FilterFelt({
     verdi,
     filter,
     setFilter,
+    barn,
 }: {
     prop: string
     verdi: unknown
     filter: Filter[]
     setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
+    barn: React.ReactNode
 }) {
-    const inkluder: Filter = {
+    const inkluderFilter: Filter = {
         prop: prop,
         verdi: JSON.stringify(verdi),
         inkluder: true,
     }
-    const ekskluder: Filter = {
+    const ekskluderFilter: Filter = {
         prop: prop,
         verdi: JSON.stringify(verdi),
         inkluder: false,
     }
 
-    function finnes(array: Filter[], b: Filter) {
-        return array.some((a) => a.prop === b.prop && a.verdi === b.verdi && a.inkluder === b.inkluder)
+    function erSammeFilter(a: Filter, b: Filter) {
+        return a.prop === b.prop && a.verdi === b.verdi && a.inkluder === b.inkluder
+    }
+
+    function finnesFilter(filterliste: Filter[], kandidat: Filter) {
+        return filterliste.some((filterelement) => erSammeFilter(filterelement, kandidat))
+    }
+
+    const inkluderer = finnesFilter(filter, inkluderFilter)
+    const ekskluderer = finnesFilter(filter, ekskluderFilter)
+
+    const markering = inkluderer ? 'inkluder' : ekskluderer ? 'ekskluder' : 'ingen'
+
+    const markeringsstil: React.CSSProperties =
+        markering === 'inkluder'
+            ? {
+                  backgroundColor: 'var(--ax-bg-success-moderateA)',
+                  color: 'var(--ax-text-success)',
+                  borderColor: 'var(--ax-border-success-subtle)',
+              }
+            : markering === 'ekskluder'
+              ? {
+                    backgroundColor: 'var(--ax-bg-danger-moderateA)',
+                    color: 'var(--ax-text-danger)',
+                    borderColor: 'var(--ax-border-danger-subtle)',
+                }
+              : {
+                    borderColor: 'transparent',
+                }
+
+    function byttFilter() {
+        setFilter((forrigeFilter: Filter[]) => {
+            const utenSammeFelt = forrigeFilter.filter(
+                (filterelement) =>
+                    !erSammeFilter(filterelement, inkluderFilter) && !erSammeFilter(filterelement, ekskluderFilter),
+            )
+
+            if (finnesFilter(forrigeFilter, inkluderFilter)) {
+                return [...utenSammeFelt, ekskluderFilter]
+            }
+
+            if (finnesFilter(forrigeFilter, ekskluderFilter)) {
+                return utenSammeFelt
+            }
+
+            return [...utenSammeFelt, inkluderFilter]
+        })
     }
 
     return (
-        <Chips className="inline-flex" size="small">
-            <Chips.Toggle
-                checkmark={false}
-                selected={finnes(filter, inkluder)}
-                onClick={() => {
-                    setFilter((prev: Filter[]) =>
-                        finnes(prev, inkluder) ? prev.filter((x) => !finnes([x], inkluder)) : [...prev, inkluder],
-                    )
-                }}
-            >
-                +
-            </Chips.Toggle>
-            <Chips.Toggle
-                checkmark={false}
-                selected={finnes(filter, ekskluder)}
-                onClick={() => {
-                    setFilter((prev: Filter[]) =>
-                        finnes(prev, ekskluder) ? prev.filter((x) => !finnes([x], ekskluder)) : [...prev, ekskluder],
-                    )
-                }}
-            >
-                -
-            </Chips.Toggle>
-        </Chips>
+        <button
+            type="button"
+            onClick={byttFilter}
+            className="inline-flex items-center gap-1 rounded text-left"
+            style={{
+                ...markeringsstil,
+                borderStyle: 'solid',
+                borderWidth: '1px',
+                cursor: 'pointer',
+            }}
+            aria-label={`Bytt filter for ${prop}`}
+        >
+            {barn}
+        </button>
     )
 }
