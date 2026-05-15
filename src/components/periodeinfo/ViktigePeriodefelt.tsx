@@ -52,16 +52,30 @@ const hentIkon = (etikett: string): React.ReactNode => {
     }
 }
 
+const hentFargeFraStatus = (status: string): string => {
+    const statusOpperstilt = status.toUpperCase()
+    if (['AVBRUTT', 'SLETTET', 'UTGAATT'].includes(statusOpperstilt)) {
+        return 'bg-ax-bg-warning-moderate'
+    }
+    if (['SENDT', 'KORRIGERT'].includes(statusOpperstilt)) {
+        return 'bg-ax-bg-success-moderate'
+    }
+    return 'bg-ax-bg-info-moderate'
+}
+
 export default function ViktigePeriodefelt({ viktigeFelt, delperiodeTekster = [] }: Props) {
     return (
         <div className="space-y-3">
             <div className="rounded-lg border border-blue-100 bg-blue-50 p-4">
                 <ul className="space-y-2">
                     {viktigeFelt.map((felt) => (
-                        <li key={felt.etikett} className="flex items-start gap-3 text-sm">
+                        <li
+                            key={felt.etikett}
+                            className={`flex items-start gap-3 text-sm p-2 ${felt.etikett == 'Status' ? hentFargeFraStatus(felt.verdi as string) + ' rounded-2xl' : ''}`}
+                        >
                             <span className="flex shrink-0 items-center text-gray-700">{hentIkon(felt.etikett)}</span>
                             <div className="flex flex-col">
-                                <span className="font-medium text-gray-700">{felt.etikett}</span>
+                                <span className="font-medium text-gray-700 ">{felt.etikett}</span>
                                 <span className="text-gray-900">{felt.verdi}</span>
                             </div>
                         </li>
