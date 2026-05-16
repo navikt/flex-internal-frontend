@@ -71,7 +71,11 @@ const renderVerdi = (
                         )
                     }
 
-                    return <li key={elementSti} className="mt-1">{renderVerdi(element, filter, setFilter, elementSti)}</li>
+                    return (
+                        <li key={elementSti} className="mt-1">
+                            {renderVerdi(element, filter, setFilter, elementSti)}
+                        </li>
+                    )
                 })}
             </ul>
         )

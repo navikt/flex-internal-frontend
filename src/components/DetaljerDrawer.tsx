@@ -151,9 +151,7 @@ export default function DetaljerDrawer({ innhold, filter, setFilter, onLukk }: D
                 />
             </div>
             <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px', fontSize: '0.875rem' }}>
-                {innhold && (
-                    <DrawerInnholdRenderer variant={innhold.variant} filter={filter} setFilter={setFilter} />
-                )}
+                {innhold && <DrawerInnholdRenderer variant={innhold.variant} filter={filter} setFilter={setFilter} />}
             </div>
         </div>,
         document.body,

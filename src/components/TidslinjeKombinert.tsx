@@ -138,9 +138,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                               } else {
                                   setAktivPeriodeId(sykmeldingAktivId)
                                   setAktivDrawerKildeId(sykmeldingAktivId)
-                                   setDrawerInnhold(
-                                       lagSykmeldingDrawerInnhold(sykmelding, periodeInfo),
-                                   )
+                                  setDrawerInnhold(lagSykmeldingDrawerInnhold(sykmelding, periodeInfo))
                               }
                           }}
                       />,
@@ -193,7 +191,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                           key={k.tom}
                                           isActive={erAktiv}
                                           onSelectPeriod={() => {
-                                               if (aktivDrawerKildeId === kildeId) {
+                                              if (aktivDrawerKildeId === kildeId) {
                                                   setAktivPeriodeId(null)
                                                   setAktivDrawerKildeId(null)
                                                   setDrawerInnhold(null)
@@ -233,12 +231,12 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                                               } else {
                                                   setAktivPeriodeId(sykmeldingId)
                                                   setAktivDrawerKildeId(kildeId)
-                                                   setDrawerInnhold(
-                                                       lagSoknadDrawerInnhold(
-                                                           sok.soknad,
-                                                           <ViktigeFeltForSoknad soknad={sok.soknad} />,
-                                                       ),
-                                                   )
+                                                  setDrawerInnhold(
+                                                      lagSoknadDrawerInnhold(
+                                                          sok.soknad,
+                                                          <ViktigeFeltForSoknad soknad={sok.soknad} />,
+                                                      ),
+                                                  )
                                               }
                                           }}
                                       />,
