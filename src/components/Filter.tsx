@@ -50,7 +50,11 @@ export function ValgteFilter({
     return (
         <Chips>
             {filter.map((f) => (
-                <Chips.Removable data-color="accent" key={filterNokkel(f)} onClick={(e) => filterOnClick(e, f)}>
+                <Chips.Removable
+                    data-color={f.inkluder ? 'success' : 'danger'}
+                    key={filterNokkel(f)}
+                    onClick={(e) => filterOnClick(e, f)}
+                >
                     {f.prop + (f.inkluder ? ' = ' : ' != ') + f.verdi}
                 </Chips.Removable>
             ))}
@@ -72,51 +76,102 @@ export function FilterFelt({
     verdi,
     filter,
     setFilter,
+    barn,
+    markerHeleRad = false,
 }: {
     prop: string
     verdi: unknown
     filter: Filter[]
     setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
+    barn: React.ReactNode
+    markerHeleRad?: boolean
 }) {
-    const inkluder: Filter = {
+    const inkluderFarger = {
+        bakgrunn: '#ccffd8',
+        tekst: '#0f5132',
+    }
+
+    const ekskluderFarger = {
+        bakgrunn: '#ffd6d9',
+        tekst: '#842029',
+    }
+
+    const inkluderFilter: Filter = {
         prop: prop,
         verdi: JSON.stringify(verdi),
         inkluder: true,
     }
-    const ekskluder: Filter = {
+    const ekskluderFilter: Filter = {
         prop: prop,
         verdi: JSON.stringify(verdi),
         inkluder: false,
     }
 
-    function finnes(array: Filter[], b: Filter) {
-        return array.some((a) => a.prop === b.prop && a.verdi === b.verdi && a.inkluder === b.inkluder)
+    function erSammeFilter(a: Filter, b: Filter) {
+        return a.prop === b.prop && a.verdi === b.verdi && a.inkluder === b.inkluder
+    }
+
+    function finnesFilter(filterliste: Filter[], kandidat: Filter) {
+        return filterliste.some((filterelement) => erSammeFilter(filterelement, kandidat))
+    }
+
+    const inkluderer = finnesFilter(filter, inkluderFilter)
+    const ekskluderer = finnesFilter(filter, ekskluderFilter)
+
+    const markering = inkluderer ? 'inkluder' : ekskluderer ? 'ekskluder' : 'ingen'
+
+    const markeringsstil: React.CSSProperties =
+        markering === 'inkluder'
+            ? {
+                  backgroundColor: inkluderFarger.bakgrunn,
+                  color: inkluderFarger.tekst,
+              }
+            : markering === 'ekskluder'
+              ? {
+                    backgroundColor: ekskluderFarger.bakgrunn,
+                    color: ekskluderFarger.tekst,
+                }
+              : {}
+
+    function byttFilter() {
+        setFilter((forrigeFilter: Filter[]) => {
+            const utenSammeFelt = forrigeFilter.filter(
+                (filterelement) =>
+                    !erSammeFilter(filterelement, inkluderFilter) && !erSammeFilter(filterelement, ekskluderFilter),
+            )
+
+            if (finnesFilter(forrigeFilter, inkluderFilter)) {
+                return [...utenSammeFelt, ekskluderFilter]
+            }
+
+            if (finnesFilter(forrigeFilter, ekskluderFilter)) {
+                return utenSammeFelt
+            }
+
+            return [...utenSammeFelt, inkluderFilter]
+        })
     }
 
     return (
-        <Chips className="inline-flex" size="small">
-            <Chips.Toggle
-                checkmark={false}
-                selected={finnes(filter, inkluder)}
-                onClick={() => {
-                    setFilter((prev: Filter[]) =>
-                        finnes(prev, inkluder) ? prev.filter((x) => !finnes([x], inkluder)) : [...prev, inkluder],
-                    )
-                }}
-            >
-                +
-            </Chips.Toggle>
-            <Chips.Toggle
-                checkmark={false}
-                selected={finnes(filter, ekskluder)}
-                onClick={() => {
-                    setFilter((prev: Filter[]) =>
-                        finnes(prev, ekskluder) ? prev.filter((x) => !finnes([x], ekskluder)) : [...prev, ekskluder],
-                    )
-                }}
-            >
-                -
-            </Chips.Toggle>
-        </Chips>
+        <button
+            type="button"
+            onClick={byttFilter}
+            className={
+                markerHeleRad
+                    ? 'flex w-full items-start rounded text-left'
+                    : 'inline-flex items-center rounded text-left'
+            }
+            style={{
+                ...markeringsstil,
+                borderRadius: '0.35rem',
+                cursor: 'pointer',
+                paddingInline: markerHeleRad ? '0.55rem' : '0.45rem',
+                paddingBlock: markerHeleRad ? '0.3rem' : '0.2rem',
+            }}
+            aria-label={`Bytt filter for ${prop}`}
+            aria-pressed={markering !== 'ingen'}
+        >
+            <span className={markerHeleRad ? 'w-full' : undefined}>{barn}</span>
+        </button>
     )
 }

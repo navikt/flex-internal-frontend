@@ -52,27 +52,30 @@ const renderVerdi = (
         if (verdi.length === 0) return '[]'
 
         return (
-            <ul className="ml-4 list-disc">
+            <ul className="ml-4 list-none">
                 {verdi.map((element, indeks) => {
                     const elementSti = `${sti}[${indeks}]`
 
                     if (erBladverdi(element)) {
                         return (
-                            <li key={elementSti}>
-                                <span className="inline-flex items-start gap-1">
-                                    <FilterFelt
-                                        prop={elementSti}
-                                        verdi={element}
-                                        filter={filter}
-                                        setFilter={setFilter}
-                                    />
-                                    <span>{formaterVerdi(element)}</span>
-                                </span>
+                            <li key={elementSti} className="mt-1">
+                                <FilterFelt
+                                    prop={elementSti}
+                                    verdi={element}
+                                    filter={filter}
+                                    setFilter={setFilter}
+                                    markerHeleRad
+                                    barn={<span>{formaterVerdi(element)}</span>}
+                                />
                             </li>
                         )
                     }
 
-                    return <li key={elementSti}>{renderVerdi(element, filter, setFilter, elementSti)}</li>
+                    return (
+                        <li key={elementSti} className="mt-1">
+                            {renderVerdi(element, filter, setFilter, elementSti)}
+                        </li>
+                    )
                 })}
             </ul>
         )
@@ -89,19 +92,26 @@ const renderVerdi = (
                     const bladverdi = erBladverdi(nestetVerdi)
 
                     return (
-                        <div key={nestetSti} className="mt-0.5">
-                            <div className="flex items-center gap-1">
-                                {bladverdi && (
-                                    <FilterFelt
-                                        prop={nestetSti}
-                                        verdi={nestetVerdi}
-                                        filter={filter}
-                                        setFilter={setFilter}
-                                    />
-                                )}
-                                <span className="font-semibold">{nøkkel}:</span>
-                                {bladverdi && renderVerdi(nestetVerdi, filter, setFilter, nestetSti)}
-                            </div>
+                        <div key={nestetSti} className="mt-1.5">
+                            {bladverdi ? (
+                                <FilterFelt
+                                    prop={nestetSti}
+                                    verdi={nestetVerdi}
+                                    filter={filter}
+                                    setFilter={setFilter}
+                                    markerHeleRad
+                                    barn={
+                                        <>
+                                            <span className="font-semibold">{nøkkel}:</span>{' '}
+                                            {renderVerdi(nestetVerdi, filter, setFilter, nestetSti)}
+                                        </>
+                                    }
+                                />
+                            ) : (
+                                <div className="flex items-center gap-1">
+                                    <span className="font-semibold">{nøkkel}:</span>
+                                </div>
+                            )}
                             {!bladverdi && renderVerdi(nestetVerdi, filter, setFilter, nestetSti)}
                         </div>
                     )
