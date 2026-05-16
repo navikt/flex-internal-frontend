@@ -39,6 +39,7 @@ const hentIkon = (etikett: string): React.ReactNode => {
         case 'Ventetid':
             return <ClockIcon aria-hidden fontSize="1.25rem" />
         case 'Fra':
+        case 'Opprettet dato':
             return <TimerStartIcon aria-hidden fontSize="1.25rem" />
         case 'Til':
             return <CheckmarkCircleIcon aria-hidden fontSize="1.25rem" />

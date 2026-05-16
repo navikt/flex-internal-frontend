@@ -38,6 +38,19 @@ const hentGradFraSoknadperioder = (soknad: Soknad): string => {
 }
 
 export default function ViktigeFeltForSoknad({ soknad }: Props) {
+    if (soknad.soknadstype === 'OPPHOLD_UTLAND') {
+        const opprettetDato = dayjsToDate(soknad.opprettetDato)
+        if (!opprettetDato) return null
+
+        const viktigeFelt = [
+            { etikett: 'ID', verdi: soknad.id },
+            { etikett: 'Status', verdi: statusTekst[soknad.status] || soknad.status },
+            { etikett: 'Opprettet dato', verdi: formaterDato(opprettetDato) },
+        ]
+
+        return <ViktigePeriodefelt viktigeFelt={viktigeFelt} />
+    }
+
     const perioder = soknad.soknadPerioder
         .map((periode) => {
             if (!periode.fom.isValid() || !periode.tom.isValid()) return null

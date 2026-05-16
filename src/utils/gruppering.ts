@@ -251,12 +251,33 @@ export function sortert(a: [string, SykmeldingGruppering], b: [string, Sykmeldin
     }
 }
 
+function leggTilOppholdUtland(soknader: Soknad[], filter: Filter[], gruppering: Map<string, ArbeidsgiverGruppering>) {
+    const oppholdUtlandSoknader = soknader.filter(
+        (sok) => sok.soknadstype === 'OPPHOLD_UTLAND' && passerAlleFilter(sok, filter),
+    )
+
+    if (oppholdUtlandSoknader.length === 0) return
+
+    const sykmeldinger = new Map<string, SykmeldingGruppering>()
+    oppholdUtlandSoknader.forEach((sok) => {
+        sykmeldinger.set(sok.id, {
+            soknader: new Map([[sok.id, { soknad: sok, klippingAvSoknad: [] }]]),
+            klippingAvSykmelding: [],
+        })
+    })
+
+    gruppering.set('opphold_utland', { sykmeldinger })
+}
+
 export default function gruppertOgFiltrert(
     filter: Filter[],
     soknader: Soknad[],
     klipp: KlippetSykepengesoknadRecord[],
 ): Map<string, ArbeidsgiverGruppering> {
-    const filtrerteSoknader = filtrer(filter, soknader)
-    const gruppertPaSykmelding = grupperPaSykmelding(filtrerteSoknader, klipp, soknader, filter)
-    return grupperPaArbeidsgiver(gruppertPaSykmelding)
+    const vanligeSoknader = soknader.filter((sok) => sok.soknadstype !== 'OPPHOLD_UTLAND')
+    const filtrerteSoknader = filtrer(filter, vanligeSoknader)
+    const gruppertPaSykmelding = grupperPaSykmelding(filtrerteSoknader, klipp, vanligeSoknader, filter)
+    const gruppering = grupperPaArbeidsgiver(gruppertPaSykmelding)
+    leggTilOppholdUtland(soknader, filter, gruppering)
+    return gruppering
 }

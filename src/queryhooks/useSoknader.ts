@@ -33,9 +33,9 @@ export function useSoknader(fnr: string | undefined, enabled = true): UseQueryRe
                     sykepengesoknadListe: [],
                     klippetSykepengesoknadRecord: [],
                 }
-                jsonResponse.sykepengesoknadListe
-                    .filter((soknad) => soknad.soknadstype !== 'OPPHOLD_UTLAND')
-                    .map((soknad) => response.sykepengesoknadListe.push(new Soknad(soknad)))
+                jsonResponse.sykepengesoknadListe.map((soknad) =>
+                    response.sykepengesoknadListe.push(new Soknad(soknad)),
+                )
                 jsonResponse.klippetSykepengesoknadRecord.map((klipp) =>
                     response.klippetSykepengesoknadRecord.push(new KlippetSykepengesoknadRecord(klipp)),
                 )
