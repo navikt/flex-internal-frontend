@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StethoscopeIcon, TasklistIcon, SplitHorizontalIcon } from '@navikt/aksel-icons'
+import { StethoscopeIcon, TasklistIcon, SplitHorizontalIcon, EarthIcon } from '@navikt/aksel-icons'
 import { BodyShort, Box, Timeline } from '@navikt/ds-react'
 
 import { KlippetSykepengesoknadRecord, Soknad, dayjsToDate } from '../queryhooks/useSoknader'
@@ -26,6 +26,7 @@ import DetaljerDrawer, {
     lagKlippetSoknadDrawerInnhold,
     lagSykmeldingDrawerInnhold,
     lagSoknadDrawerInnhold,
+    lagOppholdUtlandSoknadDrawerInnhold,
 } from './DetaljerDrawer'
 
 interface Props {
@@ -55,11 +56,12 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
     let eldsteFra: Date | null = datospennSyk?.startDato ?? null
     let nysteTil: Date | null = datospennSyk?.sluttDato ?? null
 
-    for (const { sykmeldinger: sykGrp } of soknaderGruppert.values()) {
+    for (const [arbId, { sykmeldinger: sykGrp }] of soknaderGruppert.entries()) {
         for (const { soknader: sokGrp } of sykGrp.values()) {
             for (const sok of sokGrp.values()) {
-                const fom = dayjsToDate(sok.soknad.fom!)
-                const tom = dayjsToDate(sok.soknad.tom!)
+                const erOppholdUtland = arbId === 'opphold_utland'
+                const fom = erOppholdUtland ? dayjsToDate(sok.soknad.opprettetDato) : dayjsToDate(sok.soknad.fom!)
+                const tom = erOppholdUtland ? dayjsToDate(sok.soknad.opprettetDato) : dayjsToDate(sok.soknad.tom!)
                 if (fom && (!eldsteFra || fom < eldsteFra)) eldsteFra = fom
                 if (tom && (!nysteTil || tom > nysteTil)) nysteTil = tom
             }
@@ -82,13 +84,16 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
         : filtrerteSykmeldinger.length
 
     const soknadAntall = aktivTidsvindu
-        ? [...soknaderGruppert.values()]
-              .flatMap((arb) => [...arb.sykmeldinger.values()].flatMap((syk) => [...syk.soknader.values()]))
-              .filter((sok) => {
-                  const fom = dayjsToDate(sok.soknad.fom!)
-                  const tom = dayjsToDate(sok.soknad.tom!)
-                  return fom && tom && erPeriodeInnenforTidsvindu(fom, tom, aktivTidsvindu.fra, aktivTidsvindu.til)
-              }).length
+        ? [...soknaderGruppert.entries()].flatMap(([arbId, arb]) =>
+              [...arb.sykmeldinger.values()].flatMap((syk) =>
+                  [...syk.soknader.values()].filter((sok) => {
+                      const erOppholdUtland = arbId === 'opphold_utland'
+                      const fom = erOppholdUtland ? dayjsToDate(sok.soknad.opprettetDato) : dayjsToDate(sok.soknad.fom!)
+                      const tom = erOppholdUtland ? dayjsToDate(sok.soknad.opprettetDato) : dayjsToDate(sok.soknad.tom!)
+                      return fom && tom && erPeriodeInnenforTidsvindu(fom, tom, aktivTidsvindu.fra, aktivTidsvindu.til)
+                  }),
+              ),
+          ).length
         : filtrerteSoknaderAntall
 
     const sykmeldingRader = aktivTidsvindu
@@ -161,6 +166,8 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
 
     const soknadRader = aktivTidsvindu
         ? Array.from(soknaderGruppert.entries()).flatMap(([arbId, arb]) => {
+              if (arbId === 'opphold_utland') return []
+
               const label = arbeidsgiverLabelForSoknader(arbId, arb, soknaderGruppert)
 
               const perioder_med_innhold = Array.from(arb.sykmeldinger.entries()).flatMap(([sykId, syk]) => {
@@ -300,6 +307,41 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
           })
         : []
 
+    const oppholdUtlandPins = aktivTidsvindu
+        ? Array.from(soknaderGruppert.get('opphold_utland')?.sykmeldinger.values() ?? []).flatMap((syk) =>
+              Array.from(syk.soknader.values()).flatMap((sok) => {
+                  const dato = dayjsToDate(sok.soknad.opprettetDato)
+                  if (!dato) return []
+                  const kildeId = sok.soknad.id
+                  return [
+                      <Timeline.Pin
+                          key={sok.soknad.id}
+                          date={dato}
+                          onClick={() => {
+                              if (aktivDrawerKildeId === kildeId) {
+                                  setAktivDrawerKildeId(null)
+                                  setDrawerInnhold(null)
+                              } else {
+                                  setAktivDrawerKildeId(kildeId)
+                                  setDrawerInnhold(
+                                      lagOppholdUtlandSoknadDrawerInnhold(
+                                          sok.soknad,
+                                          <ViktigeFeltForSoknad soknad={sok.soknad} />,
+                                      ),
+                                  )
+                              }
+                          }}
+                      >
+                          <span className="flex items-center gap-1 text-sm">
+                              <EarthIcon aria-hidden fontSize="1.25rem" />
+                              Opphold utland søknad
+                          </span>
+                      </Timeline.Pin>,
+                  ]
+              }),
+          )
+        : []
+
     const labelKlasse = 'kombinert-tidslinje-boks'
 
     return (
@@ -339,6 +381,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                             key={`sok-${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
                         >
                             {soknadRader}
+                            {oppholdUtlandPins}
                         </Timeline>
                     </Box>
                 </>

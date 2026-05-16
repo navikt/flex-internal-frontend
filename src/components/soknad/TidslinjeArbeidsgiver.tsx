@@ -38,11 +38,12 @@ export default function TidslinjeArbeidsgiver({
     let eldsteFra: Date | null = null
     let nysteTil: Date | null = null
 
-    for (const { sykmeldinger } of soknaderGruppertPaArbeidsgiver.values()) {
+    for (const [arbId, { sykmeldinger }] of soknaderGruppertPaArbeidsgiver.entries()) {
         for (const { soknader } of sykmeldinger.values()) {
             for (const sok of soknader.values()) {
-                const fom = dayjsToDate(sok.soknad.fom!)
-                const tom = dayjsToDate(sok.soknad.tom!)
+                const erOppholdUtland = arbId === 'opphold_utland'
+                const fom = erOppholdUtland ? dayjsToDate(sok.soknad.opprettetDato) : dayjsToDate(sok.soknad.fom!)
+                const tom = erOppholdUtland ? dayjsToDate(sok.soknad.opprettetDato) : dayjsToDate(sok.soknad.tom!)
                 if (fom && (!eldsteFra || fom < eldsteFra)) eldsteFra = fom
                 if (tom && (!nysteTil || tom > nysteTil)) nysteTil = tom
             }
@@ -64,7 +65,10 @@ export default function TidslinjeArbeidsgiver({
                 key={`${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
             >
                 {Array.from(soknaderGruppertPaArbeidsgiver.entries()).flatMap(([arbId, arb]) => {
-                    const label = arbeidsgiverLabelForSoknader(arbId, arb, soknaderGruppertPaArbeidsgiver)
+                    const erOppholdUtland = arbId === 'opphold_utland'
+                    const label = erOppholdUtland
+                        ? 'Opphold utland'
+                        : arbeidsgiverLabelForSoknader(arbId, arb, soknaderGruppertPaArbeidsgiver)
 
                     const perioder_med_innhold = Array.from(arb.sykmeldinger.entries()).flatMap(([sykId, syk]) => {
                         const erGhostSykmelding = sykId.endsWith('_GHOST')
@@ -92,7 +96,24 @@ export default function TidslinjeArbeidsgiver({
                                         </Timeline.Period>
                                     ))
 
-                                if (!erGhostSykmelding) {
+                                if (erOppholdUtland) {
+                                    const dato = dayjsToDate(sok.soknad.opprettetDato)
+                                    if (
+                                        dato &&
+                                        erPeriodeInnenforTidsvindu(dato, dato, aktivTidsvindu.fra, aktivTidsvindu.til)
+                                    ) {
+                                        klippingAvSoknad.push(
+                                            <Timeline.Period
+                                                start={dato}
+                                                end={dato}
+                                                status={timelinePeriodeStatus(sok.soknad.status)}
+                                                key={sok.soknad.id}
+                                            >
+                                                <Detaljer objekt={sok.soknad} filter={filter} setFilter={setFilter} />
+                                            </Timeline.Period>,
+                                        )
+                                    }
+                                } else if (!erGhostSykmelding) {
                                     const sokFom = dayjsToDate(sok.soknad.fom!)
                                     const sokTom = dayjsToDate(sok.soknad.tom!)
                                     if (

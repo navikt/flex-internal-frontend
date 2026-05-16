@@ -66,6 +66,13 @@ export function lagSoknadDrawerInnhold(soknad: object, periodeInfo: React.ReactN
     }
 }
 
+export function lagOppholdUtlandSoknadDrawerInnhold(soknad: object, periodeInfo: React.ReactNode): DrawerInnhold {
+    return {
+        tittel: 'Opphold utland søknad',
+        variant: { type: 'soknad', objekt: soknad, periodeInfo },
+    }
+}
+
 export function lagKlippetSoknadDrawerInnhold(klippetSoknad: object): DrawerInnhold {
     return {
         tittel: 'Klippet søknad',
