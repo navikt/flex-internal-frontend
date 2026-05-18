@@ -4,7 +4,7 @@ import { BodyShort, Box, Timeline } from '@navikt/ds-react'
 
 import { KlippetSykepengesoknadRecord, Soknad, dayjsToDate } from '../queryhooks/useSoknader'
 import type { Sykmelding } from '../queryhooks/useSykmeldinger'
-import gruppertOgFiltrert, { SoknadGruppering } from '../utils/gruppering'
+import gruppertOgFiltrert, { ArbeidsgiverGruppering, SoknadGruppering } from '../utils/gruppering'
 import { filtrerPaFilter } from '../utils/filterlogikk'
 import { hentDatospenn, validerSykmeldingsDatoer } from '../utils/sykmeldingValidering'
 import { beregnAktivTidsvindu, erPeriodeInnenforTidsvindu } from '../utils/tidslinjeUtils'
@@ -18,6 +18,7 @@ import {
     perioderMedDatoer,
     sorterPerioder,
     sykmeldingStatus,
+    SykmeldingerPerArbeidsgiver,
 } from './sykmelding/sykmeldingTidslinjeUtils'
 import ViktigeFeltForSoknad from './periodeinfo/ViktigeFeltForSoknad'
 import ViktigeFeltForSykmelding from './periodeinfo/ViktigeFeltForSykmelding'
@@ -33,6 +34,34 @@ interface Props {
     sykmeldinger: Sykmelding[]
     soknader: Soknad[]
     klipp: KlippetSykepengesoknadRecord[]
+}
+
+function sorterSykmeldingGrupperEtterSignaturDato(
+    entries: [string, SykmeldingerPerArbeidsgiver][],
+): [string, SykmeldingerPerArbeidsgiver][] {
+    return entries.slice().sort((a, b) => {
+        const maxA = Math.max(...a[1].sykmeldinger.map((s) => s.signaturDato?.valueOf() ?? 0))
+        const maxB = Math.max(...b[1].sykmeldinger.map((s) => s.signaturDato?.valueOf() ?? 0))
+        return maxB - maxA
+    })
+}
+
+function sorterSoknadGrupperEtterSignaturDato(
+    entries: [string, ArbeidsgiverGruppering][],
+): [string, ArbeidsgiverGruppering][] {
+    return entries.slice().sort((a, b) => {
+        const maxA = Math.max(
+            ...[...a[1].sykmeldinger.values()].flatMap((syk) =>
+                [...syk.soknader.values()].map((sg) => sg.soknad.sykmeldingUtskrevet?.valueOf() ?? 0),
+            ),
+        )
+        const maxB = Math.max(
+            ...[...b[1].sykmeldinger.values()].flatMap((syk) =>
+                [...syk.soknader.values()].map((sg) => sg.soknad.sykmeldingUtskrevet?.valueOf() ?? 0),
+            ),
+        )
+        return maxB - maxA
+    })
 }
 
 export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Props) {
@@ -98,75 +127,77 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
         : filtrerteSoknaderAntall
 
     const sykmeldingRader = aktivTidsvindu
-        ? Array.from(sykmeldingerGruppertPaArbeidsgiver.entries()).flatMap(([arbeidsgiverId, arbeidsgiver]) => {
-              const perioder_med_innhold = arbeidsgiver.sykmeldinger.flatMap((sykmelding) => {
-                  const status = sykmeldingStatus(sykmelding.sykmeldingStatus?.statusEvent)
-                  const perioder = sorterPerioder(perioderMedDatoer(sykmelding))
+        ? sorterSykmeldingGrupperEtterSignaturDato(Array.from(sykmeldingerGruppertPaArbeidsgiver.entries())).flatMap(
+              ([arbeidsgiverId, arbeidsgiver]) => {
+                  const perioder_med_innhold = arbeidsgiver.sykmeldinger.flatMap((sykmelding) => {
+                      const status = sykmeldingStatus(sykmelding.sykmeldingStatus?.statusEvent)
+                      const perioder = sorterPerioder(perioderMedDatoer(sykmelding))
 
-                  if (perioder.length === 0) return []
+                      if (perioder.length === 0) return []
 
-                  const forstePeriode = perioder[0]
-                  const sistePeriode = perioder[perioder.length - 1]
+                      const forstePeriode = perioder[0]
+                      const sistePeriode = perioder[perioder.length - 1]
 
-                  if (
-                      !erPeriodeInnenforTidsvindu(
-                          forstePeriode.startDato,
-                          sistePeriode.sluttDato,
-                          aktivTidsvindu.fra,
-                          aktivTidsvindu.til,
-                      )
-                  ) {
-                      return []
-                  }
+                      if (
+                          !erPeriodeInnenforTidsvindu(
+                              forstePeriode.startDato,
+                              sistePeriode.sluttDato,
+                              aktivTidsvindu.fra,
+                              aktivTidsvindu.til,
+                          )
+                      ) {
+                          return []
+                      }
 
-                  const harFlerePerioder = perioder.length > 1
-                  const ikon = harFlerePerioder ? <SplitHorizontalIcon aria-hidden /> : undefined
-                  const periodeKey = `${sykmelding.id}-${forstePeriode.fom}-${sistePeriode.tom}`
+                      const harFlerePerioder = perioder.length > 1
+                      const ikon = harFlerePerioder ? <SplitHorizontalIcon aria-hidden /> : undefined
+                      const periodeKey = `${sykmelding.id}-${forstePeriode.fom}-${sistePeriode.tom}`
 
-                  const periodeInfo = <ViktigeFeltForSykmelding sykmelding={sykmelding} perioder={perioder} />
+                      const periodeInfo = <ViktigeFeltForSykmelding sykmelding={sykmelding} perioder={perioder} />
 
-                  const sykmeldingAktivId = sykmelding.id
+                      const sykmeldingAktivId = sykmelding.id
+
+                      return [
+                          <Timeline.Period
+                              start={forstePeriode.startDato}
+                              end={sistePeriode.sluttDato}
+                              status={status}
+                              icon={ikon}
+                              className="ring-1 ring-inset ring-white/95"
+                              key={periodeKey}
+                              isActive={aktivPeriodeId === sykmeldingAktivId}
+                              onSelectPeriod={() => {
+                                  if (aktivDrawerKildeId === sykmeldingAktivId) {
+                                      setAktivPeriodeId(null)
+                                      setAktivDrawerKildeId(null)
+                                      setDrawerInnhold(null)
+                                  } else {
+                                      setAktivPeriodeId(sykmeldingAktivId)
+                                      setAktivDrawerKildeId(sykmeldingAktivId)
+                                      setDrawerInnhold(lagSykmeldingDrawerInnhold(sykmelding, periodeInfo))
+                                  }
+                              }}
+                          />,
+                      ]
+                  })
+
+                  if (perioder_med_innhold.length === 0) return []
 
                   return [
-                      <Timeline.Period
-                          start={forstePeriode.startDato}
-                          end={sistePeriode.sluttDato}
-                          status={status}
-                          icon={ikon}
-                          className="ring-1 ring-inset ring-white/95"
-                          key={periodeKey}
-                          isActive={aktivPeriodeId === sykmeldingAktivId}
-                          onSelectPeriod={() => {
-                              if (aktivDrawerKildeId === sykmeldingAktivId) {
-                                  setAktivPeriodeId(null)
-                                  setAktivDrawerKildeId(null)
-                                  setDrawerInnhold(null)
-                              } else {
-                                  setAktivPeriodeId(sykmeldingAktivId)
-                                  setAktivDrawerKildeId(sykmeldingAktivId)
-                                  setDrawerInnhold(lagSykmeldingDrawerInnhold(sykmelding, periodeInfo))
-                              }
-                          }}
-                      />,
+                      <Timeline.Row
+                          key={`syk-${arbeidsgiverId}`}
+                          label={arbeidsgiver.label}
+                          icon={<StethoscopeIcon aria-hidden fontSize="1.5rem" />}
+                      >
+                          {perioder_med_innhold}
+                      </Timeline.Row>,
                   ]
-              })
-
-              if (perioder_med_innhold.length === 0) return []
-
-              return [
-                  <Timeline.Row
-                      key={`syk-${arbeidsgiverId}`}
-                      label={arbeidsgiver.label}
-                      icon={<StethoscopeIcon aria-hidden fontSize="1.5rem" />}
-                  >
-                      {perioder_med_innhold}
-                  </Timeline.Row>,
-              ]
-          })
+              },
+          )
         : []
 
     const soknadRader = aktivTidsvindu
-        ? Array.from(soknaderGruppert.entries()).flatMap(([arbId, arb]) => {
+        ? sorterSoknadGrupperEtterSignaturDato(Array.from(soknaderGruppert.entries())).flatMap(([arbId, arb]) => {
               if (arbId === 'opphold_utland') return []
 
               const label = arbeidsgiverLabelForSoknader(arbId, arb, soknaderGruppert)
