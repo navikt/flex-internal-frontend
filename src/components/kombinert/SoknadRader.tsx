@@ -2,8 +2,7 @@ import React from 'react'
 import { TasklistIcon } from '@navikt/aksel-icons'
 import { Timeline } from '@navikt/ds-react'
 
-import { SoknadGruppering } from '../../utils/gruppering'
-import { ArbeidsgiverGruppering } from '../../utils/gruppering'
+import { ArbeidsgiverGruppering, SoknadGruppering } from '../../utils/gruppering'
 import { dayjsToDate } from '../../queryhooks/useSoknader'
 import { erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
 import { sorterSoknadGrupperEtterSignaturDato } from '../../utils/kombinertTidslinjeSortering'
@@ -22,13 +21,13 @@ interface Props {
     onPeriodeValgt: OnPeriodeValgt
 }
 
-export function lagSoknadRader({
+export const lagSoknadRader = ({
     soknaderGruppert,
     aktivTidsvindu,
     aktivPeriodeId,
     aktivDrawerKildeId,
     onPeriodeValgt,
-}: Props) {
+}: Props): React.ReactElement[] => {
     return sorterSoknadGrupperEtterSignaturDato(Array.from(soknaderGruppert.entries())).flatMap(([arbId, arb]) => {
         if (arbId === 'opphold_utland') return []
 

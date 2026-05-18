@@ -15,7 +15,11 @@ interface Props {
     onDrawerValgt: OnDrawerValgt
 }
 
-export function lagOppholdUtlandPins({ soknaderGruppert, aktivDrawerKildeId, onDrawerValgt }: Props) {
+export const lagOppholdUtlandPins = ({
+    soknaderGruppert,
+    aktivDrawerKildeId,
+    onDrawerValgt,
+}: Props): React.ReactElement[] => {
     return Array.from(soknaderGruppert.get('opphold_utland')?.sykmeldinger.values() ?? []).flatMap((syk) =>
         Array.from(syk.soknader.values()).flatMap((sok) => {
             const dato = dayjsToDate(sok.soknad.opprettetDato)

@@ -13,13 +13,13 @@ interface Props {
     onPeriodeValgt: OnPeriodeValgt
 }
 
-export default function SykmeldingTidslinje({
+const SykmeldingTidslinje = ({
     sykmeldingerGruppertPaArbeidsgiver,
     aktivTidsvindu,
     aktivPeriodeId,
     aktivDrawerKildeId,
     onPeriodeValgt,
-}: Props) {
+}: Props): React.ReactElement => {
     return (
         <Box
             borderColor="brand-blue"
@@ -45,3 +45,5 @@ export default function SykmeldingTidslinje({
         </Box>
     )
 }
+
+export default SykmeldingTidslinje

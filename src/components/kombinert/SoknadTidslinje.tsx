@@ -16,14 +16,14 @@ interface Props {
     onDrawerValgt: OnDrawerValgt
 }
 
-export default function SoknadTidslinje({
+const SoknadTidslinje = ({
     soknaderGruppert,
     aktivTidsvindu,
     aktivPeriodeId,
     aktivDrawerKildeId,
     onPeriodeValgt,
     onDrawerValgt,
-}: Props) {
+}: Props): React.ReactElement => {
     return (
         <Box
             borderColor="brand-blue"
@@ -54,3 +54,5 @@ export default function SoknadTidslinje({
         </Box>
     )
 }
+
+export default SoknadTidslinje

@@ -17,7 +17,7 @@ interface Props {
     klipp: KlippetSykepengesoknadRecord[]
 }
 
-export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Props) {
+const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.ReactElement => {
     const {
         filter,
         setFilter,
@@ -73,3 +73,5 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
         </div>
     )
 }
+
+export default TidslinjeKombinert

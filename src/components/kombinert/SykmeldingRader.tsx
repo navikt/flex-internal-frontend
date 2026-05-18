@@ -24,13 +24,13 @@ interface Props {
     onPeriodeValgt: OnPeriodeValgt
 }
 
-export function lagSykmeldingRader({
+export const lagSykmeldingRader = ({
     sykmeldingerGruppertPaArbeidsgiver,
     aktivTidsvindu,
     aktivPeriodeId,
     aktivDrawerKildeId,
     onPeriodeValgt,
-}: Props) {
+}: Props): React.ReactElement[] => {
     return sorterSykmeldingGrupperEtterSignaturDato(Array.from(sykmeldingerGruppertPaArbeidsgiver.entries())).flatMap(
         ([arbeidsgiverId, arbeidsgiver]) => {
             const perioderMedInnhold = arbeidsgiver.sykmeldinger.flatMap((sykmelding) => {
