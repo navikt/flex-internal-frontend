@@ -99,7 +99,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
             { type: 'UNDER_BEHANDLING', beskrivelse: 'Sykmeldingen blir manuelt behandlet fordi den er tilbakedatert' },
         ],
         utenlandskSykmelding: null,
-        signaturDato: null,
+        signaturDato: '2026-02-10',
     },
     {
         id: 'bc3c9e72-58c0-4d24-91ba-d712fdd8c713',
@@ -179,7 +179,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
             { type: 'UNDER_BEHANDLING', beskrivelse: 'Sykmeldingen blir manuelt behandlet fordi den er tilbakedatert' },
         ],
         utenlandskSykmelding: null,
-        signaturDato: null,
+        signaturDato: '2026-01-28',
     },
     {
         id: 'ac4d9e72-58c0-4d24-91ba-d712fdd8c714',
@@ -255,7 +255,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         papirsykmelding: false,
         harRedusertArbeidsgiverperiode: false,
         merknader: [{ type: 'UNDER_BEHANDLING', beskrivelse: 'Oppfølging av langvarig sykmelding' }],
-        signaturDato: null,
+        signaturDato: '2026-03-10',
         utenlandskSykmelding: null,
     },
     {
@@ -329,7 +329,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         papirsykmelding: false,
         harRedusertArbeidsgiverperiode: false,
         merknader: [{ type: 'TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER', beskrivelse: 'Tilbakedatert sykmelding' }],
-        signaturDato: null,
+        signaturDato: '2025-11-15',
         utenlandskSykmelding: null,
     },
     {
@@ -487,7 +487,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         papirsykmelding: false,
         harRedusertArbeidsgiverperiode: false,
         merknader: [],
-        signaturDato: null,
+        signaturDato: '2026-02-25',
         utenlandskSykmelding: null,
     },
 ]
