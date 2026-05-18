@@ -21,21 +21,37 @@ describe('ViktigePeriodefelt', () => {
             expect(screen.getByText('2024-01-31')).toBeInTheDocument()
         })
 
+        it('hvert felt rendres i en egen boks (kortbasert layout)', () => {
+            const { container } = render(
+                <ViktigePeriodefelt
+                    viktigeFelt={[
+                        { etikett: 'Fra', verdi: '2024-01-01' },
+                        { etikett: 'Til', verdi: '2024-01-31' },
+                    ]}
+                />,
+            )
+            const kortbokser = container.querySelectorAll('.rounded-lg.border')
+            expect(kortbokser).toHaveLength(2)
+        })
+
         it('viser CopyButton for felt som slutter på " id"', () => {
             const { container } = render(
                 <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Sykmelding ID', verdi: 'abc-123' }]} />,
             )
-            // CopyButton rendres som en button
             expect(container.querySelectorAll('button').length).toBeGreaterThan(0)
         })
 
         it('viser CopyButton for felt som starter med "ID"', () => {
-            const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'ID', verdi: 'uuid-456' }]} />)
+            const { container } = render(
+                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'ID', verdi: 'uuid-456' }]} />,
+            )
             expect(container.querySelectorAll('button').length).toBeGreaterThan(0)
         })
 
         it('viser ikke CopyButton for vanlige felt', () => {
-            const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'SENDT' }]} />)
+            const { container } = render(
+                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'SENDT' }]} />,
+            )
             expect(container.querySelectorAll('button')).toHaveLength(0)
         })
 
@@ -47,34 +63,51 @@ describe('ViktigePeriodefelt', () => {
 
     describe('statusfarger', () => {
         it('viser advarselsfarge for AVBRUTT-status', () => {
-            const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'AVBRUTT' }]} />)
-            const statusElement = container.querySelector('.bg-ax-bg-warning-moderate')
-            expect(statusElement).toBeInTheDocument()
+            const { container } = render(
+                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'AVBRUTT' }]} />,
+            )
+            expect(container.querySelector('.bg-ax-bg-warning-moderate')).toBeInTheDocument()
         })
 
         it('viser suksessfarge for SENDT-status', () => {
-            const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'SENDT' }]} />)
-            const statusElement = container.querySelector('.bg-ax-bg-success-moderate')
-            expect(statusElement).toBeInTheDocument()
+            const { container } = render(
+                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'SENDT' }]} />,
+            )
+            expect(container.querySelector('.bg-ax-bg-success-moderate')).toBeInTheDocument()
         })
 
         it('viser infofarge for ukjent status', () => {
-            const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'NY' }]} />)
-            const statusElement = container.querySelector('.bg-ax-bg-info-moderate')
-            expect(statusElement).toBeInTheDocument()
+            const { container } = render(
+                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'NY' }]} />,
+            )
+            expect(container.querySelector('.bg-ax-bg-info-moderate')).toBeInTheDocument()
         })
 
         it('statussammenligning er case-insensitiv', () => {
-            const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'sendt' }]} />)
+            const { container } = render(
+                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'sendt' }]} />,
+            )
             expect(container.querySelector('.bg-ax-bg-success-moderate')).toBeInTheDocument()
+        })
+
+        it('statusfelt har border-transparent i stedet for vanlig grå border', () => {
+            const { container } = render(
+                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'SENDT' }]} />,
+            )
+            expect(container.querySelector('.border-transparent')).toBeInTheDocument()
+        })
+
+        it('vanlig felt har border-gray-200', () => {
+            const { container } = render(
+                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Fra', verdi: '2024-01-01' }]} />,
+            )
+            expect(container.querySelector('.border-gray-200')).toBeInTheDocument()
         })
     })
 
     describe('delperiodeTekster', () => {
         it('viser ikke periodeliste ved 0 tekster', () => {
-            render(
-                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Fra', verdi: '2024-01-01' }]} delperiodeTekster={[]} />,
-            )
+            render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Fra', verdi: '2024-01-01' }]} delperiodeTekster={[]} />)
             expect(screen.queryByText('Perioder')).not.toBeInTheDocument()
         })
 
@@ -98,6 +131,17 @@ describe('ViktigePeriodefelt', () => {
             expect(screen.getByText('Perioder')).toBeInTheDocument()
             expect(screen.getByText('01.01 – 15.01')).toBeInTheDocument()
             expect(screen.getByText('16.01 – 31.01')).toBeInTheDocument()
+        })
+
+        it('periodeblokken er en egen kortboks i tillegg til feltene', () => {
+            const { container } = render(
+                <ViktigePeriodefelt
+                    viktigeFelt={[{ etikett: 'Fra', verdi: '2024-01-01' }]}
+                    delperiodeTekster={['01.01 – 15.01', '16.01 – 31.01']}
+                />,
+            )
+            // 1 felt + 1 periodeblokk = 2 kortbokser
+            expect(container.querySelectorAll('.rounded-lg.border')).toHaveLength(2)
         })
     })
 })
