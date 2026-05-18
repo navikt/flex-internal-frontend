@@ -1,11 +1,9 @@
-import dayjs from 'dayjs'
 import { logger } from '@navikt/next-logger'
 
 import { KlippetSykepengesoknadRecord, Soknad } from '../queryhooks/useSoknader'
 import { Filter } from '../components/Filter'
 
 import { sortert } from './soknadSortering'
-
 import { Klipp, maxTom, minFom, perioderSomMangler, sykmeldingDager, sykmeldingOverlappendeDager } from './overlapp'
 import { passerAlleFilter } from './filterlogikk'
 
