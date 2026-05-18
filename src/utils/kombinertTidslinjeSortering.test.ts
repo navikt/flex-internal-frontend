@@ -9,7 +9,7 @@ import type { ArbeidsgiverGruppering } from './gruppering'
 import {
     sorterSykmeldingGrupperEtterSignaturDato,
     sorterSoknadGrupperEtterSignaturDato,
-} from './kombinerTidslinjeSortering'
+} from './kombinertTidslinjeSortering'
 
 const lagSykGruppe = (id: string, signaturDato: string | null): [string, SykmeldingerPerArbeidsgiver] => [
     id,
@@ -20,13 +20,13 @@ const lagSykGruppe = (id: string, signaturDato: string | null): [string, Sykmeld
     },
 ]
 
-const lagSokGruppe = (id: string, sykmeldingUtskrevet: string | null): [string, ArbeidsgiverGruppering] => {
+const lagSokGruppe = (id: string, sykmeldingSignaturDato: string | null): [string, ArbeidsgiverGruppering] => {
     const soknad = new Soknad({
         id: `soknad-${id}`,
         soknadstype: 'SELVSTENDIGE_OG_FRILANSERE',
         status: 'SENDT',
         soknadPerioder: [],
-        sykmeldingUtskrevet: sykmeldingUtskrevet ?? undefined,
+        sykmeldingSignaturDato: sykmeldingSignaturDato ?? undefined,
     })
     return [
         id,
@@ -69,7 +69,7 @@ describe('sorterSykmeldingGrupperEtterSignaturDato', () => {
 })
 
 describe('sorterSoknadGrupperEtterSignaturDato', () => {
-    it('sorterer nyeste sykmeldingUtskrevet øverst', () => {
+    it('sorterer nyeste sykmeldingSignaturDato øverst', () => {
         const entries = [lagSokGruppe('gammel', '2026-01-01'), lagSokGruppe('ny', '2026-03-01')]
 
         const resultat = sorterSoknadGrupperEtterSignaturDato(entries)
@@ -78,7 +78,7 @@ describe('sorterSoknadGrupperEtterSignaturDato', () => {
         expect(resultat[1][0]).toBe('gammel')
     })
 
-    it('plasserer gruppe uten sykmeldingUtskrevet sist', () => {
+    it('plasserer gruppe uten sykmeldingSignaturDato sist', () => {
         const entries = [lagSokGruppe('uten-dato', null), lagSokGruppe('med-dato', '2026-02-01')]
 
         const resultat = sorterSoknadGrupperEtterSignaturDato(entries)

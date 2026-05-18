@@ -3,7 +3,7 @@ import { SplitHorizontalIcon, StethoscopeIcon } from '@navikt/aksel-icons'
 import { Timeline } from '@navikt/ds-react'
 
 import { erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
-import { sorterSykmeldingGrupperEtterSignaturDato } from '../../utils/kombinerTidslinjeSortering'
+import { sorterSykmeldingGrupperEtterSignaturDato } from '../../utils/kombinertTidslinjeSortering'
 import type { DrawerInnhold } from '../DetaljerDrawer'
 import { lagSykmeldingDrawerInnhold } from '../DetaljerDrawer'
 import ViktigeFeltForSykmelding from '../periodeinfo/ViktigeFeltForSykmelding'

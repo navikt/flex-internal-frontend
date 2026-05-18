@@ -18,12 +18,12 @@ export function sorterSoknadGrupperEtterSignaturDato(
     return entries.slice().sort((a, b) => {
         const maxA = Math.max(
             ...[...a[1].sykmeldinger.values()].flatMap((syk) =>
-                [...syk.soknader.values()].map((sg) => sg.soknad.sykmeldingUtskrevet?.valueOf() ?? 0),
+                [...syk.soknader.values()].map((sg) => sg.soknad.sykmeldingSignaturDato?.valueOf() ?? 0),
             ),
         )
         const maxB = Math.max(
             ...[...b[1].sykmeldinger.values()].flatMap((syk) =>
-                [...syk.soknader.values()].map((sg) => sg.soknad.sykmeldingUtskrevet?.valueOf() ?? 0),
+                [...syk.soknader.values()].map((sg) => sg.soknad.sykmeldingSignaturDato?.valueOf() ?? 0),
             ),
         )
         return maxB - maxA
