@@ -1,0 +1,99 @@
+import React from 'react'
+import { SplitHorizontalIcon, StethoscopeIcon } from '@navikt/aksel-icons'
+import { Timeline } from '@navikt/ds-react'
+
+import { erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
+import { sorterSykmeldingGrupperEtterSignaturDato } from '../../utils/kombinerTidslinjeSortering'
+import type { DrawerInnhold } from '../DetaljerDrawer'
+import { lagSykmeldingDrawerInnhold } from '../DetaljerDrawer'
+import ViktigeFeltForSykmelding from '../periodeinfo/ViktigeFeltForSykmelding'
+import {
+    perioderMedDatoer,
+    sorterPerioder,
+    sykmeldingStatus,
+    SykmeldingerPerArbeidsgiver,
+} from '../sykmelding/sykmeldingTidslinjeUtils'
+
+export type OnPeriodeValgt = (periodeId: string | null, kildeId: string | null, drawer: DrawerInnhold | null) => void
+
+interface Props {
+    sykmeldingerGruppertPaArbeidsgiver: Map<string, SykmeldingerPerArbeidsgiver>
+    aktivTidsvindu: { fra: Date; til: Date }
+    aktivPeriodeId: string | null
+    aktivDrawerKildeId: string | null
+    onPeriodeValgt: OnPeriodeValgt
+}
+
+export function lagSykmeldingRader({
+    sykmeldingerGruppertPaArbeidsgiver,
+    aktivTidsvindu,
+    aktivPeriodeId,
+    aktivDrawerKildeId,
+    onPeriodeValgt,
+}: Props) {
+    return sorterSykmeldingGrupperEtterSignaturDato(Array.from(sykmeldingerGruppertPaArbeidsgiver.entries())).flatMap(
+        ([arbeidsgiverId, arbeidsgiver]) => {
+            const perioderMedInnhold = arbeidsgiver.sykmeldinger.flatMap((sykmelding) => {
+                const status = sykmeldingStatus(sykmelding.sykmeldingStatus?.statusEvent)
+                const perioder = sorterPerioder(perioderMedDatoer(sykmelding))
+
+                if (perioder.length === 0) return []
+
+                const forstePeriode = perioder[0]
+                const sistePeriode = perioder[perioder.length - 1]
+
+                if (
+                    !erPeriodeInnenforTidsvindu(
+                        forstePeriode.startDato,
+                        sistePeriode.sluttDato,
+                        aktivTidsvindu.fra,
+                        aktivTidsvindu.til,
+                    )
+                ) {
+                    return []
+                }
+
+                const harFlerePerioder = perioder.length > 1
+                const ikon = harFlerePerioder ? <SplitHorizontalIcon aria-hidden /> : undefined
+                const periodeKey = `${sykmelding.id}-${forstePeriode.fom}-${sistePeriode.tom}`
+                const periodeInfo = <ViktigeFeltForSykmelding sykmelding={sykmelding} perioder={perioder} />
+                const sykmeldingAktivId = sykmelding.id
+
+                return [
+                    <Timeline.Period
+                        start={forstePeriode.startDato}
+                        end={sistePeriode.sluttDato}
+                        status={status}
+                        icon={ikon}
+                        className="ring-1 ring-inset ring-white/95"
+                        key={periodeKey}
+                        isActive={aktivPeriodeId === sykmeldingAktivId}
+                        onSelectPeriod={() => {
+                            if (aktivDrawerKildeId === sykmeldingAktivId) {
+                                onPeriodeValgt(null, null, null)
+                            } else {
+                                onPeriodeValgt(
+                                    sykmeldingAktivId,
+                                    sykmeldingAktivId,
+                                    lagSykmeldingDrawerInnhold(sykmelding, periodeInfo),
+                                )
+                            }
+                        }}
+                    />,
+                ]
+            })
+
+            if (perioderMedInnhold.length === 0) return []
+
+            return [
+                <Timeline.Row
+                    key={`syk-${arbeidsgiverId}`}
+                    label={arbeidsgiver.label}
+                    icon={<StethoscopeIcon aria-hidden fontSize="1.5rem" />}
+                >
+                    {perioderMedInnhold}
+                </Timeline.Row>,
+            ]
+        },
+    )
+}
