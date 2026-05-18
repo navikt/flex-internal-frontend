@@ -98,7 +98,7 @@ function DrawerInnholdRenderer({
                     <div className="flex h-full gap-6">
                         <div className="w-1/2 overflow-y-auto">{variant.periodeInfo}</div>
                         <div className="w-1/2 overflow-y-auto">
-                            <Detaljer objekt={variant.objekt} filter={filter} setFilter={setFilter} />
+                            <DetaljerMedToggle objekt={variant.objekt} filter={filter} setFilter={setFilter} />
                         </div>
                     </div>
                 )
