@@ -1,7 +1,7 @@
 import React, { useSyncExternalStore, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Button, Heading } from '@navikt/ds-react'
-import { XMarkIcon, SplitHorizontalIcon, SidebarRightIcon, ChevronDownIcon, ChevronUpIcon } from '@navikt/aksel-icons'
+import { XMarkIcon, SidebarRightIcon, ChevronDownIcon, ChevronUpIcon } from '@navikt/aksel-icons'
 
 import { Detaljer } from './Detaljer'
 import { Filter } from './Filter'
@@ -160,7 +160,7 @@ export default function DetaljerDrawer({
                     <Button
                         variant="tertiary"
                         size="small"
-                        icon={erBunn ? <SidebarRightIcon aria-hidden /> : <SplitHorizontalIcon aria-hidden />}
+                        icon={<SidebarRightIcon aria-hidden />}
                         onClick={() => setPlassering(erBunn ? 'hoyre' : 'bunn')}
                         aria-label={erBunn ? 'Bytt til høyre side' : 'Bytt til bunnen'}
                         title={erBunn ? 'Bytt til høyre side' : 'Bytt til bunnen'}
