@@ -7,7 +7,8 @@ import {
     Soknad,
 } from '../queryhooks/useSoknader'
 
-import gruppertOgFiltrert, { sortert, SykmeldingGruppering } from './gruppering'
+import gruppertOgFiltrert, { SykmeldingGruppering } from './gruppering'
+import { sortert } from './soknadSortering'
 
 const lagSoknad = (overstyringer: Partial<BackendSoknad>): Soknad =>
     new Soknad({

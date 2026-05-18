@@ -1,7 +1,8 @@
 import React, { Fragment, useState } from 'react'
 import { Timeline } from '@navikt/ds-react'
 
-import { ArbeidsgiverGruppering, SoknadGruppering, sortert, SykmeldingGruppering } from '../../utils/gruppering'
+import { ArbeidsgiverGruppering, SoknadGruppering, SykmeldingGruppering } from '../../utils/gruppering'
+import { sortert } from '../../utils/soknadSortering'
 import { dayjsToDate } from '../../queryhooks/useSoknader'
 import { beregnAktivTidsvindu, erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
 import { Filter } from '../Filter'
