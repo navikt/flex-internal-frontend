@@ -1,7 +1,7 @@
-import React, { useSyncExternalStore } from 'react'
+import React, { useSyncExternalStore, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Button, Heading } from '@navikt/ds-react'
-import { XMarkIcon, SplitHorizontalIcon, SidebarRightIcon } from '@navikt/aksel-icons'
+import { XMarkIcon, SplitHorizontalIcon, SidebarRightIcon, ChevronDownIcon, ChevronUpIcon } from '@navikt/aksel-icons'
 
 import { Detaljer } from './Detaljer'
 import { Filter } from './Filter'
@@ -53,6 +53,32 @@ export function lagKlippetSoknadDrawerInnhold(klippetSoknad: object): DrawerInnh
     }
 }
 
+function DetaljerMedToggle({
+    objekt,
+    filter,
+    setFilter,
+}: {
+    objekt: object
+    filter: Filter[]
+    setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
+}) {
+    const [visDetaljer, setVisDetaljer] = useState(false)
+
+    return (
+        <div className="space-y-4">
+            <Button
+                variant="tertiary"
+                size="small"
+                onClick={() => setVisDetaljer(!visDetaljer)}
+                icon={visDetaljer ? <ChevronUpIcon aria-hidden /> : <ChevronDownIcon aria-hidden />}
+            >
+                {visDetaljer ? 'Skjul' : 'Vis'} fullstendige detaljer
+            </Button>
+            {visDetaljer && <Detaljer objekt={objekt} filter={filter} setFilter={setFilter} />}
+        </div>
+    )
+}
+
 function DrawerInnholdRenderer({
     variant,
     filter,
@@ -80,7 +106,7 @@ function DrawerInnholdRenderer({
             return (
                 <div className="space-y-4">
                     {variant.periodeInfo}
-                    <Detaljer objekt={variant.objekt} filter={filter} setFilter={setFilter} />
+                    <DetaljerMedToggle objekt={variant.objekt} filter={filter} setFilter={setFilter} />
                 </div>
             )
         case 'klippetSoknad':
