@@ -58,7 +58,7 @@ export const lagSoknadRader = ({
                                     start={dayjsToDate(k.fom)!}
                                     end={dayjsToDate(k.tom)!}
                                     status="neutral"
-                                    key={k.tom}
+                                    key={k.id}
                                     isActive={erAktiv}
                                     onSelectPeriod={() => {
                                         if (aktivDrawerKildeId === kildeId) {
@@ -131,7 +131,7 @@ export const lagSoknadRader = ({
                                     start={dayjsToDate(k.fom)!}
                                     end={dayjsToDate(k.tom)!}
                                     status="neutral"
-                                    key={k.tom}
+                                    key={k.id}
                                     isActive={erAktiv}
                                     onSelectPeriod={() => {
                                         if (aktivDrawerKildeId === kildeId) {
