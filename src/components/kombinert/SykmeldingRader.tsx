@@ -1,17 +1,10 @@
 import React from 'react'
-import {
-    AirplaneIcon,
-    BandageFillIcon,
-    HourglassIcon,
-    MedicalThermometerIcon,
-    SectorChartIcon,
-    SplitHorizontalIcon,
-    StethoscopeIcon,
-} from '@navikt/aksel-icons'
+import { StethoscopeIcon } from '@navikt/aksel-icons'
 import { Timeline } from '@navikt/ds-react'
 
 import { erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
 import { sorterSykmeldingGrupperEtterSignaturDato } from '../../utils/kombinertTidslinjeSortering'
+import { ikonForSykmeldingPerioder } from '../../utils/tidslinjeIkonUtils'
 import type { DrawerInnhold } from '../DetaljerDrawer'
 import { lagSykmeldingDrawerInnhold } from '../DetaljerDrawer'
 import ViktigeFeltForSykmelding from '../periodeinfo/ViktigeFeltForSykmelding'
@@ -21,35 +14,8 @@ import {
     sykmeldingStatus,
     SykmeldingerPerArbeidsgiver,
 } from '../sykmelding/sykmeldingTidslinjeUtils'
-import type { PeriodeMedDatoer } from '../sykmelding/sykmeldingTidslinjeUtils'
-import type { Periodetype } from '../../types/backend/sykmelding'
 
 export type OnPeriodeValgt = (periodeId: string | null, kildeId: string | null, drawer: DrawerInnhold | null) => void
-
-function ikonForPeriodetype(type: Periodetype): React.ReactElement {
-    switch (type) {
-        case 'AKTIVITET_IKKE_MULIG':
-            return <BandageFillIcon aria-hidden />
-        case 'GRADERT':
-            return <SectorChartIcon aria-hidden />
-        case 'BEHANDLINGSDAGER':
-            return <MedicalThermometerIcon aria-hidden />
-        case 'AVVENTENDE':
-            return <HourglassIcon aria-hidden />
-        case 'REISETILSKUDD':
-            return <AirplaneIcon aria-hidden />
-    }
-}
-
-function ikonForSykmeldingPerioder(perioder: PeriodeMedDatoer[], sykmelding: {
-    sykmeldingsperioder: { type: Periodetype }[]
-}): React.ReactElement {
-    if (perioder.length > 1) {
-        return <SplitHorizontalIcon aria-hidden />
-    }
-    const type = sykmelding.sykmeldingsperioder[0]?.type
-    return type ? ikonForPeriodetype(type) : <BandageFillIcon aria-hidden />
-}
 
 interface Props {
     sykmeldingerGruppertPaArbeidsgiver: Map<string, SykmeldingerPerArbeidsgiver>
@@ -88,7 +54,7 @@ export const lagSykmeldingRader = ({
                     return []
                 }
 
-                const ikon = ikonForSykmeldingPerioder(perioder, sykmelding)
+                const ikon = ikonForSykmeldingPerioder(perioder.length, sykmelding.sykmeldingsperioder[0]?.type)
                 const periodeKey = `${sykmelding.id}-${forstePeriode.fom}-${sistePeriode.tom}`
                 const periodeInfo = <ViktigeFeltForSykmelding sykmelding={sykmelding} perioder={perioder} />
                 const sykmeldingAktivId = sykmelding.id

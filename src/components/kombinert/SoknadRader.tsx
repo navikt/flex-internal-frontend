@@ -1,21 +1,11 @@
 import React from 'react'
-import {
-    AirplaneIcon,
-    BriefcaseIcon,
-    GlobeIcon,
-    HandshakeIcon,
-    MedicalThermometerIcon,
-    PersonCheckmarkIcon,
-    PersonIcon,
-    ScissorsIcon,
-    TasklistIcon,
-} from '@navikt/aksel-icons'
+import { TasklistIcon } from '@navikt/aksel-icons'
 import { Timeline } from '@navikt/ds-react'
 
 import { ArbeidsgiverGruppering, SoknadGruppering } from '../../utils/gruppering'
 import { dayjsToDate } from '../../queryhooks/useSoknader'
-import type { Soknadstype } from '../../types/backend/soknad'
 import { erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
+import { ikonForSoknadstype, klippIkon } from '../../utils/tidslinjeIkonUtils'
 import { sorterSoknadGrupperEtterSignaturDato } from '../../utils/kombinertTidslinjeSortering'
 import { arbeidsgiverLabelForSoknader } from '../../utils/soknadArbeidsgiverLabel'
 import { lagKlippetSoknadDrawerInnhold, lagSoknadDrawerInnhold } from '../DetaljerDrawer'
@@ -23,27 +13,6 @@ import ViktigeFeltForSoknad from '../periodeinfo/ViktigeFeltForSoknad'
 import { timelinePeriodeStatus } from '../soknad/Tidslinje'
 
 import type { OnPeriodeValgt } from './SykmeldingRader'
-
-function ikonForSoknadstype(soknadstype: Soknadstype): React.ReactElement {
-    switch (soknadstype) {
-        case 'ARBEIDSTAKERE':
-        case 'ANNET_ARBEIDSFORHOLD':
-            return <BriefcaseIcon aria-hidden />
-        case 'SELVSTENDIGE_OG_FRILANSERE':
-            return <HandshakeIcon aria-hidden />
-        case 'ARBEIDSLEDIG':
-            return <PersonIcon aria-hidden />
-        case 'BEHANDLINGSDAGER':
-            return <MedicalThermometerIcon aria-hidden />
-        case 'REISETILSKUDD':
-        case 'GRADERT_REISETILSKUDD':
-            return <AirplaneIcon aria-hidden />
-        case 'OPPHOLD_UTLAND':
-            return <GlobeIcon aria-hidden />
-        case 'FRISKMELDT_TIL_ARBEIDSFORMIDLING':
-            return <PersonCheckmarkIcon aria-hidden />
-    }
-}
 
 interface Props {
     soknaderGruppert: Map<string, ArbeidsgiverGruppering>
@@ -91,7 +60,7 @@ export const lagSoknadRader = ({
                                     end={dayjsToDate(k.tom)!}
                                     status="neutral"
                                     key={k.id}
-                                    icon={<ScissorsIcon aria-hidden />}
+                                    icon={klippIkon}
                                     isActive={erAktiv}
                                     onSelectPeriod={() => {
                                         if (aktivDrawerKildeId === kildeId) {
@@ -166,7 +135,7 @@ export const lagSoknadRader = ({
                                     end={dayjsToDate(k.tom)!}
                                     status="neutral"
                                     key={k.id}
-                                    icon={<ScissorsIcon aria-hidden />}
+                                    icon={klippIkon}
                                     isActive={erAktiv}
                                     onSelectPeriod={() => {
                                         if (aktivDrawerKildeId === kildeId) {
