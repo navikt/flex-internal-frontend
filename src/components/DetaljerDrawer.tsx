@@ -89,11 +89,12 @@ export default function DetaljerDrawer({ innhold, filter, setFilter, onLukk }: D
     return createPortal(
         <div
             className={[
-                'fixed bottom-0 left-0 z-[99999] flex h-1/2 w-full flex-col bg-white',
+                'fixed bottom-0 left-0 z-[99999] flex h-1/2 w-full flex-col',
                 'border-t border-gray-200 shadow-[0_-4px_24px_rgba(0,0,0,0.12)]',
                 'transition-transform duration-300 ease-in-out',
                 erApen ? 'translate-y-0' : 'translate-y-full',
             ].join(' ')}
+            style={{ backgroundColor: '#ffffff' }}
             role="dialog"
             aria-modal="true"
             aria-label={innhold?.tittel ?? 'Detaljer'}
