@@ -42,6 +42,7 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
     const [aktivPeriodeId, setAktivPeriodeId] = useState<string | null>(null)
     const [aktivDrawerKildeId, setAktivDrawerKildeId] = useState<string | null>(null)
     const [drawerInnhold, setDrawerInnhold] = useState<DrawerInnhold | null>(null)
+    const [drawerPlassering, setDrawerPlassering] = useState<'bunn' | 'hoyre'>('bunn')
 
     const gyldigeSykmeldinger = validerSykmeldingsDatoer(sykmeldinger)
     const filtrerteSykmeldinger = filtrerPaFilter(gyldigeSykmeldinger, filter)
@@ -390,6 +391,8 @@ export default function TidslinjeKombinert({ sykmeldinger, soknader, klipp }: Pr
                 innhold={drawerInnhold}
                 filter={filter}
                 setFilter={setFilter}
+                plassering={drawerPlassering}
+                setPlassering={setDrawerPlassering}
                 onLukk={() => {
                     setAktivDrawerKildeId(null)
                     setDrawerInnhold(null)
