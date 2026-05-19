@@ -43,7 +43,11 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <ValgteFilter filter={filter} setFilter={setFilter} />
             <BodyShort className="font-semibold">{`${sykmeldingAntall} sykmelding(er) · ${soknadAntall} søknad(er)`}</BodyShort>
-            <VelgZoomPeriode setFraDato={setVisningsFraDato} setTilDato={setVisningstilDato} maxTilDato={nysteTil ?? undefined} />
+            <VelgZoomPeriode
+                setFraDato={setVisningsFraDato}
+                setTilDato={setVisningstilDato}
+                maxTilDato={nysteTil ?? undefined}
+            />
             {aktivTidsvindu && (
                 <>
                     <SykmeldingTidslinje
