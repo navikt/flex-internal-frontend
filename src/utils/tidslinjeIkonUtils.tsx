@@ -140,7 +140,7 @@ export const arbeidssituasjonTekst: Record<string, string> = {
 }
 
 export function ikonForArbeidssituasjon(arbeidssituasjon: string): React.ReactElement {
-    switch (arbeidssituasjon) {
+    switch (normaliserArbeidssituasjon(arbeidssituasjon)) {
         case 'ARBEIDSTAKER':
             return <BriefcaseIcon aria-hidden />
         case 'NAERINGSDRIVENDE':
@@ -159,10 +159,12 @@ export function ikonForArbeidssituasjon(arbeidssituasjon: string): React.ReactEl
 }
 
 export function arbeidssituasjonTilTekst(arbeidssituasjon: string): string {
-    return (
-        arbeidssituasjonTekst[arbeidssituasjon] ??
-        arbeidssituasjon.charAt(0).toUpperCase() + arbeidssituasjon.slice(1).toLowerCase()
-    )
+    const nøkkel = normaliserArbeidssituasjon(arbeidssituasjon)
+    return arbeidssituasjonTekst[nøkkel] ?? nøkkel.charAt(0).toUpperCase() + nøkkel.slice(1).toLowerCase()
+}
+
+function normaliserArbeidssituasjon(arbeidssituasjon: string): string {
+    return arbeidssituasjon.replace(/Æ/g, 'AE').replace(/Ø/g, 'O').replace(/Å/g, 'AA')
 }
 
 const soknadsmodifikatorTekst: Partial<Record<Soknadstype, string>> = {
