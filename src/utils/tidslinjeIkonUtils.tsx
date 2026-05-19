@@ -57,22 +57,7 @@ function primærIkonForSoknad(arbeidssituasjon: string | undefined, soknadstype:
     if (soknadstype === 'FRISKMELDT_TIL_ARBEIDSFORMIDLING') return <BriefcaseClockIcon aria-hidden />
     if (soknadstype === 'ANNET_ARBEIDSFORHOLD') return <CompassIcon aria-hidden />
 
-    switch (arbeidssituasjon) {
-        case 'ARBEIDSTAKER':
-            return <BriefcaseIcon aria-hidden />
-        case 'NAERINGSDRIVENDE':
-            return <ImageIcon aria-hidden />
-        case 'FRILANSER':
-            return <NewspaperIcon aria-hidden />
-        case 'ARBEIDSLEDIG':
-            return <DoorOpenIcon aria-hidden />
-        case 'JORDBRUKER':
-            return <PlantIcon aria-hidden />
-        case 'ANNET':
-            return <CompassIcon aria-hidden />
-        default:
-            return <BriefcaseIcon aria-hidden />
-    }
+    return ikonForArbeidssituasjon(arbeidssituasjon ?? '')
 }
 
 function sekundaerIkonerForSoknadstype(soknadstype: Soknadstype): React.ReactElement[] {
@@ -134,16 +119,10 @@ export function ikonParForSykmeldingPerioder(
 
     if (!arbeidssituasjon) return [periodePar]
 
-    const arbeidssituasjonTekstMap: Record<string, string> = {
-        ARBEIDSTAKER: 'Arbeidstaker',
-        NAERINGSDRIVENDE: 'Næringsdrivende',
-        FRILANSER: 'Frilanser',
-        ARBEIDSLEDIG: 'Arbeidsledig',
-        JORDBRUKER: 'Jordbruker',
-        ANNET: 'Annet arbeidsforhold',
-    }
-    const tekst = arbeidssituasjonTekstMap[arbeidssituasjon] ?? arbeidssituasjon
-    return [periodePar, { ikon: primærIkonForSoknad(arbeidssituasjon, 'ARBEIDSTAKERE'), tekst }]
+    return [
+        periodePar,
+        { ikon: ikonForArbeidssituasjon(arbeidssituasjon), tekst: arbeidssituasjonTilTekst(arbeidssituasjon) },
+    ]
 }
 
 export function ikonerForSoknad(soknad: { arbeidssituasjon?: string; soknadstype: Soknadstype }): React.ReactElement {
@@ -164,13 +143,39 @@ export function ikonerForSoknad(soknad: { arbeidssituasjon?: string; soknadstype
     )
 }
 
-const arbeidssituasjonTekst: Record<string, string> = {
+export const arbeidssituasjonTekst: Record<string, string> = {
     ARBEIDSTAKER: 'Arbeidstaker',
     NAERINGSDRIVENDE: 'Næringsdrivende',
     FRILANSER: 'Frilanser',
     ARBEIDSLEDIG: 'Arbeidsledig',
     JORDBRUKER: 'Jordbruker',
     ANNET: 'Annet arbeidsforhold',
+}
+
+export function ikonForArbeidssituasjon(arbeidssituasjon: string): React.ReactElement {
+    switch (arbeidssituasjon) {
+        case 'ARBEIDSTAKER':
+            return <BriefcaseIcon aria-hidden />
+        case 'NAERINGSDRIVENDE':
+            return <ImageIcon aria-hidden />
+        case 'FRILANSER':
+            return <NewspaperIcon aria-hidden />
+        case 'ARBEIDSLEDIG':
+            return <DoorOpenIcon aria-hidden />
+        case 'JORDBRUKER':
+            return <PlantIcon aria-hidden />
+        case 'ANNET':
+            return <CompassIcon aria-hidden />
+        default:
+            return <BriefcaseIcon aria-hidden />
+    }
+}
+
+export function arbeidssituasjonTilTekst(arbeidssituasjon: string): string {
+    return (
+        arbeidssituasjonTekst[arbeidssituasjon] ??
+        arbeidssituasjon.charAt(0).toUpperCase() + arbeidssituasjon.slice(1).toLowerCase()
+    )
 }
 
 const soknadsmodifikatorTekst: Partial<Record<Soknadstype, string>> = {
