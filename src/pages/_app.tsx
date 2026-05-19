@@ -43,8 +43,6 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
 
     const sider = {
         '/': 'Vis kombinert tidslinje',
-        '/soknader': 'Vis tidslinje av søknader',
-        '/sykmeldinger': 'Vis tidslinje av sykmeldinger',
         '/ident': 'Konverter mellom aktørId og fnr',
         '/soknad-til-fnr': 'Konverter søknad til fnr',
         '/sykmelding-til-fnr': 'Konverter sykmelding til fnr',
