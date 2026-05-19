@@ -22,6 +22,7 @@ interface ViktigFelt {
 interface Props {
     viktigeFelt: ViktigFelt[]
     delperiodeTekster?: string[]
+    ikonHeader?: { ikon: React.ReactNode; tekst: string }
 }
 
 const hentIkon = (etikett: string): React.ReactNode => {
@@ -65,9 +66,17 @@ const hentFargeFraStatus = (status: string): string => {
     return 'bg-ax-bg-info-moderate'
 }
 
-export default function ViktigePeriodefelt({ viktigeFelt, delperiodeTekster = [] }: Props) {
+export default function ViktigePeriodefelt({ viktigeFelt, delperiodeTekster = [], ikonHeader }: Props) {
     return (
         <div className="space-y-3">
+            {ikonHeader && (
+                <div className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-800">
+                    <span className="flex items-center text-gray-700" aria-hidden>
+                        {ikonHeader.ikon}
+                    </span>
+                    {ikonHeader.tekst}
+                </div>
+            )}
             <div className="rounded-lg border border-blue-100 bg-blue-50 p-4">
                 <ul className="space-y-2">
                     {viktigeFelt.map((felt) => (

@@ -3,6 +3,10 @@ import React from 'react'
 import type { Sykmelding } from '../../queryhooks/useSykmeldinger'
 import { antallKalenderdager, formaterDato } from '../sykmelding/sykmeldingTidslinjeUtils'
 import type { PeriodeMedDatoer } from '../sykmelding/sykmeldingTidslinjeUtils'
+import {
+    beskrivelseForSykmeldingPerioder,
+    ikonForSykmeldingPerioder,
+} from '../../utils/tidslinjeIkonUtils'
 
 import ViktigePeriodefelt from './ViktigePeriodefelt'
 
@@ -65,5 +69,11 @@ export default function ViktigeFeltForSykmelding({ sykmelding, perioder }: Props
         (periode, indeks) => `${indeks + 1}: ${formaterDato(periode.startDato)} – ${formaterDato(periode.sluttDato)}`,
     )
 
-    return <ViktigePeriodefelt viktigeFelt={viktigeFelt} delperiodeTekster={delperiodeTekster} />
+    const forstePeriodetype = sykmelding.sykmeldingsperioder[0]?.type
+    const ikonHeader = {
+        ikon: ikonForSykmeldingPerioder(perioder.length, forstePeriodetype),
+        tekst: beskrivelseForSykmeldingPerioder(perioder.length, forstePeriodetype),
+    }
+
+    return <ViktigePeriodefelt viktigeFelt={viktigeFelt} delperiodeTekster={delperiodeTekster} ikonHeader={ikonHeader} />
 }
