@@ -9,6 +9,7 @@ next-env.d.ts
 # Claude Code
 .claude
 Claude.md
+.junie
 
 # Dependencies
 /node_modules
