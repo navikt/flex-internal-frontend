@@ -5,7 +5,7 @@ import { Timeline } from '@navikt/ds-react'
 import { ArbeidsgiverGruppering, SoknadGruppering } from '../../utils/gruppering'
 import { dayjsToDate } from '../../queryhooks/useSoknader'
 import { erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
-import { ikonForSoknadstype, beskrivelseForSoknadstype, klippIkon } from '../../utils/tidslinjeIkonUtils'
+import { ikonerForSoknad, beskrivelseForSoknad, klippIkon } from '../../utils/tidslinjeIkonUtils'
 import { sorterSoknadGrupperEtterSignaturDato } from '../../utils/kombinertTidslinjeSortering'
 import { arbeidsgiverLabelForSoknader } from '../../utils/soknadArbeidsgiverLabel'
 import { lagKlippetSoknadDrawerInnhold, lagSoknadDrawerInnhold } from '../DetaljerDrawer'
@@ -89,7 +89,7 @@ export const lagSoknadRader = ({
                                     start={sokFom}
                                     end={sokTom}
                                     status={timelinePeriodeStatus(sok.soknad.status)}
-                                    icon={ikonForSoknadstype(sok.soknad.soknadstype)}
+                                    icon={ikonerForSoknad(sok.soknad)}
                                     key={sok.soknad.tom?.toISOString() ?? sok.soknad.id}
                                     isActive={erAktiv}
                                     onSelectPeriod={() => {
@@ -103,8 +103,8 @@ export const lagSoknadRader = ({
                                                     sok.soknad,
                                                     <ViktigeFeltForSoknad soknad={sok.soknad} />,
                                                     {
-                                                        ikon: ikonForSoknadstype(sok.soknad.soknadstype),
-                                                        tekst: beskrivelseForSoknadstype(sok.soknad.soknadstype),
+                                                        ikon: ikonerForSoknad(sok.soknad),
+                                                        tekst: beskrivelseForSoknad(sok.soknad),
                                                     },
                                                 ),
                                             )

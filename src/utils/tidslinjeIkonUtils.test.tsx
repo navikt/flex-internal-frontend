@@ -1,19 +1,23 @@
 import { describe, it, expect } from 'vitest'
 import {
-    AirplaneIcon,
     BandageFillIcon,
+    BriefcaseClockIcon,
     BriefcaseIcon,
+    CarIcon,
+    CompassIcon,
+    DoorOpenIcon,
     GlobeIcon,
-    HandshakeIcon,
+    HospitalIcon,
     HourglassIcon,
-    MedicalThermometerIcon,
-    PersonCheckmarkIcon,
-    PersonIcon,
+    ImageIcon,
+    NewspaperIcon,
+    PercentIcon,
+    PlantIcon,
     SectorChartIcon,
     SplitHorizontalIcon,
 } from '@navikt/aksel-icons'
 
-import { ikonForPeriodetype, ikonForSoknadstype, ikonForSykmeldingPerioder } from './tidslinjeIkonUtils'
+import { ikonForPeriodetype, ikonerForSoknad, ikonForSykmeldingPerioder } from './tidslinjeIkonUtils'
 
 describe('ikonForPeriodetype', () => {
     it('returnerer BandageFillIcon for AKTIVITET_IKKE_MULIG', () => {
@@ -24,54 +28,81 @@ describe('ikonForPeriodetype', () => {
         expect(ikonForPeriodetype('GRADERT').type).toBe(SectorChartIcon)
     })
 
-    it('returnerer MedicalThermometerIcon for BEHANDLINGSDAGER', () => {
-        expect(ikonForPeriodetype('BEHANDLINGSDAGER').type).toBe(MedicalThermometerIcon)
+    it('returnerer HospitalIcon for BEHANDLINGSDAGER', () => {
+        expect(ikonForPeriodetype('BEHANDLINGSDAGER').type).toBe(HospitalIcon)
     })
 
     it('returnerer HourglassIcon for AVVENTENDE', () => {
         expect(ikonForPeriodetype('AVVENTENDE').type).toBe(HourglassIcon)
     })
-
-    it('returnerer AirplaneIcon for REISETILSKUDD', () => {
-        expect(ikonForPeriodetype('REISETILSKUDD').type).toBe(AirplaneIcon)
-    })
 })
 
-describe('ikonForSoknadstype', () => {
-    it('returnerer BriefcaseIcon for ARBEIDSTAKERE', () => {
-        expect(ikonForSoknadstype('ARBEIDSTAKERE').type).toBe(BriefcaseIcon)
+describe('ikonerForSoknad — enkelt ikon (ingen modifikator)', () => {
+    it('returnerer BriefcaseIcon for ARBEIDSTAKER', () => {
+        expect(ikonerForSoknad({ arbeidssituasjon: 'ARBEIDSTAKER', soknadstype: 'ARBEIDSTAKERE' }).type).toBe(
+            BriefcaseIcon,
+        )
     })
 
-    it('returnerer BriefcaseIcon for ANNET_ARBEIDSFORHOLD', () => {
-        expect(ikonForSoknadstype('ANNET_ARBEIDSFORHOLD').type).toBe(BriefcaseIcon)
+    it('returnerer ImageIcon for NAERINGSDRIVENDE', () => {
+        expect(
+            ikonerForSoknad({ arbeidssituasjon: 'NAERINGSDRIVENDE', soknadstype: 'SELVSTENDIGE_OG_FRILANSERE' }).type,
+        ).toBe(ImageIcon)
     })
 
-    it('returnerer HandshakeIcon for SELVSTENDIGE_OG_FRILANSERE', () => {
-        expect(ikonForSoknadstype('SELVSTENDIGE_OG_FRILANSERE').type).toBe(HandshakeIcon)
+    it('returnerer NewspaperIcon for FRILANSER', () => {
+        expect(ikonerForSoknad({ arbeidssituasjon: 'FRILANSER', soknadstype: 'SELVSTENDIGE_OG_FRILANSERE' }).type).toBe(
+            NewspaperIcon,
+        )
     })
 
-    it('returnerer PersonIcon for ARBEIDSLEDIG', () => {
-        expect(ikonForSoknadstype('ARBEIDSLEDIG').type).toBe(PersonIcon)
+    it('returnerer DoorOpenIcon for ARBEIDSLEDIG', () => {
+        expect(ikonerForSoknad({ arbeidssituasjon: 'ARBEIDSLEDIG', soknadstype: 'ARBEIDSLEDIG' }).type).toBe(
+            DoorOpenIcon,
+        )
     })
 
-    it('returnerer MedicalThermometerIcon for BEHANDLINGSDAGER', () => {
-        expect(ikonForSoknadstype('BEHANDLINGSDAGER').type).toBe(MedicalThermometerIcon)
+    it('returnerer PlantIcon for JORDBRUKER', () => {
+        expect(
+            ikonerForSoknad({ arbeidssituasjon: 'JORDBRUKER', soknadstype: 'SELVSTENDIGE_OG_FRILANSERE' }).type,
+        ).toBe(PlantIcon)
     })
 
-    it('returnerer AirplaneIcon for REISETILSKUDD', () => {
-        expect(ikonForSoknadstype('REISETILSKUDD').type).toBe(AirplaneIcon)
+    it('returnerer CompassIcon for ANNET_ARBEIDSFORHOLD soknadstype', () => {
+        expect(ikonerForSoknad({ soknadstype: 'ANNET_ARBEIDSFORHOLD' }).type).toBe(CompassIcon)
     })
 
-    it('returnerer AirplaneIcon for GRADERT_REISETILSKUDD', () => {
-        expect(ikonForSoknadstype('GRADERT_REISETILSKUDD').type).toBe(AirplaneIcon)
+    it('returnerer CompassIcon for ANNET arbeidssituasjon', () => {
+        expect(ikonerForSoknad({ arbeidssituasjon: 'ANNET', soknadstype: 'ARBEIDSTAKERE' }).type).toBe(CompassIcon)
     })
 
     it('returnerer GlobeIcon for OPPHOLD_UTLAND', () => {
-        expect(ikonForSoknadstype('OPPHOLD_UTLAND').type).toBe(GlobeIcon)
+        expect(ikonerForSoknad({ soknadstype: 'OPPHOLD_UTLAND' }).type).toBe(GlobeIcon)
     })
 
-    it('returnerer PersonCheckmarkIcon for FRISKMELDT_TIL_ARBEIDSFORMIDLING', () => {
-        expect(ikonForSoknadstype('FRISKMELDT_TIL_ARBEIDSFORMIDLING').type).toBe(PersonCheckmarkIcon)
+    it('returnerer BriefcaseClockIcon for FRISKMELDT_TIL_ARBEIDSFORMIDLING', () => {
+        expect(ikonerForSoknad({ soknadstype: 'FRISKMELDT_TIL_ARBEIDSFORMIDLING' }).type).toBe(BriefcaseClockIcon)
+    })
+})
+
+describe('ikonerForSoknad — med modifikatorikon', () => {
+    it('returnerer flex-wrapper med BriefcaseIcon og HospitalIcon for BEHANDLINGSDAGER', () => {
+        const result = ikonerForSoknad({ arbeidssituasjon: 'ARBEIDSTAKER', soknadstype: 'BEHANDLINGSDAGER' })
+        expect(result.type).toBe('span')
+        expect(result.props.children[1][0].props.children.type).toBe(HospitalIcon)
+    })
+
+    it('returnerer flex-wrapper med CarIcon for REISETILSKUDD', () => {
+        const result = ikonerForSoknad({ arbeidssituasjon: 'ARBEIDSTAKER', soknadstype: 'REISETILSKUDD' })
+        expect(result.type).toBe('span')
+        expect(result.props.children[1][0].props.children.type).toBe(CarIcon)
+    })
+
+    it('returnerer flex-wrapper med PercentIcon og CarIcon for GRADERT_REISETILSKUDD', () => {
+        const result = ikonerForSoknad({ arbeidssituasjon: 'ARBEIDSTAKER', soknadstype: 'GRADERT_REISETILSKUDD' })
+        expect(result.type).toBe('span')
+        expect(result.props.children[1][0].props.children.type).toBe(PercentIcon)
+        expect(result.props.children[1][1].props.children.type).toBe(CarIcon)
     })
 })
 

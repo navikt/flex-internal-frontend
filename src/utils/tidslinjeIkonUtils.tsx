@@ -2,13 +2,18 @@ import React from 'react'
 import {
     AirplaneIcon,
     BandageFillIcon,
+    BriefcaseClockIcon,
     BriefcaseIcon,
+    CarIcon,
+    CompassIcon,
+    DoorOpenIcon,
     GlobeIcon,
-    HandshakeIcon,
+    HospitalIcon,
     HourglassIcon,
-    MedicalThermometerIcon,
-    PersonCheckmarkIcon,
-    PersonIcon,
+    ImageIcon,
+    NewspaperIcon,
+    PercentIcon,
+    PlantIcon,
     ScissorsIcon,
     SectorChartIcon,
     SplitHorizontalIcon,
@@ -24,7 +29,7 @@ export function ikonForPeriodetype(type: Periodetype): React.ReactElement {
         case 'GRADERT':
             return <SectorChartIcon aria-hidden />
         case 'BEHANDLINGSDAGER':
-            return <MedicalThermometerIcon aria-hidden />
+            return <HospitalIcon aria-hidden />
         case 'AVVENTENDE':
             return <HourglassIcon aria-hidden />
         case 'REISETILSKUDD':
@@ -47,37 +52,96 @@ export function beskrivelseForPeriodetype(type: Periodetype): string {
     }
 }
 
-export function ikonForSoknadstype(soknadstype: Soknadstype): React.ReactElement {
-    switch (soknadstype) {
-        case 'ARBEIDSTAKERE':
-        case 'ANNET_ARBEIDSFORHOLD':
+function primærIkonForSoknad(arbeidssituasjon: string | undefined, soknadstype: Soknadstype): React.ReactElement {
+    if (soknadstype === 'OPPHOLD_UTLAND') return <GlobeIcon aria-hidden />
+    if (soknadstype === 'FRISKMELDT_TIL_ARBEIDSFORMIDLING') return <BriefcaseClockIcon aria-hidden />
+    if (soknadstype === 'ANNET_ARBEIDSFORHOLD') return <CompassIcon aria-hidden />
+
+    switch (arbeidssituasjon) {
+        case 'ARBEIDSTAKER':
             return <BriefcaseIcon aria-hidden />
-        case 'SELVSTENDIGE_OG_FRILANSERE':
-            return <HandshakeIcon aria-hidden />
+        case 'NAERINGSDRIVENDE':
+            return <ImageIcon aria-hidden />
+        case 'FRILANSER':
+            return <NewspaperIcon aria-hidden />
         case 'ARBEIDSLEDIG':
-            return <PersonIcon aria-hidden />
-        case 'BEHANDLINGSDAGER':
-            return <MedicalThermometerIcon aria-hidden />
-        case 'REISETILSKUDD':
-        case 'GRADERT_REISETILSKUDD':
-            return <AirplaneIcon aria-hidden />
-        case 'OPPHOLD_UTLAND':
-            return <GlobeIcon aria-hidden />
-        case 'FRISKMELDT_TIL_ARBEIDSFORMIDLING':
-            return <PersonCheckmarkIcon aria-hidden />
+            return <DoorOpenIcon aria-hidden />
+        case 'JORDBRUKER':
+            return <PlantIcon aria-hidden />
+        case 'ANNET':
+            return <CompassIcon aria-hidden />
+        default:
+            return <BriefcaseIcon aria-hidden />
     }
+}
+
+function sekundaerIkonerForSoknadstype(soknadstype: Soknadstype): React.ReactElement[] {
+    switch (soknadstype) {
+        case 'BEHANDLINGSDAGER':
+            return [<HospitalIcon key="behandling" aria-hidden />]
+        case 'REISETILSKUDD':
+            return [<CarIcon key="reise" aria-hidden />]
+        case 'GRADERT_REISETILSKUDD':
+            return [<PercentIcon key="gradert" aria-hidden />, <CarIcon key="reise" aria-hidden />]
+        default:
+            return []
+    }
+}
+
+export function ikonerForSoknad(soknad: { arbeidssituasjon?: string; soknadstype: Soknadstype }): React.ReactElement {
+    const primær = primærIkonForSoknad(soknad.arbeidssituasjon, soknad.soknadstype)
+    const sekundære = sekundaerIkonerForSoknadstype(soknad.soknadstype)
+
+    if (sekundære.length === 0) return primær
+
+    return (
+        <span className="flex min-w-0 items-center overflow-hidden">
+            <span className="shrink-0">{primær}</span>
+            {sekundære.map((ikon) => (
+                <span key={ikon.key as string} className="shrink-0 overflow-hidden">
+                    {ikon}
+                </span>
+            ))}
+        </span>
+    )
+}
+
+const arbeidssituasjonTekst: Record<string, string> = {
+    ARBEIDSTAKER: 'Arbeidstaker',
+    NAERINGSDRIVENDE: 'Næringsdrivende',
+    FRILANSER: 'Frilanser',
+    ARBEIDSLEDIG: 'Arbeidsledig',
+    JORDBRUKER: 'Jordbruker',
+    ANNET: 'Annet arbeidsforhold',
+}
+
+const soknadsmodifikatorTekst: Partial<Record<Soknadstype, string>> = {
+    BEHANDLINGSDAGER: 'behandlingsdager',
+    REISETILSKUDD: 'reisetilskudd',
+    GRADERT_REISETILSKUDD: 'gradert reisetilskudd',
+}
+
+export function beskrivelseForSoknad(soknad: { arbeidssituasjon?: string; soknadstype: Soknadstype }): string {
+    if (soknad.soknadstype === 'OPPHOLD_UTLAND') return 'Opphold utland'
+    if (soknad.soknadstype === 'FRISKMELDT_TIL_ARBEIDSFORMIDLING') return 'Friskmeldt til arbeidsformidling'
+    if (soknad.soknadstype === 'ANNET_ARBEIDSFORHOLD') return 'Annet arbeidsforhold'
+
+    const primær = arbeidssituasjonTekst[soknad.arbeidssituasjon ?? ''] ?? beskrivelseForSoknadstype(soknad.soknadstype)
+    const modifikator = soknadsmodifikatorTekst[soknad.soknadstype]
+
+    return modifikator ? `${primær} · ${modifikator}` : primær
 }
 
 export function beskrivelseForSoknadstype(soknadstype: Soknadstype): string {
     switch (soknadstype) {
         case 'ARBEIDSTAKERE':
             return 'Arbeidstaker'
-        case 'ANNET_ARBEIDSFORHOLD':
-            return 'Annet arbeidsforhold'
         case 'SELVSTENDIGE_OG_FRILANSERE':
             return 'Selvstendig næringsdrivende / frilanser'
         case 'ARBEIDSLEDIG':
             return 'Arbeidsledig'
+        case 'ANNET_ARBEIDSFORHOLD':
+            return 'Annet arbeidsforhold'
         case 'BEHANDLINGSDAGER':
             return 'Behandlingsdager'
         case 'REISETILSKUDD':
