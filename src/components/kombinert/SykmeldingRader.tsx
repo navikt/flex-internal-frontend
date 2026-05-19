@@ -4,7 +4,7 @@ import { Timeline } from '@navikt/ds-react'
 
 import { erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
 import { sorterSykmeldingGrupperEtterSignaturDato } from '../../utils/kombinertTidslinjeSortering'
-import { ikonForSykmeldingPerioder } from '../../utils/tidslinjeIkonUtils'
+import { ikonForSykmeldingPerioder, beskrivelseForSykmeldingPerioder } from '../../utils/tidslinjeIkonUtils'
 import type { DrawerInnhold } from '../DetaljerDrawer'
 import { lagSykmeldingDrawerInnhold } from '../DetaljerDrawer'
 import ViktigeFeltForSykmelding from '../periodeinfo/ViktigeFeltForSykmelding'
@@ -54,10 +54,15 @@ export const lagSykmeldingRader = ({
                     return []
                 }
 
-                const ikon = ikonForSykmeldingPerioder(perioder.length, sykmelding.sykmeldingsperioder[0]?.type)
+                const forstePeriodetype = sykmelding.sykmeldingsperioder[0]?.type
+                const ikon = ikonForSykmeldingPerioder(perioder.length, forstePeriodetype)
                 const periodeKey = `${sykmelding.id}-${forstePeriode.fom}-${sistePeriode.tom}`
                 const periodeInfo = <ViktigeFeltForSykmelding sykmelding={sykmelding} perioder={perioder} />
                 const sykmeldingAktivId = sykmelding.id
+                const ikonHeader = {
+                    ikon,
+                    tekst: beskrivelseForSykmeldingPerioder(perioder.length, forstePeriodetype),
+                }
 
                 return [
                     <Timeline.Period
@@ -75,7 +80,7 @@ export const lagSykmeldingRader = ({
                                 onPeriodeValgt(
                                     sykmeldingAktivId,
                                     sykmeldingAktivId,
-                                    lagSykmeldingDrawerInnhold(sykmelding, periodeInfo),
+                                    lagSykmeldingDrawerInnhold(sykmelding, periodeInfo, ikonHeader),
                                 )
                             }
                         }}

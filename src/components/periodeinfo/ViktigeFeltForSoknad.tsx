@@ -2,7 +2,6 @@ import React from 'react'
 
 import { Soknad, dayjsToDate } from '../../queryhooks/useSoknader'
 import { antallKalenderdager, formaterDato } from '../sykmelding/sykmeldingTidslinjeUtils'
-import { beskrivelseForSoknadstype, ikonForSoknadstype } from '../../utils/tidslinjeIkonUtils'
 
 import ViktigePeriodefelt from './ViktigePeriodefelt'
 
@@ -49,15 +48,7 @@ export default function ViktigeFeltForSoknad({ soknad }: Props) {
             { etikett: 'Opprettet dato', verdi: formaterDato(opprettetDato) },
         ]
 
-        return (
-            <ViktigePeriodefelt
-                viktigeFelt={viktigeFelt}
-                ikonHeader={{
-                    ikon: ikonForSoknadstype(soknad.soknadstype),
-                    tekst: beskrivelseForSoknadstype(soknad.soknadstype),
-                }}
-            />
-        )
+        return <ViktigePeriodefelt viktigeFelt={viktigeFelt} />
     }
 
     const perioder = soknad.soknadPerioder
@@ -100,14 +91,5 @@ export default function ViktigeFeltForSoknad({ soknad }: Props) {
         (periode, indeks) => `${indeks + 1}: ${formaterDato(periode.startDato)} – ${formaterDato(periode.sluttDato)}`,
     )
 
-    return (
-        <ViktigePeriodefelt
-            viktigeFelt={viktigeFelt}
-            delperiodeTekster={delperiodeTekster}
-            ikonHeader={{
-                ikon: ikonForSoknadstype(soknad.soknadstype),
-                tekst: beskrivelseForSoknadstype(soknad.soknadstype),
-            }}
-        />
-    )
+    return <ViktigePeriodefelt viktigeFelt={viktigeFelt} delperiodeTekster={delperiodeTekster} />
 }

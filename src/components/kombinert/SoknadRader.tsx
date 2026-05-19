@@ -5,7 +5,7 @@ import { Timeline } from '@navikt/ds-react'
 import { ArbeidsgiverGruppering, SoknadGruppering } from '../../utils/gruppering'
 import { dayjsToDate } from '../../queryhooks/useSoknader'
 import { erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
-import { ikonForSoknadstype, klippIkon } from '../../utils/tidslinjeIkonUtils'
+import { ikonForSoknadstype, beskrivelseForSoknadstype, klippIkon } from '../../utils/tidslinjeIkonUtils'
 import { sorterSoknadGrupperEtterSignaturDato } from '../../utils/kombinertTidslinjeSortering'
 import { arbeidsgiverLabelForSoknader } from '../../utils/soknadArbeidsgiverLabel'
 import { lagKlippetSoknadDrawerInnhold, lagSoknadDrawerInnhold } from '../DetaljerDrawer'
@@ -102,6 +102,10 @@ export const lagSoknadRader = ({
                                                 lagSoknadDrawerInnhold(
                                                     sok.soknad,
                                                     <ViktigeFeltForSoknad soknad={sok.soknad} />,
+                                                    {
+                                                        ikon: ikonForSoknadstype(sok.soknad.soknadstype),
+                                                        tekst: beskrivelseForSoknadstype(sok.soknad.soknadstype),
+                                                    },
                                                 ),
                                             )
                                         }

@@ -13,6 +13,7 @@ type DrawerVariant =
 
 export interface DrawerInnhold {
     tittel: string
+    ikonHeader?: { ikon: React.ReactNode; tekst: string }
     variant: DrawerVariant
 }
 
@@ -25,16 +26,26 @@ interface DetaljerDrawerProps {
     setPlassering: React.Dispatch<React.SetStateAction<'bunn' | 'hoyre'>>
 }
 
-export function lagSykmeldingDrawerInnhold(sykmelding: object, periodeInfo: React.ReactNode): DrawerInnhold {
+export function lagSykmeldingDrawerInnhold(
+    sykmelding: object,
+    periodeInfo: React.ReactNode,
+    ikonHeader?: { ikon: React.ReactNode; tekst: string },
+): DrawerInnhold {
     return {
         tittel: 'Sykmelding',
+        ikonHeader,
         variant: { type: 'sykmelding', objekt: sykmelding, periodeInfo },
     }
 }
 
-export function lagSoknadDrawerInnhold(soknad: object, periodeInfo: React.ReactNode): DrawerInnhold {
+export function lagSoknadDrawerInnhold(
+    soknad: object,
+    periodeInfo: React.ReactNode,
+    ikonHeader?: { ikon: React.ReactNode; tekst: string },
+): DrawerInnhold {
     return {
         tittel: 'Søknad',
+        ikonHeader,
         variant: { type: 'soknad', objekt: soknad, periodeInfo },
     }
 }
@@ -155,7 +166,17 @@ export default function DetaljerDrawer({
             aria-label={innhold?.tittel ?? 'Detaljer'}
         >
             <div className="flex items-center justify-between border-b border-gray-200 px-5 py-3">
-                <Heading size="small">{innhold?.tittel ?? ''}</Heading>
+                <div className="flex min-w-0 flex-col">
+                    <div className="flex items-center gap-2">
+                        {innhold?.ikonHeader && (
+                            <span className="flex shrink-0 items-center text-gray-600" aria-hidden>
+                                {innhold.ikonHeader.ikon}
+                            </span>
+                        )}
+                        <Heading size="small">{innhold?.tittel ?? ''}</Heading>
+                    </div>
+                    {innhold?.ikonHeader && <span className="text-xs text-gray-500">{innhold.ikonHeader.tekst}</span>}
+                </div>
                 <div className="flex items-center gap-1">
                     <Button
                         variant="tertiary"
