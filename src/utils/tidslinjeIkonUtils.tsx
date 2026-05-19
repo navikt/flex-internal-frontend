@@ -107,8 +107,8 @@ export function ikonParForSykmeldingPerioder(
     if (!arbeidssituasjon) return [periodePar]
 
     return [
-        periodePar,
         { ikon: ikonForArbeidssituasjon(arbeidssituasjon), tekst: arbeidssituasjonTilTekst(arbeidssituasjon) },
+        periodePar,
     ]
 }
 
