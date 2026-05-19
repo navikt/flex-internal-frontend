@@ -37,7 +37,7 @@ function grupperPaSykmelding(
     soknader
         .sort((a, b) => (a.opprettetDato?.valueOf() ?? 0) - (b.opprettetDato?.valueOf() ?? 0))
         .forEach((sok) => {
-            const key = sok.sykmeldingId!
+            const key = sok.sykmeldingId ?? `${sok.id}_UTEN_SYKMELDING`
             let sykmeldingKey = key
 
             if (sok.status === 'KORRIGERT') {
