@@ -13,7 +13,7 @@ type DrawerVariant =
 
 export interface DrawerInnhold {
     tittel: string
-    ikonHeader?: { ikon: React.ReactNode; tekst: string }
+    ikonHeader?: Array<{ ikon: React.ReactNode; tekst: string }>
     variant: DrawerVariant
 }
 
@@ -29,7 +29,7 @@ interface DetaljerDrawerProps {
 export function lagSykmeldingDrawerInnhold(
     sykmelding: object,
     periodeInfo: React.ReactNode,
-    ikonHeader?: { ikon: React.ReactNode; tekst: string },
+    ikonHeader?: Array<{ ikon: React.ReactNode; tekst: string }>,
 ): DrawerInnhold {
     return {
         tittel: 'Sykmelding',
@@ -41,7 +41,7 @@ export function lagSykmeldingDrawerInnhold(
 export function lagSoknadDrawerInnhold(
     soknad: object,
     periodeInfo: React.ReactNode,
-    ikonHeader?: { ikon: React.ReactNode; tekst: string },
+    ikonHeader?: Array<{ ikon: React.ReactNode; tekst: string }>,
 ): DrawerInnhold {
     return {
         tittel: 'Søknad',
@@ -168,13 +168,17 @@ export default function DetaljerDrawer({
             <div className="flex items-center justify-between border-b border-gray-200 px-5 py-3">
                 <div className="flex min-w-0 items-center gap-3">
                     <Heading size="small">{innhold?.tittel ?? ''}</Heading>
-                    {innhold?.ikonHeader && (
-                        <span className="flex shrink-0 items-center gap-1 text-xs text-gray-500">
-                            <span className="flex items-center" aria-hidden>
-                                {innhold.ikonHeader.ikon}
-                            </span>
-                            {innhold.ikonHeader.tekst}
-                        </span>
+                    {innhold?.ikonHeader && innhold.ikonHeader.length > 0 && (
+                        <div className="flex flex-col gap-0.5">
+                            {innhold.ikonHeader.map((par, i) => (
+                                <span key={i} className="flex items-center gap-1 text-xs text-gray-500">
+                                    <span className="flex items-center" aria-hidden>
+                                        {par.ikon}
+                                    </span>
+                                    {par.tekst}
+                                </span>
+                            ))}
+                        </div>
                     )}
                 </div>
                 <div className="flex items-center gap-1">

@@ -4,7 +4,11 @@ import { Timeline } from '@navikt/ds-react'
 
 import { erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
 import { sorterSykmeldingGrupperEtterSignaturDato } from '../../utils/kombinertTidslinjeSortering'
-import { ikonForSykmeldingPerioder, beskrivelseForSykmeldingPerioder } from '../../utils/tidslinjeIkonUtils'
+import {
+    ikonForSykmeldingPerioder,
+    ikonParForSykmeldingPerioder,
+    beskrivelseForSykmeldingPerioder,
+} from '../../utils/tidslinjeIkonUtils'
 import type { DrawerInnhold } from '../DetaljerDrawer'
 import { lagSykmeldingDrawerInnhold } from '../DetaljerDrawer'
 import ViktigeFeltForSykmelding from '../periodeinfo/ViktigeFeltForSykmelding'
@@ -59,10 +63,7 @@ export const lagSykmeldingRader = ({
                 const periodeKey = `${sykmelding.id}-${forstePeriode.fom}-${sistePeriode.tom}`
                 const periodeInfo = <ViktigeFeltForSykmelding sykmelding={sykmelding} perioder={perioder} />
                 const sykmeldingAktivId = sykmelding.id
-                const ikonHeader = {
-                    ikon,
-                    tekst: beskrivelseForSykmeldingPerioder(perioder.length, forstePeriodetype),
-                }
+                const ikonHeader = ikonParForSykmeldingPerioder(perioder.length, forstePeriodetype)
 
                 return [
                     <Timeline.Period

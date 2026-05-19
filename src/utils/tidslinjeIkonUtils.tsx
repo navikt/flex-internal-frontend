@@ -88,6 +88,51 @@ function sekundaerIkonerForSoknadstype(soknadstype: Soknadstype): React.ReactEle
     }
 }
 
+export function ikonParForSoknad(soknad: {
+    arbeidssituasjon?: string
+    soknadstype: Soknadstype
+}): Array<{ ikon: React.ReactElement; tekst: string }> {
+    if (soknad.soknadstype === 'OPPHOLD_UTLAND') return [{ ikon: <GlobeIcon aria-hidden />, tekst: 'Opphold utland' }]
+    if (soknad.soknadstype === 'FRISKMELDT_TIL_ARBEIDSFORMIDLING')
+        return [{ ikon: <BriefcaseClockIcon aria-hidden />, tekst: 'Friskmeldt til arbeidsformidling' }]
+    if (soknad.soknadstype === 'ANNET_ARBEIDSFORHOLD')
+        return [{ ikon: <CompassIcon aria-hidden />, tekst: 'Annet arbeidsforhold' }]
+
+    const primærTekst =
+        arbeidssituasjonTekst[soknad.arbeidssituasjon ?? ''] ?? beskrivelseForSoknadstype(soknad.soknadstype)
+    const par: Array<{ ikon: React.ReactElement; tekst: string }> = [
+        { ikon: primærIkonForSoknad(soknad.arbeidssituasjon, soknad.soknadstype), tekst: primærTekst },
+    ]
+
+    switch (soknad.soknadstype) {
+        case 'BEHANDLINGSDAGER':
+            par.push({ ikon: <HospitalIcon aria-hidden />, tekst: 'Behandlingsdager' })
+            break
+        case 'REISETILSKUDD':
+            par.push({ ikon: <CarIcon aria-hidden />, tekst: 'Reisetilskudd' })
+            break
+        case 'GRADERT_REISETILSKUDD':
+            par.push({ ikon: <PercentIcon aria-hidden />, tekst: 'Gradert' })
+            par.push({ ikon: <CarIcon aria-hidden />, tekst: 'Reisetilskudd' })
+            break
+    }
+
+    return par
+}
+
+export function ikonParForSykmeldingPerioder(
+    antallPerioder: number,
+    forstePeriodetype: Periodetype | undefined,
+): Array<{ ikon: React.ReactElement; tekst: string }> {
+    if (antallPerioder > 1) {
+        return [{ ikon: <SplitHorizontalIcon aria-hidden />, tekst: `Sykmelding med ${antallPerioder} perioder` }]
+    }
+    if (forstePeriodetype) {
+        return [{ ikon: ikonForPeriodetype(forstePeriodetype), tekst: beskrivelseForPeriodetype(forstePeriodetype) }]
+    }
+    return [{ ikon: <BandageFillIcon aria-hidden />, tekst: '100% sykmeldt' }]
+}
+
 export function ikonerForSoknad(soknad: { arbeidssituasjon?: string; soknadstype: Soknadstype }): React.ReactElement {
     const primær = primærIkonForSoknad(soknad.arbeidssituasjon, soknad.soknadstype)
     const sekundære = sekundaerIkonerForSoknadstype(soknad.soknadstype)
