@@ -166,16 +166,16 @@ export default function DetaljerDrawer({
             aria-label={innhold?.tittel ?? 'Detaljer'}
         >
             <div className="flex items-center justify-between border-b border-gray-200 px-5 py-3">
-                <div className="flex min-w-0 flex-col">
-                    <div className="flex items-center gap-2">
-                        {innhold?.ikonHeader && (
-                            <span className="flex shrink-0 items-center text-gray-600" aria-hidden>
+                <div className="flex min-w-0 items-center gap-3">
+                    <Heading size="small">{innhold?.tittel ?? ''}</Heading>
+                    {innhold?.ikonHeader && (
+                        <span className="flex shrink-0 items-center gap-1 text-xs text-gray-500">
+                            <span className="flex items-center" aria-hidden>
                                 {innhold.ikonHeader.ikon}
                             </span>
-                        )}
-                        <Heading size="small">{innhold?.tittel ?? ''}</Heading>
-                    </div>
-                    {innhold?.ikonHeader && <span className="text-xs text-gray-500">{innhold.ikonHeader.tekst}</span>}
+                            {innhold.ikonHeader.tekst}
+                        </span>
+                    )}
                 </div>
                 <div className="flex items-center gap-1">
                     <Button
