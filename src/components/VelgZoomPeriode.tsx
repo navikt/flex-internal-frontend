@@ -15,7 +15,7 @@ export default function VelgZoomPeriode({ setFraDato, setTilDato, maxTilDato }: 
         } else if (år) {
             setFraDato(dayjs().subtract(år, 'year').toDate())
         }
-        const tilDato = maxTilDato && dayjs() > dayjs(maxTilDato) ? maxTilDato : dayjs().toDate()
+        const tilDato = maxTilDato && dayjs(maxTilDato) > dayjs() ? maxTilDato : dayjs().toDate()
         setTilDato(tilDato)
     }
 

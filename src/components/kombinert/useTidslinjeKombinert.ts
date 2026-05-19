@@ -109,6 +109,7 @@ export const useTidslinjeKombinert = (
         sykmeldingerGruppertPaArbeidsgiver,
         soknaderGruppert,
         aktivTidsvindu,
+        nysteTil,
         sykmeldingAntall,
         soknadAntall,
         handlePeriodeValgt,
