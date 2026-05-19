@@ -79,7 +79,9 @@ export default function ViktigePeriodefelt({ viktigeFelt, delperiodeTekster = []
                 >
                     <span className="mt-0.5 flex shrink-0 items-center text-gray-600">{hentIkon(felt.etikett)}</span>
                     <div className="flex flex-col gap-0.5">
-                        <span className="text-xs font-medium uppercase tracking-wide text-gray-500">{felt.etikett}</span>
+                        <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                            {felt.etikett}
+                        </span>
                         <span className="flex items-center gap-1 font-medium text-gray-900">
                             {felt.verdi}
                             {(felt.etikett.toLowerCase().endsWith(' id') ||

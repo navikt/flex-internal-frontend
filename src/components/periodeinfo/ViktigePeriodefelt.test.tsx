@@ -42,16 +42,12 @@ describe('ViktigePeriodefelt', () => {
         })
 
         it('viser CopyButton for felt som starter med "ID"', () => {
-            const { container } = render(
-                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'ID', verdi: 'uuid-456' }]} />,
-            )
+            const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'ID', verdi: 'uuid-456' }]} />)
             expect(container.querySelectorAll('button').length).toBeGreaterThan(0)
         })
 
         it('viser ikke CopyButton for vanlige felt', () => {
-            const { container } = render(
-                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'SENDT' }]} />,
-            )
+            const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'SENDT' }]} />)
             expect(container.querySelectorAll('button')).toHaveLength(0)
         })
 
@@ -63,51 +59,41 @@ describe('ViktigePeriodefelt', () => {
 
     describe('statusfarger', () => {
         it('viser advarselsfarge for AVBRUTT-status', () => {
-            const { container } = render(
-                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'AVBRUTT' }]} />,
-            )
+            const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'AVBRUTT' }]} />)
             expect(container.querySelector('.bg-ax-bg-warning-moderate')).toBeInTheDocument()
         })
 
         it('viser suksessfarge for SENDT-status', () => {
-            const { container } = render(
-                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'SENDT' }]} />,
-            )
+            const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'SENDT' }]} />)
             expect(container.querySelector('.bg-ax-bg-success-moderate')).toBeInTheDocument()
         })
 
         it('viser infofarge for ukjent status', () => {
-            const { container } = render(
-                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'NY' }]} />,
-            )
+            const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'NY' }]} />)
             expect(container.querySelector('.bg-ax-bg-info-moderate')).toBeInTheDocument()
         })
 
         it('statussammenligning er case-insensitiv', () => {
-            const { container } = render(
-                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'sendt' }]} />,
-            )
+            const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'sendt' }]} />)
             expect(container.querySelector('.bg-ax-bg-success-moderate')).toBeInTheDocument()
         })
 
         it('statusfelt har border-transparent i stedet for vanlig grå border', () => {
-            const { container } = render(
-                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'SENDT' }]} />,
-            )
+            const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'SENDT' }]} />)
             expect(container.querySelector('.border-transparent')).toBeInTheDocument()
         })
 
         it('vanlig felt har border-gray-200', () => {
-            const { container } = render(
-                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Fra', verdi: '2024-01-01' }]} />,
-            )
+            const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Fra', verdi: '2024-01-01' }]} />)
             expect(container.querySelector('.border-gray-200')).toBeInTheDocument()
         })
     })
 
     describe('delperiodeTekster', () => {
         it('viser ikke periodeliste ved 0 tekster', () => {
-            render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Fra', verdi: '2024-01-01' }]} delperiodeTekster={[]} />)
+            render(
+                <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Fra', verdi: '2024-01-01' }]} delperiodeTekster={[]} />,
+            )
             expect(screen.queryByText('Perioder')).not.toBeInTheDocument()
         })
 
