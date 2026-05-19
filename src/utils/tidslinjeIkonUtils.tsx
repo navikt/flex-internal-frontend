@@ -14,8 +14,8 @@ import {
     SplitHorizontalIcon,
 } from '@navikt/aksel-icons'
 
-import type { Periodetype } from '../types/backend/sykmelding'
-import type { Soknadstype } from '../types/backend/soknad'
+import type { Periodetype } from '../queryhooks/useSykmeldinger'
+import type { Soknadstype } from '../queryhooks/useSoknader'
 
 export function ikonForPeriodetype(type: Periodetype): React.ReactElement {
     switch (type) {
