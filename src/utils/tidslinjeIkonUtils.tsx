@@ -123,14 +123,27 @@ export function ikonParForSoknad(soknad: {
 export function ikonParForSykmeldingPerioder(
     antallPerioder: number,
     forstePeriodetype: Periodetype | undefined,
+    arbeidssituasjon?: string | null,
 ): Array<{ ikon: React.ReactElement; tekst: string }> {
-    if (antallPerioder > 1) {
-        return [{ ikon: <SplitHorizontalIcon aria-hidden />, tekst: `Sykmelding med ${antallPerioder} perioder` }]
+    const periodePar: { ikon: React.ReactElement; tekst: string } =
+        antallPerioder > 1
+            ? { ikon: <SplitHorizontalIcon aria-hidden />, tekst: `Sykmelding med ${antallPerioder} perioder` }
+            : forstePeriodetype
+              ? { ikon: ikonForPeriodetype(forstePeriodetype), tekst: beskrivelseForPeriodetype(forstePeriodetype) }
+              : { ikon: <BandageFillIcon aria-hidden />, tekst: '100% sykmeldt' }
+
+    if (!arbeidssituasjon) return [periodePar]
+
+    const arbeidssituasjonTekstMap: Record<string, string> = {
+        ARBEIDSTAKER: 'Arbeidstaker',
+        NAERINGSDRIVENDE: 'Næringsdrivende',
+        FRILANSER: 'Frilanser',
+        ARBEIDSLEDIG: 'Arbeidsledig',
+        JORDBRUKER: 'Jordbruker',
+        ANNET: 'Annet arbeidsforhold',
     }
-    if (forstePeriodetype) {
-        return [{ ikon: ikonForPeriodetype(forstePeriodetype), tekst: beskrivelseForPeriodetype(forstePeriodetype) }]
-    }
-    return [{ ikon: <BandageFillIcon aria-hidden />, tekst: '100% sykmeldt' }]
+    const tekst = arbeidssituasjonTekstMap[arbeidssituasjon] ?? arbeidssituasjon
+    return [periodePar, { ikon: primærIkonForSoknad(arbeidssituasjon, 'ARBEIDSTAKERE'), tekst }]
 }
 
 export function ikonerForSoknad(soknad: { arbeidssituasjon?: string; soknadstype: Soknadstype }): React.ReactElement {

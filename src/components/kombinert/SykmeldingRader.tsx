@@ -63,7 +63,8 @@ export const lagSykmeldingRader = ({
                 const periodeKey = `${sykmelding.id}-${forstePeriode.fom}-${sistePeriode.tom}`
                 const periodeInfo = <ViktigeFeltForSykmelding sykmelding={sykmelding} perioder={perioder} />
                 const sykmeldingAktivId = sykmelding.id
-                const ikonHeader = ikonParForSykmeldingPerioder(perioder.length, forstePeriodetype)
+                const arbeidssituasjon = sykmelding.sykmeldingStatus?.brukerSvar?.arbeidssituasjon?.svar
+                const ikonHeader = ikonParForSykmeldingPerioder(perioder.length, forstePeriodetype, arbeidssituasjon)
 
                 return [
                     <Timeline.Period
