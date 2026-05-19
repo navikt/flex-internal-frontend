@@ -60,19 +60,6 @@ function primærIkonForSoknad(arbeidssituasjon: string | undefined, soknadstype:
     return ikonForArbeidssituasjon(arbeidssituasjon ?? '')
 }
 
-function sekundaerIkonerForSoknadstype(soknadstype: Soknadstype): React.ReactElement[] {
-    switch (soknadstype) {
-        case 'BEHANDLINGSDAGER':
-            return [<HospitalIcon key="behandling" aria-hidden />]
-        case 'REISETILSKUDD':
-            return [<CarIcon key="reise" aria-hidden />]
-        case 'GRADERT_REISETILSKUDD':
-            return [<PercentIcon key="gradert" aria-hidden />, <CarIcon key="reise" aria-hidden />]
-        default:
-            return []
-    }
-}
-
 export function ikonParForSoknad(soknad: {
     arbeidssituasjon?: string
     soknadstype: Soknadstype
@@ -125,22 +112,22 @@ export function ikonParForSykmeldingPerioder(
     ]
 }
 
-export function ikonerForSoknad(soknad: { arbeidssituasjon?: string; soknadstype: Soknadstype }): React.ReactElement {
-    const primær = primærIkonForSoknad(soknad.arbeidssituasjon, soknad.soknadstype)
-    const sekundære = sekundaerIkonerForSoknadstype(soknad.soknadstype)
-
-    if (sekundære.length === 0) return primær
+export function ikonerFraIkonPar(par: Array<{ ikon: React.ReactElement; tekst: string }>): React.ReactElement {
+    if (par.length === 1) return par[0].ikon
 
     return (
         <span className="flex min-w-0 items-center overflow-hidden">
-            <span className="shrink-0">{primær}</span>
-            {sekundære.map((ikon) => (
-                <span key={ikon.key as string} className="shrink-0 overflow-hidden">
+            {par.map(({ ikon }, i) => (
+                <span key={i} className="shrink-0 overflow-hidden">
                     {ikon}
                 </span>
             ))}
         </span>
     )
+}
+
+export function ikonerForSoknad(soknad: { arbeidssituasjon?: string; soknadstype: Soknadstype }): React.ReactElement {
+    return ikonerFraIkonPar(ikonParForSoknad(soknad))
 }
 
 export const arbeidssituasjonTekst: Record<string, string> = {
@@ -223,11 +210,9 @@ export const klippIkon = <ScissorsIcon aria-hidden />
 export function ikonForSykmeldingPerioder(
     antallPerioder: number,
     forstePeriodetype: Periodetype | undefined,
+    arbeidssituasjon?: string | null,
 ): React.ReactElement {
-    if (antallPerioder > 1) {
-        return <SplitHorizontalIcon aria-hidden />
-    }
-    return forstePeriodetype ? ikonForPeriodetype(forstePeriodetype) : <BandageFillIcon aria-hidden />
+    return ikonerFraIkonPar(ikonParForSykmeldingPerioder(antallPerioder, forstePeriodetype, arbeidssituasjon))
 }
 
 export function beskrivelseForSykmeldingPerioder(

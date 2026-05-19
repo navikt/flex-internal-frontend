@@ -89,20 +89,23 @@ describe('ikonerForSoknad — med modifikatorikon', () => {
     it('returnerer flex-wrapper med BriefcaseIcon og HospitalIcon for BEHANDLINGSDAGER', () => {
         const result = ikonerForSoknad({ arbeidssituasjon: 'ARBEIDSTAKER', soknadstype: 'BEHANDLINGSDAGER' })
         expect(result.type).toBe('span')
-        expect(result.props.children[1][0].props.children.type).toBe(HospitalIcon)
+        expect(result.props.children[0].props.children.type).toBe(BriefcaseIcon)
+        expect(result.props.children[1].props.children.type).toBe(HospitalIcon)
     })
 
     it('returnerer flex-wrapper med CarIcon for REISETILSKUDD', () => {
         const result = ikonerForSoknad({ arbeidssituasjon: 'ARBEIDSTAKER', soknadstype: 'REISETILSKUDD' })
         expect(result.type).toBe('span')
-        expect(result.props.children[1][0].props.children.type).toBe(CarIcon)
+        expect(result.props.children[0].props.children.type).toBe(BriefcaseIcon)
+        expect(result.props.children[1].props.children.type).toBe(CarIcon)
     })
 
     it('returnerer flex-wrapper med PercentIcon og CarIcon for GRADERT_REISETILSKUDD', () => {
         const result = ikonerForSoknad({ arbeidssituasjon: 'ARBEIDSTAKER', soknadstype: 'GRADERT_REISETILSKUDD' })
         expect(result.type).toBe('span')
-        expect(result.props.children[1][0].props.children.type).toBe(PercentIcon)
-        expect(result.props.children[1][1].props.children.type).toBe(CarIcon)
+        expect(result.props.children[0].props.children.type).toBe(BriefcaseIcon)
+        expect(result.props.children[1].props.children.type).toBe(PercentIcon)
+        expect(result.props.children[2].props.children.type).toBe(CarIcon)
     })
 })
 
