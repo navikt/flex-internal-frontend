@@ -17,6 +17,77 @@ import { useIdenter } from '../queryhooks/useIdenter'
 import { handterUuidValidering } from '../utils/inputValidering'
 import { useValgtFnr } from '../utils/useValgtFnr'
 
+const DayButton = ({
+    days,
+    mutation,
+}: {
+    days: number
+    mutation: ReturnType<typeof useMutation<object, Error, dayjs.Dayjs>>
+}) => (
+    <Button
+        size="small"
+        variant="secondary"
+        loading={mutation.isPending}
+        onClick={() => mutation.mutate(dayjs().add(days, 'day'))}
+    >
+        {days} dager
+    </Button>
+)
+
+const AktorIDVisning = ({ fnr }: { fnr: string }) => {
+    const { data: data } = useIdenter(fnr, true)
+    if (!data) {
+        return <p>Ingen data</p>
+    }
+    const aktorid = data.find((d) => d.gruppe === 'AKTORID')?.ident
+    if (!aktorid) {
+        return <p>Ingen aktør</p>
+    }
+    return (
+        <>
+            <ReadMore header="AktørID">
+                <BodyShort>{aktorid}</BodyShort>
+            </ReadMore>
+            <Link href={`${sporingUrl()}/person/${aktorid}`} target="_blank">
+                Spleis sporing
+            </Link>
+            <Link className="block" href={`${spannerUrl()}/person/${aktorid}`} target="_blank">
+                Spanner
+            </Link>
+        </>
+    )
+}
+
+const FnrVisning = ({
+    sokeinput,
+    vedtaksperioder,
+}: {
+    sokeinput: string
+    vedtaksperioder: FullVedtaksperiodeBehandling[]
+}) => {
+    if (sokeinput === 'fnr') {
+        return null
+    }
+    const fnrSet = new Set<string>()
+    vedtaksperioder.forEach((vp) => {
+        vp.soknader.forEach((s) => {
+            fnrSet.add(s.fnr)
+        })
+    })
+    const fnrList = [...fnrSet]
+
+    return (
+        <>
+            <ReadMore header="Fødselsnummer">
+                {[...fnrSet].map((f) => (
+                    <div key={f}>{f}</div>
+                ))}
+            </ReadMore>
+            {fnrList.length > 0 && <AktorIDVisning fnr={fnrList[0]} />}
+        </>
+    )
+}
+
 const Vedtaksperioder = () => {
     const { fnr, nullstillFnr } = useValgtFnr()
     const [vedtaksperiodeId, setVedtaksperiodeId] = useState<string>()
@@ -43,68 +114,6 @@ const Vedtaksperioder = () => {
             })
         },
     })
-    const DayButton = ({ days }: { days: number }) => (
-        <Button
-            size="small"
-            variant="secondary"
-            loading={cronJobMutation.isPending}
-            onClick={() => cronJobMutation.mutate(dayjs().add(days, 'day'))}
-        >
-            {days} dager
-        </Button>
-    )
-    const AktorIDVisning = ({ fnr }: { fnr: string }) => {
-        const { data: data } = useIdenter(fnr, true)
-        if (!data) {
-            return <p>Ingen data</p>
-        }
-        const aktorid = data.find((d) => d.gruppe === 'AKTORID')?.ident
-        if (!aktorid) {
-            return <p>Ingen aktør</p>
-        }
-        return (
-            <>
-                <ReadMore header="AktørID">
-                    <BodyShort>{aktorid}</BodyShort>
-                </ReadMore>
-                <Link href={`${sporingUrl()}/person/${aktorid}`} target="_blank">
-                    Spleis sporing
-                </Link>
-                <Link className="block" href={`${spannerUrl()}/person/${aktorid}`} target="_blank">
-                    Spanner
-                </Link>
-            </>
-        )
-    }
-    const FnrVisning = ({
-        sokeinput,
-        vedtaksperioder,
-    }: {
-        sokeinput: string
-        vedtaksperioder: FullVedtaksperiodeBehandling[]
-    }) => {
-        if (sokeinput === 'fnr') {
-            return null
-        }
-        const fnrSet = new Set<string>()
-        vedtaksperioder.forEach((vp) => {
-            vp.soknader.forEach((s) => {
-                fnrSet.add(s.fnr)
-            })
-        })
-        const fnrList = [...fnrSet]
-
-        return (
-            <>
-                <ReadMore header="Fødselsnummer">
-                    {[...fnrSet].map((f) => (
-                        <div key={f}>{f}</div>
-                    ))}
-                </ReadMore>
-                {fnrList.length > 0 && <AktorIDVisning fnr={fnrList[0]} />}
-            </>
-        )
-    }
     return (
         <div className="flex-row space-y-4">
             <RadioGroup
@@ -170,16 +179,16 @@ const Vedtaksperioder = () => {
                 </Button>
                 {isNotProd() && (
                     <>
-                        <DayButton days={0} />
-                        <DayButton days={1} />
-                        <DayButton days={14} />
-                        <DayButton days={15} />
-                        <DayButton days={27} />
-                        <DayButton days={28} />
-                        <DayButton days={60} />
-                        <DayButton days={70} />
-                        <DayButton days={95} />
-                        <DayButton days={130} />
+                        <DayButton days={0} mutation={cronJobMutation} />
+                        <DayButton days={1} mutation={cronJobMutation} />
+                        <DayButton days={14} mutation={cronJobMutation} />
+                        <DayButton days={15} mutation={cronJobMutation} />
+                        <DayButton days={27} mutation={cronJobMutation} />
+                        <DayButton days={28} mutation={cronJobMutation} />
+                        <DayButton days={60} mutation={cronJobMutation} />
+                        <DayButton days={70} mutation={cronJobMutation} />
+                        <DayButton days={95} mutation={cronJobMutation} />
+                        <DayButton days={130} mutation={cronJobMutation} />
                     </>
                 )}
             </div>
