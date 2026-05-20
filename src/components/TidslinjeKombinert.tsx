@@ -31,7 +31,7 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
         sykmeldingerGruppertPaArbeidsgiver,
         soknaderGruppert,
         aktivTidsvindu,
-        nysteTil,
+        senesteSluttDato,
         sykmeldingAntall,
         soknadAntall,
         handlePeriodeValgt,
@@ -46,7 +46,7 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
             <VelgZoomPeriode
                 setFraDato={setVisningsFraDato}
                 setTilDato={setVisningstilDato}
-                maxTilDato={nysteTil ?? undefined}
+                maxTilDato={senesteSluttDato ?? undefined}
             />
             {aktivTidsvindu && (
                 <>

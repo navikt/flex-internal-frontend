@@ -38,7 +38,7 @@ export const useTidslinjeKombinert = (
     ).length
 
     let eldsteFra: Date | null = datospennSyk?.startDato ?? null
-    let nysteTil: Date | null = datospennSyk?.sluttDato ?? null
+    let senesteSoknadTom: Date | null = null
 
     for (const [arbId, { sykmeldinger: sykGrp }] of soknaderGruppert.entries()) {
         for (const { soknader: sokGrp } of sykGrp.values()) {
@@ -47,12 +47,14 @@ export const useTidslinjeKombinert = (
                 const fom = erOppholdUtland ? dayjsToDate(sok.soknad.opprettetDato) : dayjsToDate(sok.soknad.fom!)
                 const tom = erOppholdUtland ? dayjsToDate(sok.soknad.opprettetDato) : dayjsToDate(sok.soknad.tom!)
                 if (fom && (!eldsteFra || fom < eldsteFra)) eldsteFra = fom
-                if (tom && (!nysteTil || tom > nysteTil)) nysteTil = tom
+                if (tom && (!senesteSoknadTom || tom > senesteSoknadTom)) senesteSoknadTom = tom
             }
         }
     }
 
-    const aktivTidsvindu = beregnAktivTidsvindu(visningsFraDato, visningstilDato, eldsteFra, nysteTil)
+    const senesteSluttDato: Date | null = datospennSyk?.sluttDato ?? senesteSoknadTom
+
+    const aktivTidsvindu = beregnAktivTidsvindu(visningsFraDato, visningstilDato, eldsteFra, senesteSluttDato)
 
     const sykmeldingAntall = aktivTidsvindu
         ? filtrerteSykmeldinger.filter((sykmelding) => {
@@ -109,7 +111,7 @@ export const useTidslinjeKombinert = (
         sykmeldingerGruppertPaArbeidsgiver,
         soknaderGruppert,
         aktivTidsvindu,
-        nysteTil,
+        senesteSluttDato,
         sykmeldingAntall,
         soknadAntall,
         handlePeriodeValgt,
