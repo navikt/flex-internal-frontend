@@ -21,7 +21,7 @@ describe('ViktigePeriodefelt', () => {
             expect(screen.getByText('2024-01-31')).toBeInTheDocument()
         })
 
-        it('hvert felt rendres i en egen boks (kortbasert layout)', () => {
+        it('alle felt rendres inni én felles kortboks', () => {
             const { container } = render(
                 <ViktigePeriodefelt
                     viktigeFelt={[
@@ -31,7 +31,7 @@ describe('ViktigePeriodefelt', () => {
                 />,
             )
             const kortbokser = container.querySelectorAll('.rounded-lg.border')
-            expect(kortbokser).toHaveLength(2)
+            expect(kortbokser).toHaveLength(1)
         })
 
         it('viser CopyButton for felt som slutter på " id"', () => {
@@ -78,14 +78,15 @@ describe('ViktigePeriodefelt', () => {
             expect(container.querySelector('.bg-ax-bg-success-moderate')).toBeInTheDocument()
         })
 
-        it('statusfelt har border-transparent i stedet for vanlig grå border', () => {
+        it('statusfelt får fargeklasse', () => {
             const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'SENDT' }]} />)
-            expect(container.querySelector('.border-transparent')).toBeInTheDocument()
+            expect(container.querySelector('.bg-ax-bg-success-moderate')).toBeInTheDocument()
         })
 
-        it('vanlig felt har border-gray-200', () => {
+        it('vanlig felt har ikke statusfarge', () => {
             const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Fra', verdi: '2024-01-01' }]} />)
-            expect(container.querySelector('.border-gray-200')).toBeInTheDocument()
+            expect(container.querySelector('.bg-ax-bg-success-moderate')).not.toBeInTheDocument()
+            expect(container.querySelector('.bg-ax-bg-warning-moderate')).not.toBeInTheDocument()
         })
     })
 
@@ -119,14 +120,14 @@ describe('ViktigePeriodefelt', () => {
             expect(screen.getByText('16.01 – 31.01')).toBeInTheDocument()
         })
 
-        it('periodeblokken er en egen kortboks i tillegg til feltene', () => {
+        it('periodeblokken er en egen kortboks ved siden av felt-kortet', () => {
             const { container } = render(
                 <ViktigePeriodefelt
                     viktigeFelt={[{ etikett: 'Fra', verdi: '2024-01-01' }]}
                     delperiodeTekster={['01.01 – 15.01', '16.01 – 31.01']}
                 />,
             )
-            // 1 felt + 1 periodeblokk = 2 kortbokser
+            // 1 felt-kort + 1 periodeblokk = 2 kortbokser
             expect(container.querySelectorAll('.rounded-lg.border')).toHaveLength(2)
         })
     })
