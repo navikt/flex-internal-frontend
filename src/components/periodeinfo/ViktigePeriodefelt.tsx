@@ -68,30 +68,34 @@ const hentFargeFraStatus = (status: string): string => {
 export default function ViktigePeriodefelt({ viktigeFelt, delperiodeTekster = [] }: Props) {
     return (
         <div className="space-y-2">
-            {viktigeFelt.map((felt) => (
-                <div
-                    key={felt.etikett}
-                    className={`flex items-start gap-3 rounded-lg border p-3 text-sm shadow-sm ${
-                        felt.etikett === 'Status'
-                            ? hentFargeFraStatus(felt.verdi as string) + ' border-transparent'
-                            : 'border-gray-200 bg-white'
-                    }`}
-                >
-                    <span className="mt-0.5 flex shrink-0 items-center text-gray-600">{hentIkon(felt.etikett)}</span>
-                    <div className="flex flex-col gap-0.5">
-                        <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
-                            {felt.etikett}
+            <ul className="space-y-2">
+                {viktigeFelt.map((felt) => (
+                    <li
+                        key={felt.etikett}
+                        className={`flex items-start gap-3 rounded-lg border p-3 text-sm shadow-sm ${
+                            felt.etikett === 'Status'
+                                ? `${hentFargeFraStatus(felt.verdi as string)} border-transparent`
+                                : 'border-gray-200 bg-white'
+                        }`}
+                    >
+                        <span className="mt-0.5 flex shrink-0 items-center text-gray-600">
+                            {hentIkon(felt.etikett)}
                         </span>
-                        <span className="flex items-center gap-1 font-medium text-gray-900">
-                            {felt.verdi}
-                            {(felt.etikett.toLowerCase().endsWith(' id') ||
-                                felt.etikett.toLowerCase().startsWith('id')) && (
-                                <CopyButton size="xsmall" copyText={String(felt.verdi)} />
-                            )}
-                        </span>
-                    </div>
-                </div>
-            ))}
+                        <div className="flex flex-col gap-0.5">
+                            <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                                {felt.etikett}
+                            </span>
+                            <span className="flex items-center gap-1 font-medium text-gray-900">
+                                {felt.verdi}
+                                {(felt.etikett.toLowerCase().endsWith(' id') ||
+                                    felt.etikett.toLowerCase().startsWith('id')) && (
+                                    <CopyButton size="xsmall" copyText={String(felt.verdi)} />
+                                )}
+                            </span>
+                        </div>
+                    </li>
+                ))}
+            </ul>
 
             {delperiodeTekster.length > 1 && (
                 <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
