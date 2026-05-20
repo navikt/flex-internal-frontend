@@ -53,6 +53,7 @@ export const lagSoknadRader = ({
                             const sykmeldingId = k.sykmeldingUuid ?? null
                             const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
                             const kildeId = k.id
+                            const erValgtPeriode = aktivDrawerKildeId === kildeId
 
                             return (
                                 <Timeline.Period
@@ -62,6 +63,7 @@ export const lagSoknadRader = ({
                                     key={k.id}
                                     icon={klippIkon}
                                     isActive={erAktiv}
+                                    className={erValgtPeriode ? 'shadow-[inset_0_0_0_4px_#dc2626]!' : undefined}
                                     onSelectPeriod={() => {
                                         if (aktivDrawerKildeId === kildeId) {
                                             onPeriodeValgt(null, null, null)
@@ -84,6 +86,7 @@ export const lagSoknadRader = ({
                             const sykmeldingId = sok.soknad.sykmeldingId ?? null
                             const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
                             const kildeId = sok.soknad.id
+                            const erValgtPeriode = aktivDrawerKildeId === kildeId
                             klippingAvSoknad.push(
                                 <Timeline.Period
                                     start={sokFom}
@@ -92,6 +95,7 @@ export const lagSoknadRader = ({
                                     icon={ikonerForSoknad(sok.soknad)}
                                     key={sok.soknad.tom?.toISOString() ?? sok.soknad.id}
                                     isActive={erAktiv}
+                                    className={erValgtPeriode ? 'shadow-[inset_0_0_0_4px_#dc2626]!' : undefined}
                                     onSelectPeriod={() => {
                                         if (aktivDrawerKildeId === kildeId) {
                                             onPeriodeValgt(null, null, null)
@@ -129,6 +133,7 @@ export const lagSoknadRader = ({
                             const sykmeldingId = k.sykmeldingUuid ?? null
                             const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
                             const kildeId = k.id
+                            const erValgtPeriode = aktivDrawerKildeId === kildeId
 
                             return (
                                 <Timeline.Period
@@ -138,6 +143,7 @@ export const lagSoknadRader = ({
                                     key={k.id}
                                     icon={klippIkon}
                                     isActive={erAktiv}
+                                    className={erValgtPeriode ? 'shadow-[inset_0_0_0_4px_#dc2626]!' : undefined}
                                     onSelectPeriod={() => {
                                         if (aktivDrawerKildeId === kildeId) {
                                             onPeriodeValgt(null, null, null)
