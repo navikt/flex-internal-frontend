@@ -442,7 +442,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         sykmeldingsperioder: [
             {
                 fom: '2026-05-01',
-                tom: '2026-05-20',
+                tom: '2026-06-20',
                 gradert: null,
                 behandlingsdager: null,
                 innspillTilArbeidsgiver: null,

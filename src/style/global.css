@@ -16,3 +16,13 @@
     margin-right: 0.25rem;
     flex-shrink: 0;
 }
+
+/* Dagensdato-pin: blå linje og knapp */
+.kombinert-tidslinje-boks .aksel-timeline__pin-wrapper:has([data-idag])::before {
+    background: var(--ax-bg-info-strong);
+    width: 2px;
+}
+
+.kombinert-tidslinje-boks [data-idag].aksel-timeline__pin-button {
+    box-shadow: inset 0 0 0 4px var(--ax-bg-info-strong) !important;
+}

@@ -1,4 +1,5 @@
 import React from 'react'
+import dayjs from 'dayjs'
 import { BodyShort, Box, Timeline } from '@navikt/ds-react'
 
 import type { ArbeidsgiverGruppering } from '../../utils/gruppering'
@@ -34,7 +35,7 @@ const SoknadTidslinje = ({
         >
             <BodyShort className="font-semibold mb-2">Søknader</BodyShort>
             <Timeline
-                endDate={aktivTidsvindu.til}
+                endDate={dayjs(aktivTidsvindu.til).startOf('day').add(1, 'day').toDate()}
                 startDate={aktivTidsvindu.fra}
                 key={`sok-${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
             >
@@ -50,6 +51,11 @@ const SoknadTidslinje = ({
                     aktivDrawerKildeId,
                     onDrawerValgt,
                 })}
+                {!dayjs().isAfter(dayjs(aktivTidsvindu.til), 'day') && (
+                    <Timeline.Pin date={dayjs().startOf('day').toDate()} data-idag="true">
+                        I dag
+                    </Timeline.Pin>
+                )}
             </Timeline>
         </Box>
     )

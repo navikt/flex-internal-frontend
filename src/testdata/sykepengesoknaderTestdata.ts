@@ -360,7 +360,7 @@ export const sykepengesoknaderTestdata = {
             soknadstype: 'SELVSTENDIGE_OG_FRILANSERE',
             status: 'NY',
             fom: '2026-05-01',
-            tom: '2026-05-20',
+            tom: '2026-06-20',
             opprettetDato: '2026-10-03T14:09:14.823799',
             sendtTilNAVDato: null,
             sendtTilArbeidsgiverDato: null,
@@ -377,7 +377,7 @@ export const sykepengesoknaderTestdata = {
             soknadPerioder: [
                 {
                     fom: '2026-05-01',
-                    tom: '2026-05-20',
+                    tom: '2026-06-20',
                     grad: 100,
                     sykmeldingstype: 'AKTIVITET_IKKE_MULIG',
                 },
