@@ -1,4 +1,5 @@
 import React from 'react'
+import dayjs from 'dayjs'
 import { BodyShort, Box, Timeline } from '@navikt/ds-react'
 
 import type { SykmeldingerPerArbeidsgiver } from '../sykmelding/sykmeldingTidslinjeUtils'
@@ -30,7 +31,7 @@ const SykmeldingTidslinje = ({
         >
             <BodyShort className="font-semibold mb-2">Sykmeldinger</BodyShort>
             <Timeline
-                endDate={aktivTidsvindu.til}
+                endDate={dayjs(aktivTidsvindu.til).startOf('day').add(1, 'day').toDate()}
                 startDate={aktivTidsvindu.fra}
                 key={`syk-${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
             >
@@ -41,6 +42,11 @@ const SykmeldingTidslinje = ({
                     aktivDrawerKildeId,
                     onPeriodeValgt,
                 })}
+                {!dayjs().isAfter(dayjs(aktivTidsvindu.til), 'day') && (
+                    <Timeline.Pin date={dayjs().startOf('day').toDate()} data-idag="true">
+                        I dag
+                    </Timeline.Pin>
+                )}
             </Timeline>
         </Box>
     )
