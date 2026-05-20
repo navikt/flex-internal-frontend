@@ -70,6 +70,7 @@ export const lagSykmeldingRader = ({
                         end={sistePeriode.sluttDato}
                         status={status}
                         icon={ikon}
+
                         className={
                             erValgtPeriode ? 'shadow-[inset_0_0_0_4px_#dc2626]!' : 'ring-1 ring-inset ring-white/95'
                         }
