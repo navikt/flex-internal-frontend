@@ -66,13 +66,15 @@ export const lagSykmeldingRader = ({
                 const sykmeldingAktivId = sykmelding.id
                 const ikonHeader = ikonParForSykmeldingPerioder(perioder.length, forstePeriodetype, arbeidssituasjon)
 
+                const erValgtPeriode = aktivDrawerKildeId === sykmeldingAktivId
+
                 return [
                     <Timeline.Period
                         start={forstePeriode.startDato}
                         end={sistePeriode.sluttDato}
                         status={status}
                         icon={ikon}
-                        className="ring-1 ring-inset ring-white/95"
+                        className={erValgtPeriode ? 'ring-2 ring-red-600' : 'ring-1 ring-inset ring-white/95'}
                         key={periodeKey}
                         isActive={aktivPeriodeId === sykmeldingAktivId}
                         onSelectPeriod={() => {
