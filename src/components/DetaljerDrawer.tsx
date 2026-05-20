@@ -1,7 +1,7 @@
-import React, { useSyncExternalStore, useState } from 'react'
+import React, { useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
 import { Button, Heading } from '@navikt/ds-react'
-import { XMarkIcon, SidebarRightIcon, ChevronDownIcon, ChevronUpIcon } from '@navikt/aksel-icons'
+import { XMarkIcon, SidebarRightIcon } from '@navikt/aksel-icons'
 
 import { Detaljer } from './Detaljer'
 import { Filter } from './Filter'
@@ -64,32 +64,6 @@ export function lagKlippetSoknadDrawerInnhold(klippetSoknad: object): DrawerInnh
     }
 }
 
-function DetaljerMedToggle({
-    objekt,
-    filter,
-    setFilter,
-}: {
-    objekt: object
-    filter: Filter[]
-    setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
-}) {
-    const [visDetaljer, setVisDetaljer] = useState(false)
-
-    return (
-        <div className="space-y-4">
-            <Button
-                variant="tertiary"
-                size="small"
-                onClick={() => setVisDetaljer(!visDetaljer)}
-                icon={visDetaljer ? <ChevronUpIcon aria-hidden /> : <ChevronDownIcon aria-hidden />}
-            >
-                {visDetaljer ? 'Skjul' : 'Vis'} fullstendige detaljer
-            </Button>
-            {visDetaljer && <Detaljer objekt={objekt} filter={filter} setFilter={setFilter} />}
-        </div>
-    )
-}
-
 function DrawerInnholdRenderer({
     variant,
     filter,
@@ -109,7 +83,7 @@ function DrawerInnholdRenderer({
                     <div className="flex h-full gap-6">
                         <div className="w-1/2 overflow-y-auto">{variant.periodeInfo}</div>
                         <div className="w-1/2 overflow-y-auto">
-                            <DetaljerMedToggle objekt={variant.objekt} filter={filter} setFilter={setFilter} />
+                            <Detaljer objekt={variant.objekt} filter={filter} setFilter={setFilter} />
                         </div>
                     </div>
                 )
@@ -117,7 +91,7 @@ function DrawerInnholdRenderer({
             return (
                 <div className="space-y-4">
                     {variant.periodeInfo}
-                    <DetaljerMedToggle objekt={variant.objekt} filter={filter} setFilter={setFilter} />
+                    <Detaljer objekt={variant.objekt} filter={filter} setFilter={setFilter} />
                 </div>
             )
         case 'klippetSoknad':

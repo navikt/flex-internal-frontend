@@ -73,11 +73,11 @@ export default function ViktigePeriodefelt({ viktigeFelt, delperiodeTekster = []
                     {viktigeFelt.map((felt) => (
                         <li
                             key={felt.etikett}
-                            className={`flex items-start gap-3 text-sm p-2 ${felt.etikett == 'Status' ? hentFargeFraStatus(felt.verdi as string) + ' rounded-2xl' : ''}`}
+                            className={`flex items-start gap-3 p-2 text-sm ${felt.etikett === 'Status' ? `${hentFargeFraStatus(felt.verdi as string)} rounded-2xl` : ''}`}
                         >
                             <span className="flex shrink-0 items-center text-gray-700">{hentIkon(felt.etikett)}</span>
                             <div className="flex flex-col">
-                                <span className="font-medium text-gray-700 ">{felt.etikett}</span>
+                                <span className="font-medium text-gray-700">{felt.etikett}</span>
                                 <span className="flex items-center gap-1 text-gray-900">
                                     {felt.verdi}
                                     {(felt.etikett.toLowerCase().endsWith(' id') ||
@@ -92,23 +92,21 @@ export default function ViktigePeriodefelt({ viktigeFelt, delperiodeTekster = []
             </div>
 
             {delperiodeTekster.length > 1 && (
-                <>
-                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                        <ul className="space-y-2">
-                            <li className="flex items-center gap-2 font-semibold text-gray-700">
-                                <span className="flex items-center text-gray-700">
-                                    <FilesIcon aria-hidden fontSize="1.25rem" />
-                                </span>
-                                Perioder
+                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                    <ul className="space-y-2">
+                        <li className="flex items-center gap-2 font-semibold text-gray-700">
+                            <span className="flex items-center text-gray-700">
+                                <FilesIcon aria-hidden fontSize="1.25rem" />
+                            </span>
+                            Perioder
+                        </li>
+                        {delperiodeTekster.map((tekst, indeks) => (
+                            <li key={`${tekst}-${indeks}`} className="ml-6 text-sm text-gray-900">
+                                {tekst}
                             </li>
-                            {delperiodeTekster.map((tekst, indeks) => (
-                                <li key={`${tekst}-${indeks}`} className="ml-6 text-sm text-gray-900">
-                                    {tekst}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </>
+                        ))}
+                    </ul>
+                </div>
             )}
         </div>
     )

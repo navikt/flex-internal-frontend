@@ -21,11 +21,23 @@ describe('ViktigePeriodefelt', () => {
             expect(screen.getByText('2024-01-31')).toBeInTheDocument()
         })
 
+        it('alle felt rendres inni én felles kortboks', () => {
+            const { container } = render(
+                <ViktigePeriodefelt
+                    viktigeFelt={[
+                        { etikett: 'Fra', verdi: '2024-01-01' },
+                        { etikett: 'Til', verdi: '2024-01-31' },
+                    ]}
+                />,
+            )
+            const kortbokser = container.querySelectorAll('.rounded-lg.border')
+            expect(kortbokser).toHaveLength(1)
+        })
+
         it('viser CopyButton for felt som slutter på " id"', () => {
             const { container } = render(
                 <ViktigePeriodefelt viktigeFelt={[{ etikett: 'Sykmelding ID', verdi: 'abc-123' }]} />,
             )
-            // CopyButton rendres som en button
             expect(container.querySelectorAll('button').length).toBeGreaterThan(0)
         })
 
@@ -48,25 +60,33 @@ describe('ViktigePeriodefelt', () => {
     describe('statusfarger', () => {
         it('viser advarselsfarge for AVBRUTT-status', () => {
             const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'AVBRUTT' }]} />)
-            const statusElement = container.querySelector('.bg-ax-bg-warning-moderate')
-            expect(statusElement).toBeInTheDocument()
+            expect(container.querySelector('.bg-ax-bg-warning-moderate')).toBeInTheDocument()
         })
 
         it('viser suksessfarge for SENDT-status', () => {
             const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'SENDT' }]} />)
-            const statusElement = container.querySelector('.bg-ax-bg-success-moderate')
-            expect(statusElement).toBeInTheDocument()
+            expect(container.querySelector('.bg-ax-bg-success-moderate')).toBeInTheDocument()
         })
 
         it('viser infofarge for ukjent status', () => {
             const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'NY' }]} />)
-            const statusElement = container.querySelector('.bg-ax-bg-info-moderate')
-            expect(statusElement).toBeInTheDocument()
+            expect(container.querySelector('.bg-ax-bg-info-moderate')).toBeInTheDocument()
         })
 
         it('statussammenligning er case-insensitiv', () => {
             const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'sendt' }]} />)
             expect(container.querySelector('.bg-ax-bg-success-moderate')).toBeInTheDocument()
+        })
+
+        it('statusfelt får fargeklasse', () => {
+            const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Status', verdi: 'SENDT' }]} />)
+            expect(container.querySelector('.bg-ax-bg-success-moderate')).toBeInTheDocument()
+        })
+
+        it('vanlig felt har ikke statusfarge', () => {
+            const { container } = render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Fra', verdi: '2024-01-01' }]} />)
+            expect(container.querySelector('.bg-ax-bg-success-moderate')).not.toBeInTheDocument()
+            expect(container.querySelector('.bg-ax-bg-warning-moderate')).not.toBeInTheDocument()
         })
     })
 
@@ -98,6 +118,17 @@ describe('ViktigePeriodefelt', () => {
             expect(screen.getByText('Perioder')).toBeInTheDocument()
             expect(screen.getByText('01.01 – 15.01')).toBeInTheDocument()
             expect(screen.getByText('16.01 – 31.01')).toBeInTheDocument()
+        })
+
+        it('periodeblokken er en egen kortboks ved siden av felt-kortet', () => {
+            const { container } = render(
+                <ViktigePeriodefelt
+                    viktigeFelt={[{ etikett: 'Fra', verdi: '2024-01-01' }]}
+                    delperiodeTekster={['01.01 – 15.01', '16.01 – 31.01']}
+                />,
+            )
+            // 1 felt-kort + 1 periodeblokk = 2 kortbokser
+            expect(container.querySelectorAll('.rounded-lg.border')).toHaveLength(2)
         })
     })
 })

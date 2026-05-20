@@ -42,7 +42,6 @@ const renderVerdi = (
     filter: Filter[],
     setFilter: React.Dispatch<React.SetStateAction<Filter[]>>,
     sti: string,
-    erRot = false,
 ): React.ReactNode => {
     if (erBladverdi(verdi)) {
         return <span>{formaterVerdi(verdi)}</span>
@@ -86,7 +85,7 @@ const renderVerdi = (
         if (nøkler.length === 0) return '{}'
 
         return (
-            <div className={erRot ? '' : 'ml-4'}>
+            <div className="ml-4">
                 {nøkler.map(([nøkkel, nestetVerdi]) => {
                     const nestetSti = sti ? `${sti}.${nøkkel}` : nøkkel
                     const bladverdi = erBladverdi(nestetVerdi)
@@ -123,6 +122,42 @@ const renderVerdi = (
     return <span>{formaterVerdi(verdi)}</span>
 }
 
+const renderRotnivå = (
+    objekt: object,
+    filter: Filter[],
+    setFilter: React.Dispatch<React.SetStateAction<Filter[]>>,
+): React.ReactNode => {
+    const nøkler = Object.entries(objekt)
+    return (
+        <div className="space-y-2">
+            {nøkler.map(([nøkkel, verdi]) => {
+                const sti = nøkkel
+                const bladverdi = erBladverdi(verdi)
+
+                return (
+                    <div key={nøkkel} className="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
+                        <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500">{nøkkel}</div>
+                        <div className="text-sm text-gray-900">
+                            {bladverdi ? (
+                                <FilterFelt
+                                    prop={sti}
+                                    verdi={verdi}
+                                    filter={filter}
+                                    setFilter={setFilter}
+                                    markerHeleRad
+                                    barn={<span>{formaterVerdi(verdi)}</span>}
+                                />
+                            ) : (
+                                renderVerdi(verdi, filter, setFilter, sti)
+                            )}
+                        </div>
+                    </div>
+                )
+            })}
+        </div>
+    )
+}
+
 export const Detaljer = ({
     objekt,
     filter,
@@ -131,4 +166,4 @@ export const Detaljer = ({
     objekt: object
     filter: Filter[]
     setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
-}) => <Fragment>{renderVerdi(objekt, filter, setFilter, '', true)}</Fragment>
+}) => <Fragment>{renderRotnivå(objekt, filter, setFilter)}</Fragment>
