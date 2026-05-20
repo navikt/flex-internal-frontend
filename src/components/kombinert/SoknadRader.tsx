@@ -63,7 +63,7 @@ export const lagSoknadRader = ({
                                     key={k.id}
                                     icon={klippIkon}
                                     isActive={erAktiv}
-                                    className={erValgtPeriode ? 'ring-4 ring-inset ring-red-600' : undefined}
+                                    className={erValgtPeriode ? 'shadow-[inset_0_0_0_4px_#dc2626]!' : undefined}
                                     onSelectPeriod={() => {
                                         if (aktivDrawerKildeId === kildeId) {
                                             onPeriodeValgt(null, null, null)
@@ -95,7 +95,7 @@ export const lagSoknadRader = ({
                                     icon={ikonerForSoknad(sok.soknad)}
                                     key={sok.soknad.tom?.toISOString() ?? sok.soknad.id}
                                     isActive={erAktiv}
-                                    className={erValgtPeriode ? 'ring-4 ring-inset ring-red-600' : undefined}
+                                    className={erValgtPeriode ? 'shadow-[inset_0_0_0_4px_#dc2626]!' : undefined}
                                     onSelectPeriod={() => {
                                         if (aktivDrawerKildeId === kildeId) {
                                             onPeriodeValgt(null, null, null)
@@ -143,7 +143,7 @@ export const lagSoknadRader = ({
                                     key={k.id}
                                     icon={klippIkon}
                                     isActive={erAktiv}
-                                    className={erValgtPeriode ? 'ring-4 ring-inset ring-red-600' : undefined}
+                                    className={erValgtPeriode ? 'shadow-[inset_0_0_0_4px_#dc2626]!' : undefined}
                                     onSelectPeriod={() => {
                                         if (aktivDrawerKildeId === kildeId) {
                                             onPeriodeValgt(null, null, null)

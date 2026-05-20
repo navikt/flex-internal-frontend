@@ -4,11 +4,7 @@ import { Timeline } from '@navikt/ds-react'
 
 import { erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
 import { sorterSykmeldingGrupperEtterSignaturDato } from '../../utils/kombinertTidslinjeSortering'
-import {
-    ikonForSykmeldingPerioder,
-    ikonParForSykmeldingPerioder,
-    beskrivelseForSykmeldingPerioder,
-} from '../../utils/tidslinjeIkonUtils'
+import { ikonForSykmeldingPerioder, ikonParForSykmeldingPerioder } from '../../utils/tidslinjeIkonUtils'
 import type { DrawerInnhold } from '../DetaljerDrawer'
 import { lagSykmeldingDrawerInnhold } from '../DetaljerDrawer'
 import ViktigeFeltForSykmelding from '../periodeinfo/ViktigeFeltForSykmelding'
@@ -74,7 +70,9 @@ export const lagSykmeldingRader = ({
                         end={sistePeriode.sluttDato}
                         status={status}
                         icon={ikon}
-                        className={erValgtPeriode ? 'ring-4 ring-inset ring-red-600' : 'ring-1 ring-inset ring-white/95'}
+                        className={
+                            erValgtPeriode ? 'shadow-[inset_0_0_0_4px_#dc2626]!' : 'ring-1 ring-inset ring-white/95'
+                        }
                         key={periodeKey}
                         isActive={aktivPeriodeId === sykmeldingAktivId}
                         onSelectPeriod={() => {
