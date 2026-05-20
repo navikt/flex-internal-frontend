@@ -74,7 +74,7 @@ export const lagSykmeldingRader = ({
                         end={sistePeriode.sluttDato}
                         status={status}
                         icon={ikon}
-                        className={erValgtPeriode ? 'ring-2 ring-red-600' : 'ring-1 ring-inset ring-white/95'}
+                        className={erValgtPeriode ? 'ring-4 ring-inset ring-red-600' : 'ring-1 ring-inset ring-white/95'}
                         key={periodeKey}
                         isActive={aktivPeriodeId === sykmeldingAktivId}
                         onSelectPeriod={() => {
