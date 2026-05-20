@@ -4,7 +4,7 @@ import { KlippetSykepengesoknadRecord, Soknad } from '../queryhooks/useSoknader'
 import { Filter } from '../components/Filter'
 
 import { sortert } from './soknadSortering'
-import { Klipp, maxTom, minFom, perioderSomMangler, sykmeldingDager, sykmeldingOverlappendeDager } from './overlapp'
+import { Klipp, maxTom, minFom, perioderSomMangler, sykmeldingDager } from './overlapp'
 import { passerAlleFilter } from './filterlogikk'
 
 export interface SoknadGruppering {
@@ -37,7 +37,7 @@ function grupperPaSykmelding(
     soknader
         .sort((a, b) => (a.opprettetDato?.valueOf() ?? 0) - (b.opprettetDato?.valueOf() ?? 0))
         .forEach((sok) => {
-            const key = sok.sykmeldingId!
+            const key = sok.sykmeldingId ?? `${sok.id}_UTEN_SYKMELDING`
             let sykmeldingKey = key
 
             if (sok.status === 'KORRIGERT') {
@@ -155,6 +155,7 @@ function grupperPaArbeidsgiver(gruppertPaSykmelding: Map<string, SykmeldingGrupp
 
         const grupperingNokkel = orgnummer ?? (harNaeringsdrivende ? 'naeringsdrivende' : 'arbeidsgiver_GHOST')
         let grupperingOrgnummer = grupperingNokkel
+        const nySykmeldingDager = new Set(sykmeldingDager(sykId, syk))
         let iterationCount = 0
         const maxIterations = 20
         while (!sykmeldingBleLagtTil && iterationCount < maxIterations) {
@@ -165,14 +166,13 @@ function grupperPaArbeidsgiver(gruppertPaSykmelding: Map<string, SykmeldingGrupp
             }
             const arbeidsgiver = gruppering.get(grupperingOrgnummer)!
 
-            const alleDager = []
-            alleDager.push(...sykmeldingDager(sykId, syk))
+            const eksisterendeDager = new Set<string>()
             Array.from(arbeidsgiver.sykmeldinger.entries()).forEach(([sId, s]) => {
-                alleDager.push(...sykmeldingDager(sId, s))
+                sykmeldingDager(sId, s).forEach((dag) => eksisterendeDager.add(dag))
             })
 
-            const overlappendeDager = sykmeldingOverlappendeDager(alleDager)
-            if (overlappendeDager.length > 0) {
+            const harOverlapp = [...nySykmeldingDager].some((dag) => eksisterendeDager.has(dag))
+            if (harOverlapp) {
                 arbeidsgiverIndex += 1
                 grupperingOrgnummer = `${grupperingNokkel}(${arbeidsgiverIndex})`
             } else {

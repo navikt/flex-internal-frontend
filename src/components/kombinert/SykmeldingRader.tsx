@@ -1,9 +1,14 @@
 import React from 'react'
-import { SplitHorizontalIcon, StethoscopeIcon } from '@navikt/aksel-icons'
+import { StethoscopeIcon } from '@navikt/aksel-icons'
 import { Timeline } from '@navikt/ds-react'
 
 import { erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
 import { sorterSykmeldingGrupperEtterSignaturDato } from '../../utils/kombinertTidslinjeSortering'
+import {
+    ikonForSykmeldingPerioder,
+    ikonParForSykmeldingPerioder,
+    beskrivelseForSykmeldingPerioder,
+} from '../../utils/tidslinjeIkonUtils'
 import type { DrawerInnhold } from '../DetaljerDrawer'
 import { lagSykmeldingDrawerInnhold } from '../DetaljerDrawer'
 import ViktigeFeltForSykmelding from '../periodeinfo/ViktigeFeltForSykmelding'
@@ -53,11 +58,13 @@ export const lagSykmeldingRader = ({
                     return []
                 }
 
-                const harFlerePerioder = perioder.length > 1
-                const ikon = harFlerePerioder ? <SplitHorizontalIcon aria-hidden /> : undefined
+                const forstePeriodetype = sykmelding.sykmeldingsperioder[0]?.type
+                const arbeidssituasjon = sykmelding.sykmeldingStatus?.brukerSvar?.arbeidssituasjon?.svar
+                const ikon = ikonForSykmeldingPerioder(perioder.length, forstePeriodetype, arbeidssituasjon)
                 const periodeKey = `${sykmelding.id}-${forstePeriode.fom}-${sistePeriode.tom}`
                 const periodeInfo = <ViktigeFeltForSykmelding sykmelding={sykmelding} perioder={perioder} />
                 const sykmeldingAktivId = sykmelding.id
+                const ikonHeader = ikonParForSykmeldingPerioder(perioder.length, forstePeriodetype, arbeidssituasjon)
 
                 return [
                     <Timeline.Period
@@ -75,7 +82,7 @@ export const lagSykmeldingRader = ({
                                 onPeriodeValgt(
                                     sykmeldingAktivId,
                                     sykmeldingAktivId,
-                                    lagSykmeldingDrawerInnhold(sykmelding, periodeInfo),
+                                    lagSykmeldingDrawerInnhold(sykmelding, periodeInfo, ikonHeader),
                                 )
                             }
                         }}

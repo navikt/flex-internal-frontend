@@ -13,6 +13,7 @@ type DrawerVariant =
 
 export interface DrawerInnhold {
     tittel: string
+    ikonHeader?: Array<{ ikon: React.ReactNode; tekst: string }>
     variant: DrawerVariant
 }
 
@@ -25,16 +26,26 @@ interface DetaljerDrawerProps {
     setPlassering: React.Dispatch<React.SetStateAction<'bunn' | 'hoyre'>>
 }
 
-export function lagSykmeldingDrawerInnhold(sykmelding: object, periodeInfo: React.ReactNode): DrawerInnhold {
+export function lagSykmeldingDrawerInnhold(
+    sykmelding: object,
+    periodeInfo: React.ReactNode,
+    ikonHeader?: Array<{ ikon: React.ReactNode; tekst: string }>,
+): DrawerInnhold {
     return {
         tittel: 'Sykmelding',
+        ikonHeader,
         variant: { type: 'sykmelding', objekt: sykmelding, periodeInfo },
     }
 }
 
-export function lagSoknadDrawerInnhold(soknad: object, periodeInfo: React.ReactNode): DrawerInnhold {
+export function lagSoknadDrawerInnhold(
+    soknad: object,
+    periodeInfo: React.ReactNode,
+    ikonHeader?: Array<{ ikon: React.ReactNode; tekst: string }>,
+): DrawerInnhold {
     return {
         tittel: 'Søknad',
+        ikonHeader,
         variant: { type: 'soknad', objekt: soknad, periodeInfo },
     }
 }
@@ -155,7 +166,21 @@ export default function DetaljerDrawer({
             aria-label={innhold?.tittel ?? 'Detaljer'}
         >
             <div className="flex items-center justify-between border-b border-gray-200 px-5 py-3">
-                <Heading size="small">{innhold?.tittel ?? ''}</Heading>
+                <div className="flex min-w-0 items-center gap-3">
+                    <Heading size="small">{innhold?.tittel ?? ''}</Heading>
+                    {innhold?.ikonHeader && innhold.ikonHeader.length > 0 && (
+                        <div className="flex flex-col gap-0.5">
+                            {innhold.ikonHeader.map((par, i) => (
+                                <span key={i} className="flex items-center gap-1 text-xs text-gray-500">
+                                    <span className="flex items-center" aria-hidden>
+                                        {par.ikon}
+                                    </span>
+                                    {par.tekst}
+                                </span>
+                            ))}
+                        </div>
+                    )}
+                </div>
                 <div className="flex items-center gap-1">
                     <Button
                         variant="tertiary"

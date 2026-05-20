@@ -5,6 +5,7 @@ import { Timeline } from '@navikt/ds-react'
 import { ArbeidsgiverGruppering, SoknadGruppering } from '../../utils/gruppering'
 import { dayjsToDate } from '../../queryhooks/useSoknader'
 import { erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
+import { ikonParForSoknad, ikonerForSoknad, klippIkon } from '../../utils/tidslinjeIkonUtils'
 import { sorterSoknadGrupperEtterSignaturDato } from '../../utils/kombinertTidslinjeSortering'
 import { arbeidsgiverLabelForSoknader } from '../../utils/soknadArbeidsgiverLabel'
 import { lagKlippetSoknadDrawerInnhold, lagSoknadDrawerInnhold } from '../DetaljerDrawer'
@@ -59,6 +60,7 @@ export const lagSoknadRader = ({
                                     end={dayjsToDate(k.tom)!}
                                     status="neutral"
                                     key={k.id}
+                                    icon={klippIkon}
                                     isActive={erAktiv}
                                     onSelectPeriod={() => {
                                         if (aktivDrawerKildeId === kildeId) {
@@ -87,6 +89,7 @@ export const lagSoknadRader = ({
                                     start={sokFom}
                                     end={sokTom}
                                     status={timelinePeriodeStatus(sok.soknad.status)}
+                                    icon={ikonerForSoknad(sok.soknad)}
                                     key={sok.soknad.tom?.toISOString() ?? sok.soknad.id}
                                     isActive={erAktiv}
                                     onSelectPeriod={() => {
@@ -99,6 +102,7 @@ export const lagSoknadRader = ({
                                                 lagSoknadDrawerInnhold(
                                                     sok.soknad,
                                                     <ViktigeFeltForSoknad soknad={sok.soknad} />,
+                                                    ikonParForSoknad(sok.soknad),
                                                 ),
                                             )
                                         }
@@ -132,6 +136,7 @@ export const lagSoknadRader = ({
                                     end={dayjsToDate(k.tom)!}
                                     status="neutral"
                                     key={k.id}
+                                    icon={klippIkon}
                                     isActive={erAktiv}
                                     onSelectPeriod={() => {
                                         if (aktivDrawerKildeId === kildeId) {
