@@ -1,4 +1,4 @@
-onlyBuiltDependencies:
-  - sharp
-  - unrs-resolver
 minimumReleaseAge: 2880
+allowBuilds:
+  sharp: true
+  unrs-resolver: true
