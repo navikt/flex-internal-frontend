@@ -7,7 +7,7 @@ import { validerUuid } from '../utils/inputValidering'
 import { useValgtFnr } from '../utils/useValgtFnr'
 
 export const IdOppslagSokefelt = () => {
-    const { settFnr } = useValgtFnr()
+    const { settFnr, settValgtPeriode } = useValgtFnr()
     const [id, setId] = useState<string>()
     const [feilmelding, setFeilmelding] = useState<string>()
 
@@ -27,10 +27,24 @@ export const IdOppslagSokefelt = () => {
         if (!funnetFnr) return
 
         settFnr(funnetFnr)
+
+        // Hent relevante id-er for å markere periode på tidslinjen
+        const sykmeldingId = sykmeldingData?.sykmelding?.id ?? sykmeldingData?.id ?? null
+        const soknad = soknadData?.sykepengesoknad ?? null
+        const soknadId = soknad?.id ?? null
+        const soknadSykmeldingId = soknad?.sykmeldingId ?? null
+
+        if (typeof settValgtPeriode === 'function') {
+            // Hvis vi har sykmeldingId, bruk den som periodeId, ellers bruk soknad-kildeId
+            const periodeId = sykmeldingId ?? soknadSykmeldingId ?? null
+            const kildeId = sykmeldingId ?? soknadId ?? null
+            settValgtPeriode(periodeId, kildeId)
+        }
+
         // Utfør clear av id asynkront for å unngå synkrone setState i effect
         const timer = setTimeout(() => setId(undefined), 0)
         return () => clearTimeout(timer)
-    }, [funnetFnr, settFnr])
+    }, [funnetFnr, settFnr, sykmeldingData, soknadData, settValgtPeriode])
 
     const handterSok = (input: string) => {
         setFeilmelding(undefined)

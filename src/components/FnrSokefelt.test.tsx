@@ -7,6 +7,10 @@ vi.mock('../utils/useValgtFnr', () => ({
         fnr: '12345678901',
         settFnr: vi.fn(),
         nullstillFnr: vi.fn(),
+        valgtPeriodeId: null,
+        valgtDrawerKildeId: null,
+        settValgtPeriode: vi.fn(),
+        nullstillValgtPeriode: vi.fn(),
     }),
 }))
 
