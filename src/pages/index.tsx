@@ -18,8 +18,8 @@ const Index = () => {
     const { data: sykmeldinger = [] } = useSykmeldinger(fnr, fnr !== undefined)
 
     return (
-        <div className="flex-row space-y-4">
-            <div className="flex flex-wrap gap-8">
+        <div className="space-y-4">
+            <div className="flex gap-4">
                 <FnrSokefelt label="Søk på fødselsnummer" />
                 <IdOppslagSokefelt />
             </div>
