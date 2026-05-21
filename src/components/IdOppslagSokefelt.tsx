@@ -24,10 +24,12 @@ export const IdOppslagSokefelt = () => {
     const ikkeFunnet = harSokt && !laster && !funnetFnr
 
     useEffect(() => {
-        if (funnetFnr) {
-            settFnr(funnetFnr)
-            setId(undefined)
-        }
+        if (!funnetFnr) return
+
+        settFnr(funnetFnr)
+        // Utfør clear av id asynkront for å unngå synkrone setState i effect
+        const timer = setTimeout(() => setId(undefined), 0)
+        return () => clearTimeout(timer)
     }, [funnetFnr, settFnr])
 
     const handterSok = (input: string) => {
@@ -47,7 +49,7 @@ export const IdOppslagSokefelt = () => {
                 hideLabel={false}
                 htmlSize="40"
                 label="Slå opp fnr fra søknad-ID eller sykmelding-ID"
-                description="Limer inn en UUID for å finne tilhørende fødselsnummer og vise tidslinjen"
+                description="Lim inn en UUID for å finne tilhørende fødselsnummer og vise tidslinjen"
                 error={feilmelding}
                 onSearchClick={handterSok}
                 onKeyDown={(evt) => {
