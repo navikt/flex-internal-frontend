@@ -6,11 +6,13 @@ import type { Sykmelding } from '../queryhooks/useSykmeldinger'
 
 import { ValgteFilter } from './Filter'
 import VelgZoomPeriode from './VelgZoomPeriode'
-import DetaljerDrawer from './DetaljerDrawer'
+import DetaljerDrawer, { lagSykmeldingDrawerInnhold, lagSoknadDrawerInnhold } from './DetaljerDrawer'
 import { useTidslinjeKombinert } from './kombinert/useTidslinjeKombinert'
 import { useValgtFnr } from '../utils/useValgtFnr'
 import SykmeldingTidslinje from './kombinert/SykmeldingTidslinje'
 import SoknadTidslinje from './kombinert/SoknadTidslinje'
+import ViktigeFeltForSykmelding from './periodeinfo/ViktigeFeltForSykmelding'
+import { perioderMedDatoer, sorterPerioder } from './sykmelding/sykmeldingTidslinjeUtils'
 
 interface Props {
     sykmeldinger: Sykmelding[]
@@ -40,7 +42,7 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
         handleLukkDrawer,
     } = useTidslinjeKombinert(sykmeldinger, soknader, klipp)
 
-    const { valgtPeriodeId, valgtDrawerKildeId, nullstillValgtPeriode } = useValgtFnr()
+    const { valgtPeriodeId, valgtDrawerKildeId, oppslagData, nullstillValgtPeriode } = useValgtFnr()
 
     useEffect(() => {
         if (valgtPeriodeId === undefined && valgtDrawerKildeId === undefined) return
@@ -48,11 +50,33 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
 
         // Marker periode som valgt som om brukeren klikket på den
         const timer = setTimeout(() => {
-            handlePeriodeValgt(valgtPeriodeId ?? null, valgtDrawerKildeId ?? null, null)
+            let drawerContent = null
+
+            // Søk etter sykmelding i dataene
+            if (oppslagData?.sykmelding) {
+                const sykmelding = oppslagData.sykmelding as Sykmelding
+                const perioder = sorterPerioder(perioderMedDatoer(sykmelding))
+                if (perioder.length > 0) {
+                    const periodeInfo = <ViktigeFeltForSykmelding sykmelding={sykmelding} perioder={perioder} />
+                    drawerContent = lagSykmeldingDrawerInnhold(sykmelding, periodeInfo)
+                }
+            } else if (oppslagData?.soknad) {
+                const soknad = oppslagData.soknad as Soknad
+                const fom = soknad.fom?.format('DD.MM.YYYY') ?? '–'
+                const tom = soknad.tom?.format('DD.MM.YYYY') ?? '–'
+                const periodeInfo = (
+                    <div>
+                        {fom} til {tom}
+                    </div>
+                )
+                drawerContent = lagSoknadDrawerInnhold(soknad, periodeInfo)
+            }
+
+            handlePeriodeValgt(valgtPeriodeId ?? null, valgtDrawerKildeId ?? null, drawerContent)
             if (typeof nullstillValgtPeriode === 'function') nullstillValgtPeriode()
         }, 0)
         return () => clearTimeout(timer)
-    }, [valgtPeriodeId, valgtDrawerKildeId, handlePeriodeValgt, nullstillValgtPeriode])
+    }, [valgtPeriodeId, valgtDrawerKildeId, oppslagData, handlePeriodeValgt, nullstillValgtPeriode])
 
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">

@@ -3,6 +3,8 @@ import { Alert, Search } from '@navikt/ds-react'
 
 import { useSoknad } from '../queryhooks/useSoknad'
 import { useSykmelding } from '../queryhooks/useSykmelding'
+import { Soknad } from '../queryhooks/useSoknader'
+import type { Sykmelding } from '../queryhooks/useSykmeldinger'
 import { validerUuid } from '../utils/inputValidering'
 import { useValgtFnr } from '../utils/useValgtFnr'
 
@@ -29,8 +31,8 @@ export const IdOppslagSokefelt = () => {
         settFnr(funnetFnr)
 
         // Hent relevante id-er for å markere periode på tidslinjen
-        const sykmeldingId = sykmeldingData?.sykmelding?.id ?? sykmeldingData?.id ?? null
-        const soknad = soknadData?.sykepengesoknad ?? null
+        const sykmeldingId = sykmeldingData?.sykmelding?.id ?? null
+        const soknad = soknadData?.sykepengesoknad as Soknad | undefined
         const soknadId = soknad?.id ?? null
         const soknadSykmeldingId = soknad?.sykmeldingId ?? null
 
@@ -38,7 +40,11 @@ export const IdOppslagSokefelt = () => {
             // Hvis vi har sykmeldingId, bruk den som periodeId, ellers bruk soknad-kildeId
             const periodeId = sykmeldingId ?? soknadSykmeldingId ?? null
             const kildeId = sykmeldingId ?? soknadId ?? null
-            settValgtPeriode(periodeId, kildeId)
+            const data = {
+                sykmelding: sykmeldingData?.sykmelding ?? undefined,
+                soknad: soknad ?? undefined,
+            }
+            settValgtPeriode(periodeId, kildeId, data)
         }
 
         // Utfør clear av id asynkront for å unngå synkrone setState i effect
