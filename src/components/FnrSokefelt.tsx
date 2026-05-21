@@ -11,6 +11,7 @@ type Props = {
     className?: string
     htmlSize?: string
     label?: string
+    description?: string
     valideringstype?: Valideringstype
 }
 
@@ -24,7 +25,13 @@ const valideringsfunksjoner: Record<Valideringstype, (input: string) => string |
     ident: validerIdent,
 }
 
-const FnrSokefelt = ({ className, htmlSize = '20', label = 'Fødselsnummer', valideringstype = 'fnr' }: Props) => {
+const FnrSokefelt = ({
+    className,
+    htmlSize = '20',
+    label = 'Fødselsnummer',
+    description,
+    valideringstype = 'fnr',
+}: Props) => {
     const { fnr, settFnr, nullstillFnr } = useValgtFnr()
     const queryClient = useQueryClient()
     const [sokeverdi, setSokeverdi] = useState(fnr ?? '')
@@ -63,6 +70,7 @@ const FnrSokefelt = ({ className, htmlSize = '20', label = 'Fødselsnummer', val
             hideLabel={false}
             htmlSize={htmlSize}
             label={label}
+            description={description}
             value={sokeverdi}
             error={feilmelding}
             onChange={(verdi) => {

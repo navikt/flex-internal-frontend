@@ -1,4 +1,5 @@
 import React from 'react'
+import { HStack } from '@navikt/ds-react'
 
 import FnrSokefelt from '../components/FnrSokefelt'
 import IdOppslagSokefelt from '../components/IdOppslagSokefelt'
@@ -19,10 +20,10 @@ const Index = () => {
 
     return (
         <div className="space-y-4">
-            <div className="flex gap-4 items-end">
-                <FnrSokefelt label="Søk på fødselsnummer" />
+            <HStack gap="space-16" align="end">
+                <FnrSokefelt label="Fødselsnummer" description="Søk direkte på 11-sifret fødselsnummer" />
                 <IdOppslagSokefelt />
-            </div>
+            </HStack>
             <TidslinjeKombinert sykmeldinger={sykmeldinger} soknader={soknader} klipp={klipp} />
         </div>
     )
