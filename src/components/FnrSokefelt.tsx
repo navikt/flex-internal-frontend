@@ -40,7 +40,8 @@ const FnrSokefelt = ({
     // Synkroniser søkefeltet med valgt fnr fra context slik at feltet fylles
     // når et id-oppslag treffer
     useEffect(() => {
-        setSokeverdi(fnr ?? '')
+        const timer = setTimeout(() => setSokeverdi(fnr ?? ''), 0)
+        return () => clearTimeout(timer)
     }, [fnr])
 
     const handterSok = (input: string) => {
