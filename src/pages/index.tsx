@@ -20,7 +20,7 @@ const Index = () => {
 
     return (
         <div className="space-y-4">
-            <HStack gap="space-16" align="end">
+            <HStack gap="space-16" align="end" wrap={false}>
                 <FnrSokefelt label="Fødselsnummer" description="Søk direkte på 11-sifret fødselsnummer" />
                 <IdOppslagSokefelt />
             </HStack>

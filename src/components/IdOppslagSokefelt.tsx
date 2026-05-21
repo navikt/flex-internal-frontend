@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, Search } from '@navikt/ds-react'
+import { Alert, Box, Search } from '@navikt/ds-react'
 
 import { useSoknad } from '../queryhooks/useSoknad'
 import { useSykmelding } from '../queryhooks/useSykmelding'
@@ -64,7 +64,7 @@ export const IdOppslagSokefelt = () => {
     }
 
     return (
-        <>
+        <Box>
             <Search
                 hideLabel={false}
                 htmlSize="40"
@@ -83,7 +83,7 @@ export const IdOppslagSokefelt = () => {
                     Fant ikke fnr for oppgitt ID
                 </Alert>
             )}
-        </>
+        </Box>
     )
 }
 
