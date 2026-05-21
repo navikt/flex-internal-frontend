@@ -63,12 +63,12 @@ export const IdOppslagSokefelt = () => {
     }
 
     return (
-        <div>
+        <>
             <Search
                 hideLabel={false}
                 htmlSize="40"
-                label="Slå opp fnr fra søknad-ID eller sykmelding-ID"
-                description="Lim inn en UUID for å finne tilhørende fødselsnummer og vise tidslinjen"
+                label="Søknad-ID eller sykmelding-ID"
+                description="Lim inn UUID for å finne tilhørende fødselsnummer"
                 error={feilmelding}
                 onSearchClick={handterSok}
                 onKeyDown={(evt) => {
@@ -82,7 +82,7 @@ export const IdOppslagSokefelt = () => {
                     Fant ikke fnr for oppgitt ID
                 </Alert>
             )}
-        </div>
+        </>
     )
 }
 
