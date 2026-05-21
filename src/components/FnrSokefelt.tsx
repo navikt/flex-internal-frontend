@@ -54,6 +54,7 @@ const FnrSokefelt = ({ className, htmlSize = '20', label = 'Fødselsnummer', val
         <Search
             key={fnr ?? 'tomt-fnr'}
             className={className}
+            hideLabel={false}
             htmlSize={htmlSize}
             label={label}
             value={sokeverdi}

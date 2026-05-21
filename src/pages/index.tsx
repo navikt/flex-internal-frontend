@@ -1,6 +1,7 @@
 import React from 'react'
 
 import FnrSokefelt from '../components/FnrSokefelt'
+import IdOppslagSokefelt from '../components/IdOppslagSokefelt'
 import { initialProps } from '../initialprops/initialProps'
 import { useSoknader } from '../queryhooks/useSoknader'
 import { useSykmeldinger } from '../queryhooks/useSykmeldinger'
@@ -18,7 +19,10 @@ const Index = () => {
 
     return (
         <div className="flex-row space-y-4">
-            <FnrSokefelt />
+            <div className="flex flex-wrap gap-8">
+                <FnrSokefelt label="Søk på fødselsnummer" />
+                <IdOppslagSokefelt />
+            </div>
             <TidslinjeKombinert sykmeldinger={sykmeldinger} soknader={soknader} klipp={klipp} />
         </div>
     )
