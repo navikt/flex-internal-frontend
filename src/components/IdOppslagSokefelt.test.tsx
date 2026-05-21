@@ -40,12 +40,12 @@ describe('IdOppslagSokefelt', () => {
 
     it('viser søkefelt med riktig label', () => {
         render(<IdOppslagSokefelt />)
-        expect(screen.getByLabelText('Slå opp fnr fra søknad-ID eller sykmelding-ID')).toBeInTheDocument()
+        expect(screen.getByLabelText('Søknad-ID eller sykmelding-ID')).toBeInTheDocument()
     })
 
     it('viser feilmelding for ugyldig UUID', async () => {
         render(<IdOppslagSokefelt />)
-        const input = screen.getByLabelText('Slå opp fnr fra søknad-ID eller sykmelding-ID')
+        const input = screen.getByLabelText('Søknad-ID eller sykmelding-ID')
 
         await userEvent.type(input, 'ikke-en-uuid{enter}')
 
@@ -54,7 +54,7 @@ describe('IdOppslagSokefelt', () => {
 
     it('aksepterer gyldig UUID og trigger oppslag', async () => {
         render(<IdOppslagSokefelt />)
-        const input = screen.getByLabelText('Slå opp fnr fra søknad-ID eller sykmelding-ID')
+        const input = screen.getByLabelText('Søknad-ID eller sykmelding-ID')
         const gyldigUuid = '12345678-1234-1234-1234-123456789012'
 
         await userEvent.type(input, gyldigUuid + '{enter}')
@@ -68,7 +68,7 @@ describe('IdOppslagSokefelt', () => {
         mockUseSykmelding.mockReturnValue({ data: null, isFetching: false })
 
         const { rerender } = render(<IdOppslagSokefelt />)
-        const input = screen.getByLabelText('Slå opp fnr fra søknad-ID eller sykmelding-ID')
+        const input = screen.getByLabelText('Søknad-ID eller sykmelding-ID')
         const gyldigUuid = '12345678-1234-1234-1234-123456789012'
 
         await userEvent.type(input, gyldigUuid + '{enter}')
@@ -88,7 +88,7 @@ describe('IdOppslagSokefelt', () => {
         mockUseSykmelding.mockReturnValue({ data: null, isFetching: false })
 
         const { rerender } = render(<IdOppslagSokefelt />)
-        const input = screen.getByLabelText('Slå opp fnr fra søknad-ID eller sykmelding-ID')
+        const input = screen.getByLabelText('Søknad-ID eller sykmelding-ID')
         const gyldigUuid = '12345678-1234-1234-1234-123456789012'
 
         await userEvent.type(input, gyldigUuid + '{enter}')
@@ -108,7 +108,7 @@ describe('IdOppslagSokefelt', () => {
         mockUseSykmelding.mockReturnValue({ data: null, isFetching: false })
 
         render(<IdOppslagSokefelt />)
-        const input = screen.getByLabelText('Slå opp fnr fra søknad-ID eller sykmelding-ID')
+        const input = screen.getByLabelText('Søknad-ID eller sykmelding-ID')
         const gyldigUuid = '12345678-1234-1234-1234-123456789012'
 
         await userEvent.type(input, gyldigUuid + '{enter}')
@@ -121,7 +121,7 @@ describe('IdOppslagSokefelt', () => {
         mockUseSykmelding.mockReturnValue({ data: null, isFetching: true })
 
         render(<IdOppslagSokefelt />)
-        const input = screen.getByLabelText('Slå opp fnr fra søknad-ID eller sykmelding-ID')
+        const input = screen.getByLabelText('Søknad-ID eller sykmelding-ID')
         const gyldigUuid = '12345678-1234-1234-1234-123456789012'
 
         await userEvent.type(input, gyldigUuid + '{enter}')
