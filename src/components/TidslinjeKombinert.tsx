@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { BodyShort } from '@navikt/ds-react'
 import dayjs from 'dayjs'
 
-import { KlippetSykepengesoknadRecord, Soknad } from '../queryhooks/useSoknader'
+import { KlippetSykepengesoknadRecord, Soknad, dayjsToDate } from '../queryhooks/useSoknader'
 import type { Sykmelding } from '../queryhooks/useSykmeldinger'
 import { useValgtFnr } from '../utils/useValgtFnr'
 
@@ -66,16 +66,18 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
                 }
             } else if (oppslagData?.soknad) {
                 const soknad = oppslagData.soknad as Soknad
-                const fom = soknad.fom?.format('DD.MM.YYYY') ?? '–'
-                const tom = soknad.tom?.format('DD.MM.YYYY') ?? '–'
+                const fomDato = dayjsToDate(soknad.fom as string | undefined)
+                const tomDato = dayjsToDate(soknad.tom as string | undefined)
+                const fom = fomDato ? dayjs(fomDato).format('DD.MM.YYYY') : '–'
+                const tom = tomDato ? dayjs(tomDato).format('DD.MM.YYYY') : '–'
                 const periodeInfo = (
                     <div>
                         {fom} til {tom}
                     </div>
                 )
                 drawerContent = lagSoknadDrawerInnhold(soknad, periodeInfo)
-                periodStart = soknad.fom?.toDate() ?? null
-                periodEnd = soknad.tom?.toDate() ?? null
+                periodStart = fomDato ?? null
+                periodEnd = tomDato ?? null
             }
 
             if (periodStart) {
