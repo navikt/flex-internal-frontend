@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Search } from '@navikt/ds-react'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -29,6 +29,12 @@ const FnrSokefelt = ({ className, htmlSize = '20', label = 'Fødselsnummer', val
     const queryClient = useQueryClient()
     const [sokeverdi, setSokeverdi] = useState(fnr ?? '')
     const [feilmelding, setFeilmelding] = useState<string>()
+
+    // Synkroniser søkefeltet med valgt fnr fra context slik at feltet fylles
+    // når et id-oppslag treffer
+    useEffect(() => {
+        setSokeverdi(fnr ?? '')
+    }, [fnr])
 
     const handterSok = (input: string) => {
         setSokeverdi(input)
