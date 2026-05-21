@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { BodyShort } from '@navikt/ds-react'
+import dayjs from 'dayjs'
 
 import { KlippetSykepengesoknadRecord, Soknad } from '../queryhooks/useSoknader'
 import type { Sykmelding } from '../queryhooks/useSykmeldinger'
@@ -48,17 +49,20 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
         if (valgtPeriodeId === undefined && valgtDrawerKildeId === undefined) return
         if (valgtPeriodeId === null && valgtDrawerKildeId === null) return
 
-        // Marker periode som valgt som om brukeren klikket på den
+        // Marker periode som valgt og zoom tidslinjen til 6 mnd rundt perioden
         const timer = setTimeout(() => {
             let drawerContent = null
+            let periodStart: Date | null = null
+            let periodEnd: Date | null = null
 
-            // Søk etter sykmelding i dataene
             if (oppslagData?.sykmelding) {
                 const sykmelding = oppslagData.sykmelding as Sykmelding
                 const perioder = sorterPerioder(perioderMedDatoer(sykmelding))
                 if (perioder.length > 0) {
                     const periodeInfo = <ViktigeFeltForSykmelding sykmelding={sykmelding} perioder={perioder} />
                     drawerContent = lagSykmeldingDrawerInnhold(sykmelding, periodeInfo)
+                    periodStart = perioder[0].startDato
+                    periodEnd = perioder[perioder.length - 1].sluttDato
                 }
             } else if (oppslagData?.soknad) {
                 const soknad = oppslagData.soknad as Soknad
@@ -70,13 +74,32 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
                     </div>
                 )
                 drawerContent = lagSoknadDrawerInnhold(soknad, periodeInfo)
+                periodStart = soknad.fom?.toDate() ?? null
+                periodEnd = soknad.tom?.toDate() ?? null
+            }
+
+            if (periodStart) {
+                setVisningsFraDato(dayjs(periodStart).subtract(3, 'month').toDate())
+                setVisningstilDato(
+                    dayjs(periodEnd ?? periodStart)
+                        .add(3, 'month')
+                        .toDate(),
+                )
             }
 
             handlePeriodeValgt(valgtPeriodeId ?? null, valgtDrawerKildeId ?? null, drawerContent)
             if (typeof nullstillValgtPeriode === 'function') nullstillValgtPeriode()
         }, 0)
         return () => clearTimeout(timer)
-    }, [valgtPeriodeId, valgtDrawerKildeId, oppslagData, handlePeriodeValgt, nullstillValgtPeriode])
+    }, [
+        valgtPeriodeId,
+        valgtDrawerKildeId,
+        oppslagData,
+        handlePeriodeValgt,
+        nullstillValgtPeriode,
+        setVisningsFraDato,
+        setVisningstilDato,
+    ])
 
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
