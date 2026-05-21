@@ -1,15 +1,19 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { BodyShort } from '@navikt/ds-react'
+import dayjs from 'dayjs'
 
-import { KlippetSykepengesoknadRecord, Soknad } from '../queryhooks/useSoknader'
+import { KlippetSykepengesoknadRecord, Soknad, dayjsToDate } from '../queryhooks/useSoknader'
 import type { Sykmelding } from '../queryhooks/useSykmeldinger'
+import { useValgtFnr } from '../utils/useValgtFnr'
 
 import { ValgteFilter } from './Filter'
 import VelgZoomPeriode from './VelgZoomPeriode'
-import DetaljerDrawer from './DetaljerDrawer'
+import DetaljerDrawer, { lagSykmeldingDrawerInnhold, lagSoknadDrawerInnhold } from './DetaljerDrawer'
 import { useTidslinjeKombinert } from './kombinert/useTidslinjeKombinert'
 import SykmeldingTidslinje from './kombinert/SykmeldingTidslinje'
 import SoknadTidslinje from './kombinert/SoknadTidslinje'
+import ViktigeFeltForSykmelding from './periodeinfo/ViktigeFeltForSykmelding'
+import { perioderMedDatoer, sorterPerioder } from './sykmelding/sykmeldingTidslinjeUtils'
 
 interface Props {
     sykmeldinger: Sykmelding[]
@@ -38,6 +42,66 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
         handleDrawerValgt,
         handleLukkDrawer,
     } = useTidslinjeKombinert(sykmeldinger, soknader, klipp)
+
+    const { valgtPeriodeId, valgtDrawerKildeId, oppslagData, nullstillValgtPeriode } = useValgtFnr()
+
+    useEffect(() => {
+        if (valgtPeriodeId === undefined && valgtDrawerKildeId === undefined) return
+        if (valgtPeriodeId === null && valgtDrawerKildeId === null) return
+
+        // Marker periode som valgt og zoom tidslinjen til 6 mnd rundt perioden
+        const timer = setTimeout(() => {
+            let drawerContent = null
+            let periodStart: Date | null = null
+            let periodEnd: Date | null = null
+
+            if (oppslagData?.sykmelding) {
+                const sykmelding = oppslagData.sykmelding as Sykmelding
+                const perioder = sorterPerioder(perioderMedDatoer(sykmelding))
+                if (perioder.length > 0) {
+                    const periodeInfo = <ViktigeFeltForSykmelding sykmelding={sykmelding} perioder={perioder} />
+                    drawerContent = lagSykmeldingDrawerInnhold(sykmelding, periodeInfo)
+                    periodStart = perioder[0].startDato
+                    periodEnd = perioder[perioder.length - 1].sluttDato
+                }
+            } else if (oppslagData?.soknad) {
+                const soknad = oppslagData.soknad as Soknad
+                const fomDato = dayjsToDate(soknad.fom as string | undefined)
+                const tomDato = dayjsToDate(soknad.tom as string | undefined)
+                const fom = fomDato ? dayjs(fomDato).format('DD.MM.YYYY') : '–'
+                const tom = tomDato ? dayjs(tomDato).format('DD.MM.YYYY') : '–'
+                const periodeInfo = (
+                    <div>
+                        {fom} til {tom}
+                    </div>
+                )
+                drawerContent = lagSoknadDrawerInnhold(soknad, periodeInfo)
+                periodStart = fomDato ?? null
+                periodEnd = tomDato ?? null
+            }
+
+            if (periodStart) {
+                setVisningsFraDato(dayjs(periodStart).subtract(3, 'month').toDate())
+                setVisningstilDato(
+                    dayjs(periodEnd ?? periodStart)
+                        .add(3, 'month')
+                        .toDate(),
+                )
+            }
+
+            handlePeriodeValgt(valgtPeriodeId ?? null, valgtDrawerKildeId ?? null, drawerContent)
+            if (typeof nullstillValgtPeriode === 'function') nullstillValgtPeriode()
+        }, 0)
+        return () => clearTimeout(timer)
+    }, [
+        valgtPeriodeId,
+        valgtDrawerKildeId,
+        oppslagData,
+        handlePeriodeValgt,
+        nullstillValgtPeriode,
+        setVisningsFraDato,
+        setVisningstilDato,
+    ])
 
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">

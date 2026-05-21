@@ -126,7 +126,7 @@ pnpm run prettier:check   # Check formatting
 
 **Note:** Tests use Vitest (ESM-compatible alternative to Jest). Test file convention: `.test.ts` suffix. Example: `/src/utils/sykmeldingValidering.test.ts`.
 
-**After every code change:** run `pnpm run format && pnpm run build` to verify formatting and correctness. Remove unused imports and dead code before committing.
+**Before every commit:** always run `pnpm run format && pnpm run build` to fix formatting and verify the build compiles. Remove unused imports and dead code before committing.
 
 ## Styling
 

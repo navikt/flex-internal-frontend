@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Search } from '@navikt/ds-react'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -11,6 +11,7 @@ type Props = {
     className?: string
     htmlSize?: string
     label?: string
+    description?: string
     valideringstype?: Valideringstype
 }
 
@@ -24,11 +25,24 @@ const valideringsfunksjoner: Record<Valideringstype, (input: string) => string |
     ident: validerIdent,
 }
 
-const FnrSokefelt = ({ className, htmlSize = '20', label = 'Fødselsnummer', valideringstype = 'fnr' }: Props) => {
+const FnrSokefelt = ({
+    className,
+    htmlSize = '20',
+    label = 'Fødselsnummer',
+    description,
+    valideringstype = 'fnr',
+}: Props) => {
     const { fnr, settFnr, nullstillFnr } = useValgtFnr()
     const queryClient = useQueryClient()
     const [sokeverdi, setSokeverdi] = useState(fnr ?? '')
     const [feilmelding, setFeilmelding] = useState<string>()
+
+    // Synkroniser søkefeltet med valgt fnr fra context slik at feltet fylles
+    // når et id-oppslag treffer
+    useEffect(() => {
+        const timer = setTimeout(() => setSokeverdi(fnr ?? ''), 0)
+        return () => clearTimeout(timer)
+    }, [fnr])
 
     const handterSok = (input: string) => {
         setSokeverdi(input)
@@ -54,8 +68,10 @@ const FnrSokefelt = ({ className, htmlSize = '20', label = 'Fødselsnummer', val
         <Search
             key={fnr ?? 'tomt-fnr'}
             className={className}
+            hideLabel={false}
             htmlSize={htmlSize}
             label={label}
+            description={description}
             value={sokeverdi}
             error={feilmelding}
             onChange={(verdi) => {

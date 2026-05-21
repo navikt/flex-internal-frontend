@@ -1,6 +1,7 @@
 import React from 'react'
 
 import FnrSokefelt from '../components/FnrSokefelt'
+import IdOppslagSokefelt from '../components/IdOppslagSokefelt'
 import { initialProps } from '../initialprops/initialProps'
 import { useSoknader } from '../queryhooks/useSoknader'
 import { useSykmeldinger } from '../queryhooks/useSykmeldinger'
@@ -17,8 +18,11 @@ const Index = () => {
     const { data: sykmeldinger = [] } = useSykmeldinger(fnr, fnr !== undefined)
 
     return (
-        <div className="flex-row space-y-4">
-            <FnrSokefelt />
+        <div className="space-y-4">
+            <div className="inline-flex items-end gap-4">
+                <FnrSokefelt label="Fødselsnummer" description="Søk direkte på 11-sifret fødselsnummer" />
+                <IdOppslagSokefelt />
+            </div>
             <TidslinjeKombinert sykmeldinger={sykmeldinger} soknader={soknader} klipp={klipp} />
         </div>
     )
