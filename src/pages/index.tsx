@@ -19,7 +19,7 @@ const Index = () => {
 
     return (
         <div className="space-y-4">
-            <div className="flex gap-4">
+            <div className="flex gap-4 items-end">
                 <FnrSokefelt label="Søk på fødselsnummer" />
                 <IdOppslagSokefelt />
             </div>

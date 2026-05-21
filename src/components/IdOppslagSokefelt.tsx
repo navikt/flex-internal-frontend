@@ -64,7 +64,7 @@ export const IdOppslagSokefelt = () => {
     }
 
     return (
-        <div className="space-y-2">
+        <>
             <Search
                 hideLabel={false}
                 htmlSize="40"
@@ -78,8 +78,12 @@ export const IdOppslagSokefelt = () => {
                     }
                 }}
             />
-            {ikkeFunnet && <Alert variant="warning">Fant ikke fnr for oppgitt ID</Alert>}
-        </div>
+            {ikkeFunnet && (
+                <Alert variant="warning" className="mt-2">
+                    Fant ikke fnr for oppgitt ID
+                </Alert>
+            )}
+        </>
     )
 }
 
