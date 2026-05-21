@@ -19,7 +19,7 @@ const Index = () => {
 
     return (
         <div className="space-y-4">
-            <div className="flex items-end gap-4 justify-start">
+            <div className="inline-flex items-end gap-4">
                 <FnrSokefelt label="Fødselsnummer" description="Søk direkte på 11-sifret fødselsnummer" />
                 <IdOppslagSokefelt />
             </div>

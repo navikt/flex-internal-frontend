@@ -1,6 +1,9 @@
 import React from 'react'
 import { vi, describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+import FnrSokefelt from './FnrSokefelt'
 
 vi.mock('../utils/useValgtFnr', () => ({
     useValgtFnr: () => ({
@@ -13,9 +16,6 @@ vi.mock('../utils/useValgtFnr', () => ({
         nullstillValgtPeriode: vi.fn(),
     }),
 }))
-
-import FnrSokefelt from './FnrSokefelt'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 describe('FnrSokefelt', () => {
     it('viser hentet fnr i input-feltet når context har fnr', () => {

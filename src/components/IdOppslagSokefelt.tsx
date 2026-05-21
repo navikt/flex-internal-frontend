@@ -4,7 +4,6 @@ import { Alert, Search } from '@navikt/ds-react'
 import { useSoknad } from '../queryhooks/useSoknad'
 import { useSykmelding } from '../queryhooks/useSykmelding'
 import { Soknad } from '../queryhooks/useSoknader'
-import type { Sykmelding } from '../queryhooks/useSykmeldinger'
 import { validerUuid } from '../utils/inputValidering'
 import { useValgtFnr } from '../utils/useValgtFnr'
 

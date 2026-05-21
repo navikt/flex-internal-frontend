@@ -3,12 +3,12 @@ import { BodyShort } from '@navikt/ds-react'
 
 import { KlippetSykepengesoknadRecord, Soknad } from '../queryhooks/useSoknader'
 import type { Sykmelding } from '../queryhooks/useSykmeldinger'
+import { useValgtFnr } from '../utils/useValgtFnr'
 
 import { ValgteFilter } from './Filter'
 import VelgZoomPeriode from './VelgZoomPeriode'
 import DetaljerDrawer, { lagSykmeldingDrawerInnhold, lagSoknadDrawerInnhold } from './DetaljerDrawer'
 import { useTidslinjeKombinert } from './kombinert/useTidslinjeKombinert'
-import { useValgtFnr } from '../utils/useValgtFnr'
 import SykmeldingTidslinje from './kombinert/SykmeldingTidslinje'
 import SoknadTidslinje from './kombinert/SoknadTidslinje'
 import ViktigeFeltForSykmelding from './periodeinfo/ViktigeFeltForSykmelding'
