@@ -1,4 +1,4 @@
-import { createContext, createElement, ReactNode, useContext, useMemo, useState } from 'react'
+import { createContext, createElement, ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 
 export type OppslagData = {
     sykmelding?: object
@@ -37,17 +37,17 @@ export const ValgtFnrProvider = ({ children }: { children: ReactNode }) => {
     const [valgtDrawerKildeId, setValgtDrawerKildeId] = useState<string | null>(null)
     const [oppslagData, setOppslagData] = useState<OppslagData>({})
 
-    const settValgtPeriode = (periodeId: string | null, kildeId?: string | null, data?: OppslagData) => {
+    const settValgtPeriode = useCallback((periodeId: string | null, kildeId?: string | null, data?: OppslagData) => {
         setValgtPeriodeId(periodeId ?? null)
         setValgtDrawerKildeId(kildeId ?? null)
         if (data) setOppslagData(data)
-    }
+    }, [])
 
-    const nullstillValgtPeriode = () => {
+    const nullstillValgtPeriode = useCallback(() => {
         setValgtPeriodeId(null)
         setValgtDrawerKildeId(null)
         setOppslagData({})
-    }
+    }, [])
 
     const verdi = useMemo(
         () => ({
@@ -60,7 +60,7 @@ export const ValgtFnrProvider = ({ children }: { children: ReactNode }) => {
             settValgtPeriode,
             nullstillValgtPeriode,
         }),
-        [fnr, valgtPeriodeId, valgtDrawerKildeId, oppslagData],
+        [fnr, valgtPeriodeId, valgtDrawerKildeId, oppslagData, settValgtPeriode, nullstillValgtPeriode],
     )
 
     return createElement(ValgtFnrContext.Provider, { value: verdi }, children)

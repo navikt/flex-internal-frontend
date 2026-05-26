@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 import { KlippetSykepengesoknadRecord, Soknad, dayjsToDate } from '../../queryhooks/useSoknader'
 import type { Sykmelding } from '../../queryhooks/useSykmeldinger'
@@ -80,21 +80,24 @@ export const useTidslinjeKombinert = (
           ).length
         : filtrerteSoknaderAntall
 
-    const handlePeriodeValgt = (periodeId: string | null, kildeId: string | null, drawer: DrawerInnhold | null) => {
-        setAktivPeriodeId(periodeId)
+    const handlePeriodeValgt = useCallback(
+        (periodeId: string | null, kildeId: string | null, drawer: DrawerInnhold | null) => {
+            setAktivPeriodeId(periodeId)
+            setAktivDrawerKildeId(kildeId)
+            setDrawerInnhold(drawer)
+        },
+        [],
+    )
+
+    const handleDrawerValgt = useCallback((kildeId: string | null, drawer: DrawerInnhold | null) => {
         setAktivDrawerKildeId(kildeId)
         setDrawerInnhold(drawer)
-    }
+    }, [])
 
-    const handleDrawerValgt = (kildeId: string | null, drawer: DrawerInnhold | null) => {
-        setAktivDrawerKildeId(kildeId)
-        setDrawerInnhold(drawer)
-    }
-
-    const handleLukkDrawer = () => {
+    const handleLukkDrawer = useCallback(() => {
         setAktivDrawerKildeId(null)
         setDrawerInnhold(null)
-    }
+    }, [])
 
     return {
         filter,
