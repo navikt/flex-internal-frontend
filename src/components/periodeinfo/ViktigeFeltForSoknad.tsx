@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { Button } from '@navikt/ds-react'
 
 import { Soknad, dayjsToDate } from '../../queryhooks/useSoknader'
 import { antallKalenderdager, formaterDato } from '../sykmelding/sykmeldingTidslinjeUtils'
+import { useSoknadKafkaformat } from '../../queryhooks/useSoknadKafkaformat'
+import { Detaljer } from '../Detaljer'
 
 import ViktigePeriodefelt from './ViktigePeriodefelt'
 
@@ -38,6 +41,10 @@ const hentGradFraSoknadperioder = (soknad: Soknad): string => {
 }
 
 export default function ViktigeFeltForSoknad({ soknad }: Props) {
+    const [visKafkaformat, setVisKafkaformat] = useState(false)
+    const [kafkaformatFilter, setKafkaformatFilter] = useState<import('../Filter').Filter[]>([])
+    const { data: kafkaformatData } = useSoknadKafkaformat(soknad.id, visKafkaformat)
+
     if (soknad.soknadstype === 'OPPHOLD_UTLAND') {
         const opprettetDato = dayjsToDate(soknad.opprettetDato)
         if (!opprettetDato) return null
@@ -48,7 +55,18 @@ export default function ViktigeFeltForSoknad({ soknad }: Props) {
             { etikett: 'Opprettet dato', verdi: formaterDato(opprettetDato) },
         ]
 
-        return <ViktigePeriodefelt viktigeFelt={viktigeFelt} />
+        return (
+            <div className="space-y-3">
+                <ViktigePeriodefelt viktigeFelt={viktigeFelt} />
+                <KafkaformatSeksjon
+                    visKafkaformat={visKafkaformat}
+                    setVisKafkaformat={setVisKafkaformat}
+                    kafkaformatData={kafkaformatData}
+                    kafkaformatFilter={kafkaformatFilter}
+                    setKafkaformatFilter={setKafkaformatFilter}
+                />
+            </div>
+        )
     }
 
     const perioder = soknad.soknadPerioder
@@ -91,5 +109,43 @@ export default function ViktigeFeltForSoknad({ soknad }: Props) {
         (periode, indeks) => `${indeks + 1}: ${formaterDato(periode.startDato)} – ${formaterDato(periode.sluttDato)}`,
     )
 
-    return <ViktigePeriodefelt viktigeFelt={viktigeFelt} delperiodeTekster={delperiodeTekster} />
+    return (
+        <div className="space-y-3">
+            <ViktigePeriodefelt viktigeFelt={viktigeFelt} delperiodeTekster={delperiodeTekster} />
+            <KafkaformatSeksjon
+                visKafkaformat={visKafkaformat}
+                setVisKafkaformat={setVisKafkaformat}
+                kafkaformatData={kafkaformatData}
+                kafkaformatFilter={kafkaformatFilter}
+                setKafkaformatFilter={setKafkaformatFilter}
+            />
+        </div>
+    )
+}
+
+interface KafkaformatSeksjonProps {
+    visKafkaformat: boolean
+    setVisKafkaformat: React.Dispatch<React.SetStateAction<boolean>>
+    kafkaformatData: object | null | undefined
+    kafkaformatFilter: import('../Filter').Filter[]
+    setKafkaformatFilter: React.Dispatch<React.SetStateAction<import('../Filter').Filter[]>>
+}
+
+function KafkaformatSeksjon({
+    visKafkaformat,
+    setVisKafkaformat,
+    kafkaformatData,
+    kafkaformatFilter,
+    setKafkaformatFilter,
+}: KafkaformatSeksjonProps) {
+    return (
+        <div className="space-y-2">
+            <Button variant="secondary" size="small" onClick={() => setVisKafkaformat((prev) => !prev)}>
+                {visKafkaformat ? 'Skjul kafkaformat' : 'Vis kafkaformat'}
+            </Button>
+            {visKafkaformat && kafkaformatData && (
+                <Detaljer objekt={kafkaformatData} filter={kafkaformatFilter} setFilter={setKafkaformatFilter} />
+            )}
+        </div>
+    )
 }
