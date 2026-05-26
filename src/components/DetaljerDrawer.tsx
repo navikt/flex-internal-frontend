@@ -1,14 +1,18 @@
-import React, { useSyncExternalStore } from 'react'
+import React, { useState, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
-import { Button, Heading } from '@navikt/ds-react'
+import { Button, Heading, ToggleGroup } from '@navikt/ds-react'
 import { XMarkIcon, SidebarRightIcon } from '@navikt/aksel-icons'
+
+import { useSoknadKafkaformat } from '../queryhooks/useSoknadKafkaformat'
 
 import { Detaljer } from './Detaljer'
 import { Filter } from './Filter'
 
+type VisModus = 'vanlig' | 'kafkaformat' | 'begge'
+
 type DrawerVariant =
     | { type: 'sykmelding'; objekt: object; periodeInfo: React.ReactNode }
-    | { type: 'soknad'; objekt: object; periodeInfo: React.ReactNode }
+    | { type: 'soknad'; soknadId: string; objekt: object; periodeInfo: React.ReactNode }
     | { type: 'klippetSoknad'; objekt: object }
 
 export interface DrawerInnhold {
@@ -39,21 +43,24 @@ export function lagSykmeldingDrawerInnhold(
 }
 
 export function lagSoknadDrawerInnhold(
-    soknad: object,
+    soknad: object & { id: string },
     periodeInfo: React.ReactNode,
     ikonHeader?: Array<{ ikon: React.ReactNode; tekst: string }>,
 ): DrawerInnhold {
     return {
         tittel: 'Søknad',
         ikonHeader,
-        variant: { type: 'soknad', objekt: soknad, periodeInfo },
+        variant: { type: 'soknad', soknadId: soknad.id, objekt: soknad, periodeInfo },
     }
 }
 
-export function lagOppholdUtlandSoknadDrawerInnhold(soknad: object, periodeInfo: React.ReactNode): DrawerInnhold {
+export function lagOppholdUtlandSoknadDrawerInnhold(
+    soknad: object & { id: string },
+    periodeInfo: React.ReactNode,
+): DrawerInnhold {
     return {
         tittel: 'Opphold utland søknad',
-        variant: { type: 'soknad', objekt: soknad, periodeInfo },
+        variant: { type: 'soknad', soknadId: soknad.id, objekt: soknad, periodeInfo },
     }
 }
 
@@ -64,20 +71,87 @@ export function lagKlippetSoknadDrawerInnhold(klippetSoknad: object): DrawerInnh
     }
 }
 
+function SoknadInnholdRenderer({
+    variant,
+    filter,
+    setFilter,
+    plassering,
+    visModus,
+}: {
+    variant: Extract<DrawerVariant, { type: 'soknad' }>
+    filter: Filter[]
+    setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
+    plassering: 'bunn' | 'hoyre'
+    visModus: VisModus
+}) {
+    const [kafkaformatFilter, setKafkaformatFilter] = useState<Filter[]>([])
+    const { data: kafkaformatData } = useSoknadKafkaformat(
+        variant.soknadId,
+        visModus === 'kafkaformat' || visModus === 'begge',
+    )
+
+    const vanligDetaljer = <Detaljer objekt={variant.objekt} filter={filter} setFilter={setFilter} />
+    const kafkaDetaljer = kafkaformatData ? (
+        <Detaljer objekt={kafkaformatData} filter={kafkaformatFilter} setFilter={setKafkaformatFilter} />
+    ) : (
+        <span className="text-gray-400 text-sm">Laster kafkaformat...</span>
+    )
+
+    if (plassering === 'bunn') {
+        if (visModus === 'begge') {
+            return (
+                <div className="flex h-full gap-4">
+                    <div className="w-1/4 overflow-y-auto">{variant.periodeInfo}</div>
+                    <div className="w-[37.5%] overflow-y-auto">{vanligDetaljer}</div>
+                    <div className="w-[37.5%] overflow-y-auto">{kafkaDetaljer}</div>
+                </div>
+            )
+        }
+        return (
+            <div className="flex h-full gap-6">
+                <div className="w-1/2 overflow-y-auto">{variant.periodeInfo}</div>
+                <div className="w-1/2 overflow-y-auto">
+                    {visModus === 'kafkaformat' ? kafkaDetaljer : vanligDetaljer}
+                </div>
+            </div>
+        )
+    }
+
+    if (visModus === 'begge') {
+        return (
+            <div className="space-y-4">
+                {variant.periodeInfo}
+                <div className="flex gap-4">
+                    <div className="w-1/2 overflow-y-auto">{vanligDetaljer}</div>
+                    <div className="w-1/2 overflow-y-auto">{kafkaDetaljer}</div>
+                </div>
+            </div>
+        )
+    }
+
+    return (
+        <div className="space-y-4">
+            {variant.periodeInfo}
+            {visModus === 'kafkaformat' ? kafkaDetaljer : vanligDetaljer}
+        </div>
+    )
+}
+
 function DrawerInnholdRenderer({
     variant,
     filter,
     setFilter,
     plassering,
+    visModus,
 }: {
     variant: DrawerVariant
     filter: Filter[]
     setFilter: React.Dispatch<React.SetStateAction<Filter[]>>
     plassering: 'bunn' | 'hoyre'
+    visModus: VisModus
 }) {
     switch (variant.type) {
         case 'sykmelding':
-        case 'soknad':
             if (plassering === 'bunn') {
                 return (
                     <div className="flex h-full gap-6">
@@ -93,6 +167,16 @@ function DrawerInnholdRenderer({
                     {variant.periodeInfo}
                     <Detaljer objekt={variant.objekt} filter={filter} setFilter={setFilter} />
                 </div>
+            )
+        case 'soknad':
+            return (
+                <SoknadInnholdRenderer
+                    variant={variant}
+                    filter={filter}
+                    setFilter={setFilter}
+                    plassering={plassering}
+                    visModus={visModus}
+                />
             )
         case 'klippetSoknad':
             return <Detaljer objekt={variant.objekt} filter={filter} setFilter={setFilter} />
@@ -112,8 +196,11 @@ export default function DetaljerDrawer({
         () => true,
         () => false,
     )
+    const [visModus, setVisModus] = useState<VisModus>('vanlig')
     const erApen = innhold !== null
     const erBunn = plassering === 'bunn'
+    const erSoknad = innhold?.variant.type === 'soknad'
+    const erBegge = visModus === 'begge'
 
     if (!mounted) return null
 
@@ -125,9 +212,10 @@ export default function DetaljerDrawer({
               erApen ? 'translate-y-0' : 'translate-y-full',
           ]
         : [
-              'fixed top-0 right-0 z-[99999] flex h-full w-[500px] flex-col',
+              'fixed top-0 right-0 z-[99999] flex h-full flex-col',
+              erSoknad && erBegge ? 'w-[900px]' : 'w-[500px]',
               'border-l border-gray-200 shadow-[-4px_0_24px_rgba(0,0,0,0.12)]',
-              'transition-transform duration-300 ease-in-out',
+              'transition-[transform,width] duration-300 ease-in-out',
               erApen ? 'translate-x-0' : 'translate-x-full',
           ]
 
@@ -155,7 +243,19 @@ export default function DetaljerDrawer({
                         </div>
                     )}
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-2">
+                    {erSoknad && (
+                        <ToggleGroup
+                            value={visModus}
+                            onChange={(v) => setVisModus(v as VisModus)}
+                            size="small"
+                            variant="neutral"
+                        >
+                            <ToggleGroup.Item value="vanlig">Vanlig</ToggleGroup.Item>
+                            <ToggleGroup.Item value="kafkaformat">Kafka</ToggleGroup.Item>
+                            <ToggleGroup.Item value="begge">Begge</ToggleGroup.Item>
+                        </ToggleGroup>
+                    )}
                     <Button
                         variant="tertiary"
                         size="small"
@@ -180,6 +280,7 @@ export default function DetaljerDrawer({
                         filter={filter}
                         setFilter={setFilter}
                         plassering={plassering}
+                        visModus={visModus}
                     />
                 )}
             </div>
