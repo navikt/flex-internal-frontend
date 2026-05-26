@@ -124,7 +124,7 @@ pnpm run format           # Prettier + ESLint fixes
 pnpm run prettier:check   # Check formatting
 ```
 
-**Note:** Tests use Vitest (ESM-compatible alternative to Jest). Test file convention: `.test.ts` suffix. Example: `/src/utils/sykmeldingValidering.test.ts`.
+**Note:** Tests use Vitest (ESM-compatible alternative to Jest). Test file convention: `.test.ts` / `.test.tsx` suffix. Example: `/src/utils/sykmeldingValidering.test.ts`.
 
 **Before every commit:** always run `pnpm run format && pnpm run build` to fix formatting and verify the build compiles. Remove unused imports and dead code before committing.
 
@@ -150,6 +150,15 @@ pnpm run prettier:check   # Check formatting
 - Timeline components receive `soknader` (applications) and `klipp` (clipped/overlapping records) as arrays
 - Parent components handle filtering and grouping; pass filtered data to children
 - Query hooks centralize all backend communication
+- **`ValgtFnrProvider`** (`/src/utils/useValgtFnr.ts`) holds global search state (fnr, selected period, lookup data). Functions exposed via context (`settValgtPeriode`, `nullstillValgtPeriode`) must be wrapped in `useCallback` to avoid infinite render loops when used in `useEffect` dependency arrays.
+
+### useCallback for stable references
+
+Always wrap handler functions in `useCallback` when they are:
+- Exposed from a context provider (e.g. `useValgtFnr`)
+- Returned from a custom hook and used in `useEffect` deps (e.g. `useTidslinjeKombinert`)
+
+Failing to do so causes the function reference to change on every render, which triggers effects repeatedly and can exceed React's max update depth limit.
 
 ## File Organization
 
@@ -188,7 +197,8 @@ pnpm run prettier:check   # Check formatting
 ### Modifying Timeline Data Flow
 
 - Update filter/grouping logic in `/src/utils/filterlogikk.ts` or `/src/utils/gruppering.ts`
-- Timeline component state in `/src/components/Tidslinje.tsx` recomputes on filter changes via `useEffect`
+- Timeline state lives in `useTidslinjeKombinert` (custom hook in `/src/components/kombinert/`)
+- `TidslinjeKombinert` recomputes on filter changes via `useEffect`
 
 ## Deployment & Environment
 
