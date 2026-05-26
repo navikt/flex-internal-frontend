@@ -71,6 +71,21 @@ export function lagKlippetSoknadDrawerInnhold(klippetSoknad: object): DrawerInnh
     }
 }
 
+const SKJUL_I_DETALJER = new Set([
+    'id',
+    'sykmeldingId',
+    'status',
+    'arbeidssituasjon',
+    'ventetidSykmeldingUuid',
+    'fom',
+    'tom',
+    'soknadPerioder',
+])
+
+function filtrerNøkler(obj: object, skjul: Set<string>): object {
+    return Object.fromEntries(Object.entries(obj).filter(([k]) => !skjul.has(k)))
+}
+
 function SoknadInnholdRenderer({
     variant,
     filter,
@@ -87,11 +102,17 @@ function SoknadInnholdRenderer({
     const [kafkaformatFilter, setKafkaformatFilter] = useState<Filter[]>([])
     const { data: kafkaformatData, isLoading: lasterKafka } = useSoknadKafkaformat(variant.soknadId)
 
-    const vanligDetaljer = <Detaljer objekt={variant.objekt} filter={filter} setFilter={setFilter} />
+    const filtrertSoknad = filtrerNøkler(variant.objekt, SKJUL_I_DETALJER)
+    const vanligDetaljer = <Detaljer objekt={filtrertSoknad} filter={filter} setFilter={setFilter} />
+
     const kafkaDetaljer = lasterKafka ? (
         <span className="text-gray-400 text-sm">Laster kafkaformat...</span>
     ) : kafkaformatData ? (
-        <Detaljer objekt={kafkaformatData} filter={kafkaformatFilter} setFilter={setKafkaformatFilter} />
+        <Detaljer
+            objekt={filtrerNøkler(kafkaformatData, new Set(['versjon']))}
+            filter={kafkaformatFilter}
+            setFilter={setKafkaformatFilter}
+        />
     ) : (
         <span className="text-gray-400 text-sm">Ingen kafkaformat-data</span>
     )
