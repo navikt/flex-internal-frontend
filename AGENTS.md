@@ -55,14 +55,13 @@ Pages are in `/src/pages/`, components in `/src/components/`:
 
 ```
 index.tsx (main page)
-  └─ Tidslinje (timeline component)
-    ├─ Filter (chip-based filtering by properties)
-    ├─ ValgtArbeidsgiver (employer selector dropdown)
-    ├─ TidslinjeArbeidsgiver (employer timeline)
-    └─ TidslinjeSykmelding (sickness certificate timeline)
+  └─ TidslinjeKombinert   (combined timeline — sykmeldinger + søknader)
+    ├─ Filter             (chip-based filtering by properties)
+    ├─ VelgZoomPeriode    (zoom window selector)
+    └─ DetaljerDrawer     (side panel with period details)
 ```
 
-Components use **local state** via `useState` for UI state (selected employer, active filters). Timeline components display data grouped and sorted by employer and date range.
+Components use **local state** via `useState` for UI state (active filters, drawer). Timeline state is centralised in `useTidslinjeKombinert` (`/src/components/kombinert/`).
 
 ### Environment & Mock Backend
 
@@ -126,7 +125,7 @@ pnpm run prettier:check   # Check formatting
 
 **Note:** Tests use Vitest (ESM-compatible alternative to Jest). Test file convention: `.test.ts` / `.test.tsx` suffix. Example: `/src/utils/sykmeldingValidering.test.ts`.
 
-**Before every commit:** always run `pnpm run format && pnpm run build` to fix formatting and verify the build compiles. Remove unused imports and dead code before committing.
+**Before every commit:** always run `pnpm run format && pnpm run test && pnpm run build`. This fixes formatting, verifies tests pass, and confirms the build compiles. Remove unused imports and dead code before committing.
 
 ## Styling
 
@@ -216,18 +215,35 @@ Failing to do so causes the function reference to change on every render, which 
 - [ ] Filters/grouping logic tested with edge cases (empty data, overlaps)
 - [ ] Mock data in testdata.ts matches real backend response shape
 - [ ] Environment checks (`isMockBackend()`, `isProd()`) properly used
-- [ ] Tailwind class names sorted (prettier plugin handles this)
+- [ ] `pnpm run format && pnpm run test && pnpm run build` passed before commit
 - [ ] No explicit return type annotations on short arrow functions (ESLint disables it)
 
-## Commit Message Style
+## Git Workflow
+
+**Every feature or fix gets its own branch.** Never commit directly to `main`.
+
+```sh
+git checkout -b kort-beskrivende-navn   # e.g. fiks-krasj-ved-andre-sok
+# ... make changes ...
+pnpm run format && pnpm run test && pnpm run build
+git commit -m "Kort beskrivelse på norsk"
+git push origin <branch>
+gh pr create --fill
+```
+
+### Commit Message Style
 
 Keep commit messages short and in Norwegian, matching the style of recent commits. Examples:
 
 ```
 Vis OPPHOLD_UTLAND-søknader som pin i tidslinjen
 Viser tydeligere viktige felter
-Vis meldingtilnavdager
+Fiks krasj ved nytt søk i kombinert tidslinje
 ```
+
+- One line, imperative or descriptive, no period at end
+- Norwegian Bokmål
+- No issue numbers required
 
 ## Contact
 
