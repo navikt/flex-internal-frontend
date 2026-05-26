@@ -85,16 +85,15 @@ function SoknadInnholdRenderer({
     visModus: VisModus
 }) {
     const [kafkaformatFilter, setKafkaformatFilter] = useState<Filter[]>([])
-    const { data: kafkaformatData } = useSoknadKafkaformat(
-        variant.soknadId,
-        visModus === 'kafkaformat' || visModus === 'begge',
-    )
+    const { data: kafkaformatData, isLoading: lasterKafka } = useSoknadKafkaformat(variant.soknadId)
 
     const vanligDetaljer = <Detaljer objekt={variant.objekt} filter={filter} setFilter={setFilter} />
-    const kafkaDetaljer = kafkaformatData ? (
+    const kafkaDetaljer = lasterKafka ? (
+        <span className="text-gray-400 text-sm">Laster kafkaformat...</span>
+    ) : kafkaformatData ? (
         <Detaljer objekt={kafkaformatData} filter={kafkaformatFilter} setFilter={setKafkaformatFilter} />
     ) : (
-        <span className="text-gray-400 text-sm">Laster kafkaformat...</span>
+        <span className="text-gray-400 text-sm">Ingen kafkaformat-data</span>
     )
 
     if (plassering === 'bunn') {
@@ -251,7 +250,7 @@ export default function DetaljerDrawer({
                             size="small"
                             variant="neutral"
                         >
-                            <ToggleGroup.Item value="vanlig">Vanlig</ToggleGroup.Item>
+                            <ToggleGroup.Item value="vanlig">Detaljer</ToggleGroup.Item>
                             <ToggleGroup.Item value="kafkaformat">Kafka</ToggleGroup.Item>
                             <ToggleGroup.Item value="begge">Begge</ToggleGroup.Item>
                         </ToggleGroup>
