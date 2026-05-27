@@ -2,8 +2,9 @@ import React, { useEffect } from 'react'
 import { BodyShort } from '@navikt/ds-react'
 import dayjs from 'dayjs'
 
-import { KlippetSykepengesoknadRecord, Soknad, dayjsToDate } from '../queryhooks/useSoknader'
+import { BackendSoknad, KlippetSykepengesoknadRecord, Soknad, dayjsToDate } from '../queryhooks/useSoknader'
 import type { Sykmelding } from '../queryhooks/useSykmeldinger'
+import { ikonParForSoknad } from '../utils/tidslinjeIkonUtils'
 import { useValgtFnr } from '../utils/useValgtFnr'
 
 import { ValgteFilter } from './Filter'
@@ -12,6 +13,7 @@ import DetaljerDrawer, { lagSykmeldingDrawerInnhold, lagSoknadDrawerInnhold } fr
 import { useTidslinjeKombinert } from './kombinert/useTidslinjeKombinert'
 import SykmeldingTidslinje from './kombinert/SykmeldingTidslinje'
 import SoknadTidslinje from './kombinert/SoknadTidslinje'
+import ViktigeFeltForSoknad from './periodeinfo/ViktigeFeltForSoknad'
 import ViktigeFeltForSykmelding from './periodeinfo/ViktigeFeltForSykmelding'
 import { perioderMedDatoer, sorterPerioder } from './sykmelding/sykmeldingTidslinjeUtils'
 
@@ -65,17 +67,11 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
                     periodEnd = perioder[perioder.length - 1].sluttDato
                 }
             } else if (oppslagData?.soknad) {
-                const soknad = oppslagData.soknad as Soknad
-                const fomDato = dayjsToDate(soknad.fom as string | undefined)
-                const tomDato = dayjsToDate(soknad.tom as string | undefined)
-                const fom = fomDato ? dayjs(fomDato).format('DD.MM.YYYY') : '–'
-                const tom = tomDato ? dayjs(tomDato).format('DD.MM.YYYY') : '–'
-                const periodeInfo = (
-                    <div>
-                        {fom} til {tom}
-                    </div>
-                )
-                drawerContent = lagSoknadDrawerInnhold(soknad, periodeInfo)
+                const soknad = new Soknad(oppslagData.soknad as BackendSoknad)
+                const fomDato = dayjsToDate(soknad.fom)
+                const tomDato = dayjsToDate(soknad.tom)
+                const periodeInfo = <ViktigeFeltForSoknad soknad={soknad} />
+                drawerContent = lagSoknadDrawerInnhold(soknad, periodeInfo, ikonParForSoknad(soknad))
                 periodStart = fomDato ?? null
                 periodEnd = tomDato ?? null
             }
