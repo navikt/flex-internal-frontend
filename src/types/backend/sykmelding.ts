@@ -7,7 +7,6 @@ export interface Sykmelding {
     behandletTidspunkt: string
     behandlingsutfall: Behandlingsutfall
     egenmeldt: boolean
-    harRedusertArbeidsgiverperiode: boolean
     id: string
     kontaktMedPasient: KontaktMedPasient
     merknader: Merknad[] | null
