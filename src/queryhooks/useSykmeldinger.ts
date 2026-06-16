@@ -56,7 +56,6 @@ export interface BackendSykmelding {
     behandletTidspunkt: string
     behandlingsutfall: Behandlingsutfall
     egenmeldt: boolean
-    harRedusertArbeidsgiverperiode: boolean
     id: string
     kontaktMedPasient: BackendKontaktMedPasient
     merknader: Merknad[] | null
@@ -76,7 +75,6 @@ export interface Sykmelding {
     behandletTidspunkt: Dayjs
     behandlingsutfall: Behandlingsutfall
     egenmeldt: boolean
-    harRedusertArbeidsgiverperiode: boolean
     id: string
     kontaktMedPasient: KontaktMedPasient
     merknader: Merknad[] | null
