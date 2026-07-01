@@ -1,7 +1,7 @@
 import React from 'react'
 
 import type { Sykmelding } from '../../queryhooks/useSykmeldinger'
-import { antallKalenderdager, formaterDato } from '../sykmelding/sykmeldingTidslinjeUtils'
+import { antallKalenderdager, formaterDato, formaterDatoMedTid } from '../sykmelding/sykmeldingTidslinjeUtils'
 import type { PeriodeMedDatoer } from '../sykmelding/sykmeldingTidslinjeUtils'
 
 import ViktigePeriodefelt from './ViktigePeriodefelt'
@@ -50,7 +50,7 @@ export default function ViktigeFeltForSykmelding({ sykmelding, perioder }: Props
         },
         {
             etikett: 'Signatur dato',
-            verdi: sykmelding.signaturDato ? formaterDato(sykmelding.signaturDato.toDate()) : 'Ikke satt',
+            verdi: sykmelding.signaturDato ? formaterDatoMedTid(sykmelding.signaturDato.toDate()) : 'Ikke satt',
         },
         { etikett: 'Grad', verdi: hentGradFraSykmelding(sykmelding) },
         { etikett: 'Fra', verdi: formaterDato(forstePeriode.startDato) },
