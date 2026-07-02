@@ -11,6 +11,7 @@ import {
     SplitHorizontalIcon,
     CheckmarkCircleIcon,
     TimerStartIcon,
+    PersonCheckmarkIcon,
 } from '@navikt/aksel-icons'
 import { CopyButton } from '@navikt/ds-react'
 
@@ -34,6 +35,8 @@ const hentIkon = (etikett: string): React.ReactNode => {
             return <CheckmarkCircleFillIcon aria-hidden fontSize="1.25rem" />
         case 'Signatur dato':
             return <NotePencilIcon aria-hidden fontSize="1.25rem" />
+        case 'Behandlet tidspunkt':
+            return <PersonCheckmarkIcon aria-hidden fontSize="1.25rem" />
         case 'Grad':
             return <SectorChartIcon aria-hidden fontSize="1.25rem" />
         case 'Ventetid':
