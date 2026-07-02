@@ -16,6 +16,7 @@ updates:
 
   - package-ecosystem: npm
     directory: '/'
+    package-manager: pnpm
     schedule:
       interval: daily
       time: '04:00'
