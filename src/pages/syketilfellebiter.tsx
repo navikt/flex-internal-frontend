@@ -23,16 +23,14 @@ const SyketilfellebiterPage = () => {
                     </div>
                 ) : data ? (
                     <Box>
-                        {data && (
-                            <div className="mt-4">
-                                <Label>Syketilfellebiter:</Label>
-                                <div className="mt-2 rounded-sm bg-ax-neutral-200 p-3">
-                                    <pre className="whitespace-pre-wrap font-mono text-xs">
-                                        {JSON.stringify(data, null, 2)}
-                                    </pre>
-                                </div>
+                        <div className="mt-4">
+                            <Label>Syketilfellebiter:</Label>
+                            <div className="mt-2 rounded-sm bg-ax-neutral-200 p-3">
+                                <pre className="whitespace-pre-wrap font-mono text-xs">
+                                    {JSON.stringify(data, null, 2)}
+                                </pre>
                             </div>
-                        )}
+                        </div>
                     </Box>
                 ) : null)}
         </div>
