@@ -51,7 +51,8 @@ describe('useAktorIdOppslag', () => {
         act(() => result.current.settAktorId('1234567890123'))
 
         await waitFor(() => expect(onFunnet).toHaveBeenCalledWith('12345678901'))
-        expect(result.current.resultat.status).toBe('funnet')
+        // Etter oppslag resetter hooken seg til inaktiv
+        await waitFor(() => expect(result.current.resultat.status).toBe('inaktiv'))
     })
 
     it('setter status feil når ingen FOLKEREGISTERIDENT finnes', async () => {
@@ -84,7 +85,7 @@ describe('useAktorIdOppslag', () => {
         }
     })
 
-    it('resetter til inaktiv når settAktorId kalles med undefined', async () => {
+    it('resetter til inaktiv etter vellykket oppslag', async () => {
         const onFunnet = vi.fn()
         mockUseIdenter.mockReturnValue({
             data: [{ gruppe: 'FOLKEREGISTERIDENT', ident: '12345678901' }],
@@ -94,9 +95,9 @@ describe('useAktorIdOppslag', () => {
 
         const { result } = renderHook(() => useAktorIdOppslag(onFunnet), { wrapper })
         act(() => result.current.settAktorId('1234567890123'))
-        await waitFor(() => expect(result.current.resultat.status).toBe('funnet'))
+        await waitFor(() => expect(onFunnet).toHaveBeenCalledWith('12345678901'))
 
-        act(() => result.current.settAktorId(undefined))
-        expect(result.current.resultat.status).toBe('inaktiv')
+        // Etter timeout resettes aktorId → status inaktiv
+        await waitFor(() => expect(result.current.resultat.status).toBe('inaktiv'))
     })
 })

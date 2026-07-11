@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { Search } from '@navikt/ds-react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { InlineMessage, Search } from '@navikt/ds-react'
 import { useQueryClient } from '@tanstack/react-query'
 
 import { validerFnr, validerIdent } from '../utils/inputValidering'
@@ -39,10 +39,15 @@ const FnrSokefelt = ({
     const queryClient = useQueryClient()
     const [sokeverdi, setSokeverdi] = useState(fnr ?? '')
     const [feilmelding, setFeilmelding] = useState<string>()
+    const [funnetFnr, settFunnetFnr] = useState<string | undefined>()
+    // Ref for å unngå at sync-effekten overskriver søkefeltet ved aktørId-oppslag
+    const fnrFraAktorIdRef = useRef<string | undefined>()
 
     const onAktorIdFunnet = useCallback(
-        (funnetFnr: string) => {
-            settFnr(funnetFnr)
+        (losnetFnr: string) => {
+            fnrFraAktorIdRef.current = losnetFnr
+            settFunnetFnr(losnetFnr)
+            settFnr(losnetFnr)
             setFeilmelding(undefined)
         },
         [settFnr],
@@ -56,9 +61,10 @@ const FnrSokefelt = ({
         nullstillFnr()
     }, [resultat, nullstillFnr])
 
-    // Synkroniser søkefeltet med valgt fnr fra context slik at feltet fylles
-    // når et id-oppslag treffer
+    // Synkroniser søkefeltet med valgt fnr fra context – men ikke når fnr kom fra aktørId-oppslag
+    // (da skal søkefeltet vise aktørId-en som ble søkt på, ikke det løste fnr)
     useEffect(() => {
+        if (fnrFraAktorIdRef.current === fnr) return
         const timer = setTimeout(() => setSokeverdi(fnr ?? ''), 0)
         return () => clearTimeout(timer)
     }, [fnr])
@@ -76,6 +82,8 @@ const FnrSokefelt = ({
         setFeilmelding(undefined)
 
         if (valideringstype === 'fnrEllerAktorId' && validertVerdi.length === 13) {
+            settFunnetFnr(undefined)
+            fnrFraAktorIdRef.current = undefined
             settAktorId(validertVerdi)
             return
         }
@@ -88,31 +96,41 @@ const FnrSokefelt = ({
         }
     }
 
+    const dynamiskDescription =
+        valideringstype === 'fnrEllerAktorId' && resultat.status === 'laster' ? 'Slår opp aktørId...' : description
+
     return (
-        <Search
-            key={fnr ?? 'tomt-fnr'}
-            className={className}
-            hideLabel={false}
-            htmlSize={htmlSize}
-            label={label}
-            description={description}
-            value={sokeverdi}
-            error={feilmelding ?? (resultat.status === 'feil' ? resultat.melding : undefined)}
-            onChange={(verdi) => {
-                setSokeverdi(verdi)
-                if (feilmelding) {
-                    setFeilmelding(undefined)
-                }
-            }}
-            onSearchClick={handterSok}
-            onKeyDown={(evt) => {
-                if (evt.key === 'Enter') {
-                    handterSok(evt.currentTarget.value)
-                }
-            }}
-        >
-            <Search.Button loading={resultat.status === 'laster'} />
-        </Search>
+        <div className={className}>
+            <Search
+                hideLabel={false}
+                htmlSize={htmlSize}
+                label={label}
+                description={dynamiskDescription}
+                value={sokeverdi}
+                error={feilmelding ?? (resultat.status === 'feil' ? resultat.melding : undefined)}
+                onChange={(verdi) => {
+                    setSokeverdi(verdi)
+                    settFunnetFnr(undefined)
+                    fnrFraAktorIdRef.current = undefined
+                    if (feilmelding) {
+                        setFeilmelding(undefined)
+                    }
+                }}
+                onSearchClick={handterSok}
+                onKeyDown={(evt) => {
+                    if (evt.key === 'Enter') {
+                        handterSok(evt.currentTarget.value)
+                    }
+                }}
+            >
+                <Search.Button loading={resultat.status === 'laster'} />
+            </Search>
+            {funnetFnr && (
+                <InlineMessage status="success" size="small" className="mt-1">
+                    Fant fnr: {funnetFnr}
+                </InlineMessage>
+            )}
+        </div>
     )
 }
 
