@@ -20,7 +20,11 @@ const Index = () => {
     return (
         <div className="space-y-4">
             <div className="inline-flex items-end gap-4">
-                <FnrSokefelt label="Fødselsnummer" description="Søk direkte på 11-sifret fødselsnummer" />
+                <FnrSokefelt
+                    label="Fødselsnummer eller aktørId"
+                    description="11-sifret fnr eller 13-sifret aktørId"
+                    valideringstype="fnrEllerAktorId"
+                />
                 <IdOppslagSokefelt />
             </div>
             <TidslinjeKombinert sykmeldinger={sykmeldinger} soknader={soknader} klipp={klipp} />

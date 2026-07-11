@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Search } from '@navikt/ds-react'
 import { useQueryClient } from '@tanstack/react-query'
 
 import { validerFnr, validerIdent } from '../utils/inputValidering'
 import { useValgtFnr } from '../utils/useValgtFnr'
+import { useAktorIdOppslag } from '../utils/useAktorIdOppslag'
 
-type Valideringstype = 'fnr' | 'ident'
+type Valideringstype = 'fnr' | 'ident' | 'fnrEllerAktorId'
 
 type Props = {
     className?: string
@@ -18,11 +19,13 @@ type Props = {
 const feilmeldinger: Record<Valideringstype, string> = {
     fnr: 'Fødselsnummer må være 11 siffer',
     ident: 'Ident må være 11 eller 13 siffer',
+    fnrEllerAktorId: 'Skriv inn 11-sifret fnr eller 13-sifret aktørId',
 }
 
 const valideringsfunksjoner: Record<Valideringstype, (input: string) => string | null> = {
     fnr: validerFnr,
     ident: validerIdent,
+    fnrEllerAktorId: validerIdent,
 }
 
 const FnrSokefelt = ({
@@ -36,6 +39,22 @@ const FnrSokefelt = ({
     const queryClient = useQueryClient()
     const [sokeverdi, setSokeverdi] = useState(fnr ?? '')
     const [feilmelding, setFeilmelding] = useState<string>()
+
+    const onAktorIdFunnet = useCallback(
+        (funnetFnr: string) => {
+            settFnr(funnetFnr)
+            setFeilmelding(undefined)
+        },
+        [settFnr],
+    )
+
+    const { settAktorId, resultat } = useAktorIdOppslag(onAktorIdFunnet)
+
+    // Nullstill fnr ved feilet aktørId-oppslag (nullstillFnr er en kontekst-setter, ikke lokal state)
+    useEffect(() => {
+        if (resultat.status !== 'feil') return
+        nullstillFnr()
+    }, [resultat, nullstillFnr])
 
     // Synkroniser søkefeltet med valgt fnr fra context slik at feltet fylles
     // når et id-oppslag treffer
@@ -56,6 +75,11 @@ const FnrSokefelt = ({
 
         setFeilmelding(undefined)
 
+        if (valideringstype === 'fnrEllerAktorId' && validertVerdi.length === 13) {
+            settAktorId(validertVerdi)
+            return
+        }
+
         const erSammeFnr = validertVerdi === fnr
         settFnr(validertVerdi)
 
@@ -73,7 +97,7 @@ const FnrSokefelt = ({
             label={label}
             description={description}
             value={sokeverdi}
-            error={feilmelding}
+            error={feilmelding ?? (resultat.status === 'feil' ? resultat.melding : undefined)}
             onChange={(verdi) => {
                 setSokeverdi(verdi)
                 if (feilmelding) {
@@ -86,7 +110,9 @@ const FnrSokefelt = ({
                     handterSok(evt.currentTarget.value)
                 }
             }}
-        />
+        >
+            <Search.Button loading={resultat.status === 'laster'} />
+        </Search>
     )
 }
 
