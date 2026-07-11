@@ -54,7 +54,7 @@ export function validerUuid(input: string): string | null {
 
 export function validerIdent(input: string): string | null {
     const trimmed = input.trim()
-    if (trimmed.length === 11 || trimmed.length === 13) {
+    if ((trimmed.length === 11 || trimmed.length === 13) && /^\d+$/.test(trimmed)) {
         return trimmed
     }
     return null

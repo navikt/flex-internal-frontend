@@ -88,6 +88,9 @@ const FnrSokefelt = ({
             return
         }
 
+        // Avbryt evt. pågående aktørId-oppslag før vi setter fnr direkte
+        settAktorId(undefined)
+
         const erSammeFnr = validertVerdi === fnr
         settFnr(validertVerdi)
 
@@ -120,6 +123,8 @@ const FnrSokefelt = ({
                     setSokeverdi(verdi)
                     settFunnetFnr(undefined)
                     fnrFraAktorIdRef.current = undefined
+                    // Avbryt evt. pågående aktørId-oppslag (unngår race condition)
+                    settAktorId(undefined)
                     if (feilmelding) {
                         setFeilmelding(undefined)
                     }
