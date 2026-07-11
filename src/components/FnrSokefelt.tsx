@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
-import { InlineMessage, Search } from '@navikt/ds-react'
+import { BodyShort, Button, InlineMessage, Search } from '@navikt/ds-react'
 import { useQueryClient } from '@tanstack/react-query'
 
 import { validerFnr, validerIdent } from '../utils/inputValidering'
@@ -96,6 +96,14 @@ const FnrSokefelt = ({
         }
     }
 
+    const velgFnr = (valgtFnr: string) => {
+        fnrFraAktorIdRef.current = valgtFnr
+        settFunnetFnr(valgtFnr)
+        settFnr(valgtFnr)
+        settAktorId(undefined)
+        setFeilmelding(undefined)
+    }
+
     const dynamiskDescription =
         valideringstype === 'fnrEllerAktorId' && resultat.status === 'laster' ? 'Slår opp aktørId...' : description
 
@@ -129,6 +137,20 @@ const FnrSokefelt = ({
                 <InlineMessage status="success" size="small" className="mt-1">
                     Fant fnr: {funnetFnr}
                 </InlineMessage>
+            )}
+            {resultat.status === 'flereFunnet' && (
+                <div className="mt-2 space-y-1">
+                    <BodyShort size="small" weight="semibold">
+                        Flere fødselsnummer funnet – velg:
+                    </BodyShort>
+                    <div className="flex flex-wrap gap-2">
+                        {resultat.fnrListe.map((f) => (
+                            <Button key={f} variant="secondary" size="small" onClick={() => velgFnr(f)}>
+                                {f}
+                            </Button>
+                        ))}
+                    </div>
+                </div>
             )}
         </div>
     )

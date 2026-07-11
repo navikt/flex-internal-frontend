@@ -345,12 +345,13 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         const body = await parseRequest<HentIdenterRequest>(req)
         res.status(200)
         res.json([
-            { gruppe: 'FOLKEREGISTERIDENT', ident: body.ident },
+            { gruppe: 'FOLKEREGISTERIDENT', ident: body.ident, historisk: false },
             {
                 gruppe: 'FOLKEREGISTERIDENT',
                 ident: '11111111111',
+                historisk: true,
             },
-            { gruppe: 'AKTORID', ident: '1111111111122' },
+            { gruppe: 'AKTORID', ident: '1111111111122', historisk: false },
         ])
         res.end()
         return

@@ -5,6 +5,7 @@ import { fetchJsonMedRequestId } from '../utils/fetch'
 interface IdentData {
     gruppe: string
     ident: string
+    historisk?: boolean
 }
 
 export interface HentIdenterRequest {
