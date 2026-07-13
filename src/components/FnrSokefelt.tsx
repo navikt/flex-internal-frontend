@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { BodyShort, Button, InlineMessage, Search } from '@navikt/ds-react'
 import { useQueryClient } from '@tanstack/react-query'
 
 import { validerFnr, validerIdent } from '../utils/inputValidering'
 import { useValgtFnr } from '../utils/useValgtFnr'
 import { useAktorIdOppslag } from '../utils/useAktorIdOppslag'
+import { useIdenter } from '../queryhooks/useIdenter'
 
 type Valideringstype = 'fnr' | 'ident' | 'fnrEllerAktorId'
 
@@ -40,6 +41,7 @@ const FnrSokefelt = ({
     const [sokeverdi, setSokeverdi] = useState(fnr ?? '')
     const [feilmelding, setFeilmelding] = useState<string>()
     const [funnetFnr, settFunnetFnr] = useState<string | undefined>()
+    const [soktMedType, setSoktMedType] = useState<'fnr' | 'aktorId' | undefined>()
     // Ref for å unngå at sync-effekten overskriver søkefeltet ved aktørId-oppslag
     const fnrFraAktorIdRef = useRef<string | undefined>(undefined)
 
@@ -54,6 +56,16 @@ const FnrSokefelt = ({
     )
 
     const { settAktorId, resultat } = useAktorIdOppslag(onAktorIdFunnet)
+
+    // Hent aktørId når bruker søkte med fnr
+    const { data: identerForFnr, isLoading: lasterAktorId } = useIdenter(
+        fnr,
+        valideringstype === 'fnrEllerAktorId' && soktMedType === 'fnr' && fnr !== undefined,
+    )
+    const funnetAktorId = useMemo(() => {
+        if (!identerForFnr) return undefined
+        return identerForFnr.find((i) => i.gruppe === 'AKTORID' && !i.historisk)?.ident
+    }, [identerForFnr])
 
     // Nullstill fnr ved feilet aktørId-oppslag (nullstillFnr er en kontekst-setter, ikke lokal state)
     useEffect(() => {
@@ -84,12 +96,16 @@ const FnrSokefelt = ({
         if (valideringstype === 'fnrEllerAktorId' && validertVerdi.length === 13) {
             settFunnetFnr(undefined)
             fnrFraAktorIdRef.current = undefined
+            setSoktMedType('aktorId')
             settAktorId(validertVerdi)
             return
         }
 
         // Avbryt evt. pågående aktørId-oppslag før vi setter fnr direkte
         settAktorId(undefined)
+        if (valideringstype === 'fnrEllerAktorId') {
+            setSoktMedType('fnr')
+        }
 
         const erSammeFnr = validertVerdi === fnr
         settFnr(validertVerdi)
@@ -104,11 +120,16 @@ const FnrSokefelt = ({
         settFunnetFnr(valgtFnr)
         settFnr(valgtFnr)
         settAktorId(undefined)
+        setSoktMedType('aktorId')
         setFeilmelding(undefined)
     }
 
-    const dynamiskDescription =
-        valideringstype === 'fnrEllerAktorId' && resultat.status === 'laster' ? 'Slår opp aktørId...' : description
+    const dynamiskDescription = (() => {
+        if (valideringstype !== 'fnrEllerAktorId') return description
+        if (resultat.status === 'laster') return 'Slår opp aktørId...'
+        if (soktMedType === 'fnr' && lasterAktorId) return 'Slår opp aktørId...'
+        return description
+    })()
 
     return (
         <div className={className}>
@@ -122,6 +143,7 @@ const FnrSokefelt = ({
                 onChange={(verdi) => {
                     setSokeverdi(verdi)
                     settFunnetFnr(undefined)
+                    setSoktMedType(undefined)
                     fnrFraAktorIdRef.current = undefined
                     // Avbryt evt. pågående aktørId-oppslag (unngår race condition)
                     settAktorId(undefined)
@@ -136,11 +158,16 @@ const FnrSokefelt = ({
                     }
                 }}
             >
-                <Search.Button loading={resultat.status === 'laster'} />
+                <Search.Button loading={resultat.status === 'laster' || (soktMedType === 'fnr' && lasterAktorId)} />
             </Search>
-            {funnetFnr && (
+            {soktMedType === 'aktorId' && funnetFnr && (
                 <InlineMessage status="success" size="small" className="mt-1">
-                    Fant fnr: {funnetFnr}
+                    Søkte på aktørId → fant fnr: {funnetFnr}
+                </InlineMessage>
+            )}
+            {soktMedType === 'fnr' && funnetAktorId && (
+                <InlineMessage status="success" size="small" className="mt-1">
+                    Søkte på fnr → fant aktørId: {funnetAktorId}
                 </InlineMessage>
             )}
             {resultat.status === 'flereFunnet' && (
