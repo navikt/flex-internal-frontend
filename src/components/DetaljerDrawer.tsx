@@ -179,7 +179,11 @@ function DrawerInnholdRenderer({
                     <div className="flex h-full gap-6">
                         <div className="w-1/2 overflow-y-auto">{variant.periodeInfo}</div>
                         <div className="w-1/2 overflow-y-auto">
-                            <Detaljer objekt={filtrerNøkler(variant.objekt, SKJUL_I_SYKMELDING_DETALJER)} filter={filter} setFilter={setFilter} />
+                            <Detaljer
+                                objekt={filtrerNøkler(variant.objekt, SKJUL_I_SYKMELDING_DETALJER)}
+                                filter={filter}
+                                setFilter={setFilter}
+                            />
                         </div>
                     </div>
                 )
@@ -187,7 +191,11 @@ function DrawerInnholdRenderer({
             return (
                 <div className="space-y-4">
                     {variant.periodeInfo}
-                    <Detaljer objekt={filtrerNøkler(variant.objekt, SKJUL_I_SYKMELDING_DETALJER)} filter={filter} setFilter={setFilter} />
+                    <Detaljer
+                        objekt={filtrerNøkler(variant.objekt, SKJUL_I_SYKMELDING_DETALJER)}
+                        filter={filter}
+                        setFilter={setFilter}
+                    />
                 </div>
             )
         case 'soknad':

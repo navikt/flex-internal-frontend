@@ -14,7 +14,10 @@ interface Props {
 
 export function FeltKort({ viktigeFelt }: Props) {
     return (
-        <div data-testid="felt-kort" className="rounded border border-ax-border-info-subtle bg-ax-bg-info-soft px-2 py-1.5">
+        <div
+            data-testid="felt-kort"
+            className="rounded border border-ax-border-info-subtle bg-ax-bg-info-soft px-2 py-1.5"
+        >
             <ul className="divide-y divide-ax-border-info-subtle">
                 {viktigeFelt.map((felt) => (
                     <li key={felt.etikett} className="flex items-center gap-2 px-1 py-0.5 text-sm">
@@ -22,7 +25,11 @@ export function FeltKort({ viktigeFelt }: Props) {
                         <span className="shrink-0 text-ax-medium text-ax-text-subtle">{felt.etikett}:</span>
                         <span className="flex min-w-0 flex-1 items-center gap-1">
                             {felt.etikett === 'Status' ? (
-                                <Tag size="xsmall" variant="moderate" data-color={hentStatusFarge(felt.verdi as string)}>
+                                <Tag
+                                    size="xsmall"
+                                    variant="moderate"
+                                    data-color={hentStatusFarge(felt.verdi as string)}
+                                >
                                     {felt.verdi}
                                 </Tag>
                             ) : (
