@@ -82,6 +82,8 @@ const SKJUL_I_DETALJER = new Set([
     'soknadPerioder',
 ])
 
+const SKJUL_I_SYKMELDING_DETALJER = new Set(['id'])
+
 function filtrerNøkler(obj: object, skjul: Set<string>): object {
     return Object.fromEntries(Object.entries(obj).filter(([k]) => !skjul.has(k)))
 }
@@ -177,7 +179,7 @@ function DrawerInnholdRenderer({
                     <div className="flex h-full gap-6">
                         <div className="w-1/2 overflow-y-auto">{variant.periodeInfo}</div>
                         <div className="w-1/2 overflow-y-auto">
-                            <Detaljer objekt={variant.objekt} filter={filter} setFilter={setFilter} />
+                            <Detaljer objekt={filtrerNøkler(variant.objekt, SKJUL_I_SYKMELDING_DETALJER)} filter={filter} setFilter={setFilter} />
                         </div>
                     </div>
                 )
@@ -185,7 +187,7 @@ function DrawerInnholdRenderer({
             return (
                 <div className="space-y-4">
                     {variant.periodeInfo}
-                    <Detaljer objekt={variant.objekt} filter={filter} setFilter={setFilter} />
+                    <Detaljer objekt={filtrerNøkler(variant.objekt, SKJUL_I_SYKMELDING_DETALJER)} filter={filter} setFilter={setFilter} />
                 </div>
             )
         case 'soknad':
