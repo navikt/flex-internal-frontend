@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, Search } from '@navikt/ds-react'
+import { InlineMessage, Search } from '@navikt/ds-react'
 
 import { useSoknad } from '../queryhooks/useSoknad'
 import { useSykmelding } from '../queryhooks/useSykmelding'
@@ -78,9 +78,9 @@ export const IdOppslagSokefelt = () => {
                 }}
             />
             {ikkeFunnet && (
-                <Alert variant="warning" className="mt-2">
+                <InlineMessage status="warning" role="alert" className="mt-2">
                     Fant ikke fnr for oppgitt ID
-                </Alert>
+                </InlineMessage>
             )}
         </>
     )
