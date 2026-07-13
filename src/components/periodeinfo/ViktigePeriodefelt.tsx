@@ -76,12 +76,12 @@ export default function ViktigePeriodefelt({ viktigeFelt, delperiodeTekster = []
                     {viktigeFelt.map((felt) => (
                         <li
                             key={felt.etikett}
-                            className={`flex items-center gap-2 px-1 py-0.5 text-xs ${felt.etikett === 'Status' ? `${hentFargeFraStatus(felt.verdi as string)} rounded px-2` : ''}`}
+                            className={`flex items-center gap-2 px-1 py-0.5 text-sm ${felt.etikett === 'Status' ? `${hentFargeFraStatus(felt.verdi as string)} rounded px-2` : ''}`}
                         >
                             <span className="flex shrink-0 items-center text-gray-500" style={{ fontSize: '1rem' }}>
                                 {hentIkon(felt.etikett)}
                             </span>
-                            <span className="min-w-0 truncate font-medium text-gray-600">{felt.etikett}:</span>
+                            <span className="min-w-0 truncate text-ax-medium text-gray-600">{felt.etikett}:</span>
                             <span className="flex min-w-0 flex-1 items-center gap-1 truncate text-gray-900">
                                 {felt.verdi}
                                 {(felt.etikett.toLowerCase().endsWith(' id') ||
@@ -97,14 +97,14 @@ export default function ViktigePeriodefelt({ viktigeFelt, delperiodeTekster = []
             {delperiodeTekster.length > 1 && (
                 <div className="rounded border border-gray-200 bg-gray-50 px-2 py-1.5">
                     <ul className="divide-y divide-gray-100">
-                        <li className="flex items-center gap-1.5 pb-0.5 text-xs font-semibold text-gray-600">
+                        <li className="flex items-center gap-1.5 pb-0.5 text-ax-medium font-semibold text-gray-600">
                             <span className="flex items-center" style={{ fontSize: '1rem' }}>
                                 <FilesIcon aria-hidden />
                             </span>
                             Perioder
                         </li>
                         {delperiodeTekster.map((tekst, indeks) => (
-                            <li key={`${tekst}-${indeks}`} className="py-0.5 pl-5 text-xs text-gray-800">
+                            <li key={`${tekst}-${indeks}`} className="py-0.5 pl-5 text-ax-medium text-gray-800">
                                 {tekst}
                             </li>
                         ))}

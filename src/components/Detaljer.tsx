@@ -136,7 +136,7 @@ const renderRotnivå = (
 
                 return (
                     <div key={nøkkel} className="py-0.5">
-                        <div className="flex min-w-0 items-baseline gap-1.5 text-xs">
+                        <div className="flex min-w-0 items-baseline gap-1.5 text-ax-medium">
                             <span className="shrink-0 font-semibold text-gray-500">{nøkkel}:</span>
                             {bladverdi && (
                                 <FilterFelt
@@ -150,7 +150,7 @@ const renderRotnivå = (
                             )}
                         </div>
                         {!bladverdi && (
-                            <div className="text-xs text-gray-900">{renderVerdi(verdi, filter, setFilter, sti)}</div>
+                            <div className="text-sm text-gray-900">{renderVerdi(verdi, filter, setFilter, sti)}</div>
                         )}
                     </div>
                 )
