@@ -1,4 +1,5 @@
 import React from 'react'
+import { cn } from '../../utils/tw-utils'
 import {
     TagIcon,
     CheckmarkCircleFillIcon,
@@ -76,13 +77,21 @@ export default function ViktigePeriodefelt({ viktigeFelt, delperiodeTekster = []
                     {viktigeFelt.map((felt) => (
                         <li
                             key={felt.etikett}
-                            className={`flex items-center gap-2 px-1 py-0.5 text-sm ${felt.etikett === 'Status' ? `${hentFargeFraStatus(felt.verdi as string)} rounded px-2` : ''}`}
+                            className={cn(
+                                'flex items-center gap-2 py-0.5 text-sm',
+                                felt.etikett === 'Status'
+                                    ? `${hentFargeFraStatus(felt.verdi as string)} rounded px-2`
+                                    : 'px-1',
+                            )}
                         >
-                            <span className="flex shrink-0 items-center text-gray-500" style={{ fontSize: '1rem' }}>
+                            <span className="flex shrink-0 items-center text-gray-500">
                                 {hentIkon(felt.etikett)}
                             </span>
-                            <span className="min-w-0 truncate text-ax-medium text-gray-600">{felt.etikett}:</span>
-                            <span className="flex min-w-0 flex-1 items-center gap-1 truncate text-gray-900">
+                            <span className="shrink-0 text-ax-medium text-gray-600">{felt.etikett}:</span>
+                            <span
+                                className="flex min-w-0 flex-1 items-center gap-1 truncate text-gray-900"
+                                title={typeof felt.verdi === 'string' ? felt.verdi : undefined}
+                            >
                                 {felt.verdi}
                                 {(felt.etikett.toLowerCase().endsWith(' id') ||
                                     felt.etikett.toLowerCase().startsWith('id')) && (
@@ -98,8 +107,8 @@ export default function ViktigePeriodefelt({ viktigeFelt, delperiodeTekster = []
                 <div className="rounded border border-gray-200 bg-gray-50 px-2 py-1.5">
                     <ul className="divide-y divide-gray-100">
                         <li className="flex items-center gap-1.5 pb-0.5 text-ax-medium font-semibold text-gray-600">
-                            <span className="flex items-center" style={{ fontSize: '1rem' }}>
-                                <FilesIcon aria-hidden />
+                            <span className="flex items-center">
+                                <FilesIcon aria-hidden fontSize="1rem" />
                             </span>
                             Perioder
                         </li>
