@@ -1,251 +1,99 @@
-# AGENTS.md
+# AGENTS.md - `flex-internal-frontend`
+Repoet `flex-internal-frontend` er et internt Next.js-verktøy for NAV-ansatte for oppslag og feilsøking i Flex-data (sykmeldinger, søknader, inntektsmeldinger, arbeidssøkerperioder m.m.).
 
-Guide for AI coding agents working on `flex-internal-frontend`.
+## 1) Kommandoer
 
-## Project Overview
-
-**flex-internal-frontend** is a Next.js-based internal NAV administration tool for examining Flex-related worker data (sick leave applications, work history, income statements, etc.). It's a diagnostic/debugging dashboard restricted to NAV staff with AD group membership, requiring NaisDevice access.
-
-**Tech Stack:**
-- Next.js 16 (TypeScript, React 19)
-- TailwindCSS 4 with Aksel (NAV design system)
-- React Query 5 (@tanstack/react-query)
-- pnpm package manager (Node 24+)
-- Vitest for testing
-
-## Code Language
-
-**All code is written in Norwegian Bokmål.** Variable names, function names, comments, and UI text use Norwegian. This is non-negotiable. Examples:
-- `soknader` (applications), `fnr` (national ID), `arbeidsgiver` (employer)
-- `datostrengTilUtcDato` (date string to UTC date)
-- Comments like `// Konverter søknad til fnr`
-
-Keep comments minimal—code should be self-explanatory.
-
-## Architecture
-
-### Multi-Backend Proxy Pattern
-
-The app proxies requests to multiple NAV backends through Next.js API routes. The pattern is:
-
-1. **Page/Component** → calls query hook → **Client-side fetch** to `/api/{backend-name}/**`
-2. **API Route** (`/api/{backend-name}/[[...path]].ts`) → validates allowed endpoints → proxies to actual backend
-3. **Backend** → returns data, proxied back through API route
-
-Key files:
-- `/src/proxy/backendproxy.ts` — Core proxy logic with `proxyKallTilBackend()` and `validerKall()`
-- `/src/pages/api/sykepengesoknad-backend/[[...path]].ts` — Example API endpoint
-- `/src/auth/beskyttetApi.ts` — Auth wrapper (Azure token validation)
-- `/src/auth/beskyttetSide.ts` — Server-side page protection (getServerSideProps)
-
-Each backend route has a **whitelist** of allowed endpoints (`tillatteApier`). Unauthorized requests return 404. Request IDs track calls for metrics/debugging.
-
-### Query Hooks Pattern
-
-All data fetching uses React Query with custom hooks in `/src/queryhooks/`. Examples:
-- `useAareg()` — POST to `/api/sykepengesoknad-backend/api/v1/flex/aareg`
-- `useSoknader()` — Fetches sick leave applications
-- `useSykmeldinger()` — Fetches sickness certificates
-
-Hooks use `fetchJsonMedRequestId()` from `/src/utils/fetch.ts`, which auto-adds `x-request-id` headers for tracing.
-
-### Component Hierarchy
-
-Pages are in `/src/pages/`, components in `/src/components/`:
-
-```
-index.tsx (main page)
-  └─ TidslinjeKombinert   (combined timeline — sykmeldinger + søknader)
-    ├─ Filter             (chip-based filtering by properties)
-    ├─ VelgZoomPeriode    (zoom window selector)
-    └─ DetaljerDrawer     (side panel with period details)
-```
-
-Components use **local state** via `useState` for UI state (active filters, drawer). Timeline state is centralised in `useTidslinjeKombinert` (`/src/components/kombinert/`).
-
-### Environment & Mock Backend
-
-Three execution modes:
-
-- **`pnpm run dev`** → `MOCK_BACKEND=true` — Local dev with fake data from `/src/testdata/testdata.ts`
-- **`pnpm run local`** → `LOCAL_BACKEND=true MOCK_BACKEND=true` — Mock backend but local config
-- **`pnpm run start`** → Production mode, hits real backends
-
-Check `/src/utils/environment.ts` for runtime environment detection (`isProd()`, `isMockBackend()`, etc.).
-
-When `isMockBackend()` is true, API routes call `mockApi()` instead of proxying. Mock responses are stored in testdata.
-
-## Key Patterns & Conventions
-
-### Date Handling
-
-- Use `/src/utils/dato.ts` utilities:
-  - `datostrengTilUtcDato(string)` — Parse ISO date strings to UTC Date objects
-  - `dagerMellomUtcDatoer(Date, Date)` — Calculate days between dates
-  - Avoid timezone complications by always working with UTC
-
-### Fetch & Error Handling
-
-- `fetchMedRequestId()` returns `{ requestId, response }` with UUID tracking
-- `fetchJsonMedRequestId()` wraps `fetchMedRequestId()` and returns parsed JSON (`T`)
-- Always include request IDs for backend correlation
-
-### Validation
-
-- Input validation in `/src/utils/inputValidering.ts` (e.g., `handterFnrValidering()` for national ID fields)
-- API routes use `validerKall()` to whitelist endpoints; invalid calls return 404 silently
-
-### Filtering & Grouping
-
-- `/src/utils/filterlogikk.ts` and `/src/utils/gruppering.ts` define shared data transformation logic
-- Filters are objects: `{ prop: string; verdi: string; inkluder: boolean }`
-- Filter state managed in parent component; child components receive filtered data
-
-### Overlapping Timeline Logic
-
-- `/src/utils/overlapp.ts` detects overlapping time periods (for applications covering same date ranges)
-- Used to display conflict indicators in timeline components
-
-## Build & Testing
-
-**Scripts:**
+Bruk IntelliJ MCP (`execute_run_configuration`) for scripts — se **`AGENTS-intellij.md`**. Scripts for referanse:
 
 ```sh
-pnpm run dev              # Local dev with mock backend (port 8080)
-pnpm run build            # Production build
-pnpm run start            # Run production build
-pnpm run test             # Run vitest suite
-pnpm run test:watch       # Watch mode for tests
-pnpm run prettier:write   # Write prettier formatting
-pnpm run lint             # ESLint check (TS/TSX)
-pnpm run lint:fix         # Auto-fix linting issues
-pnpm run format           # Prettier + ESLint fixes
-pnpm run prettier:check   # Check formatting
+pnpm run dev # kjør lokalt med mock-backend på port 8080
+pnpm run local # kjør lokalt med LOCAL_BACKEND=true og MOCK_BACKEND=true
+pnpm run test # kjør Vitest i CI-modus (ingen watch)
+pnpm run test:watch # kjør Vitest i watch-modus
+pnpm run build # bygg for produksjon
+pnpm run format # kjør prettier + eslint --fix
+pnpm run lint # kjør eslint
+pnpm run prettier:check # sjekk formattering
 ```
 
-**Note:** Tests use Vitest (ESM-compatible alternative to Jest). Test file convention: `.test.ts` / `.test.tsx` suffix. Example: `/src/utils/sykmeldingValidering.test.ts`.
+- `pnpm run dev` bruker mock-backend lokalt (`MOCK_BACKEND=true`)
 
-**Before every commit:** always run `pnpm run format && pnpm run test && pnpm run build`. This fixes formatting, verifies tests pass, and confirms the build compiles. Remove unused imports and dead code before committing.
+### Før commit (obligatorisk)
 
-## Styling
+Kjør i rekkefølge via `execute_run_configuration`:
 
-- **TailwindCSS 4** with Aksel (NAV design system) components
-- Aksel components: `@navikt/ds-react` (Button, Search, Dropdown, InternalHeader, etc.)
-- Aksel icons: `@navikt/aksel-icons`
-- Custom CSS in `/src/style/global.css` (minimal—prefer Tailwind utilities)
-- Prettier plugin `prettier-plugin-tailwindcss` auto-sorts class names
+1. `format`
+2. `test`
+3. `build`
 
-## Authentication & Security
+## 2) Testing
 
-- **Azure AD** integration via `@navikt/oasis` library
-- API routes: `getToken()` + `validateAzureToken()` in `beskyttetApi()`
-- SSR pages: `getToken()` + `validateAzureToken()` in `beskyttetSide()`
-- Mock backend bypasses all auth (useful for local dev)
-- Allowed AD group: `team flex` (enforced outside app, at ingress level)
+- Enhet/integrasjon: **Vitest** (`.test.ts` / `.test.tsx`) i `src/`
+- E2E: Ikke satt opp som standard script i dette repoet per nå
+- «Kjør tester» betyr `pnpm run test` med mindre noe annet er eksplisitt avtalt
+- Prioriter tester for endret domenelogikk
 
-## Cross-Component Communication
+## 3) Prosjektstruktur
 
-- **Props-based** data flow (no Redux/Zustand)
-- Timeline components receive `soknader` (applications) and `klipp` (clipped/overlapping records) as arrays
-- Parent components handle filtering and grouping; pass filtered data to children
-- Query hooks centralize all backend communication
-- **`ValgtFnrProvider`** (`/src/utils/useValgtFnr.ts`) holds global search state (fnr, selected period, lookup data). Functions exposed via context (`settValgtPeriode`, `nullstillValgtPeriode`) must be wrapped in `useCallback` to avoid infinite render loops when used in `useEffect` dependency arrays.
+- Sider og API-ruter: `src/pages/` (`*.tsx`, `pages/api/**`)
+- UI: `src/components/`
+- Datahenting/server state: `src/queryhooks/` (React Query + egne hooks)
+- Hjelpefunksjoner: `src/utils/`
+- Mock-data i dev: `src/testdata/`
 
-### useCallback for stable references
+Ved nytt backend-endepunkt:
+1. Opprett rute i `src/pages/api/{backend}/[[...path]].ts`
+2. Oppdater `tillatteApier`
+3. Behold `beskyttetApi()` + `proxyKallTilBackend()`
+4. Hent data fra queryhook med `useQuery()` + `fetchJsonMedRequestId()`
 
-Always wrap handler functions in `useCallback` when they are:
-- Exposed from a context provider (e.g. `useValgtFnr`)
-- Returned from a custom hook and used in `useEffect` deps (e.g. `useTidslinjeKombinert`)
+## 4) Kodestil
 
-Failing to do so causes the function reference to change on every render, which triggers effects repeatedly and can exceed React's max update depth limit.
+- All kode, kommentarer og UI-tekst på **norsk bokmål**
+- Bruk eksisterende mønstre i koden fremfor nye varianter
+- Bruk props-basert dataflyt og hooks (ingen Redux/Zustand)
+- Dato-strenger skal håndteres via `src/utils/dato.ts` (f.eks. `datostrengTilUtcDato`)
+- Bruk `fetchJsonMedRequestId()` for kall som skal spores med request-id
 
-## File Organization
+## 5) Git-workflow
 
-```
-/src
-  /pages                 → Next.js routes (pages + API endpoints)
-  /pages/api/{backend}   → Proxy routes (one per backend)
-  /pages/api/internal    → Health/probe endpoints (`isAlive`, `isReady`, `preStop`)
-  /components            → React components (mostly presentational)
-  /queryhooks            → React Query hooks (data fetching)
-  /auth                  → Auth logic (Azure token validation)
-  /proxy                 → Backend proxy utilities
-  /utils                 → Shared utilities (date, fetch, validation, filtering)
-  /testdata              → Mock data for local dev
-  /initialprops          → Server-side props shared across pages
-  /style                 → Global CSS
-```
+- Egen branch per feature/fix, aldri direkte på `main`
+- Hold commit-meldinger korte, beskrivende, én linje, uten punktum
+- Ingen conventional commit-prefix og ingen issue-nummer påkrevd
 
-## Common Tasks
-
-### Adding a New Backend Endpoint
-
-1. Create API route at `/src/pages/api/{backend-name}/[[...path]].ts` (copy existing pattern)
-2. Add allowed endpoints to `tillatteApier` array
-3. Import `beskyttetApi()` wrapper and proxy handler
-4. Create query hook in `/src/queryhooks/use{Name}.ts` with `useQuery()` + `fetchJsonMedRequestId()`
-
-### Adding a New Page
-
-1. Create `.tsx` file in `/src/pages/{name}.tsx`
-2. Import `initialProps` from `/src/initialprops/initialProps.ts`
-3. Export `getServerSideProps = initialProps` for auth
-4. Use query hooks to fetch data in component
-5. Add page metadata to `/src/pages/_app.tsx` `sider` object for navigation
-
-### Modifying Timeline Data Flow
-
-- Update filter/grouping logic in `/src/utils/filterlogikk.ts` or `/src/utils/gruppering.ts`
-- Timeline state lives in `useTidslinjeKombinert` (custom hook in `/src/components/kombinert/`)
-- `TidslinjeKombinert` recomputes on filter changes via `useEffect`
-
-## Deployment & Environment
-
-- **Nais** deployment (NAV Kubernetes platform)
-- Config in `/nais/app/` (dev.yaml, prod.yaml, naiserator.yaml)
-- Docker image built from Dockerfile (standalone Next.js)
-- Prod: `https://flex-internal.intern.nav.no/`
-- Dev: `https://flex-internal.intern.dev.nav.no/`
-
-## Code Review Checklist
-
-- [ ] All variable names and comments in Norwegian Bokmål
-- [ ] API whitelist updated if adding new endpoints
-- [ ] Request IDs used in fetches (automatic via `fetchJsonMedRequestId`)
-- [ ] Filters/grouping logic tested with edge cases (empty data, overlaps)
-- [ ] Mock data in testdata.ts matches real backend response shape
-- [ ] Environment checks (`isMockBackend()`, `isProd()`) properly used
-- [ ] `pnpm run format && pnpm run test && pnpm run build` passed before commit
-- [ ] No explicit return type annotations on short arrow functions (ESLint disables it)
-
-## Git Workflow
-
-**Every feature or fix gets its own branch.** Never commit directly to `main`.
+Standard flyt:
 
 ```sh
-git checkout -b kort-beskrivende-navn   # e.g. fiks-krasj-ved-andre-sok
-# ... make changes ...
-pnpm run format && pnpm run test && pnpm run build
+git checkout -b kort-beskrivende-navn
+# kjør format, test og build via IntelliJ MCP (se «Før commit» i seksjon 1)
 git commit -m "Kort beskrivelse på norsk"
 git push origin <branch>
-gh pr create --fill
 ```
 
-### Commit Message Style
+Opprett PR via GitHub MCP (`create_pull_request`) eller `gh pr create --fill`.
 
-Keep commit messages short and in Norwegian, matching the style of recent commits. Examples:
+## 6) Grenser (aldri gjør dette)
 
-```
-Vis OPPHOLD_UTLAND-søknader som pin i tidslinjen
-Viser tydeligere viktige felter
-Fiks krasj ved nytt søk i kombinert tidslinje
-```
+- Aldri lekke eller logge sensitiv informasjon (fnr, tokens, session-data)
+- Aldri hardkode hemmeligheter eller credentials
+- Aldri bytt ut datohåndtering i `src/utils/dato.ts` med tilfeldige ad hoc-varianter
+- Aldri innfør ny global state-løsning uten eksplisitt beskjed
+- Aldri kall backend direkte fra tilfeldige komponenter når queryhook/API-mønster finnes
+- Aldri fjern sikkerhetsmekanismer i API-ruter (`beskyttetApi`, whitelist)
+- Aldri commit med rød format/test/build
 
-- One line, imperative or descriptive, no period at end
-- Norwegian Bokmål
-- No issue numbers required
+## Når du trenger mer kontekst
 
-## Contact
+- `README.md` - prosjektformål og lokal kjøring
+- `package.json` - scripts og verktøy som faktisk brukes
+- `src/utils/environment.ts` - miljødeteksjon (`isProd()`, `isMockBackend()`)
+- `src/pages/api/**/*.ts` - API-proxy, whitelist og sikkerhetsmønstre
+- `src/queryhooks/` - anbefalt mønster for datahenting
+- `src/utils/dato.ts` - korrekt håndtering av dato-strenger
+- `src/proxy/backendproxy.ts` - proxying og validering av tillatte API-kall
 
-Questions about code/architecture: `flex@nav.no` or Slack `#flex`
+## Hurtigsjekk før levering
 
+- [ ] Endringen følger eksisterende mønster i berørte filer
+- [ ] Tester er oppdatert der domenelogikk er endret
+- [ ] Format, tester og bygg er grønn (se «Før commit» i seksjon 1)
