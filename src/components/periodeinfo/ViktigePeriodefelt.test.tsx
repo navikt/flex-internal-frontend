@@ -15,9 +15,9 @@ describe('ViktigePeriodefelt', () => {
                     ]}
                 />,
             )
-            expect(screen.getByText('Fra')).toBeInTheDocument()
+            expect(screen.getByText('Fra:')).toBeInTheDocument()
             expect(screen.getByText('2024-01-01')).toBeInTheDocument()
-            expect(screen.getByText('Til')).toBeInTheDocument()
+            expect(screen.getByText('Til:')).toBeInTheDocument()
             expect(screen.getByText('2024-01-31')).toBeInTheDocument()
         })
 
@@ -30,7 +30,7 @@ describe('ViktigePeriodefelt', () => {
                     ]}
                 />,
             )
-            const kortbokser = container.querySelectorAll('.rounded-lg.border')
+            const kortbokser = container.querySelectorAll('.rounded.border')
             expect(kortbokser).toHaveLength(1)
         })
 
@@ -128,7 +128,7 @@ describe('ViktigePeriodefelt', () => {
                 />,
             )
             // 1 felt-kort + 1 periodeblokk = 2 kortbokser
-            expect(container.querySelectorAll('.rounded-lg.border')).toHaveLength(2)
+            expect(container.querySelectorAll('.rounded.border')).toHaveLength(2)
         })
     })
 })

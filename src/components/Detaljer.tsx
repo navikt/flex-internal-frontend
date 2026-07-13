@@ -51,13 +51,13 @@ const renderVerdi = (
         if (verdi.length === 0) return '[]'
 
         return (
-            <ul className="ml-4 list-none">
+            <ul className="ml-3 list-none">
                 {verdi.map((element, indeks) => {
                     const elementSti = `${sti}[${indeks}]`
 
                     if (erBladverdi(element)) {
                         return (
-                            <li key={elementSti} className="mt-1">
+                            <li key={elementSti} className="mt-0.5">
                                 <FilterFelt
                                     prop={elementSti}
                                     verdi={element}
@@ -71,7 +71,7 @@ const renderVerdi = (
                     }
 
                     return (
-                        <li key={elementSti} className="mt-1">
+                        <li key={elementSti} className="mt-0.5">
                             {renderVerdi(element, filter, setFilter, elementSti)}
                         </li>
                     )
@@ -85,13 +85,13 @@ const renderVerdi = (
         if (nøkler.length === 0) return '{}'
 
         return (
-            <div className="ml-4">
+            <div className="ml-3">
                 {nøkler.map(([nøkkel, nestetVerdi]) => {
                     const nestetSti = sti ? `${sti}.${nøkkel}` : nøkkel
                     const bladverdi = erBladverdi(nestetVerdi)
 
                     return (
-                        <div key={nestetSti} className="mt-1.5">
+                        <div key={nestetSti} className="mt-0.5">
                             {bladverdi ? (
                                 <FilterFelt
                                     prop={nestetSti}
@@ -129,28 +129,29 @@ const renderRotnivå = (
 ): React.ReactNode => {
     const nøkler = Object.entries(objekt)
     return (
-        <div className="space-y-2">
+        <div className="divide-y divide-gray-100">
             {nøkler.map(([nøkkel, verdi]) => {
                 const sti = nøkkel
                 const bladverdi = erBladverdi(verdi)
 
                 return (
-                    <div key={nøkkel} className="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
-                        <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500">{nøkkel}</div>
-                        <div className="text-sm text-gray-900">
-                            {bladverdi ? (
+                    <div key={nøkkel} className="py-0.5">
+                        <div className="flex min-w-0 items-baseline gap-1.5 text-xs">
+                            <span className="shrink-0 font-semibold text-gray-500">{nøkkel}:</span>
+                            {bladverdi && (
                                 <FilterFelt
                                     prop={sti}
                                     verdi={verdi}
                                     filter={filter}
                                     setFilter={setFilter}
                                     markerHeleRad
-                                    barn={<span>{formaterVerdi(verdi)}</span>}
+                                    barn={<span className="text-gray-900">{formaterVerdi(verdi)}</span>}
                                 />
-                            ) : (
-                                renderVerdi(verdi, filter, setFilter, sti)
                             )}
                         </div>
+                        {!bladverdi && (
+                            <div className="text-xs text-gray-900">{renderVerdi(verdi, filter, setFilter, sti)}</div>
+                        )}
                     </div>
                 )
             })}

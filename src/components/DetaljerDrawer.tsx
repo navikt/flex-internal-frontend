@@ -247,7 +247,7 @@ export default function DetaljerDrawer({
             aria-modal="true"
             aria-label={innhold?.tittel ?? 'Detaljer'}
         >
-            <div className="flex items-center justify-between border-b border-gray-200 px-5 py-3">
+            <div className="flex items-center justify-between border-b border-gray-200 px-4 py-2">
                 <div className="flex min-w-0 items-center gap-3">
                     <Heading size="small">{innhold?.tittel ?? ''}</Heading>
                     {innhold?.ikonHeader && innhold.ikonHeader.length > 0 && (
@@ -293,7 +293,7 @@ export default function DetaljerDrawer({
                     />
                 </div>
             </div>
-            <div className="flex-1 overflow-hidden px-5 py-4 text-sm">
+            <div className="flex-1 overflow-hidden px-4 py-2 text-sm">
                 {innhold && (
                     <DrawerInnholdRenderer
                         variant={innhold.variant}

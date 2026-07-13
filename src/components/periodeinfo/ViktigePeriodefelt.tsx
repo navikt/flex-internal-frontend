@@ -70,41 +70,41 @@ const hentFargeFraStatus = (status: string): string => {
 
 export default function ViktigePeriodefelt({ viktigeFelt, delperiodeTekster = [] }: Props) {
     return (
-        <div className="space-y-3">
-            <div className="rounded-lg border border-blue-100 bg-blue-50 p-4">
-                <ul className="space-y-2">
+        <div className="space-y-1.5">
+            <div className="rounded border border-blue-100 bg-blue-50 px-2 py-1.5">
+                <ul className="divide-y divide-blue-100">
                     {viktigeFelt.map((felt) => (
                         <li
                             key={felt.etikett}
-                            className={`flex items-start gap-3 p-2 text-sm ${felt.etikett === 'Status' ? `${hentFargeFraStatus(felt.verdi as string)} rounded-2xl` : ''}`}
+                            className={`flex items-center gap-2 px-1 py-0.5 text-xs ${felt.etikett === 'Status' ? `${hentFargeFraStatus(felt.verdi as string)} rounded px-2` : ''}`}
                         >
-                            <span className="flex shrink-0 items-center text-gray-700">{hentIkon(felt.etikett)}</span>
-                            <div className="flex flex-col">
-                                <span className="font-medium text-gray-700">{felt.etikett}</span>
-                                <span className="flex items-center gap-1 text-gray-900">
-                                    {felt.verdi}
-                                    {(felt.etikett.toLowerCase().endsWith(' id') ||
-                                        felt.etikett.toLowerCase().startsWith('id')) && (
-                                        <CopyButton size="xsmall" copyText={String(felt.verdi)} />
-                                    )}
-                                </span>
-                            </div>
+                            <span className="flex shrink-0 items-center text-gray-500" style={{ fontSize: '1rem' }}>
+                                {hentIkon(felt.etikett)}
+                            </span>
+                            <span className="min-w-0 truncate font-medium text-gray-600">{felt.etikett}:</span>
+                            <span className="flex min-w-0 flex-1 items-center gap-1 truncate text-gray-900">
+                                {felt.verdi}
+                                {(felt.etikett.toLowerCase().endsWith(' id') ||
+                                    felt.etikett.toLowerCase().startsWith('id')) && (
+                                    <CopyButton size="xsmall" copyText={String(felt.verdi)} />
+                                )}
+                            </span>
                         </li>
                     ))}
                 </ul>
             </div>
 
             {delperiodeTekster.length > 1 && (
-                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                    <ul className="space-y-2">
-                        <li className="flex items-center gap-2 font-semibold text-gray-700">
-                            <span className="flex items-center text-gray-700">
-                                <FilesIcon aria-hidden fontSize="1.25rem" />
+                <div className="rounded border border-gray-200 bg-gray-50 px-2 py-1.5">
+                    <ul className="divide-y divide-gray-100">
+                        <li className="flex items-center gap-1.5 pb-0.5 text-xs font-semibold text-gray-600">
+                            <span className="flex items-center" style={{ fontSize: '1rem' }}>
+                                <FilesIcon aria-hidden />
                             </span>
                             Perioder
                         </li>
                         {delperiodeTekster.map((tekst, indeks) => (
-                            <li key={`${tekst}-${indeks}`} className="ml-6 text-sm text-gray-900">
+                            <li key={`${tekst}-${indeks}`} className="py-0.5 pl-5 text-xs text-gray-800">
                                 {tekst}
                             </li>
                         ))}
