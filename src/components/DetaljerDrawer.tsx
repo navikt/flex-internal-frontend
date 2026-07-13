@@ -82,6 +82,8 @@ const SKJUL_I_DETALJER = new Set([
     'soknadPerioder',
 ])
 
+const SKJUL_I_SYKMELDING_DETALJER = new Set(['id'])
+
 function filtrerNøkler(obj: object, skjul: Set<string>): object {
     return Object.fromEntries(Object.entries(obj).filter(([k]) => !skjul.has(k)))
 }
@@ -177,7 +179,11 @@ function DrawerInnholdRenderer({
                     <div className="flex h-full gap-6">
                         <div className="w-1/2 overflow-y-auto">{variant.periodeInfo}</div>
                         <div className="w-1/2 overflow-y-auto">
-                            <Detaljer objekt={variant.objekt} filter={filter} setFilter={setFilter} />
+                            <Detaljer
+                                objekt={filtrerNøkler(variant.objekt, SKJUL_I_SYKMELDING_DETALJER)}
+                                filter={filter}
+                                setFilter={setFilter}
+                            />
                         </div>
                     </div>
                 )
@@ -185,7 +191,11 @@ function DrawerInnholdRenderer({
             return (
                 <div className="space-y-4">
                     {variant.periodeInfo}
-                    <Detaljer objekt={variant.objekt} filter={filter} setFilter={setFilter} />
+                    <Detaljer
+                        objekt={filtrerNøkler(variant.objekt, SKJUL_I_SYKMELDING_DETALJER)}
+                        filter={filter}
+                        setFilter={setFilter}
+                    />
                 </div>
             )
         case 'soknad':
@@ -247,7 +257,7 @@ export default function DetaljerDrawer({
             aria-modal="true"
             aria-label={innhold?.tittel ?? 'Detaljer'}
         >
-            <div className="flex items-center justify-between border-b border-gray-200 px-5 py-3">
+            <div className="flex items-center justify-between border-b border-gray-200 px-4 py-2">
                 <div className="flex min-w-0 items-center gap-3">
                     <Heading size="small">{innhold?.tittel ?? ''}</Heading>
                     {innhold?.ikonHeader && innhold.ikonHeader.length > 0 && (
@@ -293,7 +303,7 @@ export default function DetaljerDrawer({
                     />
                 </div>
             </div>
-            <div className="flex-1 overflow-hidden px-5 py-4 text-sm">
+            <div className="flex-1 overflow-hidden px-4 py-2 text-sm">
                 {innhold && (
                     <DrawerInnholdRenderer
                         variant={innhold.variant}
