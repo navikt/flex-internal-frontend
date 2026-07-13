@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
-import { BodyShort, Button, InlineMessage, Search } from '@navikt/ds-react'
+import { BodyShort, Chips, InlineMessage, Search } from '@navikt/ds-react'
 import { useQueryClient } from '@tanstack/react-query'
 
 import { validerFnr, validerIdent } from '../utils/inputValidering'
@@ -58,10 +58,11 @@ const FnrSokefelt = ({
     const { settAktorId, resultat } = useAktorIdOppslag(onAktorIdFunnet)
 
     // Hent aktørId når bruker søkte med fnr
-    const { data: identerForFnr, isLoading: lasterAktorId } = useIdenter(
-        fnr,
-        valideringstype === 'fnrEllerAktorId' && soktMedType === 'fnr' && fnr !== undefined,
-    )
+    const {
+        data: identerForFnr,
+        isLoading: henterIdenterForFnr,
+        isError: feiletAktorIdOppslag,
+    } = useIdenter(fnr, valideringstype === 'fnrEllerAktorId' && soktMedType === 'fnr' && fnr !== undefined)
     const funnetAktorId = useMemo(() => {
         if (!identerForFnr) return undefined
         return identerForFnr.find((i) => i.gruppe === 'AKTORID' && !i.historisk)?.ident
@@ -120,16 +121,18 @@ const FnrSokefelt = ({
         settFunnetFnr(valgtFnr)
         settFnr(valgtFnr)
         settAktorId(undefined)
-        setSoktMedType('aktorId')
+        // soktMedType er alltid 'aktorId' her – trenger ikke settes på nytt
         setFeilmelding(undefined)
     }
 
-    const dynamiskDescription = (() => {
-        if (valideringstype !== 'fnrEllerAktorId') return description
-        if (resultat.status === 'laster') return 'Slår opp aktørId...'
-        if (soktMedType === 'fnr' && lasterAktorId) return 'Slår opp aktørId...'
-        return description
-    })()
+    let dynamiskDescription = description
+    if (valideringstype === 'fnrEllerAktorId') {
+        if (resultat.status === 'laster') {
+            dynamiskDescription = 'Slår opp fnr fra aktørId...'
+        } else if (soktMedType === 'fnr' && henterIdenterForFnr) {
+            dynamiskDescription = 'Slår opp aktørId...'
+        }
+    }
 
     return (
         <div className={className}>
@@ -158,30 +161,37 @@ const FnrSokefelt = ({
                     }
                 }}
             >
-                <Search.Button loading={resultat.status === 'laster' || (soktMedType === 'fnr' && lasterAktorId)} />
+                <Search.Button
+                    loading={resultat.status === 'laster' || (soktMedType === 'fnr' && henterIdenterForFnr)}
+                />
             </Search>
             {soktMedType === 'aktorId' && funnetFnr && (
-                <InlineMessage status="success" size="small" className="mt-1">
-                    Søkte på aktørId → fant fnr: {funnetFnr}
+                <InlineMessage status="success" size="small" className="mt-1" role="status">
+                    Søkte på aktørId – fant fnr: {funnetFnr}
                 </InlineMessage>
             )}
             {soktMedType === 'fnr' && funnetAktorId && (
-                <InlineMessage status="success" size="small" className="mt-1">
-                    Søkte på fnr → fant aktørId: {funnetAktorId}
+                <InlineMessage status="success" size="small" className="mt-1" role="status">
+                    Søkte på fnr – fant aktørId: {funnetAktorId}
+                </InlineMessage>
+            )}
+            {soktMedType === 'fnr' && feiletAktorIdOppslag && (
+                <InlineMessage status="error" size="small" className="mt-1" role="alert">
+                    Kunne ikke slå opp aktørId for dette fødselsnummeret
                 </InlineMessage>
             )}
             {resultat.status === 'flereFunnet' && (
-                <div className="mt-2 space-y-1">
-                    <BodyShort size="small" weight="semibold">
+                <div className="mt-2" role="alert">
+                    <BodyShort size="small" weight="semibold" className="mb-1">
                         Flere fødselsnummer funnet – velg:
                     </BodyShort>
-                    <div className="flex flex-wrap gap-2">
+                    <Chips size="small">
                         {resultat.fnrListe.map((f) => (
-                            <Button key={f} variant="secondary" size="small" onClick={() => velgFnr(f)}>
+                            <Chips.Toggle key={f} checkmark={false} onClick={() => velgFnr(f)}>
                                 {f}
-                            </Button>
+                            </Chips.Toggle>
                         ))}
-                    </div>
+                    </Chips>
                 </div>
             )}
         </div>
