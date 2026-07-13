@@ -41,7 +41,7 @@ const FnrSokefelt = ({
     const [feilmelding, setFeilmelding] = useState<string>()
     const [funnetFnr, settFunnetFnr] = useState<string | undefined>()
     // Ref for å unngå at sync-effekten overskriver søkefeltet ved aktørId-oppslag
-    const fnrFraAktorIdRef = useRef<string | undefined>()
+    const fnrFraAktorIdRef = useRef<string | undefined>(undefined)
 
     const onAktorIdFunnet = useCallback(
         (losnetFnr: string) => {
