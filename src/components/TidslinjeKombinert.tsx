@@ -24,6 +24,7 @@ interface Props {
     klipp: KlippetSykepengesoknadRecord[]
     sammenlignModus?: boolean
     onSammenlignAvslutt?: () => void
+    onSammenlignValgteEndret?: (titler: string[]) => void
 }
 
 const TidslinjeKombinert = ({
@@ -32,6 +33,7 @@ const TidslinjeKombinert = ({
     klipp,
     sammenlignModus: sammenlignModusProp,
     onSammenlignAvslutt,
+    onSammenlignValgteEndret,
 }: Props): React.ReactElement => {
     const {
         filter,
@@ -58,7 +60,14 @@ const TidslinjeKombinert = ({
         handleStartSammenlign,
         handleAvsluttSammenlign,
         handleLukkSammenlignDrawer,
-    } = useTidslinjeKombinert(sykmeldinger, soknader, klipp, sammenlignModusProp, onSammenlignAvslutt)
+    } = useTidslinjeKombinert(
+        sykmeldinger,
+        soknader,
+        klipp,
+        sammenlignModusProp,
+        onSammenlignAvslutt,
+        onSammenlignValgteEndret,
+    )
 
     const { valgtPeriodeId, valgtDrawerKildeId, oppslagData, nullstillValgtPeriode } = useValgtFnr()
 

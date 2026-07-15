@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, HStack } from '@navikt/ds-react'
+import { BodyShort, Button, HStack } from '@navikt/ds-react'
 import { ArrowsSquarepathIcon } from '@navikt/aksel-icons'
 
 import FnrSokefelt from '../components/FnrSokefelt'
@@ -10,15 +10,27 @@ import { useSykmeldinger } from '../queryhooks/useSykmeldinger'
 import TidslinjeKombinert from '../components/TidslinjeKombinert'
 import { useValgtFnr } from '../utils/useValgtFnr'
 
+const sammenlignStatusTekst = (titler: string[]) => {
+    if (titler.length === 0) return 'Velg første element'
+    if (titler.length === 1) return `Valgt: ${titler[0]} — velg ett til`
+    return `Sammenligner: ${titler[0]} vs ${titler[1]}`
+}
+
 const Index = ({ erMockBackend }: Pick<PrefetchResults, 'erMockBackend'>) => {
     const { fnr } = useValgtFnr()
     const [sammenlignModus, setSammenlignModus] = useState(false)
+    const [sammenlignTitler, setSammenlignTitler] = useState<string[]>([])
 
     const { data: soknadData } = useSoknader(fnr, fnr !== undefined)
     const soknader = soknadData?.sykepengesoknadListe || []
     const klipp = soknadData?.klippetSykepengesoknadRecord || []
 
     const { data: sykmeldinger = [] } = useSykmeldinger(fnr, fnr !== undefined)
+
+    const avsluttSammenlign = () => {
+        setSammenlignModus(false)
+        setSammenlignTitler([])
+    }
 
     return (
         <div className="space-y-4">
@@ -34,7 +46,6 @@ const Index = ({ erMockBackend }: Pick<PrefetchResults, 'erMockBackend'>) => {
                 </div>
                 {!sammenlignModus ? (
                     <Button
-                        size="small"
                         variant="secondary"
                         icon={<ArrowsSquarepathIcon aria-hidden />}
                         onClick={() => setSammenlignModus(true)}
@@ -42,9 +53,14 @@ const Index = ({ erMockBackend }: Pick<PrefetchResults, 'erMockBackend'>) => {
                         Sammenlign
                     </Button>
                 ) : (
-                    <Button size="small" variant="tertiary-neutral" onClick={() => setSammenlignModus(false)}>
-                        Avslutt sammenligning
-                    </Button>
+                    <HStack align="center" gap="space-3">
+                        <BodyShort className="text-ax-text-neutral-subtle italic" aria-live="polite" aria-atomic="true">
+                            {sammenlignStatusTekst(sammenlignTitler)}
+                        </BodyShort>
+                        <Button variant="tertiary-neutral" onClick={avsluttSammenlign}>
+                            Avslutt sammenligning
+                        </Button>
+                    </HStack>
                 )}
             </HStack>
             <TidslinjeKombinert
@@ -52,7 +68,8 @@ const Index = ({ erMockBackend }: Pick<PrefetchResults, 'erMockBackend'>) => {
                 soknader={soknader}
                 klipp={klipp}
                 sammenlignModus={sammenlignModus}
-                onSammenlignAvslutt={() => setSammenlignModus(false)}
+                onSammenlignAvslutt={avsluttSammenlign}
+                onSammenlignValgteEndret={setSammenlignTitler}
             />
         </div>
     )
