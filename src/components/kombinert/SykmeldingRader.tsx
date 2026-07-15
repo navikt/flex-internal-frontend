@@ -1,4 +1,5 @@
 import React from 'react'
+import dayjs from 'dayjs'
 import { StethoscopeIcon } from '@navikt/aksel-icons'
 import { Timeline } from '@navikt/ds-react'
 
@@ -15,6 +16,8 @@ import {
     SykmeldingerPerArbeidsgiver,
 } from '../sykmelding/sykmeldingTidslinjeUtils'
 
+import type { SammenlignElement } from './useTidslinjeKombinert'
+
 export type OnPeriodeValgt = (periodeId: string | null, kildeId: string | null, drawer: DrawerInnhold | null) => void
 
 interface Props {
@@ -23,6 +26,9 @@ interface Props {
     aktivPeriodeId: string | null
     aktivDrawerKildeId: string | null
     onPeriodeValgt: OnPeriodeValgt
+    sammenlignModus?: boolean
+    sammenlignValgteIder?: string[]
+    onSammenlignValgt?: (element: SammenlignElement) => void
 }
 
 export const lagSykmeldingRader = ({
@@ -31,6 +37,9 @@ export const lagSykmeldingRader = ({
     aktivPeriodeId,
     aktivDrawerKildeId,
     onPeriodeValgt,
+    sammenlignModus = false,
+    sammenlignValgteIder = [],
+    onSammenlignValgt,
 }: Props): React.ReactElement[] => {
     return sorterSykmeldingGrupperEtterSignaturDato(Array.from(sykmeldingerGruppertPaArbeidsgiver.entries())).flatMap(
         ([arbeidsgiverId, arbeidsgiver]) => {
@@ -63,6 +72,12 @@ export const lagSykmeldingRader = ({
                 const ikonHeader = ikonParForSykmeldingPerioder(perioder.length, forstePeriodetype, arbeidssituasjon)
 
                 const erValgtPeriode = aktivDrawerKildeId === sykmeldingAktivId
+                const erSammenlignValgt = sammenlignValgteIder.includes(sykmeldingAktivId)
+
+                const sammenlignKantKlasse = erSammenlignValgt ? 'shadow-[inset_0_0_0_4px_#0067c5]!' : undefined
+                const normalKantKlasse = erValgtPeriode
+                    ? 'shadow-[inset_0_0_0_4px_#dc2626]!'
+                    : 'ring-1 ring-inset ring-white/95'
 
                 return [
                     <Timeline.Period
@@ -70,13 +85,19 @@ export const lagSykmeldingRader = ({
                         end={sistePeriode.sluttDato}
                         status={status}
                         icon={ikon}
-                        className={
-                            erValgtPeriode ? 'shadow-[inset_0_0_0_4px_#dc2626]!' : 'ring-1 ring-inset ring-white/95'
-                        }
+                        className={sammenlignModus ? sammenlignKantKlasse : normalKantKlasse}
                         key={periodeKey}
                         isActive={aktivPeriodeId === sykmeldingAktivId}
                         onSelectPeriod={() => {
-                            if (aktivDrawerKildeId === sykmeldingAktivId) {
+                            if (sammenlignModus) {
+                                const fomStr = dayjs(forstePeriode.fom).format('D MMM YYYY')
+                                const tomStr = dayjs(sistePeriode.tom).format('D MMM YYYY')
+                                onSammenlignValgt?.({
+                                    kildeId: sykmeldingAktivId,
+                                    objekt: sykmelding,
+                                    tittel: `Sykmelding ${fomStr}–${tomStr}`,
+                                })
+                            } else if (aktivDrawerKildeId === sykmeldingAktivId) {
                                 onPeriodeValgt(null, null, null)
                             } else {
                                 onPeriodeValgt(

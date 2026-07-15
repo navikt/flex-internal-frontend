@@ -7,6 +7,7 @@ import gruppertOgFiltrert from '../../utils/gruppering'
 import { hentDatospenn, validerSykmeldingsDatoer } from '../../utils/sykmeldingValidering'
 import { beregnAktivTidsvindu, erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
 import type { DrawerInnhold } from '../DetaljerDrawer'
+import { lagSammenlignDrawerInnhold } from '../DetaljerDrawer'
 import type { Filter } from '../Filter'
 import {
     grupperSykmeldingerPaArbeidsgiver,
@@ -14,10 +15,19 @@ import {
     sorterPerioder,
 } from '../sykmelding/sykmeldingTidslinjeUtils'
 
+export interface SammenlignElement {
+    kildeId: string
+    objekt: object
+    tittel: string
+}
+
 export const useTidslinjeKombinert = (
     sykmeldinger: Sykmelding[],
     soknader: Soknad[],
     klipp: KlippetSykepengesoknadRecord[],
+    eksternSammenlignModus?: boolean,
+    onEksternSammenlignAvslutt?: () => void,
+    onSammenlignValgteEndret?: (titler: string[]) => void,
 ) => {
     const [filter, setFilter] = useState<Filter[]>([])
     const [visningsFraDato, setVisningsFraDato] = useState<Date | null>(null)
@@ -25,7 +35,10 @@ export const useTidslinjeKombinert = (
     const [aktivPeriodeId, setAktivPeriodeId] = useState<string | null>(null)
     const [aktivDrawerKildeId, setAktivDrawerKildeId] = useState<string | null>(null)
     const [drawerInnhold, setDrawerInnhold] = useState<DrawerInnhold | null>(null)
-    const [drawerPlassering, setDrawerPlassering] = useState<'bunn' | 'hoyre'>('bunn')
+    const [drawerPlassering, setDrawerPlassering] = useState<'bunn' | 'hoyre'>('hoyre')
+    const [internSammenlignModus, setInternSammenlignModus] = useState(false)
+    const sammenlignModus = eksternSammenlignModus ?? internSammenlignModus
+    const [sammenlignValgte, setSammenlignValgte] = useState<SammenlignElement[]>([])
 
     const gyldigeSykmeldinger = validerSykmeldingsDatoer(sykmeldinger)
     const filtrerteSykmeldinger = filtrerPaFilter(gyldigeSykmeldinger, filter)
@@ -99,6 +112,69 @@ export const useTidslinjeKombinert = (
         setDrawerInnhold(null)
     }, [])
 
+    const handleSammenlignValgt = useCallback(
+        (element: SammenlignElement) => {
+            setSammenlignValgte((gjeldende) => {
+                const erAlleredeValgt = gjeldende.some((e) => e.kildeId === element.kildeId)
+                if (erAlleredeValgt) {
+                    const nyListe = gjeldende.filter((e) => e.kildeId !== element.kildeId)
+                    setDrawerInnhold(null)
+                    onSammenlignValgteEndret?.(nyListe.map((e) => e.tittel))
+                    return nyListe
+                }
+                if (gjeldende.length >= 2) {
+                    const nyListe = [gjeldende[1], element]
+                    setDrawerInnhold(
+                        lagSammenlignDrawerInnhold(
+                            nyListe[0].objekt,
+                            nyListe[0].tittel,
+                            nyListe[1].objekt,
+                            nyListe[1].tittel,
+                        ),
+                    )
+                    onSammenlignValgteEndret?.(nyListe.map((e) => e.tittel))
+                    return nyListe
+                }
+                const nyListe = [...gjeldende, element]
+                if (nyListe.length === 2) {
+                    setDrawerInnhold(
+                        lagSammenlignDrawerInnhold(
+                            nyListe[0].objekt,
+                            nyListe[0].tittel,
+                            nyListe[1].objekt,
+                            nyListe[1].tittel,
+                        ),
+                    )
+                }
+                onSammenlignValgteEndret?.(nyListe.map((e) => e.tittel))
+                return nyListe
+            })
+        },
+        [onSammenlignValgteEndret],
+    )
+
+    const handleAvsluttSammenlign = useCallback(() => {
+        if (onEksternSammenlignAvslutt) {
+            onEksternSammenlignAvslutt()
+        } else {
+            setInternSammenlignModus(false)
+        }
+        setSammenlignValgte([])
+        setDrawerInnhold(null)
+        onSammenlignValgteEndret?.([])
+    }, [onEksternSammenlignAvslutt, onSammenlignValgteEndret])
+
+    const handleStartSammenlign = useCallback(() => {
+        setInternSammenlignModus(true)
+    }, [])
+
+    const handleLukkSammenlignDrawer = useCallback(() => {
+        setSammenlignValgte([])
+        setDrawerInnhold(null)
+        onSammenlignValgteEndret?.([])
+        // sammenlignModus forblir true — brukeren kan velge nye elementer
+    }, [onSammenlignValgteEndret])
+
     return {
         filter,
         setFilter,
@@ -118,5 +194,11 @@ export const useTidslinjeKombinert = (
         handlePeriodeValgt,
         handleDrawerValgt,
         handleLukkDrawer,
+        sammenlignModus,
+        sammenlignValgte,
+        handleSammenlignValgt,
+        handleStartSammenlign,
+        handleAvsluttSammenlign,
+        handleLukkSammenlignDrawer,
     }
 }

@@ -4,6 +4,7 @@ import { BodyShort, Box, Timeline } from '@navikt/ds-react'
 
 import type { ArbeidsgiverGruppering } from '../../utils/gruppering'
 
+import type { SammenlignElement } from './useTidslinjeKombinert'
 import { lagOppholdUtlandPins, type OnDrawerValgt } from './OppholdUtlandPins'
 import { lagSoknadRader } from './SoknadRader'
 import type { OnPeriodeValgt } from './SykmeldingRader'
@@ -15,6 +16,9 @@ interface Props {
     aktivDrawerKildeId: string | null
     onPeriodeValgt: OnPeriodeValgt
     onDrawerValgt: OnDrawerValgt
+    sammenlignModus?: boolean
+    sammenlignValgteIder?: string[]
+    onSammenlignValgt?: (element: SammenlignElement) => void
 }
 
 const SoknadTidslinje = ({
@@ -24,6 +28,9 @@ const SoknadTidslinje = ({
     aktivDrawerKildeId,
     onPeriodeValgt,
     onDrawerValgt,
+    sammenlignModus = false,
+    sammenlignValgteIder = [],
+    onSammenlignValgt,
 }: Props): React.ReactElement => {
     return (
         <Box
@@ -45,6 +52,9 @@ const SoknadTidslinje = ({
                     aktivPeriodeId,
                     aktivDrawerKildeId,
                     onPeriodeValgt,
+                    sammenlignModus,
+                    sammenlignValgteIder,
+                    onSammenlignValgt,
                 })}
                 {lagOppholdUtlandPins({
                     soknaderGruppert,

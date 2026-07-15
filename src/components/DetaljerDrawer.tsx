@@ -7,6 +7,7 @@ import { useSoknadKafkaformat } from '../queryhooks/useSoknadKafkaformat'
 
 import { Detaljer } from './Detaljer'
 import { Filter } from './Filter'
+import { SammenlignDetaljer } from './SammenlignDetaljer'
 
 type VisModus = 'vanlig' | 'kafkaformat' | 'begge'
 
@@ -14,6 +15,7 @@ type DrawerVariant =
     | { type: 'sykmelding'; objekt: object; periodeInfo: React.ReactNode }
     | { type: 'soknad'; soknadId: string; objekt: object; periodeInfo: React.ReactNode }
     | { type: 'klippetSoknad'; objekt: object }
+    | { type: 'sammenlign'; objekt1: object; tittel1: string; objekt2: object; tittel2: string }
 
 export interface DrawerInnhold {
     tittel: string
@@ -68,6 +70,18 @@ export function lagKlippetSoknadDrawerInnhold(klippetSoknad: object): DrawerInnh
     return {
         tittel: 'Klippet søknad',
         variant: { type: 'klippetSoknad', objekt: klippetSoknad },
+    }
+}
+
+export function lagSammenlignDrawerInnhold(
+    objekt1: object,
+    tittel1: string,
+    objekt2: object,
+    tittel2: string,
+): DrawerInnhold {
+    return {
+        tittel: 'Sammenligning',
+        variant: { type: 'sammenlign', objekt1, tittel1, objekt2, tittel2 },
     }
 }
 
@@ -210,6 +224,15 @@ function DrawerInnholdRenderer({
             )
         case 'klippetSoknad':
             return <Detaljer objekt={variant.objekt} filter={filter} setFilter={setFilter} />
+        case 'sammenlign':
+            return (
+                <SammenlignDetaljer
+                    objekt1={variant.objekt1}
+                    tittel1={variant.tittel1}
+                    objekt2={variant.objekt2}
+                    tittel2={variant.tittel2}
+                />
+            )
     }
 }
 
@@ -234,6 +257,8 @@ export default function DetaljerDrawer({
 
     if (!mounted) return null
 
+    const erSammenlign = innhold?.variant.type === 'sammenlign'
+
     const posisjonKlasser = erBunn
         ? [
               'fixed bottom-0 left-0 z-[99999] flex h-1/2 w-full flex-col',
@@ -243,7 +268,7 @@ export default function DetaljerDrawer({
           ]
         : [
               'fixed top-0 right-0 z-[99999] flex h-full flex-col',
-              erSoknad && erBegge ? 'w-[900px]' : 'w-[500px]',
+              erSammenlign ? 'w-[900px]' : erSoknad && erBegge ? 'w-[900px]' : 'w-[500px]',
               'border-l border-gray-200 shadow-[-4px_0_24px_rgba(0,0,0,0.12)]',
               'transition-[transform,width] duration-300 ease-in-out',
               erApen ? 'translate-x-0' : 'translate-x-full',
@@ -279,11 +304,11 @@ export default function DetaljerDrawer({
                             value={visModus}
                             onChange={(v) => setVisModus(v as VisModus)}
                             size="small"
-                            variant="neutral"
+                            data-color="neutral"
                         >
-                            <ToggleGroup.Item value="vanlig">Detaljer</ToggleGroup.Item>
-                            <ToggleGroup.Item value="kafkaformat">Kafka</ToggleGroup.Item>
-                            <ToggleGroup.Item value="begge">Begge</ToggleGroup.Item>
+                            <ToggleGroup.Item value="vanlig" label="Detaljer" />
+                            <ToggleGroup.Item value="kafkaformat" label="Kafka" />
+                            <ToggleGroup.Item value="begge" label="Begge" />
                         </ToggleGroup>
                     )}
                     <Button
