@@ -78,20 +78,27 @@ function grupperPaSykmelding(
             })
         }
         if (k.klippVariant.startsWith('SOKNAD')) {
-            let sykmeldingEksisterte = false
+            let soknadFunnet = false
+            let sykmeldingMedSammeId: SykmeldingGruppering | undefined
 
-            // Noen ganger er hele søknaden klippet bort, men sykmelding var lang og vi finner fremdeles sykmeldingen
-            sykmeldingGruppering.forEach((sykmelding) => {
-                // TODO: Vi finner aldri denne søknaden, og vi kjenner heller ikke sykmelding id'n, så i disse tilfellene klarer vi ikke koble sammen klipping av søknad med riktig sykmelding
+            sykmeldingGruppering.forEach((sykmelding, sykId) => {
                 if (sykmelding.soknader.has(k.sykepengesoknadUuid)) {
                     sykmelding.soknader.get(k.sykepengesoknadUuid)?.klippingAvSoknad.push(...perioderSomErKlippet)
-                    sykmeldingEksisterte = true
+                    soknadFunnet = true
+                }
+                if (sykId === k.sykmeldingUuid || sykId.startsWith(k.sykmeldingUuid + '_KORRIGERT')) {
+                    sykmeldingMedSammeId = sykmelding
                 }
             })
 
-            // Når hele søknaden er klippet bort og det ikke fantes flere søknader på samme sykmelding
-            if (!sykmeldingEksisterte) {
+            if (!soknadFunnet) {
                 if (alleSoknaderIds.has(k.sykepengesoknadUuid)) {
+                    return
+                }
+
+                // Erstatningssøknad med annen UUID finnes på samme sykmelding — vis klippehistorikk der
+                if (sykmeldingMedSammeId) {
+                    sykmeldingMedSammeId.klippingAvSykmelding.push(...perioderSomErKlippet)
                     return
                 }
 
