@@ -54,7 +54,7 @@ const Index = ({ erMockBackend }: Pick<PrefetchResults, 'erMockBackend'>) => {
                         Sammenlign
                     </Button>
                 ) : (
-                    <HStack align="center" gap="space-3">
+                    <HStack align="center" gap="space-4">
                         <BodyShort className="text-ax-text-neutral-subtle italic" aria-live="polite" aria-atomic="true">
                             {sammenlignStatusTekst(sammenlignTitler)}
                         </BodyShort>
