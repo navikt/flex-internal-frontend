@@ -129,7 +129,7 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
                     </Button>
                 ) : (
                     <HStack align="center" gap="space-2">
-                        <BodyShort size="small" className="text-text-subtle italic">
+                        <BodyShort size="small" className="text-text-subtle italic" aria-live="polite" aria-atomic="true">
                             {sammenlignStatusTekst()}
                         </BodyShort>
                         <Button size="small" variant="tertiary-neutral" onClick={handleAvsluttSammenlign}>

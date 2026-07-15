@@ -46,10 +46,15 @@ export const flatUtObjekt = (obj: unknown, prefix = ''): Record<string, string> 
     } else if (erDayjsObjekt(obj)) {
         resultat[prefix] = formaterVerdiSammenlign(obj)
     } else if (erObjekt(obj)) {
-        for (const [nøkkel, verdi] of Object.entries(obj)) {
-            const sti = prefix ? `${prefix}.${nøkkel}` : nøkkel
-            const nested = flatUtObjekt(verdi, sti)
-            Object.assign(resultat, nested)
+        const entries = Object.entries(obj)
+        if (entries.length === 0) {
+            if (prefix) resultat[prefix] = '{}'
+        } else {
+            for (const [nøkkel, verdi] of entries) {
+                const sti = prefix ? `${prefix}.${nøkkel}` : nøkkel
+                const nested = flatUtObjekt(verdi, sti)
+                Object.assign(resultat, nested)
+            }
         }
     } else {
         resultat[prefix] = formaterVerdiSammenlign(obj)
