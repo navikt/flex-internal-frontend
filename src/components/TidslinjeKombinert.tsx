@@ -22,9 +22,17 @@ interface Props {
     sykmeldinger: Sykmelding[]
     soknader: Soknad[]
     klipp: KlippetSykepengesoknadRecord[]
+    sammenlignModus?: boolean
+    onSammenlignAvslutt?: () => void
 }
 
-const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.ReactElement => {
+const TidslinjeKombinert = ({
+    sykmeldinger,
+    soknader,
+    klipp,
+    sammenlignModus: sammenlignModusProp,
+    onSammenlignAvslutt,
+}: Props): React.ReactElement => {
     const {
         filter,
         setFilter,
@@ -50,7 +58,7 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
         handleStartSammenlign,
         handleAvsluttSammenlign,
         handleLukkSammenlignDrawer,
-    } = useTidslinjeKombinert(sykmeldinger, soknader, klipp)
+    } = useTidslinjeKombinert(sykmeldinger, soknader, klipp, sammenlignModusProp, onSammenlignAvslutt)
 
     const { valgtPeriodeId, valgtDrawerKildeId, oppslagData, nullstillValgtPeriode } = useValgtFnr()
 
@@ -119,7 +127,7 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
             <ValgteFilter filter={filter} setFilter={setFilter} />
             <HStack align="center" gap="space-4" className="mb-1">
                 <BodyShort className="font-semibold">{`${sykmeldingAntall} sykmelding(er) · ${soknadAntall} søknad(er)`}</BodyShort>
-                {!sammenlignModus ? (
+                {sammenlignModusProp === undefined && !sammenlignModus && (
                     <Button
                         size="small"
                         variant="secondary"
@@ -128,12 +136,11 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
                     >
                         Sammenlign
                     </Button>
-                ) : (
-                    <HStack align="center" gap="space-2">
-                        <Button size="small" variant="tertiary-neutral" onClick={handleAvsluttSammenlign}>
-                            Avslutt sammenligning
-                        </Button>
-                    </HStack>
+                )}
+                {sammenlignModusProp === undefined && sammenlignModus && (
+                    <Button size="small" variant="tertiary-neutral" onClick={handleAvsluttSammenlign}>
+                        Avslutt sammenligning
+                    </Button>
                 )}
                 <BodyShort
                     size="small"

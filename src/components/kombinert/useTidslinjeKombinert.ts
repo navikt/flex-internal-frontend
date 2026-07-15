@@ -25,6 +25,8 @@ export const useTidslinjeKombinert = (
     sykmeldinger: Sykmelding[],
     soknader: Soknad[],
     klipp: KlippetSykepengesoknadRecord[],
+    eksternSammenlignModus?: boolean,
+    onEksternSammenlignAvslutt?: () => void,
 ) => {
     const [filter, setFilter] = useState<Filter[]>([])
     const [visningsFraDato, setVisningsFraDato] = useState<Date | null>(null)
@@ -33,7 +35,8 @@ export const useTidslinjeKombinert = (
     const [aktivDrawerKildeId, setAktivDrawerKildeId] = useState<string | null>(null)
     const [drawerInnhold, setDrawerInnhold] = useState<DrawerInnhold | null>(null)
     const [drawerPlassering, setDrawerPlassering] = useState<'bunn' | 'hoyre'>('hoyre')
-    const [sammenlignModus, setSammenlignModus] = useState(false)
+    const [internSammenlignModus, setInternSammenlignModus] = useState(false)
+    const sammenlignModus = eksternSammenlignModus ?? internSammenlignModus
     const [sammenlignValgte, setSammenlignValgte] = useState<SammenlignElement[]>([])
 
     const gyldigeSykmeldinger = validerSykmeldingsDatoer(sykmeldinger)
@@ -144,13 +147,17 @@ export const useTidslinjeKombinert = (
     }, [])
 
     const handleAvsluttSammenlign = useCallback(() => {
-        setSammenlignModus(false)
+        if (onEksternSammenlignAvslutt) {
+            onEksternSammenlignAvslutt()
+        } else {
+            setInternSammenlignModus(false)
+        }
         setSammenlignValgte([])
         setDrawerInnhold(null)
-    }, [])
+    }, [onEksternSammenlignAvslutt])
 
     const handleStartSammenlign = useCallback(() => {
-        setSammenlignModus(true)
+        setInternSammenlignModus(true)
     }, [])
 
     const handleLukkSammenlignDrawer = useCallback(() => {
