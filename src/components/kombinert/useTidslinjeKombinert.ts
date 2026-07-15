@@ -112,7 +112,9 @@ export const useTidslinjeKombinert = (
         setSammenlignValgte((gjeldende) => {
             const erAlleredeValgt = gjeldende.some((e) => e.kildeId === element.kildeId)
             if (erAlleredeValgt) {
-                return gjeldende.filter((e) => e.kildeId !== element.kildeId)
+                const nyListe = gjeldende.filter((e) => e.kildeId !== element.kildeId)
+                setDrawerInnhold(null)
+                return nyListe
             }
             if (gjeldende.length >= 2) {
                 const nyListe = [gjeldende[1], element]

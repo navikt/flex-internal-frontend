@@ -14,6 +14,7 @@ import {
     sykmeldingStatus,
     SykmeldingerPerArbeidsgiver,
 } from '../sykmelding/sykmeldingTidslinjeUtils'
+
 import type { SammenlignElement } from './useTidslinjeKombinert'
 
 export type OnPeriodeValgt = (periodeId: string | null, kildeId: string | null, drawer: DrawerInnhold | null) => void

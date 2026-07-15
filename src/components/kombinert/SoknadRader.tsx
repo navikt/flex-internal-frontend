@@ -11,8 +11,8 @@ import { arbeidsgiverLabelForSoknader } from '../../utils/soknadArbeidsgiverLabe
 import { lagKlippetSoknadDrawerInnhold, lagSoknadDrawerInnhold } from '../DetaljerDrawer'
 import ViktigeFeltForSoknad from '../periodeinfo/ViktigeFeltForSoknad'
 import { timelinePeriodeStatus } from '../soknad/Tidslinje'
-import type { SammenlignElement } from './useTidslinjeKombinert'
 
+import type { SammenlignElement } from './useTidslinjeKombinert'
 import type { OnPeriodeValgt } from './SykmeldingRader'
 
 interface Props {
