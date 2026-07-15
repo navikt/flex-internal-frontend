@@ -42,10 +42,15 @@ export default function ViktigeFeltForSoknad({ soknad }: Props) {
         const opprettetDato = dayjsToDate(soknad.opprettetDato)
         if (!opprettetDato) return null
 
+        const sendtTilNAVDato = dayjsToDate(soknad.sendtTilNAVDato)
+        const avbruttDato = dayjsToDate(soknad.avbruttDato)
+
         const viktigeFelt = [
             { etikett: 'ID', verdi: soknad.id },
             { etikett: 'Status', verdi: statusTekst[soknad.status] || soknad.status },
             { etikett: 'Opprettet dato', verdi: formaterDato(opprettetDato) },
+            ...(sendtTilNAVDato ? [{ etikett: 'Sendt til NAV', verdi: formaterDato(sendtTilNAVDato) }] : []),
+            ...(avbruttDato ? [{ etikett: 'Avbrutt dato', verdi: formaterDato(avbruttDato) }] : []),
         ]
 
         return <ViktigePeriodefelt viktigeFelt={viktigeFelt} />
