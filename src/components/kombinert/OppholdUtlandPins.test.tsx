@@ -108,15 +108,21 @@ describe('lagOppholdUtlandPins', () => {
         expect(onDrawerValgt).not.toHaveBeenCalled()
     })
 
-    it('popover-innholdet inneholder ingen knapp', () => {
+    it('popover-innholdet er klikkbart og åpner drawer', () => {
+        const onDrawerValgt = vi.fn()
+
         const pins = lagOppholdUtlandPins({
             soknaderGruppert: lagUtlandGruppering(utlandSoknad),
             aktivDrawerKildeId: null,
-            onDrawerValgt: vi.fn(),
+            onDrawerValgt,
         })
 
-        const pinElement = pins[0]
-        const popoverInnhold = pinElement.props.children as React.ReactElement
-        expect(popoverInnhold.type).toBe('span')
+        const span = pins[0].props.children as React.ReactElement
+        span.props.onClick()
+
+        expect(onDrawerValgt).toHaveBeenCalledOnce()
+        const [kildeId, drawer] = onDrawerValgt.mock.calls[0]
+        expect(kildeId).toBe('utland-1')
+        expect(drawer.tittel).toBe('Opphold utland søknad')
     })
 })

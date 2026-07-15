@@ -45,7 +45,22 @@ export const lagOppholdUtlandPins = ({
                         }
                     }}
                 >
-                    <span className="flex items-center gap-1 text-sm font-semibold">
+                    <span
+                        className="flex cursor-pointer items-center gap-1 text-sm font-semibold hover:underline"
+                        onClick={() => {
+                            if (aktivDrawerKildeId === kildeId) {
+                                onDrawerValgt(null, null)
+                            } else {
+                                onDrawerValgt(
+                                    kildeId,
+                                    lagOppholdUtlandSoknadDrawerInnhold(
+                                        sok.soknad,
+                                        <ViktigeFeltForSoknad soknad={sok.soknad} />,
+                                    ),
+                                )
+                            }
+                        }}
+                    >
                         <EarthIcon aria-hidden fontSize="1.25rem" />
                         Opphold utland søknad
                     </span>
