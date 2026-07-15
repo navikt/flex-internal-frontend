@@ -27,27 +27,31 @@ export const lagOppholdUtlandPins = ({
             const kildeId = sok.soknad.id
 
             return [
-                <Timeline.Pin
-                    key={sok.soknad.id}
-                    date={dato}
-                    onClick={() => {
-                        if (aktivDrawerKildeId === kildeId) {
-                            onDrawerValgt(null, null)
-                        } else {
-                            onDrawerValgt(
-                                kildeId,
-                                lagOppholdUtlandSoknadDrawerInnhold(
-                                    sok.soknad,
-                                    <ViktigeFeltForSoknad soknad={sok.soknad} />,
-                                ),
-                            )
-                        }
-                    }}
-                >
-                    <span className="flex items-center gap-1 text-sm">
-                        <EarthIcon aria-hidden fontSize="1.25rem" />
-                        Opphold utland søknad
-                    </span>
+                <Timeline.Pin key={sok.soknad.id} date={dato}>
+                    <div className="flex flex-col gap-2 p-1">
+                        <span className="flex items-center gap-1 text-sm font-semibold">
+                            <EarthIcon aria-hidden fontSize="1.25rem" />
+                            Opphold utland søknad
+                        </span>
+                        <button
+                            className="text-left text-sm text-blue-600 underline hover:text-blue-800"
+                            onClick={() => {
+                                if (aktivDrawerKildeId === kildeId) {
+                                    onDrawerValgt(null, null)
+                                } else {
+                                    onDrawerValgt(
+                                        kildeId,
+                                        lagOppholdUtlandSoknadDrawerInnhold(
+                                            sok.soknad,
+                                            <ViktigeFeltForSoknad soknad={sok.soknad} />,
+                                        ),
+                                    )
+                                }
+                            }}
+                        >
+                            {aktivDrawerKildeId === kildeId ? 'Lukk skuff' : 'Åpne i skuff'}
+                        </button>
+                    </div>
                 </Timeline.Pin>,
             ]
         }),
