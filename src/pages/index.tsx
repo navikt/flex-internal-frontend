@@ -49,6 +49,7 @@ const Index = ({ erMockBackend }: Pick<PrefetchResults, 'erMockBackend'>) => {
                         variant="secondary"
                         icon={<ArrowsSquarepathIcon aria-hidden />}
                         onClick={() => setSammenlignModus(true)}
+                        disabled={sykmeldinger.length === 0 && soknader.length === 0}
                     >
                         Sammenlign
                     </Button>

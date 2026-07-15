@@ -151,14 +151,16 @@ const TidslinjeKombinert = ({
                         Avslutt sammenligning
                     </Button>
                 )}
-                <BodyShort
-                    size="small"
-                    className="text-ax-text-neutral-subtle italic"
-                    aria-live="polite"
-                    aria-atomic="true"
-                >
-                    {sammenlignModus ? sammenlignStatusTekst() : ''}
-                </BodyShort>
+                {sammenlignModusProp === undefined && (
+                    <BodyShort
+                        size="small"
+                        className="text-ax-text-neutral-subtle italic"
+                        aria-live="polite"
+                        aria-atomic="true"
+                    >
+                        {sammenlignModus ? sammenlignStatusTekst() : ''}
+                    </BodyShort>
+                )}
             </HStack>
             <VelgZoomPeriode
                 setFraDato={setVisningsFraDato}
