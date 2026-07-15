@@ -84,9 +84,9 @@ function grupperPaSykmelding(
             sykmeldingGruppering.forEach((sykmelding) => {
                 // TODO: Vi finner aldri denne søknaden, og vi kjenner heller ikke sykmelding id'n, så i disse tilfellene klarer vi ikke koble sammen klipping av søknad med riktig sykmelding
                 if (sykmelding.soknader.has(k.sykepengesoknadUuid)) {
-                    // Søknaden finnes i systemet selv om klipperecorden sier den ble fullstendig fjernet.
-                    // Dette skjer når søknaden er manuelt korrigert/gjenopprettet etter klippingen.
-                    // Vi legger ikke til gammel klippeinfo – søknaden skal vises normalt.
+                    // Søknaden finnes i systemet (manuelt gjenopprettet etter klipping).
+                    // Vi beholder klippehistorikken for full sporbarhet, men søknaden vises også normalt.
+                    sykmelding.soknader.get(k.sykepengesoknadUuid)?.klippingAvSoknad.push(...perioderSomErKlippet)
                     sykmeldingEksisterte = true
                 }
             })

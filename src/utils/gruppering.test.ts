@@ -64,7 +64,7 @@ describe('gruppertOgFiltrert', () => {
         expect(nøkler.some((nøkkel) => nøkkel.startsWith('arbeidsgiver_GHOST'))).toBe(true)
     })
 
-    it('viser manuelt korrigert søknad normalt uten klipte blokker', () => {
+    it('viser manuelt korrigert søknad normalt og beholder klippehistorikk', () => {
         // Søknaden eksisterer i listen (manuelt gjenopprettet), men KlippetRecord har periodeEtter=null
         const gjenopprettetSoknad = lagSoknad({
             id: 'soknad-korrigert',
@@ -91,11 +91,13 @@ describe('gruppertOgFiltrert', () => {
         expect(nøkler).toContain('999999999')
         expect(nøkler.some((n) => n.endsWith('_GHOST'))).toBe(false)
 
-        // Søknaden skal ikke ha klipte perioder (ingen misvisende nøytrale blokker)
+        // Søknaden skal finnes i grupperingen
         const arbeidsgiver = gruppert.get('999999999')!
         const soknader = Array.from(arbeidsgiver.sykmeldinger.values()).flatMap((s) => Array.from(s.soknader.values()))
         expect(soknader).toHaveLength(1)
-        expect(soknader[0].klippingAvSoknad).toHaveLength(0)
+
+        // Klippehistorikken skal vises (historisk sporbarhet)
+        expect(soknader[0].klippingAvSoknad.length).toBeGreaterThan(0)
     })
 })
 
