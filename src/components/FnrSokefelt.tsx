@@ -15,6 +15,7 @@ type Props = {
     label?: string
     description?: string
     valideringstype?: Valideringstype
+    erMockBackend?: boolean
 }
 
 const feilmeldinger: Record<Valideringstype, string> = {
@@ -35,6 +36,7 @@ const FnrSokefelt = ({
     label = 'Fødselsnummer',
     description,
     valideringstype = 'fnr',
+    erMockBackend = false,
 }: Props) => {
     const { fnr, settFnr, nullstillFnr } = useValgtFnr()
     const queryClient = useQueryClient()
@@ -83,6 +85,11 @@ const FnrSokefelt = ({
     }, [fnr])
 
     const handterSok = (input: string) => {
+        if (input === '' && erMockBackend) {
+            settFnr('12345678901')
+            return
+        }
+
         setSokeverdi(input)
 
         const validertVerdi = valideringsfunksjoner[valideringstype](input)

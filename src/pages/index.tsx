@@ -2,13 +2,13 @@ import React from 'react'
 
 import FnrSokefelt from '../components/FnrSokefelt'
 import IdOppslagSokefelt from '../components/IdOppslagSokefelt'
-import { initialProps } from '../initialprops/initialProps'
+import { initialProps, PrefetchResults } from '../initialprops/initialProps'
 import { useSoknader } from '../queryhooks/useSoknader'
 import { useSykmeldinger } from '../queryhooks/useSykmeldinger'
 import TidslinjeKombinert from '../components/TidslinjeKombinert'
 import { useValgtFnr } from '../utils/useValgtFnr'
 
-const Index = () => {
+const Index = ({ erMockBackend }: Pick<PrefetchResults, 'erMockBackend'>) => {
     const { fnr } = useValgtFnr()
 
     const { data: soknadData } = useSoknader(fnr, fnr !== undefined)
@@ -24,6 +24,7 @@ const Index = () => {
                     label="Fødselsnummer eller aktørId"
                     description="11-sifret fnr eller 13-sifret aktørId"
                     valideringstype="fnrEllerAktorId"
+                    erMockBackend={erMockBackend}
                 />
                 <IdOppslagSokefelt />
             </div>
