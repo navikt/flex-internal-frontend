@@ -85,10 +85,7 @@ describe('sammenlignObjekter', () => {
     })
 
     it('sammenligner nestede objekt-felt', () => {
-        const rader = sammenlignObjekter(
-            { arbeidsgiver: { navn: 'NAV' } },
-            { arbeidsgiver: { navn: 'NHO' } },
-        )
+        const rader = sammenlignObjekter({ arbeidsgiver: { navn: 'NAV' } }, { arbeidsgiver: { navn: 'NHO' } })
         const rad = rader.find((r) => r.nøkkel === 'arbeidsgiver.navn')
         expect(rad).toMatchObject({ verdi1: 'NAV', verdi2: 'NHO', erLik: false })
     })
