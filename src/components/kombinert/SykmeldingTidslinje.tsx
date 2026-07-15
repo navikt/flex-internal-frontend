@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import { BodyShort, Box, Timeline } from '@navikt/ds-react'
 
 import type { SykmeldingerPerArbeidsgiver } from '../sykmelding/sykmeldingTidslinjeUtils'
+import type { SammenlignElement } from './useTidslinjeKombinert'
 
 import { lagSykmeldingRader, type OnPeriodeValgt } from './SykmeldingRader'
 
@@ -12,6 +13,9 @@ interface Props {
     aktivPeriodeId: string | null
     aktivDrawerKildeId: string | null
     onPeriodeValgt: OnPeriodeValgt
+    sammenlignModus: boolean
+    sammenlignValgteIder: string[]
+    onSammenlignValgt: (element: SammenlignElement) => void
 }
 
 const SykmeldingTidslinje = ({
@@ -20,6 +24,9 @@ const SykmeldingTidslinje = ({
     aktivPeriodeId,
     aktivDrawerKildeId,
     onPeriodeValgt,
+    sammenlignModus,
+    sammenlignValgteIder,
+    onSammenlignValgt,
 }: Props): React.ReactElement => {
     return (
         <Box
@@ -41,6 +48,9 @@ const SykmeldingTidslinje = ({
                     aktivPeriodeId,
                     aktivDrawerKildeId,
                     onPeriodeValgt,
+                    sammenlignModus,
+                    sammenlignValgteIder,
+                    onSammenlignValgt,
                 })}
                 {!dayjs().isAfter(dayjs(aktivTidsvindu.til), 'day') && (
                     <Timeline.Pin date={dayjs().startOf('day').toDate()} data-idag="true">

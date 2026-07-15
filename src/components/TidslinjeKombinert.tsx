@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
-import { BodyShort } from '@navikt/ds-react'
+import { BodyShort, Button, HStack } from '@navikt/ds-react'
+import { ArrowsSquarepathIcon } from '@navikt/aksel-icons'
 import dayjs from 'dayjs'
 
 import { BackendSoknad, KlippetSykepengesoknadRecord, Soknad, dayjsToDate } from '../queryhooks/useSoknader'
@@ -43,6 +44,11 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
         handlePeriodeValgt,
         handleDrawerValgt,
         handleLukkDrawer,
+        sammenlignModus,
+        setSammenlignModus,
+        sammenlignValgte,
+        handleSammenlignValgt,
+        handleAvsluttSammenlign,
     } = useTidslinjeKombinert(sykmeldinger, soknader, klipp)
 
     const { valgtPeriodeId, valgtDrawerKildeId, oppslagData, nullstillValgtPeriode } = useValgtFnr()
@@ -99,10 +105,39 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
         setVisningstilDato,
     ])
 
+    const sammenlignStatusTekst = () => {
+        if (sammenlignValgte.length === 0) return 'Velg første element'
+        if (sammenlignValgte.length === 1) return `Valgt: ${sammenlignValgte[0].tittel} — velg ett til`
+        return `Sammenligner: ${sammenlignValgte[0].tittel} vs ${sammenlignValgte[1].tittel}`
+    }
+
+    const sammenlignValgteIder = sammenlignValgte.map((e) => e.kildeId)
+
     return (
         <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
             <ValgteFilter filter={filter} setFilter={setFilter} />
-            <BodyShort className="font-semibold">{`${sykmeldingAntall} sykmelding(er) · ${soknadAntall} søknad(er)`}</BodyShort>
+            <HStack align="center" gap="space-4" className="mb-1">
+                <BodyShort className="font-semibold">{`${sykmeldingAntall} sykmelding(er) · ${soknadAntall} søknad(er)`}</BodyShort>
+                {!sammenlignModus ? (
+                    <Button
+                        size="small"
+                        variant="secondary"
+                        icon={<ArrowsSquarepathIcon aria-hidden />}
+                        onClick={() => setSammenlignModus(true)}
+                    >
+                        Sammenlign
+                    </Button>
+                ) : (
+                    <HStack align="center" gap="space-2">
+                        <BodyShort size="small" className="text-text-subtle italic">
+                            {sammenlignStatusTekst()}
+                        </BodyShort>
+                        <Button size="small" variant="tertiary-neutral" onClick={handleAvsluttSammenlign}>
+                            Avslutt sammenligning
+                        </Button>
+                    </HStack>
+                )}
+            </HStack>
             <VelgZoomPeriode
                 setFraDato={setVisningsFraDato}
                 setTilDato={setVisningstilDato}
@@ -116,6 +151,9 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
                         aktivPeriodeId={aktivPeriodeId}
                         aktivDrawerKildeId={aktivDrawerKildeId}
                         onPeriodeValgt={handlePeriodeValgt}
+                        sammenlignModus={sammenlignModus}
+                        sammenlignValgteIder={sammenlignValgteIder}
+                        onSammenlignValgt={handleSammenlignValgt}
                     />
                     <SoknadTidslinje
                         soknaderGruppert={soknaderGruppert}
@@ -124,6 +162,9 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
                         aktivDrawerKildeId={aktivDrawerKildeId}
                         onPeriodeValgt={handlePeriodeValgt}
                         onDrawerValgt={handleDrawerValgt}
+                        sammenlignModus={sammenlignModus}
+                        sammenlignValgteIder={sammenlignValgteIder}
+                        onSammenlignValgt={handleSammenlignValgt}
                     />
                 </>
             )}
@@ -133,7 +174,7 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
                 setFilter={setFilter}
                 plassering={drawerPlassering}
                 setPlassering={setDrawerPlassering}
-                onLukk={handleLukkDrawer}
+                onLukk={sammenlignModus ? handleAvsluttSammenlign : handleLukkDrawer}
             />
         </div>
     )

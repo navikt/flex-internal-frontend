@@ -11,6 +11,7 @@ import { arbeidsgiverLabelForSoknader } from '../../utils/soknadArbeidsgiverLabe
 import { lagKlippetSoknadDrawerInnhold, lagSoknadDrawerInnhold } from '../DetaljerDrawer'
 import ViktigeFeltForSoknad from '../periodeinfo/ViktigeFeltForSoknad'
 import { timelinePeriodeStatus } from '../soknad/Tidslinje'
+import type { SammenlignElement } from './useTidslinjeKombinert'
 
 import type { OnPeriodeValgt } from './SykmeldingRader'
 
@@ -20,6 +21,9 @@ interface Props {
     aktivPeriodeId: string | null
     aktivDrawerKildeId: string | null
     onPeriodeValgt: OnPeriodeValgt
+    sammenlignModus?: boolean
+    sammenlignValgteIder?: string[]
+    onSammenlignValgt?: (element: SammenlignElement) => void
 }
 
 export const lagSoknadRader = ({
@@ -28,6 +32,9 @@ export const lagSoknadRader = ({
     aktivPeriodeId,
     aktivDrawerKildeId,
     onPeriodeValgt,
+    sammenlignModus = false,
+    sammenlignValgteIder = [],
+    onSammenlignValgt,
 }: Props): React.ReactElement[] => {
     return sorterSoknadGrupperEtterSignaturDato(Array.from(soknaderGruppert.entries())).flatMap(([arbId, arb]) => {
         if (arbId === 'opphold_utland') return []
@@ -87,6 +94,11 @@ export const lagSoknadRader = ({
                             const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
                             const kildeId = sok.soknad.id
                             const erValgtPeriode = aktivDrawerKildeId === kildeId
+                            const erSammenlignValgt = sammenlignValgteIder.includes(kildeId)
+
+                            const fomStr = sok.soknad.fom ? sok.soknad.fom.format('D MMM YYYY') : ''
+                            const tomStr = sok.soknad.tom ? sok.soknad.tom.format('D MMM YYYY') : ''
+
                             klippingAvSoknad.push(
                                 <Timeline.Period
                                     start={sokFom}
@@ -95,9 +107,23 @@ export const lagSoknadRader = ({
                                     icon={ikonerForSoknad(sok.soknad)}
                                     key={sok.soknad.tom?.toISOString() ?? sok.soknad.id}
                                     isActive={erAktiv}
-                                    className={erValgtPeriode ? 'shadow-[inset_0_0_0_4px_#dc2626]!' : undefined}
+                                    className={
+                                        sammenlignModus
+                                            ? erSammenlignValgt
+                                                ? 'shadow-[inset_0_0_0_4px_#0067c5]!'
+                                                : undefined
+                                            : erValgtPeriode
+                                              ? 'shadow-[inset_0_0_0_4px_#dc2626]!'
+                                              : undefined
+                                    }
                                     onSelectPeriod={() => {
-                                        if (aktivDrawerKildeId === kildeId) {
+                                        if (sammenlignModus) {
+                                            onSammenlignValgt?.({
+                                                kildeId,
+                                                objekt: sok.soknad,
+                                                tittel: `Søknad ${fomStr}–${tomStr}`,
+                                            })
+                                        } else if (aktivDrawerKildeId === kildeId) {
                                             onPeriodeValgt(null, null, null)
                                         } else {
                                             onPeriodeValgt(
