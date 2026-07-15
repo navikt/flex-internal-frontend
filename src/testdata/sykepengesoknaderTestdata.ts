@@ -577,6 +577,37 @@ export const sykepengesoknaderTestdata = {
             merknaderFraSykmelding: null,
             ventetidSykmeldingUuid: null,
         },
+        // Erstatningssøknad for en som ble fullstendig klippet (annen UUID, samme sykmelding)
+        {
+            id: 'erstatning-soknad-ny-uuid',
+            sykmeldingId: 'sykmelding-klippet-erstattet',
+            soknadstype: 'ARBEIDSTAKERE',
+            status: 'SENDT',
+            fom: '2023-07-01',
+            tom: '2023-07-31',
+            opprettetDato: '2023-08-01T10:00:00',
+            sendtTilNAVDato: '2023-08-02T10:00:00',
+            sendtTilArbeidsgiverDato: '2023-08-02T10:00:00',
+            avbruttDato: null,
+            startSykeforlop: '2023-07-01',
+            sykmeldingUtskrevet: '2023-07-01T01:00:00',
+            sykmeldingSignaturDato: null,
+            arbeidsgiver: null,
+            arbeidsgiverNavn: 'Klonelabben',
+            arbeidsgiverOrgnummer: '907670201',
+            korrigerer: null,
+            korrigertAv: null,
+            arbeidssituasjon: 'ARBEIDSTAKER',
+            soknadPerioder: [
+                {
+                    fom: '2023-07-01',
+                    tom: '2023-07-31',
+                    grad: 100,
+                    sykmeldingstype: 'AKTIVITET_IKKE_MULIG',
+                },
+            ],
+            merknaderFraSykmelding: null,
+        },
     ],
     klippetSykepengesoknadRecord: [
         {
@@ -623,6 +654,16 @@ export const sykepengesoknaderTestdata = {
             periodeFor: '[{"fom":"2023-06-11","tom":"2023-06-30","grad":100,"sykmeldingstype":"AKTIVITET_IKKE_MULIG"}]',
             periodeEtter: null,
             timestamp: '2023-06-19T06:59:52.264863Z',
+        },
+        // Klipp for søknad som er erstattet av 'erstatning-soknad-ny-uuid' (annen UUID, samme sykmelding)
+        {
+            id: 'klipp-erstattet-gammel-uuid',
+            sykepengesoknadUuid: 'gammel-soknad-som-ble-klippet',
+            sykmeldingUuid: 'sykmelding-klippet-erstattet',
+            klippVariant: 'SOKNAD_STARTER_FOR_SLUTTER_ETTER',
+            periodeFor: '[{"fom":"2023-07-01","tom":"2023-07-31","grad":100,"sykmeldingstype":"AKTIVITET_IKKE_MULIG"}]',
+            periodeEtter: null,
+            timestamp: '2023-08-01T10:00:00Z',
         },
     ],
 }
