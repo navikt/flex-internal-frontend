@@ -45,10 +45,11 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
         handleDrawerValgt,
         handleLukkDrawer,
         sammenlignModus,
-        setSammenlignModus,
         sammenlignValgte,
         handleSammenlignValgt,
+        handleStartSammenlign,
         handleAvsluttSammenlign,
+        handleLukkSammenlignDrawer,
     } = useTidslinjeKombinert(sykmeldinger, soknader, klipp)
 
     const { valgtPeriodeId, valgtDrawerKildeId, oppslagData, nullstillValgtPeriode } = useValgtFnr()
@@ -123,20 +124,25 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
                         size="small"
                         variant="secondary"
                         icon={<ArrowsSquarepathIcon aria-hidden />}
-                        onClick={() => setSammenlignModus(true)}
+                        onClick={handleStartSammenlign}
                     >
                         Sammenlign
                     </Button>
                 ) : (
                     <HStack align="center" gap="space-2">
-                        <BodyShort size="small" className="text-text-subtle italic" aria-live="polite" aria-atomic="true">
-                            {sammenlignStatusTekst()}
-                        </BodyShort>
                         <Button size="small" variant="tertiary-neutral" onClick={handleAvsluttSammenlign}>
                             Avslutt sammenligning
                         </Button>
                     </HStack>
                 )}
+                <BodyShort
+                    size="small"
+                    className="text-ax-text-neutral-subtle italic"
+                    aria-live="polite"
+                    aria-atomic="true"
+                >
+                    {sammenlignModus ? sammenlignStatusTekst() : ''}
+                </BodyShort>
             </HStack>
             <VelgZoomPeriode
                 setFraDato={setVisningsFraDato}
@@ -174,7 +180,7 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
                 setFilter={setFilter}
                 plassering={drawerPlassering}
                 setPlassering={setDrawerPlassering}
-                onLukk={sammenlignModus ? handleAvsluttSammenlign : handleLukkDrawer}
+                onLukk={sammenlignModus ? handleLukkSammenlignDrawer : handleLukkDrawer}
             />
         </div>
     )

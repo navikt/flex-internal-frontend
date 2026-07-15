@@ -304,11 +304,11 @@ export default function DetaljerDrawer({
                             value={visModus}
                             onChange={(v) => setVisModus(v as VisModus)}
                             size="small"
-                            variant="neutral"
+                            data-color="neutral"
                         >
-                            <ToggleGroup.Item value="vanlig">Detaljer</ToggleGroup.Item>
-                            <ToggleGroup.Item value="kafkaformat">Kafka</ToggleGroup.Item>
-                            <ToggleGroup.Item value="begge">Begge</ToggleGroup.Item>
+                            <ToggleGroup.Item value="vanlig" label="Detaljer" />
+                            <ToggleGroup.Item value="kafkaformat" label="Kafka" />
+                            <ToggleGroup.Item value="begge" label="Begge" />
                         </ToggleGroup>
                     )}
                     <Button

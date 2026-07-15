@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ToggleGroup } from '@navikt/ds-react'
+import { Table, ToggleGroup, VStack, HStack } from '@navikt/ds-react'
 
 import { sammenlignObjekter, SammenlignRad } from '../utils/sammenlignUtils'
 
@@ -12,15 +12,15 @@ interface Props {
 
 const radBakgrunn = (rad: SammenlignRad): string => {
     if (rad.verdi1 === undefined || rad.verdi2 === undefined) {
-        return 'bg-surface-neutral-subtle'
+        return 'bg-ax-bg-neutral-soft'
     }
-    if (!rad.erLik) return 'bg-surface-warning-subtle'
+    if (!rad.erLik) return 'bg-ax-bg-warning-soft'
     return ''
 }
 
 const VerdiCelle = ({ verdi }: { verdi: string | undefined }) => {
     if (verdi === undefined) {
-        return <span className="text-text-subtle italic">—</span>
+        return <span className="text-ax-text-neutral-subtle italic">—</span>
     }
     return <span className="break-all">{verdi}</span>
 }
@@ -34,50 +34,60 @@ export const SammenlignDetaljer = ({ tittel1, tittel2, objekt1, objekt2 }: Props
     const antallForskjeller = rader.filter((r) => !r.erLik).length
 
     return (
-        <div className="space-y-3">
-            <div className="flex items-center gap-3">
+        <VStack gap="space-12">
+            <HStack align="center" gap="space-12">
                 <ToggleGroup
                     value={kunForskjeller}
                     onChange={(v) => setKunForskjeller(v as 'alle' | 'forskjeller')}
                     size="small"
-                    variant="neutral"
+                    data-color="neutral"
+                    aria-label="Velg hvilke felt som vises"
                 >
-                    <ToggleGroup.Item value="forskjeller">Kun forskjeller ({antallForskjeller})</ToggleGroup.Item>
-                    <ToggleGroup.Item value="alle">Alle felt ({rader.length})</ToggleGroup.Item>
+                    <ToggleGroup.Item value="forskjeller" label={`Kun forskjeller (${antallForskjeller})`} />
+                    <ToggleGroup.Item value="alle" label={`Alle felt (${rader.length})`} />
                 </ToggleGroup>
-            </div>
+            </HStack>
 
-            <div className="overflow-x-auto">
-                <table className="w-full text-sm border-collapse">
-                    <thead>
-                        <tr className="border-b border-gray-200">
-                            <th className="text-left py-1.5 pr-3 font-semibold text-gray-500 w-[35%]">Felt</th>
-                            <th className="text-left py-1.5 pr-3 font-semibold w-[32.5%]">{tittel1}</th>
-                            <th className="text-left py-1.5 font-semibold w-[32.5%]">{tittel2}</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                        {filtrertRader.map((rad) => (
-                            <tr key={rad.nøkkel} className={radBakgrunn(rad)}>
-                                <td className="py-1 pr-3 text-gray-500 font-mono text-xs align-top">{rad.nøkkel}</td>
-                                <td className="py-1 pr-3 align-top">
-                                    <VerdiCelle verdi={rad.verdi1} />
-                                </td>
-                                <td className="py-1 align-top">
-                                    <VerdiCelle verdi={rad.verdi2} />
-                                </td>
-                            </tr>
-                        ))}
-                        {filtrertRader.length === 0 && (
-                            <tr>
-                                <td colSpan={3} className="py-4 text-center text-text-subtle italic">
-                                    Ingen forskjeller funnet
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+            <Table size="small">
+                <Table.Header>
+                    <Table.Row>
+                        <Table.HeaderCell scope="col" className="w-[35%] text-ax-text-neutral-subtle">
+                            Felt
+                        </Table.HeaderCell>
+                        <Table.HeaderCell scope="col" className="w-[32.5%]">
+                            {tittel1}
+                        </Table.HeaderCell>
+                        <Table.HeaderCell scope="col" className="w-[32.5%]">
+                            {tittel2}
+                        </Table.HeaderCell>
+                    </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                    {filtrertRader.map((rad) => (
+                        <Table.Row key={rad.nøkkel} className={radBakgrunn(rad)}>
+                            <Table.HeaderCell
+                                scope="row"
+                                className="font-mono text-xs align-top text-ax-text-neutral-subtle"
+                            >
+                                {rad.nøkkel}
+                            </Table.HeaderCell>
+                            <Table.DataCell className="align-top">
+                                <VerdiCelle verdi={rad.verdi1} />
+                            </Table.DataCell>
+                            <Table.DataCell className="align-top">
+                                <VerdiCelle verdi={rad.verdi2} />
+                            </Table.DataCell>
+                        </Table.Row>
+                    ))}
+                    {filtrertRader.length === 0 && (
+                        <Table.Row>
+                            <Table.DataCell colSpan={3} className="text-center text-ax-text-neutral-subtle italic">
+                                Ingen forskjeller funnet
+                            </Table.DataCell>
+                        </Table.Row>
+                    )}
+                </Table.Body>
+            </Table>
+        </VStack>
     )
 }

@@ -149,6 +149,16 @@ export const useTidslinjeKombinert = (
         setDrawerInnhold(null)
     }, [])
 
+    const handleStartSammenlign = useCallback(() => {
+        setSammenlignModus(true)
+    }, [])
+
+    const handleLukkSammenlignDrawer = useCallback(() => {
+        setSammenlignValgte([])
+        setDrawerInnhold(null)
+        // sammenlignModus forblir true — brukeren kan velge nye elementer
+    }, [])
+
     return {
         filter,
         setFilter,
@@ -169,9 +179,10 @@ export const useTidslinjeKombinert = (
         handleDrawerValgt,
         handleLukkDrawer,
         sammenlignModus,
-        setSammenlignModus,
         sammenlignValgte,
         handleSammenlignValgt,
+        handleStartSammenlign,
         handleAvsluttSammenlign,
+        handleLukkSammenlignDrawer,
     }
 }

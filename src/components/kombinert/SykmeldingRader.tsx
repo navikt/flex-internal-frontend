@@ -1,4 +1,5 @@
 import React from 'react'
+import dayjs from 'dayjs'
 import { StethoscopeIcon } from '@navikt/aksel-icons'
 import { Timeline } from '@navikt/ds-react'
 
@@ -89,10 +90,12 @@ export const lagSykmeldingRader = ({
                         isActive={aktivPeriodeId === sykmeldingAktivId}
                         onSelectPeriod={() => {
                             if (sammenlignModus) {
+                                const fomStr = dayjs(forstePeriode.fom).format('D MMM YYYY')
+                                const tomStr = dayjs(sistePeriode.tom).format('D MMM YYYY')
                                 onSammenlignValgt?.({
                                     kildeId: sykmeldingAktivId,
                                     objekt: sykmelding,
-                                    tittel: `Sykmelding ${forstePeriode.fom}–${sistePeriode.tom}`,
+                                    tittel: `Sykmelding ${fomStr}–${tomStr}`,
                                 })
                             } else if (aktivDrawerKildeId === sykmeldingAktivId) {
                                 onPeriodeValgt(null, null, null)
