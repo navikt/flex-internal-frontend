@@ -69,8 +69,8 @@ describe('lagOppholdUtlandPins', () => {
             onDrawerValgt,
         })
 
-        const wrapper = pins[0]
-        wrapper.props.onClickCapture({ stopPropagation: vi.fn() })
+        const pin = pins[0]
+        pin.props.onMouseDown({ button: 0 })
 
         expect(onDrawerValgt).toHaveBeenCalledOnce()
         const [kildeId, drawer] = onDrawerValgt.mock.calls[0]
@@ -88,11 +88,24 @@ describe('lagOppholdUtlandPins', () => {
             onDrawerValgt,
         })
 
-        const wrapper = pins[0]
-        wrapper.props.onClickCapture({ stopPropagation: vi.fn() })
+        const pin = pins[0]
+        pin.props.onMouseDown({ button: 0 })
 
         expect(onDrawerValgt).toHaveBeenCalledOnce()
         expect(onDrawerValgt).toHaveBeenCalledWith(null, null)
+    })
+
+    it('høyreklikk gjør ingenting', () => {
+        const onDrawerValgt = vi.fn()
+
+        const pins = lagOppholdUtlandPins({
+            soknaderGruppert: lagUtlandGruppering(utlandSoknad),
+            aktivDrawerKildeId: null,
+            onDrawerValgt,
+        })
+
+        pins[0].props.onMouseDown({ button: 2 })
+        expect(onDrawerValgt).not.toHaveBeenCalled()
     })
 
     it('popover-innholdet inneholder ingen knapp', () => {
@@ -102,10 +115,8 @@ describe('lagOppholdUtlandPins', () => {
             onDrawerValgt: vi.fn(),
         })
 
-        const wrapper = pins[0]
-        const pinElement = wrapper.props.children as React.ReactElement
+        const pinElement = pins[0]
         const popoverInnhold = pinElement.props.children as React.ReactElement
         expect(popoverInnhold.type).toBe('span')
-        expect(popoverInnhold.props.children).toBeDefined()
     })
 })

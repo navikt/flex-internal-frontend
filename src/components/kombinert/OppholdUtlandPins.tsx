@@ -27,11 +27,11 @@ export const lagOppholdUtlandPins = ({
             const kildeId = sok.soknad.id
 
             return [
-                <div
+                <Timeline.Pin
                     key={sok.soknad.id}
-                    role="none"
-                    onClickCapture={(e) => {
-                        e.stopPropagation()
+                    date={dato}
+                    onMouseDown={(e) => {
+                        if (e.button !== 0) return
                         if (aktivDrawerKildeId === kildeId) {
                             onDrawerValgt(null, null)
                         } else {
@@ -45,13 +45,11 @@ export const lagOppholdUtlandPins = ({
                         }
                     }}
                 >
-                    <Timeline.Pin date={dato}>
-                        <span className="flex items-center gap-1 text-sm font-semibold">
-                            <EarthIcon aria-hidden fontSize="1.25rem" />
-                            Opphold utland søknad
-                        </span>
-                    </Timeline.Pin>
-                </div>,
+                    <span className="flex items-center gap-1 text-sm font-semibold">
+                        <EarthIcon aria-hidden fontSize="1.25rem" />
+                        Opphold utland søknad
+                    </span>
+                </Timeline.Pin>,
             ]
         }),
     )

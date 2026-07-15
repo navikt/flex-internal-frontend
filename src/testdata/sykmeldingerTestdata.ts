@@ -5,7 +5,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
     {
         id: 'bc3c9e72-58c0-4d24-91ba-d712fdd8c712',
         pasient: {
-            fnr: '64820175075',
+            fnr: '12345678901',
             overSyttiAar: false,
         },
         mottattTidspunkt: '2026-02-01T23:00:00Z',
@@ -103,7 +103,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
     {
         id: 'bc3c9e72-58c0-4d24-91ba-d712fdd8c713',
         pasient: {
-            fnr: '64820175075',
+            fnr: '12345678901',
             overSyttiAar: false,
         },
         mottattTidspunkt: '2026-02-01T23:00:00Z',
@@ -182,7 +182,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
     {
         id: 'ac4d9e72-58c0-4d24-91ba-d712fdd8c714',
         pasient: {
-            fnr: '64820175075',
+            fnr: '12345678901',
             overSyttiAar: false,
         },
         mottattTidspunkt: '2026-02-20T23:00:00Z',
@@ -258,7 +258,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
     {
         id: 'bd5e8f73-59c1-5d35-92cb-d812fdd8c815',
         pasient: {
-            fnr: '64820175075',
+            fnr: '12345678901',
             overSyttiAar: false,
         },
         mottattTidspunkt: '2024-12-15T23:00:00Z',
@@ -331,7 +331,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
     {
         id: 'bd5e8f73-59c1-5d35-92cb-d812fdd8c816',
         pasient: {
-            fnr: '64820175075',
+            fnr: '12345678901',
             overSyttiAar: false,
         },
         mottattTidspunkt: '2024-12-15T23:00:00Z',
@@ -420,7 +420,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
     {
         id: 'ce6f0a84-60d2-6e46-a3dc-e923fee9d926',
         pasient: {
-            fnr: '64820175075',
+            fnr: '12345678901',
 
             overSyttiAar: false,
         },
@@ -487,7 +487,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
     // GRADERT periode
     {
         id: 'syk-gradert-001',
-        pasient: { fnr: '64820175075', overSyttiAar: false },
+        pasient: { fnr: '12345678901', overSyttiAar: false },
         mottattTidspunkt: '2025-06-01T10:00:00Z',
         behandlingsutfall: { status: 'OK', ruleHits: [], erUnderBehandling: false },
         arbeidsgiver: { navn: 'NAV IT', stillingsprosent: 60 },
@@ -539,7 +539,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
     // BEHANDLINGSDAGER periode
     {
         id: 'syk-behandlingsdager-001',
-        pasient: { fnr: '64820175075', overSyttiAar: false },
+        pasient: { fnr: '12345678901', overSyttiAar: false },
         mottattTidspunkt: '2025-08-01T10:00:00Z',
         behandlingsutfall: { status: 'OK', ruleHits: [], erUnderBehandling: false },
         arbeidsgiver: { navn: 'NAV IT', stillingsprosent: 100 },
@@ -591,7 +591,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
     // AVVENTENDE periode
     {
         id: 'syk-avventende-001',
-        pasient: { fnr: '64820175075', overSyttiAar: false },
+        pasient: { fnr: '12345678901', overSyttiAar: false },
         mottattTidspunkt: '2025-10-01T10:00:00Z',
         behandlingsutfall: { status: 'OK', ruleHits: [], erUnderBehandling: false },
         arbeidsgiver: { navn: 'NAV IT', stillingsprosent: 100 },
@@ -643,7 +643,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
     // REISETILSKUDD periode
     {
         id: 'syk-reisetilskudd-001',
-        pasient: { fnr: '64820175075', overSyttiAar: false },
+        pasient: { fnr: '12345678901', overSyttiAar: false },
         mottattTidspunkt: '2025-12-01T10:00:00Z',
         behandlingsutfall: { status: 'OK', ruleHits: [], erUnderBehandling: false },
         arbeidsgiver: { navn: 'NAV IT', stillingsprosent: 100 },
