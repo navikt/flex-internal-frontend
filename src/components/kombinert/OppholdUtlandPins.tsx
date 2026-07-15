@@ -27,32 +27,31 @@ export const lagOppholdUtlandPins = ({
             const kildeId = sok.soknad.id
 
             return [
-                <Timeline.Pin key={sok.soknad.id} date={dato}>
-                    <div className="flex flex-col gap-2 p-1">
+                <div
+                    key={sok.soknad.id}
+                    role="none"
+                    onClickCapture={(e) => {
+                        e.stopPropagation()
+                        if (aktivDrawerKildeId === kildeId) {
+                            onDrawerValgt(null, null)
+                        } else {
+                            onDrawerValgt(
+                                kildeId,
+                                lagOppholdUtlandSoknadDrawerInnhold(
+                                    sok.soknad,
+                                    <ViktigeFeltForSoknad soknad={sok.soknad} />,
+                                ),
+                            )
+                        }
+                    }}
+                >
+                    <Timeline.Pin date={dato}>
                         <span className="flex items-center gap-1 text-sm font-semibold">
                             <EarthIcon aria-hidden fontSize="1.25rem" />
                             Opphold utland søknad
                         </span>
-                        <button
-                            className="text-left text-sm text-blue-600 underline hover:text-blue-800"
-                            onClick={() => {
-                                if (aktivDrawerKildeId === kildeId) {
-                                    onDrawerValgt(null, null)
-                                } else {
-                                    onDrawerValgt(
-                                        kildeId,
-                                        lagOppholdUtlandSoknadDrawerInnhold(
-                                            sok.soknad,
-                                            <ViktigeFeltForSoknad soknad={sok.soknad} />,
-                                        ),
-                                    )
-                                }
-                            }}
-                        >
-                            {aktivDrawerKildeId === kildeId ? 'Lukk skuff' : 'Åpne i skuff'}
-                        </button>
-                    </div>
-                </Timeline.Pin>,
+                    </Timeline.Pin>
+                </div>,
             ]
         }),
     )

@@ -32,13 +32,6 @@ const utlandSoknad = new Soknad({
     soknadPerioder: [],
 })
 
-const hentKnapp = (pins: React.ReactElement[]): React.ReactElement => {
-    const pin = pins[0]
-    const div = pin.props.children as React.ReactElement
-    const children = React.Children.toArray(div.props.children) as React.ReactElement[]
-    return children[1]
-}
-
 describe('lagOppholdUtlandPins', () => {
     it('returnerer en pin for søknad med opprettetDato', () => {
         const pins = lagOppholdUtlandPins({
@@ -67,29 +60,7 @@ describe('lagOppholdUtlandPins', () => {
         expect(pins).toHaveLength(0)
     })
 
-    it('knappen i pinnen viser "Åpne i skuff" når skuffen er lukket', () => {
-        const pins = lagOppholdUtlandPins({
-            soknaderGruppert: lagUtlandGruppering(utlandSoknad),
-            aktivDrawerKildeId: null,
-            onDrawerValgt: vi.fn(),
-        })
-
-        const knapp = hentKnapp(pins)
-        expect(knapp.props.children).toBe('Åpne i skuff')
-    })
-
-    it('knappen i pinnen viser "Lukk skuff" når denne søknadens skuff er åpen', () => {
-        const pins = lagOppholdUtlandPins({
-            soknaderGruppert: lagUtlandGruppering(utlandSoknad),
-            aktivDrawerKildeId: 'utland-1',
-            onDrawerValgt: vi.fn(),
-        })
-
-        const knapp = hentKnapp(pins)
-        expect(knapp.props.children).toBe('Lukk skuff')
-    })
-
-    it('klikk på knappen kaller onDrawerValgt med kildeId og innhold', () => {
+    it('klikk på wrapper kaller onDrawerValgt med kildeId og drawer-innhold', () => {
         const onDrawerValgt = vi.fn()
 
         const pins = lagOppholdUtlandPins({
@@ -98,8 +69,8 @@ describe('lagOppholdUtlandPins', () => {
             onDrawerValgt,
         })
 
-        const knapp = hentKnapp(pins)
-        knapp.props.onClick()
+        const wrapper = pins[0]
+        wrapper.props.onClickCapture({ stopPropagation: vi.fn() })
 
         expect(onDrawerValgt).toHaveBeenCalledOnce()
         const [kildeId, drawer] = onDrawerValgt.mock.calls[0]
@@ -108,7 +79,7 @@ describe('lagOppholdUtlandPins', () => {
         expect(drawer.tittel).toBe('Opphold utland søknad')
     })
 
-    it('klikk på knappen lukker skuffen når den allerede er åpen for denne søknaden', () => {
+    it('klikk lukker skuffen når den allerede er åpen for denne søknaden', () => {
         const onDrawerValgt = vi.fn()
 
         const pins = lagOppholdUtlandPins({
@@ -117,10 +88,24 @@ describe('lagOppholdUtlandPins', () => {
             onDrawerValgt,
         })
 
-        const knapp = hentKnapp(pins)
-        knapp.props.onClick()
+        const wrapper = pins[0]
+        wrapper.props.onClickCapture({ stopPropagation: vi.fn() })
 
         expect(onDrawerValgt).toHaveBeenCalledOnce()
         expect(onDrawerValgt).toHaveBeenCalledWith(null, null)
+    })
+
+    it('popover-innholdet inneholder ingen knapp', () => {
+        const pins = lagOppholdUtlandPins({
+            soknaderGruppert: lagUtlandGruppering(utlandSoknad),
+            aktivDrawerKildeId: null,
+            onDrawerValgt: vi.fn(),
+        })
+
+        const wrapper = pins[0]
+        const pinElement = wrapper.props.children as React.ReactElement
+        const popoverInnhold = pinElement.props.children as React.ReactElement
+        expect(popoverInnhold.type).toBe('span')
+        expect(popoverInnhold.props.children).toBeDefined()
     })
 })
