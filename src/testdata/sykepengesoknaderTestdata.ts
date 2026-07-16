@@ -577,7 +577,39 @@ export const sykepengesoknaderTestdata = {
             merknaderFraSykmelding: null,
             ventetidSykmeldingUuid: null,
         },
-        // Erstatningssøknad for en som ble fullstendig klippet (annen UUID, samme sykmelding)
+        // Første søknad på sykmelding som også har en klippet søknad (realistisk kontekst)
+        {
+            id: 'soknad-juni-samme-sykmelding',
+            sykmeldingId: 'sykmelding-klippet-erstattet',
+            soknadstype: 'ARBEIDSTAKERE',
+            status: 'SENDT',
+            fom: '2023-06-01',
+            tom: '2023-06-30',
+            opprettetDato: '2023-07-01T10:00:00',
+            sendtTilNAVDato: '2023-07-02T10:00:00',
+            sendtTilArbeidsgiverDato: '2023-07-02T10:00:00',
+            avbruttDato: null,
+            startSykeforlop: '2023-06-01',
+            sykmeldingUtskrevet: '2023-06-01T01:00:00',
+            sykmeldingSignaturDato: null,
+            arbeidsgiver: null,
+            arbeidsgiverNavn: 'Klonelabben',
+            arbeidsgiverOrgnummer: '907670201',
+            korrigerer: null,
+            korrigertAv: null,
+            arbeidssituasjon: 'ARBEIDSTAKER',
+            soknadPerioder: [
+                {
+                    fom: '2023-06-01',
+                    tom: '2023-06-30',
+                    grad: 100,
+                    sykmeldingstype: 'AKTIVITET_IKKE_MULIG',
+                },
+            ],
+            merknaderFraSykmelding: null,
+        },
+        // Erstatningssøknad for en som ble fullstendig klippet (annen UUID, samme sykmelding).
+        // Original søknad dekket jul–aug, men bare juli ble gjenopprettet manuelt.
         {
             id: 'erstatning-soknad-ny-uuid',
             sykmeldingId: 'sykmelding-klippet-erstattet',
@@ -585,12 +617,12 @@ export const sykepengesoknaderTestdata = {
             status: 'SENDT',
             fom: '2023-07-01',
             tom: '2023-07-31',
-            opprettetDato: '2023-08-01T10:00:00',
-            sendtTilNAVDato: '2023-08-02T10:00:00',
-            sendtTilArbeidsgiverDato: '2023-08-02T10:00:00',
+            opprettetDato: '2023-08-20T10:00:00',
+            sendtTilNAVDato: '2023-08-21T10:00:00',
+            sendtTilArbeidsgiverDato: '2023-08-21T10:00:00',
             avbruttDato: null,
-            startSykeforlop: '2023-07-01',
-            sykmeldingUtskrevet: '2023-07-01T01:00:00',
+            startSykeforlop: '2023-06-01',
+            sykmeldingUtskrevet: '2023-06-01T01:00:00',
             sykmeldingSignaturDato: null,
             arbeidsgiver: null,
             arbeidsgiverNavn: 'Klonelabben',
@@ -655,15 +687,16 @@ export const sykepengesoknaderTestdata = {
             periodeEtter: null,
             timestamp: '2023-06-19T06:59:52.264863Z',
         },
-        // Klipp for søknad som er erstattet av 'erstatning-soknad-ny-uuid' (annen UUID, samme sykmelding)
+        // Klipp for søknad som er erstattet av 'erstatning-soknad-ny-uuid' (annen UUID, samme sykmelding).
+        // Original søknad dekket jul–15. aug, men ble fullstendig klippet. Kun juli ble manuelt gjenopprettet.
         {
             id: 'klipp-erstattet-gammel-uuid',
             sykepengesoknadUuid: 'gammel-soknad-som-ble-klippet',
             sykmeldingUuid: 'sykmelding-klippet-erstattet',
             klippVariant: 'SOKNAD_STARTER_FOR_SLUTTER_ETTER',
-            periodeFor: '[{"fom":"2023-07-01","tom":"2023-07-31","grad":100,"sykmeldingstype":"AKTIVITET_IKKE_MULIG"}]',
+            periodeFor: '[{"fom":"2023-07-01","tom":"2023-08-15","grad":100,"sykmeldingstype":"AKTIVITET_IKKE_MULIG"}]',
             periodeEtter: null,
-            timestamp: '2023-08-01T10:00:00Z',
+            timestamp: '2023-08-16T10:00:00Z',
         },
     ],
 }
