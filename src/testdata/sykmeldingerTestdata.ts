@@ -773,4 +773,70 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         signaturDato: null,
         utenlandskSykmelding: null,
     },
+    // Ny overlappende sykmelding som forårsaket klipping av søknad på 'sykmelding-klippet-erstattet'.
+    // Dekker juli med gradert 50%, og ga opphav til 'erstatning-soknad-ny-uuid'.
+    {
+        id: 'sykmelding-overlappende-klipp',
+        pasient: {
+            fnr: '12345678901',
+            overSyttiAar: false,
+        },
+        mottattTidspunkt: '2023-07-01T08:00:00Z',
+        behandlingsutfall: {
+            status: 'OK',
+            ruleHits: [],
+            erUnderBehandling: false,
+        },
+        arbeidsgiver: {
+            navn: 'Klonelabben',
+            stillingsprosent: 100,
+        },
+        sykmeldingsperioder: [
+            {
+                fom: '2023-07-01',
+                tom: '2023-07-31',
+                gradert: { grad: 50, reisetilskudd: false },
+                behandlingsdager: null,
+                innspillTilArbeidsgiver: null,
+                type: 'GRADERT',
+                aktivitetIkkeMulig: null,
+                reisetilskudd: false,
+            },
+        ],
+        sykmeldingStatus: {
+            statusEvent: 'SENDT',
+            timestamp: '2023-07-02T08:00:00Z',
+            arbeidsgiver: {
+                orgnummer: '907670201',
+                juridiskOrgnummer: '907670201',
+                orgNavn: 'Klonelabben',
+            },
+            brukerSvar: {
+                erOpplysningeneRiktige: { sporsmaltekst: 'Stemmer opplysningene?', svar: 'JA' },
+                arbeidssituasjon: { sporsmaltekst: 'Jeg er sykmeldt som', svar: 'ARBEIDSTAKER' },
+                uriktigeOpplysninger: null,
+                arbeidsgiverOrgnummer: {
+                    sporsmaltekst: 'Velg arbeidsgiver',
+                    svar: '907670201',
+                },
+                arbeidsledig: null,
+                riktigNarmesteLeder: null,
+                harBruktEgenmelding: null,
+                egenmeldingsperioder: null,
+                harForsikring: null,
+                egenmeldingsdager: null,
+                harBruktEgenmeldingsdager: null,
+                fisker: null,
+            },
+        },
+        skjermesForPasient: false,
+        kontaktMedPasient: { kontaktDato: null, begrunnelseIkkeKontakt: null },
+        behandletTidspunkt: '2023-07-01T10:00:00Z',
+        syketilfelleStartDato: '2023-06-01',
+        egenmeldt: false,
+        papirsykmelding: false,
+        merknader: [],
+        signaturDato: null,
+        utenlandskSykmelding: null,
+    },
 ]

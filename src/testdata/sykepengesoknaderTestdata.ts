@@ -608,11 +608,12 @@ export const sykepengesoknaderTestdata = {
             ],
             merknaderFraSykmelding: null,
         },
-        // Erstatningssøknad for en som ble fullstendig klippet (annen UUID, samme sykmelding).
-        // Original søknad dekket jul–aug, men bare juli ble gjenopprettet manuelt.
+        // Søknad opprettet pga ny overlappende sykmelding som klippet den opprinnelige søknaden.
+        // Original søknad på 'sykmelding-klippet-erstattet' dekket jul–aug, men ble fullstendig klippet
+        // fordi ny sykmelding 'sykmelding-overlappende-klipp' overtok juli-perioden (gradert 50%).
         {
             id: 'erstatning-soknad-ny-uuid',
-            sykmeldingId: 'sykmelding-klippet-erstattet',
+            sykmeldingId: 'sykmelding-overlappende-klipp',
             soknadstype: 'ARBEIDSTAKERE',
             status: 'SENDT',
             fom: '2023-07-01',
@@ -622,7 +623,7 @@ export const sykepengesoknaderTestdata = {
             sendtTilArbeidsgiverDato: '2023-08-21T10:00:00',
             avbruttDato: null,
             startSykeforlop: '2023-06-01',
-            sykmeldingUtskrevet: '2023-06-01T01:00:00',
+            sykmeldingUtskrevet: '2023-07-01T01:00:00',
             sykmeldingSignaturDato: null,
             arbeidsgiver: null,
             arbeidsgiverNavn: 'Klonelabben',
@@ -634,8 +635,8 @@ export const sykepengesoknaderTestdata = {
                 {
                     fom: '2023-07-01',
                     tom: '2023-07-31',
-                    grad: 100,
-                    sykmeldingstype: 'AKTIVITET_IKKE_MULIG',
+                    grad: 50,
+                    sykmeldingstype: 'GRADERT',
                 },
             ],
             merknaderFraSykmelding: null,
