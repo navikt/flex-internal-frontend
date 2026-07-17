@@ -32,7 +32,7 @@ const valideringsfunksjoner: Record<Valideringstype, (input: string) => string |
 
 const FnrSokefelt = ({
     className,
-    htmlSize = '20',
+    htmlSize = '15',
     label = 'Fødselsnummer',
     description,
     valideringstype = 'fnr',

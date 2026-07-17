@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { BodyShort, Button, HStack } from '@navikt/ds-react'
-import { ArrowsSquarepathIcon } from '@navikt/aksel-icons'
+import { ArrowsSquarepathIcon, XMarkIcon } from '@navikt/aksel-icons'
 import dayjs from 'dayjs'
 
 import { BackendSoknad, KlippetSykepengesoknadRecord, Soknad, dayjsToDate } from '../queryhooks/useSoknader'
@@ -22,19 +22,9 @@ interface Props {
     sykmeldinger: Sykmelding[]
     soknader: Soknad[]
     klipp: KlippetSykepengesoknadRecord[]
-    sammenlignModus?: boolean
-    onSammenlignAvslutt?: () => void
-    onSammenlignValgteEndret?: (titler: string[]) => void
 }
 
-const TidslinjeKombinert = ({
-    sykmeldinger,
-    soknader,
-    klipp,
-    sammenlignModus: sammenlignModusProp,
-    onSammenlignAvslutt,
-    onSammenlignValgteEndret,
-}: Props): React.ReactElement => {
+const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.ReactElement => {
     const {
         filter,
         setFilter,
@@ -60,14 +50,7 @@ const TidslinjeKombinert = ({
         handleStartSammenlign,
         handleAvsluttSammenlign,
         handleLukkSammenlignDrawer,
-    } = useTidslinjeKombinert(
-        sykmeldinger,
-        soknader,
-        klipp,
-        sammenlignModusProp,
-        onSammenlignAvslutt,
-        onSammenlignValgteEndret,
-    )
+    } = useTidslinjeKombinert(sykmeldinger, soknader, klipp)
 
     const { valgtPeriodeId, valgtDrawerKildeId, oppslagData, nullstillValgtPeriode } = useValgtFnr()
 
@@ -132,11 +115,11 @@ const TidslinjeKombinert = ({
     const sammenlignValgteIder = sammenlignValgte.map((e) => e.kildeId)
 
     return (
-        <div className="min-w-[800px] min-h-[2000px] overflow-x-auto">
+        <div className="min-w-[800px] overflow-x-auto">
             <ValgteFilter filter={filter} setFilter={setFilter} />
             <HStack align="center" gap="space-4" className="mb-1">
                 <BodyShort className="font-semibold">{`${sykmeldingAntall} sykmelding(er) · ${soknadAntall} søknad(er)`}</BodyShort>
-                {sammenlignModusProp === undefined && !sammenlignModus && (
+                {!sammenlignModus && (
                     <Button
                         size="small"
                         variant="secondary"
@@ -146,21 +129,25 @@ const TidslinjeKombinert = ({
                         Sammenlign
                     </Button>
                 )}
-                {sammenlignModusProp === undefined && sammenlignModus && (
-                    <Button size="small" variant="tertiary-neutral" onClick={handleAvsluttSammenlign}>
-                        Avslutt sammenligning
+                {sammenlignModus && (
+                    <Button
+                        size="small"
+                        data-color="danger"
+                        variant="secondary-neutral"
+                        icon={<XMarkIcon aria-hidden />}
+                        onClick={handleAvsluttSammenlign}
+                    >
+                        Sammenligning
                     </Button>
                 )}
-                {sammenlignModusProp === undefined && (
-                    <BodyShort
-                        size="small"
-                        className="text-ax-text-neutral-subtle italic"
-                        aria-live="polite"
-                        aria-atomic="true"
-                    >
-                        {sammenlignModus ? sammenlignStatusTekst() : ''}
-                    </BodyShort>
-                )}
+                <BodyShort
+                    size="small"
+                    className="text-ax-text-neutral-subtle italic"
+                    aria-live="polite"
+                    aria-atomic="true"
+                >
+                    {sammenlignModus ? sammenlignStatusTekst() : ''}
+                </BodyShort>
             </HStack>
             <VelgZoomPeriode
                 setFraDato={setVisningsFraDato}

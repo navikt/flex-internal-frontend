@@ -1,4 +1,4 @@
-import React, { useState, useSyncExternalStore } from 'react'
+import React, { useEffect, useState, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
 import { Button, Heading, ToggleGroup } from '@navikt/ds-react'
 import { XMarkIcon, SidebarRightIcon } from '@navikt/aksel-icons'
@@ -254,10 +254,23 @@ export default function DetaljerDrawer({
     const erBunn = plassering === 'bunn'
     const erSoknad = innhold?.variant.type === 'soknad'
     const erBegge = visModus === 'begge'
+    const erSammenlign = innhold?.variant.type === 'sammenlign'
+
+    const drawerBredde = erSammenlign ? 900 : erSoknad && erBegge ? 900 : 450
+
+    useEffect(() => {
+        const root = document.getElementById('root')
+        if (!root) return
+
+        root.style.transition = 'padding-right 300ms ease-in-out'
+        root.style.paddingRight = erApen && plassering === 'hoyre' ? `${drawerBredde + 12}px` : ''
+
+        return () => {
+            root.style.paddingRight = ''
+        }
+    }, [erApen, plassering, drawerBredde])
 
     if (!mounted) return null
-
-    const erSammenlign = innhold?.variant.type === 'sammenlign'
 
     const posisjonKlasser = erBunn
         ? [
@@ -268,7 +281,7 @@ export default function DetaljerDrawer({
           ]
         : [
               'fixed top-0 right-0 z-[99999] flex h-full flex-col',
-              erSammenlign ? 'w-[900px]' : erSoknad && erBegge ? 'w-[900px]' : 'w-[500px]',
+              erSammenlign ? 'w-[900px]' : erSoknad && erBegge ? 'w-[900px]' : 'w-[450px]',
               'border-l border-gray-200 shadow-[-4px_0_24px_rgba(0,0,0,0.12)]',
               'transition-[transform,width] duration-300 ease-in-out',
               erApen ? 'translate-x-0' : 'translate-x-full',
@@ -328,7 +341,7 @@ export default function DetaljerDrawer({
                     />
                 </div>
             </div>
-            <div className="flex-1 overflow-hidden px-4 py-2 text-sm">
+            <div className={`flex-1 px-4 py-2 text-sm ${erBunn ? 'overflow-hidden' : 'overflow-y-auto'}`}>
                 {innhold && (
                     <DrawerInnholdRenderer
                         variant={innhold.variant}
