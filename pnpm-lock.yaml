@@ -58,8 +58,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0(eslint@9.39.4(jiti@2.7.0))
       '@navikt/tsm-prettier':
-        specifier: ^2.0.0
-        version: 2.0.0(prettier@3.8.3)
+        specifier: ^2.0.1
+        version: 2.0.1(prettier@3.8.3)
       '@tailwindcss/postcss':
         specifier: ^4.3.2
         version: 4.3.2
@@ -590,8 +590,8 @@ packages:
     peerDependencies:
       eslint: '>= 9'
 
-  '@navikt/tsm-prettier@2.0.0':
-    resolution: {integrity: sha512-c2sxQn1/t3xxrwu6+Njba+6rGVNDhU4igEKKHlHV9/UGCyn32OgnzkZAiVTN2UVTtgQYK/Ft7GbB63REoAu/Qg==, tarball: https://npm.pkg.github.com/download/@navikt/tsm-prettier/2.0.0/48f457e5234d4a13586c9d61512891eeca06a383}
+  '@navikt/tsm-prettier@2.0.1':
+    resolution: {integrity: sha512-lPZ5xGPI5zWvpZSjJhb0XtWozyW11R9kAcgTitWKAWOWYx5SMaixNUq4sTaB5FVTXM+BOQD4qn9NnNvQ9cEISQ==, tarball: https://npm.pkg.github.com/download/@navikt/tsm-prettier/2.0.1/282dbeee88ec6aa5c3b0cfd8ff8ab9b65a6f1683}
     peerDependencies:
       prettier: '>= 3'
 
@@ -3387,7 +3387,7 @@ snapshots:
     dependencies:
       eslint: 9.39.4(jiti@2.7.0)
 
-  '@navikt/tsm-prettier@2.0.0(prettier@3.8.3)':
+  '@navikt/tsm-prettier@2.0.1(prettier@3.8.3)':
     dependencies:
       prettier: 3.8.3
 
