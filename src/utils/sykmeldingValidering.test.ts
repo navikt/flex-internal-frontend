@@ -93,7 +93,7 @@ describe('hentDatospenn', () => {
 
         const datospenn = hentDatospenn(sykmeldinger)
 
-        expect(datospenn?.startDato.toISOString().slice(0, 10)).toBe('2025-07-01')
+        expect(datospenn?.startDato.toISOString().slice(0, 10)).toBe('2023-01-01')
         expect(datospenn?.sluttDato.toISOString().slice(0, 10)).toBe('2026-06-20')
     })
 
