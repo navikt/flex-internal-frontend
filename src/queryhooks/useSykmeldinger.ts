@@ -48,6 +48,11 @@ export const mapTilSykmelding = (sykmelding: BackendSykmelding): Sykmelding => {
             fom: tilDayjsPaakrevd(periode.fom, 'sykmeldingsperioder.fom', 'YYYY-MM-DD'),
             tom: tilDayjsPaakrevd(periode.tom, 'sykmeldingsperioder.tom', 'YYYY-MM-DD'),
         })),
+        hendelser: (sykmelding.hendelser ?? []).map((hendelse) => ({
+            ...hendelse,
+            hendelseOpprettet: tilDayjsPaakrevd(hendelse.hendelseOpprettet, 'hendelser.hendelseOpprettet'),
+            lokaltOpprettet: tilDayjsPaakrevd(hendelse.lokaltOpprettet, 'hendelser.lokaltOpprettet'),
+        })),
     }
 }
 
@@ -67,6 +72,7 @@ export interface BackendSykmelding {
     syketilfelleStartDato: string | null
     sykmeldingStatus: BackendSykmeldingStatus
     sykmeldingsperioder: BackendSykmeldingsperiode[]
+    hendelser: BackendHendelse[]
     utenlandskSykmelding: UtenlandskSykmelding | null
 }
 
@@ -86,6 +92,7 @@ export interface Sykmelding {
     syketilfelleStartDato?: Dayjs
     sykmeldingStatus: SykmeldingStatus
     sykmeldingsperioder: Sykmeldingsperiode[]
+    hendelser: Hendelse[]
     utenlandskSykmelding: UtenlandskSykmelding | null
 }
 
@@ -173,6 +180,32 @@ export interface BackendSykmeldingStatus {
 }
 
 export type SykmeldingStatusType = 'NY' | 'APEN' | 'SENDT' | 'AVVIST' | 'UTGATT' | 'BEKREFTET' | 'AVBRUTT'
+
+export type HendelseStatus =
+    | 'APEN'
+    | 'AVBRUTT'
+    | 'SENDT_TIL_NAV'
+    | 'SENDT_TIL_ARBEIDSGIVER'
+    | 'BEKREFTET_AVVIST'
+    | 'UTGATT'
+
+export interface BackendHendelse {
+    status: HendelseStatus
+    brukerSvar: unknown | null
+    tilleggsinfo: unknown | null
+    source: string | null
+    hendelseOpprettet: string
+    lokaltOpprettet: string
+}
+
+export interface Hendelse {
+    status: HendelseStatus
+    brukerSvar: unknown | null
+    tilleggsinfo: unknown | null
+    source: string | null
+    hendelseOpprettet: Dayjs
+    lokaltOpprettet: Dayjs
+}
 
 export interface ArbeidsgiverStatus {
     orgnummer: string
