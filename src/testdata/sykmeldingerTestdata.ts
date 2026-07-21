@@ -1,11 +1,27 @@
 // Testdata for sykmeldinger
-import { BackendHendelse, BackendSykmelding, HendelseStatus, SykmeldingStatusType } from '../queryhooks/useSykmeldinger'
+import { BackendSykmelding } from '../queryhooks/useSykmeldinger'
 
-type SykmeldingUtenHendelser = Omit<BackendSykmelding, 'hendelser'>
-
-const raaSykmeldinger: SykmeldingUtenHendelser[] = [
+export const sykmeldingerTestdata: BackendSykmelding[] = [
     {
         id: 'bc3c9e72-58c0-4d24-91ba-d712fdd8c712',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2026-02-01T23:00:00Z',
+                lokaltOpprettet: '2026-02-01T23:00:00Z',
+            },
+            {
+                status: 'SENDT_TIL_ARBEIDSGIVER',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2026-02-02T14:59:35.035516Z',
+                lokaltOpprettet: '2026-02-02T14:59:35.035516Z',
+            },
+        ],
         pasient: {
             fnr: '12345678901',
             overSyttiAar: false,
@@ -104,6 +120,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     },
     {
         id: 'bc3c9e72-58c0-4d24-91ba-d712fdd8c713',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2026-02-01T23:00:00Z',
+                lokaltOpprettet: '2026-02-01T23:00:00Z',
+            },
+            {
+                status: 'SENDT_TIL_ARBEIDSGIVER',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2026-02-02T14:59:35.035516Z',
+                lokaltOpprettet: '2026-02-02T14:59:35.035516Z',
+            },
+        ],
         pasient: {
             fnr: '12345678901',
             overSyttiAar: false,
@@ -183,6 +217,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     },
     {
         id: 'ac4d9e72-58c0-4d24-91ba-d712fdd8c714',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2026-02-20T23:00:00Z',
+                lokaltOpprettet: '2026-02-20T23:00:00Z',
+            },
+            {
+                status: 'SENDT_TIL_NAV',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2026-03-02T14:59:35.035516Z',
+                lokaltOpprettet: '2026-03-02T14:59:35.035516Z',
+            },
+        ],
         pasient: {
             fnr: '12345678901',
             overSyttiAar: false,
@@ -259,6 +311,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     },
     {
         id: 'bd5e8f73-59c1-5d35-92cb-d812fdd8c815',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2024-12-15T23:00:00Z',
+                lokaltOpprettet: '2024-12-15T23:00:00Z',
+            },
+            {
+                status: 'AVBRUTT',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2024-12-20T14:59:35.035516Z',
+                lokaltOpprettet: '2024-12-20T14:59:35.035516Z',
+            },
+        ],
         pasient: {
             fnr: '12345678901',
             overSyttiAar: false,
@@ -332,6 +402,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     },
     {
         id: 'bd5e8f73-59c1-5d35-92cb-d812fdd8c816',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2024-12-15T23:00:00Z',
+                lokaltOpprettet: '2024-12-15T23:00:00Z',
+            },
+            {
+                status: 'AVBRUTT',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2024-12-20T14:59:35.035516Z',
+                lokaltOpprettet: '2024-12-20T14:59:35.035516Z',
+            },
+        ],
         pasient: {
             fnr: '12345678901',
             overSyttiAar: false,
@@ -421,6 +509,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     },
     {
         id: 'ce6f0a84-60d2-6e46-a3dc-e923fee9d926',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2026-04-10T09:00:00Z',
+                lokaltOpprettet: '2026-04-10T09:00:00Z',
+            },
+            {
+                status: 'SENDT_TIL_ARBEIDSGIVER',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2026-04-11T10:15:00Z',
+                lokaltOpprettet: '2026-04-11T10:15:00Z',
+            },
+        ],
         pasient: {
             fnr: '12345678901',
 
@@ -489,6 +595,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     // GRADERT periode
     {
         id: 'syk-gradert-001',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2025-06-01T10:00:00Z',
+                lokaltOpprettet: '2025-06-01T10:00:00Z',
+            },
+            {
+                status: 'SENDT_TIL_ARBEIDSGIVER',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2025-06-02T08:00:00Z',
+                lokaltOpprettet: '2025-06-02T08:00:00Z',
+            },
+        ],
         pasient: { fnr: '12345678901', overSyttiAar: false },
         mottattTidspunkt: '2025-06-01T10:00:00Z',
         behandlingsutfall: { status: 'OK', ruleHits: [], erUnderBehandling: false },
@@ -541,6 +665,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     // BEHANDLINGSDAGER periode
     {
         id: 'syk-behandlingsdager-001',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2025-08-01T10:00:00Z',
+                lokaltOpprettet: '2025-08-01T10:00:00Z',
+            },
+            {
+                status: 'SENDT_TIL_ARBEIDSGIVER',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2025-08-02T08:00:00Z',
+                lokaltOpprettet: '2025-08-02T08:00:00Z',
+            },
+        ],
         pasient: { fnr: '12345678901', overSyttiAar: false },
         mottattTidspunkt: '2025-08-01T10:00:00Z',
         behandlingsutfall: { status: 'OK', ruleHits: [], erUnderBehandling: false },
@@ -593,6 +735,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     // AVVENTENDE periode
     {
         id: 'syk-avventende-001',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2025-10-01T10:00:00Z',
+                lokaltOpprettet: '2025-10-01T10:00:00Z',
+            },
+            {
+                status: 'SENDT_TIL_ARBEIDSGIVER',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2025-10-02T08:00:00Z',
+                lokaltOpprettet: '2025-10-02T08:00:00Z',
+            },
+        ],
         pasient: { fnr: '12345678901', overSyttiAar: false },
         mottattTidspunkt: '2025-10-01T10:00:00Z',
         behandlingsutfall: { status: 'OK', ruleHits: [], erUnderBehandling: false },
@@ -645,6 +805,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     // REISETILSKUDD periode
     {
         id: 'syk-reisetilskudd-001',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2025-12-01T10:00:00Z',
+                lokaltOpprettet: '2025-12-01T10:00:00Z',
+            },
+            {
+                status: 'SENDT_TIL_ARBEIDSGIVER',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2025-12-02T08:00:00Z',
+                lokaltOpprettet: '2025-12-02T08:00:00Z',
+            },
+        ],
         pasient: { fnr: '12345678901', overSyttiAar: false },
         mottattTidspunkt: '2025-12-01T10:00:00Z',
         behandlingsutfall: { status: 'OK', ruleHits: [], erUnderBehandling: false },
@@ -707,6 +885,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     // Sykmeldinger for eksisterende søknader (Klonelabben 2023-data)
     {
         id: '70df59fa-e1a3-4f38-bc3d-6a1fb2349c04',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2022-12-20T10:00:00Z',
+                lokaltOpprettet: '2022-12-20T10:00:00Z',
+            },
+            {
+                status: 'SENDT_TIL_ARBEIDSGIVER',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2022-12-21T08:00:00Z',
+                lokaltOpprettet: '2022-12-21T08:00:00Z',
+            },
+        ],
         pasient: { fnr: '12345678901', overSyttiAar: false },
         mottattTidspunkt: '2022-12-20T10:00:00Z',
         behandlingsutfall: { status: 'OK', ruleHits: [], erUnderBehandling: false },
@@ -754,6 +950,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     },
     {
         id: '884b8a9f-e24a-432d-b1c6-89bbac272513',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2023-04-05T10:00:00Z',
+                lokaltOpprettet: '2023-04-05T10:00:00Z',
+            },
+            {
+                status: 'SENDT_TIL_ARBEIDSGIVER',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2023-04-06T08:00:00Z',
+                lokaltOpprettet: '2023-04-06T08:00:00Z',
+            },
+        ],
         pasient: { fnr: '12345678901', overSyttiAar: false },
         mottattTidspunkt: '2023-04-05T10:00:00Z',
         behandlingsutfall: { status: 'OK', ruleHits: [], erUnderBehandling: false },
@@ -801,6 +1015,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     },
     {
         id: 'd02d8d3a-b58e-44b2-8b41-5279865360a6',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2023-04-12T10:00:00Z',
+                lokaltOpprettet: '2023-04-12T10:00:00Z',
+            },
+            {
+                status: 'SENDT_TIL_ARBEIDSGIVER',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2023-04-13T08:00:00Z',
+                lokaltOpprettet: '2023-04-13T08:00:00Z',
+            },
+        ],
         pasient: { fnr: '12345678901', overSyttiAar: false },
         mottattTidspunkt: '2023-04-12T10:00:00Z',
         behandlingsutfall: { status: 'OK', ruleHits: [], erUnderBehandling: false },
@@ -848,6 +1080,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     },
     {
         id: '2e6666d0-2540-40f2-99b6-083cbd91934d',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2023-04-19T10:00:00Z',
+                lokaltOpprettet: '2023-04-19T10:00:00Z',
+            },
+            {
+                status: 'SENDT_TIL_ARBEIDSGIVER',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2023-04-20T08:00:00Z',
+                lokaltOpprettet: '2023-04-20T08:00:00Z',
+            },
+        ],
         pasient: { fnr: '12345678901', overSyttiAar: false },
         mottattTidspunkt: '2023-04-19T10:00:00Z',
         behandlingsutfall: { status: 'OK', ruleHits: [], erUnderBehandling: false },
@@ -895,6 +1145,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     },
     {
         id: 'de68e6ed-3cb6-4e3b-9cf0-0a07c234c629',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2023-04-22T10:00:00Z',
+                lokaltOpprettet: '2023-04-22T10:00:00Z',
+            },
+            {
+                status: 'SENDT_TIL_ARBEIDSGIVER',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2023-04-23T08:00:00Z',
+                lokaltOpprettet: '2023-04-23T08:00:00Z',
+            },
+        ],
         pasient: { fnr: '12345678901', overSyttiAar: false },
         mottattTidspunkt: '2023-04-22T10:00:00Z',
         behandlingsutfall: { status: 'OK', ruleHits: [], erUnderBehandling: false },
@@ -945,6 +1213,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     },
     {
         id: '468ecc00-7346-4a71-80a9-61d890971f6e',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2023-06-15T10:00:00Z',
+                lokaltOpprettet: '2023-06-15T10:00:00Z',
+            },
+            {
+                status: 'SENDT_TIL_ARBEIDSGIVER',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2023-06-16T08:00:00Z',
+                lokaltOpprettet: '2023-06-16T08:00:00Z',
+            },
+        ],
         pasient: { fnr: '12345678901', overSyttiAar: false },
         mottattTidspunkt: '2023-06-15T10:00:00Z',
         behandlingsutfall: { status: 'OK', ruleHits: [], erUnderBehandling: false },
@@ -995,6 +1281,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     },
     {
         id: 'bb95fde1-cdc7-4fc9-baee-abc8dccd0dfe',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2024-09-20T10:00:00Z',
+                lokaltOpprettet: '2024-09-20T10:00:00Z',
+            },
+            {
+                status: 'SENDT_TIL_ARBEIDSGIVER',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2024-09-21T08:00:00Z',
+                lokaltOpprettet: '2024-09-21T08:00:00Z',
+            },
+        ],
         pasient: { fnr: '12345678901', overSyttiAar: false },
         mottattTidspunkt: '2024-09-20T10:00:00Z',
         behandlingsutfall: { status: 'OK', ruleHits: [], erUnderBehandling: false },
@@ -1046,6 +1350,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     // Sykmelding som matcher klippet/erstattet-søknad testcase (Klonelabben, jun–aug 2023)
     {
         id: 'sykmelding-klippet-erstattet',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2023-05-28T10:00:00Z',
+                lokaltOpprettet: '2023-05-28T10:00:00Z',
+            },
+            {
+                status: 'SENDT_TIL_ARBEIDSGIVER',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2023-05-29T08:00:00Z',
+                lokaltOpprettet: '2023-05-29T08:00:00Z',
+            },
+        ],
         pasient: {
             fnr: '12345678901',
             overSyttiAar: false,
@@ -1128,6 +1450,24 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     // Dekker juli med gradert 50%, og ga opphav til 'erstatning-soknad-ny-uuid'.
     {
         id: 'sykmelding-overlappende-klipp',
+        hendelser: [
+            {
+                status: 'APEN',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: null,
+                hendelseOpprettet: '2023-07-01T08:00:00Z',
+                lokaltOpprettet: '2023-07-01T08:00:00Z',
+            },
+            {
+                status: 'SENDT_TIL_ARBEIDSGIVER',
+                brukerSvar: null,
+                tilleggsinfo: null,
+                source: 'flex-sykmeldinger-backend',
+                hendelseOpprettet: '2023-07-02T08:00:00Z',
+                lokaltOpprettet: '2023-07-02T08:00:00Z',
+            },
+        ],
         pasient: {
             fnr: '12345678901',
             overSyttiAar: false,
@@ -1191,33 +1531,3 @@ const raaSykmeldinger: SykmeldingUtenHendelser[] = [
         utenlandskSykmelding: null,
     },
 ]
-
-const hendelseSekvensForStatus: Record<SykmeldingStatusType, HendelseStatus[]> = {
-    NY: ['APEN'],
-    APEN: ['APEN'],
-    SENDT: ['APEN', 'SENDT_TIL_ARBEIDSGIVER'],
-    BEKREFTET: ['APEN', 'SENDT_TIL_NAV'],
-    AVVIST: ['APEN', 'BEKREFTET_AVVIST'],
-    UTGATT: ['APEN', 'UTGATT'],
-    AVBRUTT: ['APEN', 'AVBRUTT'],
-}
-
-const lagHendelser = (sykmelding: SykmeldingUtenHendelser): BackendHendelse[] => {
-    const statuser = hendelseSekvensForStatus[sykmelding.sykmeldingStatus.statusEvent] ?? ['APEN']
-    return statuser.map((status, indeks) => {
-        const tidspunkt = indeks === 0 ? sykmelding.mottattTidspunkt : sykmelding.sykmeldingStatus.timestamp
-        return {
-            status,
-            brukerSvar: null,
-            tilleggsinfo: null,
-            source: status === 'APEN' ? null : 'flex-sykmeldinger-backend',
-            hendelseOpprettet: tidspunkt,
-            lokaltOpprettet: tidspunkt,
-        }
-    })
-}
-
-export const sykmeldingerTestdata: BackendSykmelding[] = raaSykmeldinger.map((sykmelding) => ({
-    ...sykmelding,
-    hendelser: lagHendelser(sykmelding),
-}))
