@@ -1,7 +1,9 @@
 // Testdata for sykmeldinger
-import { BackendSykmelding } from '../queryhooks/useSykmeldinger'
+import { BackendHendelse, BackendSykmelding, HendelseStatus, SykmeldingStatusType } from '../queryhooks/useSykmeldinger'
 
-export const sykmeldingerTestdata: BackendSykmelding[] = [
+type SykmeldingUtenHendelser = Omit<BackendSykmelding, 'hendelser'>
+
+const raaSykmeldinger: SykmeldingUtenHendelser[] = [
     {
         id: 'bc3c9e72-58c0-4d24-91ba-d712fdd8c712',
         pasient: {
@@ -1189,3 +1191,33 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         utenlandskSykmelding: null,
     },
 ]
+
+const hendelseSekvensForStatus: Record<SykmeldingStatusType, HendelseStatus[]> = {
+    NY: ['APEN'],
+    APEN: ['APEN'],
+    SENDT: ['APEN', 'SENDT_TIL_ARBEIDSGIVER'],
+    BEKREFTET: ['APEN', 'SENDT_TIL_NAV'],
+    AVVIST: ['APEN', 'BEKREFTET_AVVIST'],
+    UTGATT: ['APEN', 'UTGATT'],
+    AVBRUTT: ['APEN', 'AVBRUTT'],
+}
+
+const lagHendelser = (sykmelding: SykmeldingUtenHendelser): BackendHendelse[] => {
+    const statuser = hendelseSekvensForStatus[sykmelding.sykmeldingStatus.statusEvent] ?? ['APEN']
+    return statuser.map((status, indeks) => {
+        const tidspunkt = indeks === 0 ? sykmelding.mottattTidspunkt : sykmelding.sykmeldingStatus.timestamp
+        return {
+            status,
+            brukerSvar: null,
+            tilleggsinfo: null,
+            source: status === 'APEN' ? null : 'flex-sykmeldinger-backend',
+            hendelseOpprettet: tidspunkt,
+            lokaltOpprettet: tidspunkt,
+        }
+    })
+}
+
+export const sykmeldingerTestdata: BackendSykmelding[] = raaSykmeldinger.map((sykmelding) => ({
+    ...sykmelding,
+    hendelser: lagHendelser(sykmelding),
+}))
