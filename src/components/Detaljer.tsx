@@ -71,7 +71,7 @@ const renderVerdi = (
                     }
 
                     return (
-                        <li key={elementSti} className="mt-0.5">
+                        <li key={elementSti} className={indeks > 0 ? 'mt-1 border-t border-gray-200 pt-1' : 'mt-0.5'}>
                             {renderVerdi(element, filter, setFilter, elementSti)}
                         </li>
                     )
