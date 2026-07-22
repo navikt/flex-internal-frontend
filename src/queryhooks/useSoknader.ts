@@ -215,14 +215,7 @@ export type Soknadstype =
     | 'FRISKMELDT_TIL_ARBEIDSFORMIDLING'
 
 export type Soknadstatus =
-    | 'NY'
-    | 'SENDT'
-    | 'FREMTIDIG'
-    | 'UTKAST_TIL_KORRIGERING'
-    | 'KORRIGERT'
-    | 'AVBRUTT'
-    | 'SLETTET'
-    | 'UTGAATT'
+    'NY' | 'SENDT' | 'FREMTIDIG' | 'UTKAST_TIL_KORRIGERING' | 'KORRIGERT' | 'AVBRUTT' | 'SLETTET' | 'UTGAATT'
 
 export type Arbeidssituasjon = 'NAERINGSDRIVENDE' | 'FRILANSER' | 'ARBEIDSTAKER' | 'ARBEIDSLEDIG' | 'ANNET'
 
