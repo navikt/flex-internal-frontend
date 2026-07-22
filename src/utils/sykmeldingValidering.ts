@@ -11,10 +11,7 @@ const MILLISEKUNDER_PER_DAG = 24 * 60 * 60 * 1000
 const utcTidForDato = (dato: Dayjs): number => Date.UTC(dato.year(), dato.month(), dato.date())
 
 export type UgyldigPeriodeArsak =
-    | 'mangler-fom-eller-tom'
-    | 'ugyldig-datoformat'
-    | 'aar-utenfor-grenser'
-    | 'for-lang-eller-negativ-periode'
+    'mangler-fom-eller-tom' | 'ugyldig-datoformat' | 'aar-utenfor-grenser' | 'for-lang-eller-negativ-periode'
 
 export const finnUgyldigPeriodeArsak = (periode?: { fom?: Dayjs; tom?: Dayjs }): UgyldigPeriodeArsak | null => {
     if (!periode?.fom || !periode?.tom) return 'mangler-fom-eller-tom'

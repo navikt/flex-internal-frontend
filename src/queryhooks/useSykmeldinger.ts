@@ -182,12 +182,7 @@ export interface BackendSykmeldingStatus {
 export type SykmeldingStatusType = 'NY' | 'APEN' | 'SENDT' | 'AVVIST' | 'UTGATT' | 'BEKREFTET' | 'AVBRUTT'
 
 export type HendelseStatus =
-    | 'APEN'
-    | 'AVBRUTT'
-    | 'SENDT_TIL_NAV'
-    | 'SENDT_TIL_ARBEIDSGIVER'
-    | 'BEKREFTET_AVVIST'
-    | 'UTGATT'
+    'APEN' | 'AVBRUTT' | 'SENDT_TIL_NAV' | 'SENDT_TIL_ARBEIDSGIVER' | 'BEKREFTET_AVVIST' | 'UTGATT'
 
 export interface BackendHendelse {
     status: HendelseStatus
