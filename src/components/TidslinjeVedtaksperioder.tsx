@@ -186,7 +186,7 @@ export function TidslinjeVedtaksperioder({
                                                         brukervarselId: null,
                                                         dittSykefravaerMeldingId: null,
                                                         opprettetDatabase: forelagt.opprettet,
-                                                        status: 'NY',
+                                                        status: `FORELAGTE_OPPLYSNINGER_NY`,
                                                         tidspunkt: forelagt.opprinneligOpprettet,
                                                         vedtaksperiodeBehandlingId: behandling.vedtaksperiode.id!,
                                                     })
@@ -197,7 +197,7 @@ export function TidslinjeVedtaksperioder({
                                                             brukervarselId: null,
                                                             dittSykefravaerMeldingId: null,
                                                             opprettetDatabase: forelagt.opprettet,
-                                                            status: forelagt.status,
+                                                            status: `FORELAGTE_OPPLYSNINGER_${forelagt.status}`,
                                                             tidspunkt: forelagt.statusEndret,
                                                             vedtaksperiodeBehandlingId: behandling.vedtaksperiode.id!,
                                                         })
