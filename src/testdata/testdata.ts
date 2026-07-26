@@ -4,6 +4,7 @@ import { Stream } from 'node:stream'
 import { NextApiRequest } from 'next'
 
 import {
+    ForelagteOpplysningerDbRecord,
     FullVedtaksperiodeBehandling,
     InntektsmeldingDbRecord,
 } from '../queryhooks/useVedtaksperioderMedInntektsmeldinger'
@@ -324,11 +325,36 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
             foersteFravaersdag: '2024-04-26',
             vedtaksperiodeId: '123',
         }
+        const forelagteOpplysninger: ForelagteOpplysningerDbRecord[] = [
+            {
+                id: 'fo-test-001',
+                vedtaksperiodeId: '3337dceb-e5a5-481d-b659-b55da88a6d61',
+                behandlingId: '5809d055-3ccf-49d9-aee7-d81e88db25ee',
+                forelagteOpplysningerMelding: {
+                    vedtaksperiodeId: '3337dceb-e5a5-481d-b659-b55da88a6d61',
+                    behandlingId: '5809d055-3ccf-49d9-aee7-d81e88db25ee',
+                    tidsstempel: '2024-06-20T08:00:00',
+                    omregnetÅrsinntekt: 624000,
+                    skatteinntekter: [
+                        { måned: '2024-01', beløp: 52000 },
+                        { måned: '2024-02', beløp: 52000 },
+                        { måned: '2024-03', beløp: 52000 },
+                        { måned: '2024-04', beløp: 52000 },
+                        { måned: '2024-05', beløp: 52000 },
+                        { måned: '2024-06', beløp: 52000 },
+                    ],
+                },
+                opprettet: '2024-06-20T08:00:00Z',
+                opprinneligOpprettet: '2024-06-19T12:00:00Z',
+                status: 'SENDT',
+                statusEndret: '2024-06-25T10:30:00Z',
+            },
+        ]
         res.status(200)
         res.json({
             inntektsmeldinger: [inntektsmedling],
             vedtaksperioder: vedtaksperiodeTestdata,
-            forelagteOpplysninger: [],
+            forelagteOpplysninger,
         })
         res.end()
         return

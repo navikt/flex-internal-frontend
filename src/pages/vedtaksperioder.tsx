@@ -3,7 +3,7 @@ import { Alert, BodyShort, Button, Link, Radio, RadioGroup, ReadMore, Search } f
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 
-import { initialProps } from '../initialprops/initialProps'
+import { initialProps, PrefetchResults } from '../initialprops/initialProps'
 import {
     FullVedtaksperiodeBehandling,
     useVedtaksperioderMedInntektsmeldinger,
@@ -88,7 +88,7 @@ const FnrVisning = ({
     )
 }
 
-const Vedtaksperioder = () => {
+const Vedtaksperioder = ({ erMockBackend }: Pick<PrefetchResults, 'erMockBackend'>) => {
     const { fnr, nullstillFnr } = useValgtFnr()
     const [vedtaksperiodeId, setVedtaksperiodeId] = useState<string>()
     const [sokeinput, setSokeinput] = useState<'vedtaksperiodeid' | 'fnr'>('vedtaksperiodeid')
@@ -133,7 +133,7 @@ const Vedtaksperioder = () => {
                 <Radio value="vedtaksperiodeid">VedtaksperiodeId</Radio>
                 <Radio value="fnr">Fødselsnummer</Radio>
             </RadioGroup>
-            {sokeinput === 'fnr' && <FnrSokefelt />}
+            {sokeinput === 'fnr' && <FnrSokefelt erMockBackend={erMockBackend} />}
             {sokeinput === 'vedtaksperiodeid' && (
                 <Search
                     className="w-80"
