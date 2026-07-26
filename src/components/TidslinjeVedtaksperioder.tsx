@@ -186,18 +186,18 @@ export function TidslinjeVedtaksperioder({
                                                         brukervarselId: null,
                                                         dittSykefravaerMeldingId: null,
                                                         opprettetDatabase: forelagt.opprettet,
-                                                        status: 'FORELEGGING_FORESPORSEL_MOTTATT',
+                                                        status: 'NY',
                                                         tidspunkt: forelagt.opprinneligOpprettet,
                                                         vedtaksperiodeBehandlingId: behandling.vedtaksperiode.id!,
                                                     })
 
-                                                    if (forelagt.status === 'SENDT' && forelagt.statusEndret) {
+                                                    if (forelagt.statusEndret && forelagt.status !== 'NY') {
                                                         statuserMedForelegging.push({
                                                             id: forelagt.id,
                                                             brukervarselId: null,
                                                             dittSykefravaerMeldingId: null,
                                                             opprettetDatabase: forelagt.opprettet,
-                                                            status: 'FORELEGGING_VARSEL_SENDT',
+                                                            status: forelagt.status,
                                                             tidspunkt: forelagt.statusEndret,
                                                             vedtaksperiodeBehandlingId: behandling.vedtaksperiode.id!,
                                                         })
