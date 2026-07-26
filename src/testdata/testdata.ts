@@ -21,7 +21,7 @@ const vedtaksperiodeTestdata: FullVedtaksperiodeBehandling[] = [
             opprettetDatabase: '2024-05-13T10:56:50.855626Z',
             oppdatert: '2024-05-13T10:56:50.883256Z',
             sisteSpleisstatus: 'VENTER_PÅ_ARBEIDSGIVER',
-            sisteVarslingstatus: 'SENDT_SMSER',
+            sisteVarslingstatus: 'VARSLET_MANGLER_INNTEKTSMELDING_FØRSTE',
             vedtaksperiodeId: '3337dceb-e5a5-481d-b659-b55da88a6d61',
             behandlingId: '5809d055-3ccf-49d9-aee7-d81e88db25ee',
             sykepengesoknadUuid: '2f7a41d4-1658-4049-9694-94d1df7fcd6f',

@@ -100,7 +100,6 @@ type StatusVerdi =
     | 'VARSLET_MANGLER_INNTEKTSMELDING_28_DONE'
     | 'VARSLET_VENTER_PÅ_SAKSBEHANDLER_28'
     | 'VARSLET_VENTER_PÅ_SAKSBEHANDLER_28_DONE'
-    | 'SENDT_SMSER'
 
 export interface InntektsmeldingDbRecord {
     id: string | null
