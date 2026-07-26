@@ -74,7 +74,32 @@ export interface VedtaksperiodeBehandlingStatusDbRecord {
     dittSykefravaerMeldingId: string | null
 }
 
-type StatusVerdi = string
+type StatusVerdi =
+    | 'VARSLET_MANGLER_INNTEKTSMELDING_FØRSTE'
+    | 'VARSLET_MANGLER_INNTEKTSMELDING_FØRSTE_DONE'
+    | 'VARSLET_MANGLER_INNTEKTSMELDING_ANDRE'
+    | 'VARSLET_MANGLER_INNTEKTSMELDING_ANDRE_DONE'
+    | 'VARSLET_VENTER_PÅ_SAKSBEHANDLER_FØRSTE'
+    | 'VARSLET_VENTER_PÅ_SAKSBEHANDLER_FØRSTE_DONE'
+    | 'OPPRETTET'
+    | 'VENTER_PÅ_ARBEIDSGIVER'
+    | 'VENTER_PÅ_SAKSBEHANDLER'
+    | 'VENTER_PÅ_ANNEN_PERIODE'
+    | 'FERDIG'
+    | 'BEHANDLES_UTENFOR_SPEIL'
+    | 'REVARSLET_VENTER_PÅ_SAKSBEHANDLER'
+    | 'REVARSLET_VENTER_PÅ_SAKSBEHANDLER_DONE'
+    | 'VARSLER_IKKE_GRUNNET_FULL_REFUSJON'
+    | 'VARSLET_FORSINKET_PA_ANNEN_ORGNUMMER'
+    | 'VARSLET_MANGLER_INNTEKTSMELDING'
+    | 'VARSLET_MANGLER_INNTEKTSMELDING_DONE'
+    | 'VARSLET_VENTER_PÅ_SAKSBEHANDLER'
+    | 'VARSLET_MANGLER_INNTEKTSMELDING_15'
+    | 'VARSLET_MANGLER_INNTEKTSMELDING_15_DONE'
+    | 'VARSLET_MANGLER_INNTEKTSMELDING_28'
+    | 'VARSLET_MANGLER_INNTEKTSMELDING_28_DONE'
+    | 'VARSLET_VENTER_PÅ_SAKSBEHANDLER_28'
+    | 'VARSLET_VENTER_PÅ_SAKSBEHANDLER_28_DONE'
 
 export interface InntektsmeldingDbRecord {
     id: string | null
@@ -93,7 +118,24 @@ export interface ForelagteOpplysningerDbRecord {
     id: string | null
     vedtaksperiodeId: string
     behandlingId: string
+    forelagteOpplysningerMelding: ForelagteOpplysningerMelding | null
     opprettet: string
     opprinneligOpprettet: string
-    forelagt: string | null
+    status: ForelagtStatus
+    statusEndret: string | null
+}
+
+export type ForelagtStatus = 'NY' | 'SENDT' | 'AVBRUTT'
+
+export interface ForelagteOpplysningerMelding {
+    vedtaksperiodeId: string
+    behandlingId: string
+    tidsstempel: string
+    omregnetÅrsinntekt: number
+    skatteinntekter: Skatteinntekt[]
+}
+
+interface Skatteinntekt {
+    måned: string
+    beløp: number
 }

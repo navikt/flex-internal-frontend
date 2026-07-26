@@ -30,8 +30,8 @@ export function TidslinjeVedtaksperioder({
         })
     })
     forelagteOpplysninger.forEach((fo) => {
-        if (fo.forelagt != null) {
-            datoer.push(dayjs(fo.forelagt))
+        if (fo.statusEndret != null) {
+            datoer.push(dayjs(fo.statusEndret))
         }
         datoer.push(dayjs(fo.opprettet))
         datoer.push(dayjs(fo.opprinneligOpprettet))
@@ -104,13 +104,28 @@ export function TidslinjeVedtaksperioder({
                     )
                 })}
                 {forelagteOpplysninger.map((fo) => {
-                    if (fo.forelagt == null) {
-                        return null
-                    }
+                    const pinDato = fo.status === 'SENDT' ? fo.statusEndret : fo.opprinneligOpprettet
+                    if (!pinDato) return null
                     return (
-                        <Timeline.Pin key={fo.id} date={dayjs(fo.forelagt).toDate()}>
+                        <Timeline.Pin key={fo.id} date={dayjs(pinDato).toDate()}>
                             <p>Forelagt opplysninger fra A-Ordningen</p>
-                            <p>{formatterTimestamp(fo.forelagt)}</p>
+                            <p>Status: {fo.status}</p>
+                            <p>{formatterTimestamp(pinDato)}</p>
+                            {fo.forelagteOpplysningerMelding && (
+                                <ReadMore header="Inntektsdata">
+                                    <p>
+                                        Omregnet årsinntekt:{' '}
+                                        {fo.forelagteOpplysningerMelding.omregnetÅrsinntekt.toLocaleString('nb-NO')} kr
+                                    </p>
+                                    <ul>
+                                        {fo.forelagteOpplysningerMelding.skatteinntekter.map((si) => (
+                                            <li key={si.måned}>
+                                                {si.måned}: {si.beløp.toLocaleString('nb-NO')} kr
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </ReadMore>
+                            )}
                         </Timeline.Pin>
                     )
                 })}
@@ -157,7 +172,11 @@ export function TidslinjeVedtaksperioder({
                                                 Behandlinger
                                             </BodyShort>
                                             {sortertEtterOppdatert.map((behandling) => {
-                                                const statuserMedForelegging = [...behandling.statuser]
+                                                const statuserMedForelegging: Array<
+                                                    Omit<VedtaksperiodeBehandlingStatusDbRecord, 'status'> & {
+                                                        status: string
+                                                    }
+                                                > = [...behandling.statuser]
                                                 const forelagt = forelagteMap.get(
                                                     `${behandling.vedtaksperiode.vedtaksperiodeId}-${behandling.vedtaksperiode.behandlingId}`,
                                                 )
@@ -167,19 +186,19 @@ export function TidslinjeVedtaksperioder({
                                                         brukervarselId: null,
                                                         dittSykefravaerMeldingId: null,
                                                         opprettetDatabase: forelagt.opprettet,
-                                                        status: 'FORELEGGING_FORESPORSEL_MOTTATT',
+                                                        status: `FORELAGTE_OPPLYSNINGER_NY`,
                                                         tidspunkt: forelagt.opprinneligOpprettet,
                                                         vedtaksperiodeBehandlingId: behandling.vedtaksperiode.id!,
                                                     })
 
-                                                    if (forelagt.forelagt) {
+                                                    if (forelagt.statusEndret && forelagt.status !== 'NY') {
                                                         statuserMedForelegging.push({
                                                             id: forelagt.id,
                                                             brukervarselId: null,
                                                             dittSykefravaerMeldingId: null,
                                                             opprettetDatabase: forelagt.opprettet,
-                                                            status: 'FORELEGGING_VARSEL_SENDT',
-                                                            tidspunkt: forelagt.forelagt,
+                                                            status: `FORELAGTE_OPPLYSNINGER_${forelagt.status}`,
+                                                            tidspunkt: forelagt.statusEndret,
                                                             vedtaksperiodeBehandlingId: behandling.vedtaksperiode.id!,
                                                         })
                                                     }
@@ -188,7 +207,7 @@ export function TidslinjeVedtaksperioder({
                                                     a.tidspunkt.localeCompare(b.tidspunkt),
                                                 )
 
-                                                const tidligstePerStatus: VedtaksperiodeBehandlingStatusDbRecord[] = []
+                                                const tidligstePerStatus: typeof statuserMedForelegging = []
                                                 let forrigeStatus: string | undefined = undefined
 
                                                 for (const element of sortert) {
