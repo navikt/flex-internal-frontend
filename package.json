@@ -16,7 +16,7 @@
         "@navikt/next-api-proxy": "5.0.5",
         "@navikt/next-logger": "^5.0.0",
         "@navikt/oasis": "^4.1.4",
-        "@tanstack/react-query": "^5.101.2",
+        "@tanstack/react-query": "^5.101.4",
         "classnames": "^2.5.1",
         "dayjs": "^1.11.21",
         "react": "^19.2.7",
