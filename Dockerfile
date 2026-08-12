@@ -6,6 +6,7 @@ ENV PORT=8080
 
 COPY .next/standalone ./
 COPY .next/static ./.next/static
+COPY public ./public
 
 ENTRYPOINT ["/nodejs/bin/node"]
 CMD ["server.js"]
