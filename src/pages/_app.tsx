@@ -4,11 +4,11 @@ import 'react-json-view-lite/dist/index.css'
 import type { AppProps } from 'next/app'
 import React, { JSX, useState } from 'react'
 import Head from 'next/head'
-import Image from 'next/image'
 import { QueryClient, QueryClientProvider, useIsFetching } from '@tanstack/react-query'
 import { Dropdown, InternalHeader } from '@navikt/ds-react'
 import { useRouter } from 'next/router'
 
+import BroccorealLogo from '../components/BroccorealLogo'
 import LasterInnhold from '../components/LasterInnhold'
 import { ValgtFnrProvider } from '../utils/useValgtFnr'
 
@@ -62,23 +62,15 @@ function MyApp({ Component, pageProps }: AppProps): JSX.Element {
                 <title>Flex internal frontend</title>
                 <meta name="robots" content="noindex" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
-                <link rel="icon" href="/static/img/the-flex-is-broccoreal.svg" type="image/svg+xml" />
+                <link rel="icon" href="/the-flex-is-broccoreal.svg" type="image/svg+xml" />
             </Head>
             <QueryClientProvider client={queryClient}>
                 <ValgtFnrProvider>
                     <InternalHeader>
-                        <InternalHeader.Title as="h1" className="flex items-center gap-2">
-                            <Image
-                                src="/static/img/the-flex-is-broccoreal.svg"
-                                alt=""
-                                aria-hidden="true"
-                                width={24}
-                                height={24}
-                                className="h-6 w-6 shrink-0"
-                                loading="eager"
-                            />
-                        </InternalHeader.Title>
                         <InternalHeader.Title as="h2">
+                            <BroccorealLogo />
+                        </InternalHeader.Title>
+                        <InternalHeader.Title as="h1" className="flex items-center gap-2">
                             <span>Flex internal frontend</span>
                         </InternalHeader.Title>
                         <InternalHeader.Title as="h2">
