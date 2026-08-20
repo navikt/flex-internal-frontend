@@ -15,6 +15,44 @@ import { timelinePeriodeStatus } from '../soknad/Tidslinje'
 import type { SammenlignElement } from './useTidslinjeKombinert'
 import type { OnPeriodeValgt } from './SykmeldingRader'
 
+interface TidslinjePeriodeMedElement {
+    start: Date
+    end: Date
+    element: React.ReactElement
+}
+
+const sorterPerioderForSpor = (a: TidslinjePeriodeMedElement, b: TidslinjePeriodeMedElement) => {
+    const startDiff = a.start.getTime() - b.start.getTime()
+    if (startDiff !== 0) return startDiff
+
+    const sluttDiff = a.end.getTime() - b.end.getTime()
+    if (sluttDiff !== 0) return sluttDiff
+
+    return 0
+}
+
+const grupperPerioderISpor = (perioder: TidslinjePeriodeMedElement[]): TidslinjePeriodeMedElement[][] => {
+    const spor: TidslinjePeriodeMedElement[][] = []
+
+    perioder
+        .slice()
+        .sort(sorterPerioderForSpor)
+        .forEach((periode) => {
+            const eksisterendeSpor = spor.find((enkeltSpor) => {
+                const sistePeriode = enkeltSpor[enkeltSpor.length - 1]
+                return sistePeriode.end.getTime() < periode.start.getTime()
+            })
+
+            if (eksisterendeSpor) {
+                eksisterendeSpor.push(periode)
+            } else {
+                spor.push([periode])
+            }
+        })
+
+    return spor
+}
+
 interface Props {
     soknaderGruppert: Map<string, ArbeidsgiverGruppering>
     aktivTidsvindu: { fra: Date; til: Date }
@@ -57,29 +95,35 @@ export const lagSoknadRader = ({
                             )
                         })
                         .map((k) => {
+                            const start = dayjsToDate(k.fom)!
+                            const end = dayjsToDate(k.tom)!
                             const sykmeldingId = k.sykmeldingUuid ?? null
                             const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
                             const kildeId = k.id
                             const erValgtPeriode = aktivDrawerKildeId === kildeId
 
-                            return (
-                                <Timeline.Period
-                                    start={dayjsToDate(k.fom)!}
-                                    end={dayjsToDate(k.tom)!}
-                                    status="neutral"
-                                    key={k.id}
-                                    icon={klippIkon}
-                                    isActive={erAktiv}
-                                    className={erValgtPeriode ? 'shadow-[inset_0_0_0_4px_#dc2626]!' : undefined}
-                                    onSelectPeriod={() => {
-                                        if (aktivDrawerKildeId === kildeId) {
-                                            onPeriodeValgt(null, null, null)
-                                        } else {
-                                            onPeriodeValgt(sykmeldingId, kildeId, lagKlippetSoknadDrawerInnhold(k))
-                                        }
-                                    }}
-                                />
-                            )
+                            return {
+                                start,
+                                end,
+                                element: (
+                                    <Timeline.Period
+                                        start={start}
+                                        end={end}
+                                        status="neutral"
+                                        key={k.id}
+                                        icon={klippIkon}
+                                        isActive={erAktiv}
+                                        className={erValgtPeriode ? 'shadow-[inset_0_0_0_4px_#dc2626]!' : undefined}
+                                        onSelectPeriod={() => {
+                                            if (aktivDrawerKildeId === kildeId) {
+                                                onPeriodeValgt(null, null, null)
+                                            } else {
+                                                onPeriodeValgt(sykmeldingId, kildeId, lagKlippetSoknadDrawerInnhold(k))
+                                            }
+                                        }}
+                                    />
+                                ),
+                            }
                         })
 
                     if (!erGhostSykmelding) {
@@ -99,46 +143,50 @@ export const lagSoknadRader = ({
                             const fomStr = sok.soknad.fom ? sok.soknad.fom.format('D MMM YYYY') : ''
                             const tomStr = sok.soknad.tom ? sok.soknad.tom.format('D MMM YYYY') : ''
 
-                            klippingAvSoknad.push(
-                                <Timeline.Period
-                                    start={sokFom}
-                                    end={sokTom}
-                                    status={timelinePeriodeStatus(sok.soknad.status)}
-                                    icon={ikonerForSoknad(sok.soknad)}
-                                    key={sok.soknad.id}
-                                    isActive={erAktiv}
-                                    className={
-                                        sammenlignModus
-                                            ? erSammenlignValgt
-                                                ? 'shadow-[inset_0_0_0_4px_#0067c5]!'
-                                                : undefined
-                                            : erValgtPeriode
-                                              ? 'shadow-[inset_0_0_0_4px_#dc2626]!'
-                                              : undefined
-                                    }
-                                    onSelectPeriod={() => {
-                                        if (sammenlignModus) {
-                                            onSammenlignValgt?.({
-                                                kildeId,
-                                                objekt: sok.soknad,
-                                                tittel: `Søknad ${fomStr}–${tomStr}`,
-                                            })
-                                        } else if (aktivDrawerKildeId === kildeId) {
-                                            onPeriodeValgt(null, null, null)
-                                        } else {
-                                            onPeriodeValgt(
-                                                sykmeldingId,
-                                                kildeId,
-                                                lagSoknadDrawerInnhold(
-                                                    sok.soknad,
-                                                    <ViktigeFeltForSoknad soknad={sok.soknad} />,
-                                                    ikonParForSoknad(sok.soknad),
-                                                ),
-                                            )
+                            klippingAvSoknad.push({
+                                start: sokFom,
+                                end: sokTom,
+                                element: (
+                                    <Timeline.Period
+                                        start={sokFom}
+                                        end={sokTom}
+                                        status={timelinePeriodeStatus(sok.soknad.status)}
+                                        icon={ikonerForSoknad(sok.soknad)}
+                                        key={sok.soknad.id}
+                                        isActive={erAktiv}
+                                        className={
+                                            sammenlignModus
+                                                ? erSammenlignValgt
+                                                    ? 'shadow-[inset_0_0_0_4px_#0067c5]!'
+                                                    : undefined
+                                                : erValgtPeriode
+                                                  ? 'shadow-[inset_0_0_0_4px_#dc2626]!'
+                                                  : undefined
                                         }
-                                    }}
-                                />,
-                            )
+                                        onSelectPeriod={() => {
+                                            if (sammenlignModus) {
+                                                onSammenlignValgt?.({
+                                                    kildeId,
+                                                    objekt: sok.soknad,
+                                                    tittel: `Søknad ${fomStr}–${tomStr}`,
+                                                })
+                                            } else if (aktivDrawerKildeId === kildeId) {
+                                                onPeriodeValgt(null, null, null)
+                                            } else {
+                                                onPeriodeValgt(
+                                                    sykmeldingId,
+                                                    kildeId,
+                                                    lagSoknadDrawerInnhold(
+                                                        sok.soknad,
+                                                        <ViktigeFeltForSoknad soknad={sok.soknad} />,
+                                                        ikonParForSoknad(sok.soknad),
+                                                    ),
+                                                )
+                                            }
+                                        }}
+                                    />
+                                ),
+                            })
                         }
                     }
 
@@ -156,39 +204,51 @@ export const lagSoknadRader = ({
                             )
                         })
                         .map((k) => {
+                            const start = dayjsToDate(k.fom)!
+                            const end = dayjsToDate(k.tom)!
                             const sykmeldingId = k.sykmeldingUuid ?? null
                             const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
                             const kildeId = k.id
                             const erValgtPeriode = aktivDrawerKildeId === kildeId
 
-                            return (
-                                <Timeline.Period
-                                    start={dayjsToDate(k.fom)!}
-                                    end={dayjsToDate(k.tom)!}
-                                    status="neutral"
-                                    key={k.id}
-                                    icon={klippIkon}
-                                    isActive={erAktiv}
-                                    className={erValgtPeriode ? 'shadow-[inset_0_0_0_4px_#dc2626]!' : undefined}
-                                    onSelectPeriod={() => {
-                                        if (aktivDrawerKildeId === kildeId) {
-                                            onPeriodeValgt(null, null, null)
-                                        } else {
-                                            onPeriodeValgt(sykmeldingId, kildeId, lagKlippetSoknadDrawerInnhold(k))
-                                        }
-                                    }}
-                                />
-                            )
+                            return {
+                                start,
+                                end,
+                                element: (
+                                    <Timeline.Period
+                                        start={start}
+                                        end={end}
+                                        status="neutral"
+                                        key={k.id}
+                                        icon={klippIkon}
+                                        isActive={erAktiv}
+                                        className={erValgtPeriode ? 'shadow-[inset_0_0_0_4px_#dc2626]!' : undefined}
+                                        onSelectPeriod={() => {
+                                            if (aktivDrawerKildeId === kildeId) {
+                                                onPeriodeValgt(null, null, null)
+                                            } else {
+                                                onPeriodeValgt(sykmeldingId, kildeId, lagKlippetSoknadDrawerInnhold(k))
+                                            }
+                                        }}
+                                    />
+                                ),
+                            }
                         }),
                 )
         })
 
         if (perioderMedInnhold.length === 0) return []
 
-        return [
-            <Timeline.Row key={`sok-${arbId}`} label={label} icon={<TasklistIcon aria-hidden fontSize="1.5rem" />}>
-                {perioderMedInnhold}
-            </Timeline.Row>,
-        ]
+        const spor = grupperPerioderISpor(perioderMedInnhold)
+
+        return spor.map((perioderISpor, index) => (
+            <Timeline.Row
+                key={`sok-${arbId}-${index}`}
+                label={index === 0 ? label : `${label} (overlapp)`}
+                icon={<TasklistIcon aria-hidden fontSize="1.5rem" />}
+            >
+                {perioderISpor.map((periode) => periode.element)}
+            </Timeline.Row>
+        ))
     })
 }

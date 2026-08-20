@@ -4,7 +4,6 @@ import { BodyShort, Box, Timeline } from '@navikt/ds-react'
 
 import type { ArbeidsgiverGruppering, SykmeldingGruppering } from '../../utils/gruppering'
 import KlippBugInfo from '../soknad/KlippBugInfo'
-import OverlappendeTidslinjeRad from '../soknad/OverlappendeTidslinjeRad'
 
 import type { SammenlignElement } from './useTidslinjeKombinert'
 import { lagOppholdUtlandPins, type OnDrawerValgt } from './OppholdUtlandPins'
@@ -51,7 +50,6 @@ const SoknadTidslinje = ({
             className="kombinert-tidslinje-boks"
         >
             <BodyShort className="font-semibold mb-2">Søknader</BodyShort>
-            <OverlappendeTidslinjeRad sykmeldingGruppering={sykmeldingGruppering} />
             <KlippBugInfo sykmeldingGruppering={sykmeldingGruppering} />
             <Timeline
                 endDate={dayjs(aktivTidsvindu.til).startOf('day').add(1, 'day').toDate()}
