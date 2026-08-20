@@ -1,7 +1,7 @@
 import React from 'react'
 import dayjs from 'dayjs'
 import { describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 
 import { BackendKlippetSykepengesoknadRecord, KlippetSykepengesoknadRecord, Soknad } from '../../queryhooks/useSoknader'
 import { mapTilSykmelding } from '../../queryhooks/useSykmeldinger'
@@ -276,7 +276,7 @@ describe('PeriodeMarkering', () => {
         expect(keys.some((key) => key.includes('soknad-delvis-klipp'))).toBe(true)
     })
 
-    it('viser varsel for overlap-scenarioet der ordinær søknad blir borte visuelt mellom klippede perioder', () => {
+    it('viser alle søknader for overlap-scenarioet der ordinær søknad blir borte visuelt mellom klippede perioder', () => {
         const arbeidsgiverOrgnummer = 'arbeidsgiver-overlapp'
         const soknadId = 'soknad-overlapp'
         const sykmeldingId = 'sykmelding-overlapp'
@@ -352,12 +352,8 @@ describe('PeriodeMarkering', () => {
 
         const perioder = container.querySelectorAll('[data-timeline-period="true"]')
         const rader = container.querySelectorAll('[data-timeline-row="true"]')
-        const varseltekst = screen.getByText(/Det er overlappende perioder i en av sykmeldingen/i)
 
-        expect(rader).toHaveLength(1)
-        expect(perioder).toHaveLength(3)
-        expect(varseltekst).toBeInTheDocument()
-        expect(varseltekst.parentElement).toHaveTextContent(/2026-06-29/)
-        expect(varseltekst.parentElement).toHaveTextContent(/2026-07-03/)
+        expect(rader).toHaveLength(2)
+        expect(perioder).toHaveLength(4)
     })
 })
