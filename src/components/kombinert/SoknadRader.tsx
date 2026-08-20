@@ -105,7 +105,7 @@ export const lagSoknadRader = ({
                                     end={sokTom}
                                     status={timelinePeriodeStatus(sok.soknad.status)}
                                     icon={ikonerForSoknad(sok.soknad)}
-                                    key={sok.soknad.tom?.toISOString() ?? sok.soknad.id}
+                                    key={sok.soknad.id}
                                     isActive={erAktiv}
                                     className={
                                         sammenlignModus
