@@ -2,7 +2,9 @@ import React from 'react'
 import dayjs from 'dayjs'
 import { BodyShort, Box, Timeline } from '@navikt/ds-react'
 
-import type { ArbeidsgiverGruppering } from '../../utils/gruppering'
+import type { ArbeidsgiverGruppering, SykmeldingGruppering } from '../../utils/gruppering'
+import KlippBugInfo from '../soknad/KlippBugInfo'
+import OverlappendeTidslinjeRad from '../soknad/OverlappendeTidslinjeRad'
 
 import type { SammenlignElement } from './useTidslinjeKombinert'
 import { lagOppholdUtlandPins, type OnDrawerValgt } from './OppholdUtlandPins'
@@ -32,6 +34,14 @@ const SoknadTidslinje = ({
     sammenlignValgteIder = [],
     onSammenlignValgt,
 }: Props): React.ReactElement => {
+    const sykmeldingGruppering = new Map<string, SykmeldingGruppering>()
+
+    soknaderGruppert.forEach(({ sykmeldinger }, arbeidsgiverId) => {
+        sykmeldinger.forEach((sykmelding, sykmeldingId) => {
+            sykmeldingGruppering.set(`${arbeidsgiverId}:${sykmeldingId}`, sykmelding)
+        })
+    })
+
     return (
         <Box
             borderColor="brand-blue"
@@ -41,6 +51,8 @@ const SoknadTidslinje = ({
             className="kombinert-tidslinje-boks"
         >
             <BodyShort className="font-semibold mb-2">Søknader</BodyShort>
+            <OverlappendeTidslinjeRad sykmeldingGruppering={sykmeldingGruppering} />
+            <KlippBugInfo sykmeldingGruppering={sykmeldingGruppering} />
             <Timeline
                 endDate={dayjs(aktivTidsvindu.til).startOf('day').add(1, 'day').toDate()}
                 startDate={aktivTidsvindu.fra}
