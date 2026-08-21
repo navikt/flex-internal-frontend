@@ -1,10 +1,15 @@
-import React from 'react'
+import type { ReactElement } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 
 import { Soknad } from '../../queryhooks/useSoknader'
 import { ArbeidsgiverGruppering } from '../../utils/gruppering'
 
 import { lagOppholdUtlandPins } from './OppholdUtlandPins'
+
+type PinElement = ReactElement<{
+    onMouseDown: (event: { button: number }) => void
+    children?: ReactElement<{ onClick: () => void }>
+}>
 
 const lagUtlandGruppering = (soknad: Soknad): Map<string, ArbeidsgiverGruppering> =>
     new Map([
@@ -69,7 +74,7 @@ describe('lagOppholdUtlandPins', () => {
             onDrawerValgt,
         })
 
-        const pin = pins[0]
+        const pin = pins[0] as PinElement
         pin.props.onMouseDown({ button: 0 })
 
         expect(onDrawerValgt).toHaveBeenCalledOnce()
@@ -88,7 +93,7 @@ describe('lagOppholdUtlandPins', () => {
             onDrawerValgt,
         })
 
-        const pin = pins[0]
+        const pin = pins[0] as PinElement
         pin.props.onMouseDown({ button: 0 })
 
         expect(onDrawerValgt).toHaveBeenCalledOnce()
@@ -104,7 +109,8 @@ describe('lagOppholdUtlandPins', () => {
             onDrawerValgt,
         })
 
-        pins[0].props.onMouseDown({ button: 2 })
+        const pin = pins[0] as PinElement
+        pin.props.onMouseDown({ button: 2 })
         expect(onDrawerValgt).not.toHaveBeenCalled()
     })
 
@@ -117,7 +123,8 @@ describe('lagOppholdUtlandPins', () => {
             onDrawerValgt,
         })
 
-        const span = pins[0].props.children as React.ReactElement
+        const pin = pins[0] as PinElement
+        const span = pin.props.children as ReactElement<{ onClick: () => void }>
         span.props.onClick()
 
         expect(onDrawerValgt).toHaveBeenCalledOnce()

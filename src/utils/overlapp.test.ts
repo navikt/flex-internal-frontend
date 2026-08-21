@@ -14,7 +14,7 @@ function lagKlipp(
         id,
         sykepengesoknadUuid: `sok-${id}`,
         sykmeldingUuid: `syk-${id}`,
-        klippVariant: 'SOKNAD_STARTER_INNI_SYKMELDINGSPERIODE_SOKNAD',
+        klippVariant: 'SOKNAD_STARTER_FOR_SLUTTER_INNI',
         periodeFor: periodeFor.map((p) => ({ ...p, grad: 100, sykmeldingstype: 'AKTIVITET_IKKE_MULIG' })),
         periodeEtter: periodeEtter
             ? periodeEtter.map((p) => ({ ...p, grad: 100, sykmeldingstype: 'AKTIVITET_IKKE_MULIG' }))
@@ -85,7 +85,7 @@ describe('minFom', () => {
     })
 
     it('fungerer med én periode', () => {
-        expect(minFom([{ fom: '2024-06-15', tom: '2024-06-30' }])).toBe('2024-06-15')
+        expect(minFom([{ fom: '2024-06-15' }])).toBe('2024-06-15')
     })
 
     it('fungerer med dayjs-objekter', () => {
@@ -105,7 +105,7 @@ describe('maxTom', () => {
     })
 
     it('fungerer med én periode', () => {
-        expect(maxTom([{ fom: '2024-06-01', tom: '2024-06-30' }])).toBe('2024-06-30')
+        expect(maxTom([{ tom: '2024-06-30' }])).toBe('2024-06-30')
     })
 })
 

@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react'
 import { describe, it, expect } from 'vitest'
 import {
     BandageFillIcon,
@@ -87,21 +88,30 @@ describe('ikonerForSoknad — enkelt ikon (ingen modifikator)', () => {
 
 describe('ikonerForSoknad — med modifikatorikon', () => {
     it('returnerer flex-wrapper med BriefcaseIcon og HospitalIcon for BEHANDLINGSDAGER', () => {
-        const result = ikonerForSoknad({ arbeidssituasjon: 'ARBEIDSTAKER', soknadstype: 'BEHANDLINGSDAGER' })
+        const result = ikonerForSoknad({
+            arbeidssituasjon: 'ARBEIDSTAKER',
+            soknadstype: 'BEHANDLINGSDAGER',
+        }) as ReactElement<{ children: Array<ReactElement<{ children: ReactElement }>> }>
         expect(result.type).toBe('span')
         expect(result.props.children[0].props.children.type).toBe(BriefcaseIcon)
         expect(result.props.children[1].props.children.type).toBe(HospitalIcon)
     })
 
     it('returnerer flex-wrapper med CarIcon for REISETILSKUDD', () => {
-        const result = ikonerForSoknad({ arbeidssituasjon: 'ARBEIDSTAKER', soknadstype: 'REISETILSKUDD' })
+        const result = ikonerForSoknad({
+            arbeidssituasjon: 'ARBEIDSTAKER',
+            soknadstype: 'REISETILSKUDD',
+        }) as ReactElement<{ children: Array<ReactElement<{ children: ReactElement }>> }>
         expect(result.type).toBe('span')
         expect(result.props.children[0].props.children.type).toBe(BriefcaseIcon)
         expect(result.props.children[1].props.children.type).toBe(CarIcon)
     })
 
     it('returnerer flex-wrapper med PercentIcon og CarIcon for GRADERT_REISETILSKUDD', () => {
-        const result = ikonerForSoknad({ arbeidssituasjon: 'ARBEIDSTAKER', soknadstype: 'GRADERT_REISETILSKUDD' })
+        const result = ikonerForSoknad({
+            arbeidssituasjon: 'ARBEIDSTAKER',
+            soknadstype: 'GRADERT_REISETILSKUDD',
+        }) as ReactElement<{ children: Array<ReactElement<{ children: ReactElement }>> }>
         expect(result.type).toBe('span')
         expect(result.props.children[0].props.children.type).toBe(BriefcaseIcon)
         expect(result.props.children[1].props.children.type).toBe(PercentIcon)
