@@ -1,8 +1,10 @@
-import dayjs from 'dayjs'
+import { format } from 'date-fns'
+
+import { toDate } from './dato-utils'
 
 export function formatterTimestamp(timestamp: string | undefined): string {
     if (!timestamp) {
         return ''
     }
-    return dayjs(timestamp).format('D MMM YYYY HH:mm')
+    return format(toDate(timestamp), 'd MMM yyyy HH:mm')
 }
