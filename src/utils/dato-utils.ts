@@ -4,7 +4,8 @@
 // blandet tidssone-semantikk. TZDate gir én konsistent kontekst.
 
 import { TZDate } from '@date-fns/tz'
-import { parseISO } from 'date-fns'
+import { format, parseISO } from 'date-fns'
+import { nb } from 'date-fns/locale/nb'
 
 const OSLO = 'Europe/Oslo'
 
@@ -18,6 +19,21 @@ export function toDate(date: string, defaultTimezone = OSLO): Date {
     }
 
     return new TZDate(date, defaultTimezone)
+}
+
+/** Som toDate, men returnerer undefined for tomme verdier. */
+export function toDateEllerUndefined(dato: string | null | undefined): Date | undefined {
+    return dato ? toDate(dato) : undefined
+}
+
+/** Sjekker om verdien er en gyldig Date. Erstatter dayjs sin .isValid(). */
+export function erGyldigDato(dato: unknown): dato is Date {
+    return dato instanceof Date && !Number.isNaN(dato.getTime())
+}
+
+/** Formaterer en dato med norsk bokmål-locale. */
+export function formaterDato(dato: Date, mønster: string): string {
+    return format(dato, mønster, { locale: nb })
 }
 
 /** Nåtidspunkt i Oslo-tidssone. */
