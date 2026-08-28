@@ -1,6 +1,8 @@
 import { Button, HStack } from '@navikt/ds-react'
-import dayjs from 'dayjs'
+import { isAfter, subMonths, subYears } from 'date-fns'
 import React from 'react'
+
+import { now, tilOsloDatoFraDato } from '../utils/dato-utils'
 
 interface VelgZoomPeriodeProps {
     setFraDato: (date: Date | null) => void
@@ -10,13 +12,16 @@ interface VelgZoomPeriodeProps {
 
 export default function VelgZoomPeriode({ setFraDato, setTilDato, maxTilDato }: VelgZoomPeriodeProps) {
     const handleZoom = (måneder?: number, år?: number) => {
+        // Alle vindusgrenser pinnes til Oslo-midnatt slik at Aksels interne
+        // månedsberegning får én konsistent tidssonekontekst.
+        const iDag = now()
         if (måneder) {
-            setFraDato(dayjs().subtract(måneder, 'month').toDate())
+            setFraDato(tilOsloDatoFraDato(subMonths(iDag, måneder)))
         } else if (år) {
-            setFraDato(dayjs().subtract(år, 'year').toDate())
+            setFraDato(tilOsloDatoFraDato(subYears(iDag, år)))
         }
-        const tilDato = maxTilDato && dayjs(maxTilDato) > dayjs() ? maxTilDato : dayjs().toDate()
-        setTilDato(tilDato)
+        const tilDato = maxTilDato && isAfter(maxTilDato, iDag) ? maxTilDato : iDag
+        setTilDato(tilOsloDatoFraDato(tilDato))
     }
 
     return (
