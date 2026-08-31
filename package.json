@@ -27,7 +27,7 @@
         "uuid": "^14.0.2"
     },
     "devDependencies": {
-        "@navikt/tsm-eslint-react": "^1.0.1",
+        "@navikt/tsm-eslint-react": "^1.0.3",
         "@navikt/tsm-prettier": "^2.0.1",
         "@tailwindcss/postcss": "^4.3.3",
         "@testing-library/jest-dom": "^7.0.1",
