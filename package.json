@@ -24,7 +24,7 @@
         "react-dom": "^19.2.8",
         "react-json-view-lite": "^2.5.0",
         "tailwind-merge": "^3.6.0",
-        "uuid": "^14.0.1"
+        "uuid": "^14.0.2"
     },
     "devDependencies": {
         "@navikt/tsm-eslint-react": "^1.0.1",
