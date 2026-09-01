@@ -1,5 +1,5 @@
 import { Button } from '@navikt/ds-react'
-import dayjs from 'dayjs'
+import { subMonths } from 'date-fns'
 import React from 'react'
 
 export function VelgManederKnapp(props: {
@@ -16,8 +16,8 @@ export function VelgManederKnapp(props: {
                 variant="secondary"
                 className="navds-timeline__zoom-button font-normal"
                 onClick={() => {
-                    props.setFraSelected(dayjs().subtract(props.maneder, 'month').toDate())
-                    props.setTilSelected(dayjs().toDate())
+                    props.setFraSelected(subMonths(new Date(), props.maneder))
+                    props.setTilSelected(new Date())
                 }}
             >
                 {props.maneder + ' mnd'}

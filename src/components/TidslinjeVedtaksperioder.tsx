@@ -1,12 +1,13 @@
 import { BodyShort, DatePicker, Link, ReadMore, Switch, Table, Timeline, useDatepicker } from '@navikt/ds-react'
+import { addWeeks, isBefore } from 'date-fns'
 import React, { Fragment, useState } from 'react'
-import dayjs from 'dayjs'
 
 import {
     ForelagteOpplysningerDbRecord,
     FullVedtaksperiodeBehandling,
     VedtaksperiodeBehandlingStatusDbRecord,
 } from '../queryhooks/useVedtaksperioderMedInntektsmeldinger'
+import { formaterDato, toDate } from '../utils/dato-utils'
 import { sporingUrl } from '../utils/environment'
 import { formatterTimestamp } from '../utils/formatterDatoer'
 
@@ -19,26 +20,26 @@ export function TidslinjeVedtaksperioder({
     vedtaksperioder: FullVedtaksperiodeBehandling[]
     forelagteOpplysninger: ForelagteOpplysningerDbRecord[]
 }) {
-    const datoer = [] as dayjs.Dayjs[]
+    const datoer: Date[] = []
     vedtaksperioder.forEach((vp) => {
         vp.soknader.forEach((soknad) => {
-            datoer.push(dayjs(soknad.fom))
-            datoer.push(dayjs(soknad.tom))
+            datoer.push(toDate(soknad.fom))
+            datoer.push(toDate(soknad.tom))
         })
         vp.statuser.forEach((status) => {
-            datoer.push(dayjs(status.tidspunkt))
+            datoer.push(toDate(status.tidspunkt))
         })
     })
     forelagteOpplysninger.forEach((fo) => {
         if (fo.statusEndret != null) {
-            datoer.push(dayjs(fo.statusEndret))
+            datoer.push(toDate(fo.statusEndret))
         }
-        datoer.push(dayjs(fo.opprettet))
-        datoer.push(dayjs(fo.opprinneligOpprettet))
+        datoer.push(toDate(fo.opprettet))
+        datoer.push(toDate(fo.opprinneligOpprettet))
     })
 
-    const eldsteDato = datoer.sort((a, b) => (dayjs(a).isBefore(dayjs(b)) ? -1 : 1))[0]
-    const nyesteDato = datoer.sort((a, b) => (dayjs(a).isBefore(dayjs(b)) ? 1 : -1))[0]
+    const eldsteDato = datoer.sort((a, b) => (isBefore(a, b) ? -1 : 1))[0]
+    const nyesteDato = datoer.sort((a, b) => (isBefore(a, b) ? 1 : -1))[0]
     const [fjernDuplikatStatus, setFjernDuplikatStatus] = useState(true)
 
     const {
@@ -47,7 +48,7 @@ export function TidslinjeVedtaksperioder({
         selectedDay: fraSelectedDay,
         setSelected: setFraSelected,
     } = useDatepicker({
-        defaultSelected: eldsteDato.toDate(),
+        defaultSelected: eldsteDato,
     })
 
     const {
@@ -56,7 +57,7 @@ export function TidslinjeVedtaksperioder({
         selectedDay: tilSelectedDay,
         setSelected: setTilSelected,
     } = useDatepicker({
-        defaultSelected: nyesteDato.add(1, 'week').toDate(),
+        defaultSelected: addWeeks(nyesteDato, 1),
     })
 
     // grupper perioder per soknad.orgnummer
@@ -97,7 +98,7 @@ export function TidslinjeVedtaksperioder({
             <Timeline endDate={tilSelectedDay} startDate={fraSelectedDay}>
                 {varslinger.map((status) => {
                     return (
-                        <Timeline.Pin key={status.id} date={dayjs(status.tidspunkt).toDate()}>
+                        <Timeline.Pin key={status.id} date={toDate(status.tidspunkt)}>
                             <p>{status.status}</p>
                             <p>{formatterTimestamp(status.tidspunkt)}</p>
                         </Timeline.Pin>
@@ -107,7 +108,7 @@ export function TidslinjeVedtaksperioder({
                     const pinDato = fo.status === 'SENDT' ? fo.statusEndret : fo.opprinneligOpprettet
                     if (!pinDato) return null
                     return (
-                        <Timeline.Pin key={fo.id} date={dayjs(pinDato).toDate()}>
+                        <Timeline.Pin key={fo.id} date={toDate(pinDato)}>
                             <p>Forelagt opplysninger fra A-Ordningen</p>
                             <p>Status: {fo.status}</p>
                             <p>{formatterTimestamp(pinDato)}</p>
@@ -142,13 +143,17 @@ export function TidslinjeVedtaksperioder({
                             {gruppert.map((vp) => {
                                 if (!vp) return null
 
-                                const sortertEtterOppdatert = vp.sort(
-                                    (a, b) =>
-                                        dayjs(a.vedtaksperiode.oppdatert).unix() -
-                                        dayjs(b.vedtaksperiode.oppdatert || 0).unix(),
-                                )
+                                const sortertEtterOppdatert = vp.sort((a, b) => {
+                                    const oppdatertB = b.vedtaksperiode.oppdatert
+                                        ? toDate(b.vedtaksperiode.oppdatert)
+                                        : new Date(0)
+                                    return (
+                                        toDate(a.vedtaksperiode.oppdatert).getTime() / 1000 -
+                                        oppdatertB.getTime() / 1000
+                                    )
+                                })
                                 const nyeste = sortertEtterOppdatert[sortertEtterOppdatert.length - 1]
-                                const vedtaksperiodeLesbar = `${dayjs(nyeste.soknader[0].fom).format(' D MMMM')} til ${dayjs(nyeste.soknader[0].tom).format(' D MMMM')}`
+                                const vedtaksperiodeLesbar = `${formaterDato(toDate(nyeste.soknader[0].fom), ' d MMMM')} til ${formaterDato(toDate(nyeste.soknader[0].tom), ' d MMMM')}`
 
                                 const flereSoknader = nyeste.soknader.length > 1
                                 let iconTekst = nyeste.vedtaksperiode.sisteSpleisstatus
@@ -157,8 +162,8 @@ export function TidslinjeVedtaksperioder({
                                 }
                                 return (
                                     <Timeline.Period
-                                        start={dayjs(nyeste.soknader[0].fom).toDate()}
-                                        end={dayjs(nyeste.soknader[0].tom).toDate()}
+                                        start={toDate(nyeste.soknader[0].fom)}
+                                        end={toDate(nyeste.soknader[0].tom)}
                                         status="neutral"
                                         key={nyeste.vedtaksperiode.id}
                                         icon={iconTekst}
