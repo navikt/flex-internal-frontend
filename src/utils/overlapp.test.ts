@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import dayjs from 'dayjs'
 
 import { KlippetSykepengesoknadRecord } from '../queryhooks/useSoknader'
 
+import { toDate } from './dato-utils'
 import { perioderSomMangler, minFom, maxTom, sykmeldingOverlappendeDager } from './overlapp'
 
 function lagKlipp(
@@ -72,6 +72,47 @@ describe('perioderSomMangler', () => {
         expect(mangler[1].fom).toBe('2024-04-08')
         expect(mangler[1].tom).toBe('2024-04-10')
     })
+
+    it('returnerer ett-dags periode som én inklusiv dag (fom er lik tom)', () => {
+        const klipp = lagKlipp('5', [{ fom: '2024-06-15', tom: '2024-06-15' }], null)
+        const mangler = perioderSomMangler(klipp)
+        expect(mangler).toHaveLength(1)
+        expect(mangler[0].fom).toBe('2024-06-15')
+        expect(mangler[0].tom).toBe('2024-06-15')
+    })
+
+    it('beholder riktig kalenderdag-antall over sommertid-overgangen i mars (23-timers døgn)', () => {
+        // 2026-03-29 er DST-start i Oslo (klokken hopper fra 02:00 til 03:00). Perioden skal likevel telle
+        // som 7 kalenderdager (27. mars t.o.m. 2. april), ikke 6 (som rå millisekund-diff ville gitt).
+        const klipp = lagKlipp('dst-mars', [{ fom: '2026-03-27', tom: '2026-04-02' }], null)
+        const mangler = perioderSomMangler(klipp)
+        expect(mangler).toHaveLength(1)
+        expect(mangler[0].fom).toBe('2026-03-27')
+        expect(mangler[0].tom).toBe('2026-04-02')
+    })
+
+    it('beholder riktig kalenderdag-antall over sommertid-slutt i oktober (25-timers døgn)', () => {
+        // 2026-10-25 er DST-slutt i Oslo (klokken går fra 03:00 tilbake til 02:00).
+        const klipp = lagKlipp('dst-okt', [{ fom: '2026-10-24', tom: '2026-10-26' }], null)
+        const mangler = perioderSomMangler(klipp)
+        expect(mangler).toHaveLength(1)
+        expect(mangler[0].fom).toBe('2026-10-24')
+        expect(mangler[0].tom).toBe('2026-10-26')
+    })
+
+    it('inkluderer skuddårsdagen 29. februar som del av en sammenhengende periode', () => {
+        const klipp = lagKlipp('leap', [{ fom: '2024-02-28', tom: '2024-03-01' }], null)
+        const mangler = perioderSomMangler(klipp)
+        expect(mangler).toHaveLength(1)
+        expect(mangler[0].fom).toBe('2024-02-28')
+        expect(mangler[0].tom).toBe('2024-03-01')
+    })
+
+    it('returnerer tom liste uten å kaste når periodeFor er tom (omvendt/ugyldig spenn)', () => {
+        const klipp = lagKlipp('empty', [], null)
+        expect(() => perioderSomMangler(klipp)).not.toThrow()
+        expect(perioderSomMangler(klipp)).toHaveLength(0)
+    })
 })
 
 describe('minFom', () => {
@@ -88,8 +129,12 @@ describe('minFom', () => {
         expect(minFom([{ fom: '2024-06-15' }])).toBe('2024-06-15')
     })
 
-    it('fungerer med dayjs-objekter', () => {
-        const perioder = [{ fom: dayjs('2024-05-10'), tom: '2024-05-20' }]
+    it('returnerer sentinel-verdi for tom liste', () => {
+        expect(minFom([])).toBe('9999-12-31')
+    })
+
+    it('fungerer med Date-objekter', () => {
+        const perioder = [{ fom: toDate('2024-05-10'), tom: '2024-05-20' }]
         expect(minFom(perioder)).toBe('2024-05-10')
     })
 })
@@ -106,6 +151,15 @@ describe('maxTom', () => {
 
     it('fungerer med én periode', () => {
         expect(maxTom([{ tom: '2024-06-30' }])).toBe('2024-06-30')
+    })
+
+    it('returnerer sentinel-verdi for tom liste', () => {
+        expect(maxTom([])).toBe('1111-01-01')
+    })
+
+    it('fungerer med Date-objekter', () => {
+        const perioder = [{ fom: '2024-05-01', tom: toDate('2024-05-20') }]
+        expect(maxTom(perioder)).toBe('2024-05-20')
     })
 })
 
