@@ -3,7 +3,7 @@ import React, { Fragment } from 'react'
 
 import { ArbeidsgiverGruppering, SoknadGruppering } from '../../utils/gruppering'
 import { arbeidsgiverLabelForSoknader } from '../../utils/soknadArbeidsgiverLabel'
-import { dayjsToDate } from '../../queryhooks/useSoknader'
+import { toDateEllerUndefined } from '../../utils/dato-utils'
 import { beregnAktivTidsvindu, erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
 import { Filter } from '../Filter'
 import { Detaljer } from '../Detaljer'
@@ -42,8 +42,8 @@ export default function TidslinjeArbeidsgiver({
         for (const { soknader } of sykmeldinger.values()) {
             for (const sok of soknader.values()) {
                 const erOppholdUtland = arbId === 'opphold_utland'
-                const fom = erOppholdUtland ? dayjsToDate(sok.soknad.opprettetDato) : dayjsToDate(sok.soknad.fom!)
-                const tom = erOppholdUtland ? dayjsToDate(sok.soknad.opprettetDato) : dayjsToDate(sok.soknad.tom!)
+                const fom = erOppholdUtland ? sok.soknad.opprettetDato : sok.soknad.fom
+                const tom = erOppholdUtland ? sok.soknad.opprettetDato : sok.soknad.tom
                 if (fom && (!eldsteFra || fom < eldsteFra)) eldsteFra = fom
                 if (tom && (!nysteTil || tom > nysteTil)) nysteTil = tom
             }
@@ -77,8 +77,8 @@ export default function TidslinjeArbeidsgiver({
                             .flatMap((sok: SoknadGruppering) => {
                                 const klippingAvSoknad = sok.klippingAvSoknad
                                     .filter((k) => {
-                                        const fom = dayjsToDate(k.fom)
-                                        const tom = dayjsToDate(k.tom)
+                                        const fom = toDateEllerUndefined(k.fom)
+                                        const tom = toDateEllerUndefined(k.tom)
                                         return (
                                             fom &&
                                             tom &&
@@ -87,8 +87,8 @@ export default function TidslinjeArbeidsgiver({
                                     })
                                     .map((k) => (
                                         <Timeline.Period
-                                            start={dayjsToDate(k.fom)!}
-                                            end={dayjsToDate(k.tom)!}
+                                            start={toDateEllerUndefined(k.fom)!}
+                                            end={toDateEllerUndefined(k.tom)!}
                                             status="neutral"
                                             key={k.tom}
                                         >
@@ -97,7 +97,7 @@ export default function TidslinjeArbeidsgiver({
                                     ))
 
                                 if (erOppholdUtland) {
-                                    const dato = dayjsToDate(sok.soknad.opprettetDato)
+                                    const dato = sok.soknad.opprettetDato
                                     if (
                                         dato &&
                                         erPeriodeInnenforTidsvindu(dato, dato, aktivTidsvindu.fra, aktivTidsvindu.til)
@@ -114,8 +114,8 @@ export default function TidslinjeArbeidsgiver({
                                         )
                                     }
                                 } else if (!erGhostSykmelding) {
-                                    const sokFom = dayjsToDate(sok.soknad.fom!)
-                                    const sokTom = dayjsToDate(sok.soknad.tom!)
+                                    const sokFom = sok.soknad.fom
+                                    const sokTom = sok.soknad.tom
                                     if (
                                         sokFom &&
                                         sokTom &&
@@ -144,8 +144,8 @@ export default function TidslinjeArbeidsgiver({
                             .concat(
                                 syk.klippingAvSykmelding
                                     .filter((k) => {
-                                        const fom = dayjsToDate(k.fom)
-                                        const tom = dayjsToDate(k.tom)
+                                        const fom = toDateEllerUndefined(k.fom)
+                                        const tom = toDateEllerUndefined(k.tom)
                                         return (
                                             fom &&
                                             tom &&
@@ -154,8 +154,8 @@ export default function TidslinjeArbeidsgiver({
                                     })
                                     .map((k) => (
                                         <Timeline.Period
-                                            start={dayjsToDate(k.fom)!}
-                                            end={dayjsToDate(k.tom)!}
+                                            start={toDateEllerUndefined(k.fom)!}
+                                            end={toDateEllerUndefined(k.tom)!}
                                             status="neutral"
                                             key={k.tom}
                                         >
