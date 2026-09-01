@@ -1,18 +1,18 @@
 import React, { Fragment } from 'react'
-import dayjs, { Dayjs } from 'dayjs'
+import { format } from 'date-fns'
+
+import { erGyldigDato, formaterDato, toDate } from '../utils/dato-utils'
 
 import { Filter, FilterFelt } from './Filter'
 
 const erObjekt = (verdi: unknown): verdi is Record<string, unknown> =>
     typeof verdi === 'object' && verdi !== null && !Array.isArray(verdi)
 
-const erDayjsObjekt = (verdi: unknown): verdi is Dayjs => dayjs.isDayjs(verdi)
-
 const erDatostreng = (verdi: string): boolean => {
     if (!/^\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?(?:Z|[+-]\d{2}:\d{2})?)?$/.test(verdi)) {
         return false
     }
-    return dayjs(verdi).isValid()
+    return erGyldigDato(toDate(verdi))
 }
 
 const harTidspunkt = (verdi: string): boolean => /[T ]\d{2}:\d{2}/.test(verdi)
@@ -21,14 +21,14 @@ const erTom = (verdi: unknown): boolean =>
     (Array.isArray(verdi) && verdi.length === 0) || (erObjekt(verdi) && Object.keys(verdi).length === 0)
 
 const erBladverdi = (verdi: unknown): boolean =>
-    erDayjsObjekt(verdi) || (!Array.isArray(verdi) && !erObjekt(verdi)) || erTom(verdi)
+    erGyldigDato(verdi) || (!Array.isArray(verdi) && !erObjekt(verdi)) || erTom(verdi)
 
 const formaterVerdi = (verdi: unknown): string => {
-    if (erDayjsObjekt(verdi)) return verdi.format('D MMM YYYY HH:mm')
+    if (erGyldigDato(verdi)) return formaterDato(verdi, 'd MMM yyyy HH:mm')
     if (typeof verdi === 'string') {
         if (erDatostreng(verdi)) {
-            const dato = dayjs(verdi)
-            return dato.format(harTidspunkt(verdi) ? 'D MMM YYYY HH:mm' : 'D MMM YYYY')
+            const dato = toDate(verdi)
+            return format(dato, harTidspunkt(verdi) ? 'd MMM yyyy HH:mm' : 'd MMM yyyy')
         }
         return verdi
     }
