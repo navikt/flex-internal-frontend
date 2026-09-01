@@ -1,25 +1,27 @@
-import dayjs, { Dayjs } from 'dayjs'
+import { isValid } from 'date-fns'
+
+import { erGyldigDato, formaterDato, toDate } from './dato-utils'
 
 const erObjekt = (verdi: unknown): verdi is Record<string, unknown> =>
     typeof verdi === 'object' && verdi !== null && !Array.isArray(verdi)
 
-const erDayjsObjekt = (verdi: unknown): verdi is Dayjs => dayjs.isDayjs(verdi)
+const erDatoObjekt = (verdi: unknown): verdi is Date => verdi instanceof Date
 
 const erDatostreng = (verdi: string): boolean => {
     if (!/^\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?(?:Z|[+-]\d{2}:\d{2})?)?$/.test(verdi)) {
         return false
     }
-    return dayjs(verdi).isValid()
+    return isValid(toDate(verdi))
 }
 
 const harTidspunkt = (verdi: string): boolean => /[T ]\d{2}:\d{2}/.test(verdi)
 
 export const formaterVerdiSammenlign = (verdi: unknown): string => {
-    if (erDayjsObjekt(verdi)) return verdi.format('D MMM YYYY HH:mm')
+    if (erDatoObjekt(verdi)) return erGyldigDato(verdi) ? formaterDato(verdi, 'd MMM yyyy HH:mm') : 'Invalid Date'
     if (typeof verdi === 'string') {
         if (erDatostreng(verdi)) {
-            const dato = dayjs(verdi)
-            return dato.format(harTidspunkt(verdi) ? 'D MMM YYYY HH:mm' : 'D MMM YYYY')
+            const dato = toDate(verdi)
+            return formaterDato(dato, harTidspunkt(verdi) ? 'd MMM yyyy HH:mm' : 'd MMM yyyy')
         }
         return verdi
     }
@@ -43,7 +45,7 @@ export const flatUtObjekt = (obj: unknown, prefix = ''): Record<string, string> 
                 Object.assign(resultat, nested)
             })
         }
-    } else if (erDayjsObjekt(obj)) {
+    } else if (erDatoObjekt(obj)) {
         resultat[prefix] = formaterVerdiSammenlign(obj)
     } else if (erObjekt(obj)) {
         const entries = Object.entries(obj)
