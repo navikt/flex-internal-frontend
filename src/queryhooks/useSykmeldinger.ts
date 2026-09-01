@@ -1,8 +1,7 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
-import { Dayjs } from 'dayjs'
 
 import { fetchJsonMedRequestId } from '../utils/fetch'
-import { tilDayjs, tilDayjsPaakrevd } from '../utils/dayjsValidering'
+import { toDateEllerUndefined, toDatePaakrevd } from '../utils/dato-utils'
 
 interface BackendSykmeldingerResponse {
     sykmeldinger: BackendSykmelding[]
@@ -31,27 +30,27 @@ export function useSykmeldinger(fnr: string | undefined, enabled = true): UseQue
 export const mapTilSykmelding = (sykmelding: BackendSykmelding): Sykmelding => {
     return {
         ...sykmelding,
-        mottattTidspunkt: tilDayjsPaakrevd(sykmelding.mottattTidspunkt, 'mottattTidspunkt'),
-        behandletTidspunkt: tilDayjsPaakrevd(sykmelding.behandletTidspunkt, 'behandletTidspunkt'),
-        syketilfelleStartDato: tilDayjs(sykmelding.syketilfelleStartDato, 'YYYY-MM-DD'),
-        signaturDato: tilDayjs(sykmelding.signaturDato),
+        mottattTidspunkt: toDatePaakrevd(sykmelding.mottattTidspunkt, 'mottattTidspunkt'),
+        behandletTidspunkt: toDatePaakrevd(sykmelding.behandletTidspunkt, 'behandletTidspunkt'),
+        syketilfelleStartDato: toDateEllerUndefined(sykmelding.syketilfelleStartDato),
+        signaturDato: toDateEllerUndefined(sykmelding.signaturDato),
         kontaktMedPasient: {
             ...sykmelding.kontaktMedPasient,
-            kontaktDato: tilDayjs(sykmelding.kontaktMedPasient?.kontaktDato, 'YYYY-MM-DD'),
+            kontaktDato: toDateEllerUndefined(sykmelding.kontaktMedPasient?.kontaktDato),
         },
         sykmeldingStatus: {
             ...sykmelding.sykmeldingStatus,
-            timestamp: tilDayjsPaakrevd(sykmelding.sykmeldingStatus.timestamp, 'sykmeldingStatus.timestamp'),
+            timestamp: toDatePaakrevd(sykmelding.sykmeldingStatus.timestamp, 'sykmeldingStatus.timestamp'),
         },
         sykmeldingsperioder: sykmelding.sykmeldingsperioder.map((periode) => ({
             ...periode,
-            fom: tilDayjsPaakrevd(periode.fom, 'sykmeldingsperioder.fom', 'YYYY-MM-DD'),
-            tom: tilDayjsPaakrevd(periode.tom, 'sykmeldingsperioder.tom', 'YYYY-MM-DD'),
+            fom: toDatePaakrevd(periode.fom, 'sykmeldingsperioder.fom'),
+            tom: toDatePaakrevd(periode.tom, 'sykmeldingsperioder.tom'),
         })),
         hendelser: (sykmelding.hendelser ?? []).map((hendelse) => ({
             ...hendelse,
-            hendelseOpprettet: tilDayjsPaakrevd(hendelse.hendelseOpprettet, 'hendelser.hendelseOpprettet'),
-            lokaltOpprettet: tilDayjsPaakrevd(hendelse.lokaltOpprettet, 'hendelser.lokaltOpprettet'),
+            hendelseOpprettet: toDatePaakrevd(hendelse.hendelseOpprettet, 'hendelser.hendelseOpprettet'),
+            lokaltOpprettet: toDatePaakrevd(hendelse.lokaltOpprettet, 'hendelser.lokaltOpprettet'),
         })),
     }
 }
@@ -78,18 +77,18 @@ export interface BackendSykmelding {
 
 export interface Sykmelding {
     arbeidsgiver: Arbeidsgiver
-    behandletTidspunkt: Dayjs
+    behandletTidspunkt: Date
     behandlingsutfall: Behandlingsutfall
     egenmeldt: boolean
     id: string
     kontaktMedPasient: KontaktMedPasient
     merknader: Merknad[] | null
-    mottattTidspunkt: Dayjs
+    mottattTidspunkt: Date
     papirsykmelding: boolean
     pasient: Pasient
-    signaturDato?: Dayjs
+    signaturDato?: Date
     skjermesForPasient: boolean
-    syketilfelleStartDato?: Dayjs
+    syketilfelleStartDato?: Date
     sykmeldingStatus: SykmeldingStatus
     sykmeldingsperioder: Sykmeldingsperiode[]
     hendelser: Hendelse[]
@@ -133,8 +132,8 @@ export interface BackendSykmeldingsperiode {
 }
 
 export interface Sykmeldingsperiode {
-    fom: Dayjs
-    tom: Dayjs
+    fom: Date
+    tom: Date
     gradert: GradertPeriode | null
     behandlingsdager: number | null
     innspillTilArbeidsgiver: string | null
@@ -167,7 +166,7 @@ export interface ArbeidsrelatertArsak {
 
 export interface SykmeldingStatus {
     statusEvent: SykmeldingStatusType
-    timestamp: Dayjs
+    timestamp: Date
     arbeidsgiver: ArbeidsgiverStatus | null
     brukerSvar: BrukerSvar | null
 }
@@ -198,8 +197,8 @@ export interface Hendelse {
     brukerSvar: unknown | null
     tilleggsinfo: unknown | null
     source: string | null
-    hendelseOpprettet: Dayjs
-    lokaltOpprettet: Dayjs
+    hendelseOpprettet: Date
+    lokaltOpprettet: Date
 }
 
 export interface ArbeidsgiverStatus {
@@ -229,7 +228,7 @@ export interface FormSporsmalSvar<T> {
 }
 
 export interface KontaktMedPasient {
-    kontaktDato?: Dayjs
+    kontaktDato?: Date
     begrunnelseIkkeKontakt: string | null
 }
 
