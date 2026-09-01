@@ -1,5 +1,5 @@
 import React from 'react'
-import dayjs from 'dayjs'
+import { addMonths, subMonths } from 'date-fns'
 import { describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/react'
 
@@ -12,8 +12,8 @@ const ingenSykmeldinger = new Map<string, SykmeldingerPerArbeidsgiver>()
 describe('DagensDatoPin', () => {
     it('vises når dagens dato er innenfor tidsvinduet', () => {
         const aktivTidsvindu = {
-            fra: dayjs().subtract(1, 'month').toDate(),
-            til: dayjs().add(1, 'month').toDate(),
+            fra: subMonths(new Date(), 1),
+            til: addMonths(new Date(), 1),
         }
 
         const { container } = render(
@@ -31,8 +31,8 @@ describe('DagensDatoPin', () => {
 
     it('vises ikke når dagens dato er utenfor tidsvinduet', () => {
         const aktivTidsvindu = {
-            fra: dayjs('2020-01-01').toDate(),
-            til: dayjs('2020-06-30').toDate(),
+            fra: new Date('2020-01-01T00:00:00Z'),
+            til: new Date('2020-06-30T00:00:00Z'),
         }
 
         const { container } = render(
@@ -50,8 +50,8 @@ describe('DagensDatoPin', () => {
 
     it('vises ikke når tidsvinduet slutter i går', () => {
         const aktivTidsvindu = {
-            fra: dayjs().subtract(2, 'month').toDate(),
-            til: dayjs().subtract(1, 'day').startOf('day').toDate(),
+            fra: subMonths(new Date(), 2),
+            til: new Date(new Date(new Date().setDate(new Date().getDate() - 1)).setHours(0, 0, 0, 0)),
         }
 
         const { container } = render(
