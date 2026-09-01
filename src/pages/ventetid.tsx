@@ -1,11 +1,24 @@
 import React, { useState } from 'react'
+import { differenceInCalendarDays } from 'date-fns'
 import { Alert, BodyShort, Box, Label, Search, Loader } from '@navikt/ds-react'
 import { CheckmarkCircleFillIcon, CircleSlashFillIcon } from '@navikt/aksel-icons'
-import dayjs from 'dayjs'
 
 import { initialProps } from '../initialprops/initialProps'
 import { useVentetid } from '../queryhooks/useVentetid'
+import { formaterDato, toDatePaakrevd } from '../utils/dato-utils'
 import { handterUuidValidering } from '../utils/inputValidering'
+
+export function beregnAntallKalenderdager(periode: { fom: string; tom: string } | undefined): number | null {
+    if (!periode) {
+        return null
+    }
+
+    return differenceInCalendarDays(toDatePaakrevd(periode.tom, 'tom'), toDatePaakrevd(periode.fom, 'fom')) + 1
+}
+
+function formaterPeriodeDato(dato: string): string {
+    return formaterDato(toDatePaakrevd(dato, 'dato'), 'dd.MM.yyyy')
+}
 
 const VentetidPage = () => {
     const [sykmeldingId, setSykmeldingId] = useState<string>()
@@ -13,10 +26,8 @@ const VentetidPage = () => {
     const erUtenforVentetid = data?.erUtenforVentetid
     const ventetid = data?.ventetid
     const sykmeldingsperiode = data?.sykmeldingsperiode
-    const antallVentetidsdager = ventetid ? dayjs(ventetid.tom).diff(dayjs(ventetid.fom), 'day') + 1 : null
-    const antallSykmeldingsdager = sykmeldingsperiode
-        ? dayjs(sykmeldingsperiode.tom).diff(dayjs(sykmeldingsperiode.fom), 'day') + 1
-        : null
+    const antallVentetidsdager = beregnAntallKalenderdager(ventetid)
+    const antallSykmeldingsdager = beregnAntallKalenderdager(sykmeldingsperiode)
 
     function postfiksAntall(antall: number | null) {
         if (antall === null) return ''
@@ -90,7 +101,7 @@ const VentetidPage = () => {
                                 <>
                                     <BodyShort>Ventetid:</BodyShort>
                                     <BodyShort>
-                                        {`${dayjs(ventetid.fom).format('DD.MM.YYYY')} - ${dayjs(ventetid.tom).format('DD.MM.YYYY')} (${postfiksAntall(antallVentetidsdager)})`}
+                                        {`${formaterPeriodeDato(ventetid.fom)} - ${formaterPeriodeDato(ventetid.tom)} (${postfiksAntall(antallVentetidsdager)})`}
                                     </BodyShort>
                                 </>
                             )}
@@ -99,7 +110,7 @@ const VentetidPage = () => {
                                 <>
                                     <BodyShort>Sykmeldingsperiode:</BodyShort>
                                     <BodyShort>
-                                        {`${dayjs(sykmeldingsperiode.fom).format('DD.MM.YYYY')} - ${dayjs(sykmeldingsperiode.tom).format('DD.MM.YYYY')} (${postfiksAntall(antallSykmeldingsdager)})`}
+                                        {`${formaterPeriodeDato(sykmeldingsperiode.fom)} - ${formaterPeriodeDato(sykmeldingsperiode.tom)} (${postfiksAntall(antallSykmeldingsdager)})`}
                                     </BodyShort>
                                 </>
                             )}
