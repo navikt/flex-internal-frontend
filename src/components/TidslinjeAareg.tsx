@@ -1,28 +1,29 @@
 import { DatePicker, ReadMore, Timeline, useDatepicker } from '@navikt/ds-react'
+import { addWeeks } from 'date-fns'
 import React from 'react'
-import dayjs from 'dayjs'
 
 import { AaregResponse, Arbeidsforhold } from '../queryhooks/useAareg'
+import { toDate } from '../utils/dato-utils'
 
 import VelgZoomPeriode from './VelgZoomPeriode'
 
 export function TidslinjeAareg({ aaregresponse }: { aaregresponse: AaregResponse }) {
-    const datoer = [] as dayjs.Dayjs[]
+    const datoer: Date[] = []
     aaregresponse.forEach((arbeidsforhold) => {
         if (arbeidsforhold.ansettelsesperiode.startdato) {
-            datoer.push(dayjs(arbeidsforhold.ansettelsesperiode.startdato))
+            datoer.push(toDate(arbeidsforhold.ansettelsesperiode.startdato))
         }
         if (arbeidsforhold.ansettelsesperiode.sluttdato) {
-            datoer.push(dayjs(arbeidsforhold.ansettelsesperiode.sluttdato))
+            datoer.push(toDate(arbeidsforhold.ansettelsesperiode.sluttdato))
         }
     })
-    datoer.push(dayjs().add(1, 'week'))
+    datoer.push(addWeeks(new Date(), 1))
 
-    const sorterteDatoer = datoer.slice().sort((a, b) => a.valueOf() - b.valueOf())
+    const sorterteDatoer = datoer.slice().sort((a, b) => a.getTime() - b.getTime())
     const eldsteDato = sorterteDatoer[0]
     const nyesteDato = sorterteDatoer[sorterteDatoer.length - 1]
-    const defaultFraDato = eldsteDato.toDate()
-    const defaultTilDato = nyesteDato.add(1, 'week').toDate()
+    const defaultFraDato = eldsteDato
+    const defaultTilDato = addWeeks(nyesteDato, 1)
 
     const {
         datepickerProps: fraDatepickerProps,
@@ -56,10 +57,10 @@ export function TidslinjeAareg({ aaregresponse }: { aaregresponse: AaregResponse
 
     const sluttDatoEllerToUkerTil = (arbeidsforhold: Arbeidsforhold) => {
         if (arbeidsforhold.ansettelsesperiode.sluttdato) {
-            return dayjs(arbeidsforhold.ansettelsesperiode.sluttdato).toDate()
+            return toDate(arbeidsforhold.ansettelsesperiode.sluttdato)
         }
 
-        return dayjs().add(2, 'week').toDate()
+        return addWeeks(new Date(), 2)
     }
 
     return (
@@ -91,7 +92,7 @@ export function TidslinjeAareg({ aaregresponse }: { aaregresponse: AaregResponse
 
                                 return (
                                     <Timeline.Period
-                                        start={dayjs(ao.ansettelsesperiode.startdato).toDate()}
+                                        start={toDate(ao.ansettelsesperiode.startdato)}
                                         end={sluttDatoEllerToUkerTil(ao)}
                                         status="neutral"
                                         key={periodeNokkel}
