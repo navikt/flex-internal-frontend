@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { differenceInCalendarDays, format, isBefore } from 'date-fns'
 import {
     Alert,
     BodyLong,
@@ -15,7 +16,6 @@ import {
 } from '@navikt/ds-react'
 import { ArrowsCirclepathIcon, FileIcon, TrashIcon } from '@navikt/aksel-icons'
 import { useQueryClient } from '@tanstack/react-query'
-import dayjs from 'dayjs'
 
 import { initialProps } from '../initialprops/initialProps'
 import { useArbeidssoker, ArbeidssokerDetaljer } from '../queryhooks/useArbeidssoker'
@@ -31,7 +31,20 @@ import { useFtaVedtakIgnorerArbeidssokerregister } from '../queryhooks/useFtaVed
 import { useEndreFtaVedtakTomMutation } from '../queryhooks/useEndreFtaVedtakTom'
 import { useEndreFtaVedtakFomMutation } from '../queryhooks/useEndreFtaVedtakFom'
 import { useDeleteFtaSoknadMutation } from '../queryhooks/useDeleteFtaSoknad'
+import { formaterDato, osloDate, toDatePaakrevd } from '../utils/dato-utils'
 import { useValgtFnr } from '../utils/useValgtFnr'
+
+export function beregnUkerMellomDatoer(fom: Date | undefined, tom: Date | undefined): number | undefined {
+    if (!fom || !tom) {
+        return undefined
+    }
+
+    return Math.ceil(differenceInCalendarDays(tom, fom) / 7)
+}
+
+function formaterIsoDato(dato: Date): string {
+    return format(dato, 'yyyy-MM-dd')
+}
 
 const FriskmeldtPage = () => {
     const { fnr, settFnr, nullstillFnr } = useValgtFnr()
@@ -168,14 +181,14 @@ const FriskmeldtEnkeltPerson = ({ fnr }: { fnr: string }) => {
                 className="mb-6"
                 size="small"
                 variant="secondary"
-                onClick={() => {
-                    queryclient.invalidateQueries({
+                onClick={async () => {
+                    await queryclient.invalidateQueries({
                         queryKey: ['fta-vedtak-for-person', fnr],
                     })
-                    queryclient.invalidateQueries({
+                    await queryclient.invalidateQueries({
                         queryKey: ['soknad', fnr],
                     })
-                    queryclient.invalidateQueries({
+                    await queryclient.invalidateQueries({
                         queryKey: ['arbeidssokerperioder', fnr],
                     })
                 }}
@@ -205,10 +218,10 @@ const Soknader = ({ fnr }: { fnr: string }) => {
     )
 
     friskmeldtsoknader.sort((a, b) => {
-        if (a.fom! < b.fom!) {
+        if (a.fom && b.fom && isBefore(a.fom, b.fom)) {
             return -1
         }
-        if (a.fom! > b.fom!) {
+        if (a.fom && b.fom && isBefore(b.fom, a.fom)) {
             return 1
         }
         return 0
@@ -267,8 +280,10 @@ const Soknader = ({ fnr }: { fnr: string }) => {
                     {friskmeldtsoknader.map((soknad) => (
                         <Table.Row key={soknad.id}>
                             <Table.DataCell>{soknad.id}</Table.DataCell>
-                            <Table.DataCell>{soknad.fom?.format('YYYY-MM-DD')}</Table.DataCell>{' '}
-                            <Table.DataCell>{soknad.tom?.format('YYYY-MM-DD')}</Table.DataCell>
+                            <Table.DataCell>
+                                {soknad.fom ? formaterDato(soknad.fom, 'yyyy-MM-dd') : ''}
+                            </Table.DataCell>{' '}
+                            <Table.DataCell>{soknad.tom ? formaterDato(soknad.tom, 'yyyy-MM-dd') : ''}</Table.DataCell>
                             <Table.DataCell>{soknad.status}</Table.DataCell>
                             <Table.DataCell>
                                 {(soknad.status === 'NY' || soknad.status === 'FREMTIDIG') && (
@@ -308,9 +323,9 @@ const Soknader = ({ fnr }: { fnr: string }) => {
 
 const EndreFomDato = ({ vedtak }: { vedtak: FtaVedtak }) => {
     const { datepickerProps, inputProps, selectedDay } = useDatepicker({
-        defaultSelected: new Date(vedtak.fom),
+        defaultSelected: toDatePaakrevd(vedtak.fom, 'vedtak.fom'),
     })
-    const formattertSelected = dayjs(selectedDay).format('YYYY-MM-DD')
+    const formattertSelected = selectedDay ? formaterIsoDato(selectedDay) : vedtak.fom
     const endreFom = useEndreFtaVedtakFomMutation()
     return (
         <div className="mt-8">
@@ -342,9 +357,9 @@ const EndreFomDato = ({ vedtak }: { vedtak: FtaVedtak }) => {
 
 const EndreTomDato = ({ vedtak }: { vedtak: FtaVedtak }) => {
     const { datepickerProps, inputProps, selectedDay } = useDatepicker({
-        defaultSelected: new Date(vedtak.tom),
+        defaultSelected: toDatePaakrevd(vedtak.tom, 'vedtak.tom'),
     })
-    const formattertSelected = dayjs(selectedDay).format('YYYY-MM-DD')
+    const formattertSelected = selectedDay ? formaterIsoDato(selectedDay) : vedtak.tom
     const endreTom = useEndreFtaVedtakTomMutation()
     return (
         <div className="mt-8">
@@ -382,12 +397,12 @@ const FtaVedtakComp = ({ fnr }: { fnr: string }) => {
         datepickerProps: fomDpProps,
         inputProps: fomInputProps,
         selectedDay: fomDag,
-    } = useDatepicker({ fromDate: new Date('2025-01-01') })
+    } = useDatepicker({ fromDate: osloDate(2025, 1, 1) })
     const {
         datepickerProps: tomDpProps,
         inputProps: tomInputProps,
         selectedDay: tomDag,
-    } = useDatepicker({ fromDate: new Date('2025-01-01') })
+    } = useDatepicker({ fromDate: osloDate(2025, 1, 1) })
     const [ignorerArbeidssokerregister, setIgnorerArbeidssokerregister] = useState(false)
     const endreStatus = useEndreStatusMutation()
     const ignorerArbs = useFtaVedtakIgnorerArbeidssokerregister()
@@ -396,14 +411,14 @@ const FtaVedtakComp = ({ fnr }: { fnr: string }) => {
         return <div>Laster vedtak...</div>
     }
 
-    const ok = fomDag && tomDag && fomDag <= tomDag
+    const ok = Boolean(fomDag && tomDag && !isBefore(tomDag, fomDag))
 
     // weeks between fom and tom
     function regnUtUker() {
         if (!fomDag || !tomDag) {
             return undefined
         }
-        return Math.ceil((tomDag.getTime() - fomDag.getTime()) / (1000 * 60 * 60 * 24 * 7))
+        return Math.ceil(differenceInCalendarDays(tomDag, fomDag) / 7)
     }
 
     const weeks = regnUtUker()
@@ -614,8 +629,8 @@ const FtaVedtakComp = ({ fnr }: { fnr: string }) => {
                                 request: {
                                     fnr: fnr,
                                     ignorerArbeidssokerregister: ignorerArbeidssokerregister,
-                                    fom: fomDag ? dayjs(fomDag).format('YYYY-MM-DD') : '',
-                                    tom: tomDag ? dayjs(tomDag).format('YYYY-MM-DD') : '',
+                                    fom: fomDag ? formaterIsoDato(fomDag) : '',
+                                    tom: tomDag ? formaterIsoDato(tomDag) : '',
                                 },
                                 callback: () => {
                                     ref.current?.close()
