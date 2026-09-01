@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import dayjs from 'dayjs'
 
 import { Soknad } from '../queryhooks/useSoknader'
 import type { Sykmelding } from '../queryhooks/useSykmeldinger'
 import type { SykmeldingerPerArbeidsgiver } from '../components/sykmelding/sykmeldingTidslinjeUtils'
 
 import type { ArbeidsgiverGruppering } from './gruppering'
+import { toDate } from './dato-utils'
 import {
     sorterSykmeldingGrupperEtterSignaturDato,
     sorterSoknadGrupperEtterSignaturDato,
@@ -16,7 +16,7 @@ const lagSykGruppe = (id: string, signaturDato: string | null): [string, Sykmeld
     {
         label: id,
         dagNokler: new Set(),
-        sykmeldinger: [{ signaturDato: signaturDato ? dayjs(signaturDato) : undefined } as unknown as Sykmelding],
+        sykmeldinger: [{ signaturDato: signaturDato ? toDate(signaturDato) : undefined } as unknown as Sykmelding],
     },
 ]
 
