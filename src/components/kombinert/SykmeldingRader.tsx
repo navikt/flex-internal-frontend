@@ -1,9 +1,9 @@
 import React from 'react'
-import dayjs from 'dayjs'
 import { StethoscopeIcon } from '@navikt/aksel-icons'
 import { Timeline } from '@navikt/ds-react'
 
 import { erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
+import { formaterDato, toDate } from '../../utils/dato-utils'
 import { sorterSykmeldingGrupperEtterSignaturDato } from '../../utils/kombinertTidslinjeSortering'
 import { ikonForSykmeldingPerioder, ikonParForSykmeldingPerioder } from '../../utils/tidslinjeIkonUtils'
 import type { DrawerInnhold } from '../DetaljerDrawer'
@@ -90,8 +90,8 @@ export const lagSykmeldingRader = ({
                         isActive={aktivPeriodeId === sykmeldingAktivId}
                         onSelectPeriod={() => {
                             if (sammenlignModus) {
-                                const fomStr = dayjs(forstePeriode.fom).format('D MMM YYYY')
-                                const tomStr = dayjs(sistePeriode.tom).format('D MMM YYYY')
+                                const fomStr = formaterDato(toDate(forstePeriode.fom), 'd MMM yyyy')
+                                const tomStr = formaterDato(toDate(sistePeriode.tom), 'd MMM yyyy')
                                 onSammenlignValgt?.({
                                     kildeId: sykmeldingAktivId,
                                     objekt: sykmelding,

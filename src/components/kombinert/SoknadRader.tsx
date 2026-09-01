@@ -3,7 +3,8 @@ import { TasklistIcon } from '@navikt/aksel-icons'
 import { Timeline } from '@navikt/ds-react'
 
 import { ArbeidsgiverGruppering, SoknadGruppering } from '../../utils/gruppering'
-import { dayjsToDate } from '../../queryhooks/useSoknader'
+import { formaterDato, toDateEllerUndefined } from '../../utils/dato-utils'
+import type { Klipp } from '../../utils/overlapp'
 import { erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
 import { ikonParForSoknad, ikonerForSoknad, klippIkon } from '../../utils/tidslinjeIkonUtils'
 import { sorterSoknadGrupperEtterSignaturDato } from '../../utils/kombinertTidslinjeSortering'
@@ -19,6 +20,48 @@ interface TidslinjePeriodeMedElement {
     start: Date
     end: Date
     element: React.ReactElement
+}
+
+const lagKlippPeriodeMedElement = (
+    k: Klipp,
+    aktivTidsvindu: { fra: Date; til: Date },
+    aktivPeriodeId: string | null,
+    aktivDrawerKildeId: string | null,
+    onPeriodeValgt: OnPeriodeValgt,
+): TidslinjePeriodeMedElement | null => {
+    const start = toDateEllerUndefined(k.fom)
+    const end = toDateEllerUndefined(k.tom)
+    if (!start || !end) return null
+
+    if (!erPeriodeInnenforTidsvindu(start, end, aktivTidsvindu.fra, aktivTidsvindu.til)) return null
+
+    const sykmeldingId = k.sykmeldingUuid ?? null
+    const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
+    const kildeId = k.id
+    const erValgtPeriode = aktivDrawerKildeId === kildeId
+
+    return {
+        start,
+        end,
+        element: (
+            <Timeline.Period
+                start={start}
+                end={end}
+                status="neutral"
+                key={k.id}
+                icon={klippIkon}
+                isActive={erAktiv}
+                className={erValgtPeriode ? 'shadow-[inset_0_0_0_4px_#dc2626]!' : undefined}
+                onSelectPeriod={() => {
+                    if (aktivDrawerKildeId === kildeId) {
+                        onPeriodeValgt(null, null, null)
+                    } else {
+                        onPeriodeValgt(sykmeldingId, kildeId, lagKlippetSoknadDrawerInnhold(k))
+                    }
+                }}
+            />
+        ),
+    }
 }
 
 const sorterPerioderForSpor = (a: TidslinjePeriodeMedElement, b: TidslinjePeriodeMedElement) => {
@@ -85,50 +128,20 @@ export const lagSoknadRader = ({
             return Array.from(syk.soknader.values())
                 .flatMap((sok: SoknadGruppering) => {
                     const klippingAvSoknad = sok.klippingAvSoknad
-                        .filter((k) => {
-                            const fom = dayjsToDate(k.fom)
-                            const tom = dayjsToDate(k.tom)
-                            return (
-                                fom &&
-                                tom &&
-                                erPeriodeInnenforTidsvindu(fom, tom, aktivTidsvindu.fra, aktivTidsvindu.til)
-                            )
-                        })
-                        .map((k) => {
-                            const start = dayjsToDate(k.fom)!
-                            const end = dayjsToDate(k.tom)!
-                            const sykmeldingId = k.sykmeldingUuid ?? null
-                            const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
-                            const kildeId = k.id
-                            const erValgtPeriode = aktivDrawerKildeId === kildeId
-
-                            return {
-                                start,
-                                end,
-                                element: (
-                                    <Timeline.Period
-                                        start={start}
-                                        end={end}
-                                        status="neutral"
-                                        key={k.id}
-                                        icon={klippIkon}
-                                        isActive={erAktiv}
-                                        className={erValgtPeriode ? 'shadow-[inset_0_0_0_4px_#dc2626]!' : undefined}
-                                        onSelectPeriod={() => {
-                                            if (aktivDrawerKildeId === kildeId) {
-                                                onPeriodeValgt(null, null, null)
-                                            } else {
-                                                onPeriodeValgt(sykmeldingId, kildeId, lagKlippetSoknadDrawerInnhold(k))
-                                            }
-                                        }}
-                                    />
-                                ),
-                            }
-                        })
+                        .map((k) =>
+                            lagKlippPeriodeMedElement(
+                                k,
+                                aktivTidsvindu,
+                                aktivPeriodeId,
+                                aktivDrawerKildeId,
+                                onPeriodeValgt,
+                            ),
+                        )
+                        .filter((periode): periode is TidslinjePeriodeMedElement => periode !== null)
 
                     if (!erGhostSykmelding) {
-                        const sokFom = dayjsToDate(sok.soknad.fom!)
-                        const sokTom = dayjsToDate(sok.soknad.tom!)
+                        const sokFom = sok.soknad.fom
+                        const sokTom = sok.soknad.tom
                         if (
                             sokFom &&
                             sokTom &&
@@ -140,8 +153,8 @@ export const lagSoknadRader = ({
                             const erValgtPeriode = aktivDrawerKildeId === kildeId
                             const erSammenlignValgt = sammenlignValgteIder.includes(kildeId)
 
-                            const fomStr = sok.soknad.fom ? sok.soknad.fom.format('D MMM YYYY') : ''
-                            const tomStr = sok.soknad.tom ? sok.soknad.tom.format('D MMM YYYY') : ''
+                            const fomStr = sok.soknad.fom ? formaterDato(sok.soknad.fom, 'd MMM yyyy') : ''
+                            const tomStr = sok.soknad.tom ? formaterDato(sok.soknad.tom, 'd MMM yyyy') : ''
 
                             klippingAvSoknad.push({
                                 start: sokFom,
@@ -195,45 +208,24 @@ export const lagSoknadRader = ({
                 .concat(
                     syk.klippingAvSykmelding
                         .filter((k) => {
-                            const fom = dayjsToDate(k.fom)
-                            const tom = dayjsToDate(k.tom)
+                            const fom = toDateEllerUndefined(k.fom)
+                            const tom = toDateEllerUndefined(k.tom)
                             return (
                                 fom &&
                                 tom &&
                                 erPeriodeInnenforTidsvindu(fom, tom, aktivTidsvindu.fra, aktivTidsvindu.til)
                             )
                         })
-                        .map((k) => {
-                            const start = dayjsToDate(k.fom)!
-                            const end = dayjsToDate(k.tom)!
-                            const sykmeldingId = k.sykmeldingUuid ?? null
-                            const erAktiv = aktivPeriodeId !== null && aktivPeriodeId === sykmeldingId
-                            const kildeId = k.id
-                            const erValgtPeriode = aktivDrawerKildeId === kildeId
-
-                            return {
-                                start,
-                                end,
-                                element: (
-                                    <Timeline.Period
-                                        start={start}
-                                        end={end}
-                                        status="neutral"
-                                        key={k.id}
-                                        icon={klippIkon}
-                                        isActive={erAktiv}
-                                        className={erValgtPeriode ? 'shadow-[inset_0_0_0_4px_#dc2626]!' : undefined}
-                                        onSelectPeriod={() => {
-                                            if (aktivDrawerKildeId === kildeId) {
-                                                onPeriodeValgt(null, null, null)
-                                            } else {
-                                                onPeriodeValgt(sykmeldingId, kildeId, lagKlippetSoknadDrawerInnhold(k))
-                                            }
-                                        }}
-                                    />
-                                ),
-                            }
-                        }),
+                        .map((k) =>
+                            lagKlippPeriodeMedElement(
+                                k,
+                                aktivTidsvindu,
+                                aktivPeriodeId,
+                                aktivDrawerKildeId,
+                                onPeriodeValgt,
+                            ),
+                        )
+                        .filter((periode): periode is TidslinjePeriodeMedElement => periode !== null),
                 )
         })
 
