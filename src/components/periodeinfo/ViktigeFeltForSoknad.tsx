@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { Soknad, dayjsToDate } from '../../queryhooks/useSoknader'
+import { Soknad } from '../../queryhooks/useSoknader'
+import { erGyldigDato } from '../../utils/dato-utils'
 import { antallKalenderdager, formaterDato } from '../sykmelding/sykmeldingTidslinjeUtils'
 
 import ViktigePeriodefelt from './ViktigePeriodefelt'
@@ -39,11 +40,11 @@ const hentGradFraSoknadperioder = (soknad: Soknad): string => {
 
 export default function ViktigeFeltForSoknad({ soknad }: Props) {
     if (soknad.soknadstype === 'OPPHOLD_UTLAND') {
-        const opprettetDato = dayjsToDate(soknad.opprettetDato)
+        const opprettetDato = soknad.opprettetDato
         if (!opprettetDato) return null
 
-        const sendtTilNAVDato = dayjsToDate(soknad.sendtTilNAVDato)
-        const avbruttDato = dayjsToDate(soknad.avbruttDato)
+        const sendtTilNAVDato = soknad.sendtTilNAVDato
+        const avbruttDato = soknad.avbruttDato
 
         const viktigeFelt = [
             { etikett: 'ID', verdi: soknad.id },
@@ -58,17 +59,17 @@ export default function ViktigeFeltForSoknad({ soknad }: Props) {
 
     const perioder = soknad.soknadPerioder
         .map((periode) => {
-            if (!periode.fom.isValid() || !periode.tom.isValid()) return null
+            if (!erGyldigDato(periode.fom) || !erGyldigDato(periode.tom)) return null
             return {
-                startDato: periode.fom.toDate(),
-                sluttDato: periode.tom.toDate(),
+                startDato: periode.fom,
+                sluttDato: periode.tom,
             }
         })
         .filter((periode): periode is { startDato: Date; sluttDato: Date } => periode !== null)
         .sort((a, b) => a.startDato.getTime() - b.startDato.getTime())
 
-    const forstePeriode = dayjsToDate(soknad.fom) ?? perioder[0]?.startDato
-    const sistePeriode = dayjsToDate(soknad.tom) ?? perioder[perioder.length - 1]?.sluttDato
+    const forstePeriode = soknad.fom ?? perioder[0]?.startDato
+    const sistePeriode = soknad.tom ?? perioder[perioder.length - 1]?.sluttDato
 
     if (!forstePeriode || !sistePeriode) return null
 

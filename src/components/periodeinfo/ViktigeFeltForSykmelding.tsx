@@ -50,11 +50,11 @@ export default function ViktigeFeltForSykmelding({ sykmelding, perioder }: Props
         },
         {
             etikett: 'Signatur dato',
-            verdi: sykmelding.signaturDato ? formaterDatoMedTid(sykmelding.signaturDato.toDate()) : 'Ikke satt',
+            verdi: sykmelding.signaturDato ? formaterDatoMedTid(sykmelding.signaturDato) : 'Ikke satt',
         },
         {
             etikett: 'Behandlet tidspunkt',
-            verdi: formaterDatoMedTid(sykmelding.behandletTidspunkt.toDate()),
+            verdi: formaterDatoMedTid(sykmelding.behandletTidspunkt),
         },
         { etikett: 'Grad', verdi: hentGradFraSykmelding(sykmelding) },
         { etikett: 'Fra', verdi: formaterDato(forstePeriode.startDato) },

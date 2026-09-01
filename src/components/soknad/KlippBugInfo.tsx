@@ -1,7 +1,9 @@
 import { Fragment } from 'react'
 import { Alert } from '@navikt/ds-react'
+import { format } from 'date-fns'
 
 import { SykmeldingGruppering } from '../../utils/gruppering'
+import { erGyldigDato } from '../../utils/dato-utils'
 import { maxTom, minFom } from '../../utils/overlapp'
 
 function finnUglerIMosen(sykmeldingGruppering: Map<string, SykmeldingGruppering>) {
@@ -14,14 +16,14 @@ function finnUglerIMosen(sykmeldingGruppering: Map<string, SykmeldingGruppering>
             }
             const forventetFom = minFom(sok.soknad.soknadPerioder)
             const forventetTom = maxTom(sok.soknad.soknadPerioder)
-            if (sok.soknad.fom?.format('YYYY-MM-DD') !== forventetFom) {
+            if (!erGyldigDato(sok.soknad.fom) || format(sok.soknad.fom, 'yyyy-MM-dd') !== forventetFom) {
                 ugler.push(
                     `Soknad ${sokId} har feil fom ${sok.soknad.fom}, perioder ${JSON.stringify(
                         sok.soknad.soknadPerioder,
                     )}`,
                 )
             }
-            if (sok.soknad.tom?.format('YYYY-MM-DD') !== forventetTom) {
+            if (!erGyldigDato(sok.soknad.tom) || format(sok.soknad.tom, 'yyyy-MM-dd') !== forventetTom) {
                 ugler.push(
                     `Soknad ${sokId} har feil tom ${sok.soknad.tom}, perioder ${JSON.stringify(
                         sok.soknad.soknadPerioder,

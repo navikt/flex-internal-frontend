@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import { BodyShort, Button, HStack } from '@navikt/ds-react'
 import { ArrowsSquarepathIcon, XMarkIcon } from '@navikt/aksel-icons'
-import dayjs from 'dayjs'
+import { addMonths, subMonths } from 'date-fns'
 
-import { BackendSoknad, KlippetSykepengesoknadRecord, Soknad, dayjsToDate } from '../queryhooks/useSoknader'
+import { BackendSoknad, KlippetSykepengesoknadRecord, Soknad } from '../queryhooks/useSoknader'
 import type { Sykmelding } from '../queryhooks/useSykmeldinger'
 import { ikonParForSoknad } from '../utils/tidslinjeIkonUtils'
 import { useValgtFnr } from '../utils/useValgtFnr'
@@ -75,8 +75,8 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
                 }
             } else if (oppslagData?.soknad) {
                 const soknad = new Soknad(oppslagData.soknad as BackendSoknad)
-                const fomDato = dayjsToDate(soknad.fom)
-                const tomDato = dayjsToDate(soknad.tom)
+                const fomDato = soknad.fom
+                const tomDato = soknad.tom
                 const periodeInfo = <ViktigeFeltForSoknad soknad={soknad} />
                 drawerContent = lagSoknadDrawerInnhold(soknad, periodeInfo, ikonParForSoknad(soknad))
                 periodStart = fomDato ?? null
@@ -84,12 +84,8 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
             }
 
             if (periodStart) {
-                setVisningsFraDato(dayjs(periodStart).subtract(3, 'month').toDate())
-                setVisningstilDato(
-                    dayjs(periodEnd ?? periodStart)
-                        .add(3, 'month')
-                        .toDate(),
-                )
+                setVisningsFraDato(subMonths(periodStart, 3))
+                setVisningstilDato(addMonths(periodEnd ?? periodStart, 3))
             }
 
             handlePeriodeValgt(valgtPeriodeId ?? null, valgtDrawerKildeId ?? null, drawerContent)
