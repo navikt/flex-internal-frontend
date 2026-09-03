@@ -58,8 +58,8 @@ importers:
         version: 14.0.2
     devDependencies:
       '@navikt/tsm-eslint-react':
-        specifier: ^1.0.1
-        version: 1.0.1(eslint@9.39.5(jiti@2.7.0))
+        specifier: ^1.0.3
+        version: 1.0.3(eslint@9.39.5(jiti@2.7.0))
       '@navikt/tsm-prettier':
         specifier: ^2.0.1
         version: 2.0.1(prettier@3.9.6)
@@ -600,8 +600,8 @@ packages:
     resolution: {integrity: sha512-WS+agfWCqHyCtIpn/iQHNBRwn1gzCQDe0NY9Tz5ErrBsWHNxtqIV7W2eAmRUa3DLrZGHczoQhup+PYT6UX/SpQ==, tarball: https://npm.pkg.github.com/download/@navikt/texas/4.1.4/1725aca0fa0b803e0048212c3e202d24c10f3c3b}
     engines: {node: ^20.19.0 || >= 22.12.0 || 24.x || 25.x}
 
-  '@navikt/tsm-eslint-react@1.0.1':
-    resolution: {integrity: sha512-0cTdF3QlbOP6cRCrtY01/i9YnCcUwywslmLWpBtf+0qaeriOY6tRmEPx4pkRrm4YofY/DQr/WcdplFel6Xi+Lw==, tarball: https://npm.pkg.github.com/download/@navikt/tsm-eslint-react/1.0.1/8e22286fef31ae0adde49ce6ea7e5cd839b58fca}
+  '@navikt/tsm-eslint-react@1.0.3':
+    resolution: {integrity: sha512-+kVDpmdscsUVp21m9LWIy7H9+f6Vm4KzOvfVsinVZHA3Q2O0KEWICbzJQBNJhd5OagkAKi/OVvFmpWfnHYDdjQ==, tarball: https://npm.pkg.github.com/download/@navikt/tsm-eslint-react/1.0.3/104b9333b6c2e67422362d269a85ba3f1d37645b}
     peerDependencies:
       eslint: '>= 9'
 
@@ -3505,7 +3505,7 @@ snapshots:
 
   '@navikt/texas@4.1.4': {}
 
-  '@navikt/tsm-eslint-react@1.0.1(eslint@9.39.5(jiti@2.7.0))':
+  '@navikt/tsm-eslint-react@1.0.3(eslint@9.39.5(jiti@2.7.0))':
     dependencies:
       eslint: 9.39.5(jiti@2.7.0)
 
