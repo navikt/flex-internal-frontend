@@ -1,7 +1,6 @@
-import dayjs from 'dayjs'
-
 import { Sortering } from '../components/soknad/ValgtSortering'
 
+import { toDate } from './dato-utils'
 import { SykmeldingGruppering } from './gruppering'
 
 export const sortert = (
@@ -25,7 +24,7 @@ export const sortert = (
 
     const isGreater = (a: unknown, b: unknown): boolean => {
         if (typeof a === 'string' && typeof b === 'string') return a > b
-        if (dayjs.isDayjs(a) && dayjs.isDayjs(b)) return a.valueOf() > b.valueOf()
+        if (a instanceof Date && b instanceof Date) return a.getTime() > b.getTime()
         return false
     }
 
@@ -34,35 +33,36 @@ export const sortert = (
         else return previousValue
     }
 
-    const tilDayjsVerdi = (verdi: unknown): dayjs.Dayjs => {
-        if (dayjs.isDayjs(verdi)) return verdi
-        if (typeof verdi === 'string') return dayjs(verdi)
-        return dayjs(0)
+    /** Normaliserer klipp (streng, 'YYYY-MM-DD') og søknad (Date) til samme Date-representasjon for sammenligning. */
+    const tilDateVerdi = (verdi: unknown): Date => {
+        if (verdi instanceof Date) return verdi
+        if (typeof verdi === 'string') return toDate(verdi)
+        return new Date(0)
     }
 
     switch (sortering) {
         case 'sykmelding skrevet': {
-            const verdiA = mapTilSoknadProp(aSykmeldingGruppering, 'sykmeldingUtskrevet').reduce(maximum, dayjs(0))
-            const verdiB = mapTilSoknadProp(bSykmeldingGruppering, 'sykmeldingUtskrevet').reduce(maximum, dayjs(0))
+            const verdiA = mapTilSoknadProp(aSykmeldingGruppering, 'sykmeldingUtskrevet').reduce(maximum, new Date(0))
+            const verdiB = mapTilSoknadProp(bSykmeldingGruppering, 'sykmeldingUtskrevet').reduce(maximum, new Date(0))
             return isGreater(verdiA, verdiB) ? -1 : 1
         }
         case 'opprettet': {
             const verdiA = aSykmeldingId.endsWith('_GHOST')
-                ? mapTilKlippProp(aSykmeldingGruppering, 'timestamp').reduce(maximum, dayjs(0))
-                : mapTilSoknadProp(aSykmeldingGruppering, 'opprettetDato').reduce(maximum, dayjs(0))
+                ? mapTilKlippProp(aSykmeldingGruppering, 'timestamp').reduce(maximum, new Date(0))
+                : mapTilSoknadProp(aSykmeldingGruppering, 'opprettetDato').reduce(maximum, new Date(0))
             const verdiB = bSykmeldingId.endsWith('_GHOST')
-                ? mapTilKlippProp(bSykmeldingGruppering, 'timestamp').reduce(maximum, dayjs(0))
-                : mapTilSoknadProp(bSykmeldingGruppering, 'opprettetDato').reduce(maximum, dayjs(0))
+                ? mapTilKlippProp(bSykmeldingGruppering, 'timestamp').reduce(maximum, new Date(0))
+                : mapTilSoknadProp(bSykmeldingGruppering, 'opprettetDato').reduce(maximum, new Date(0))
             return isGreater(verdiA, verdiB) ? -1 : 1
         }
         default:
         case 'tom': {
             const verdiA = aSykmeldingId.endsWith('_GHOST')
-                ? mapTilKlippProp(aSykmeldingGruppering, 'tom').map(tilDayjsVerdi).reduce(maximum, dayjs('2000-01-01'))
-                : mapTilSoknadProp(aSykmeldingGruppering, 'tom').map(tilDayjsVerdi).reduce(maximum, dayjs('2000-01-01'))
+                ? mapTilKlippProp(aSykmeldingGruppering, 'tom').map(tilDateVerdi).reduce(maximum, toDate('2000-01-01'))
+                : mapTilSoknadProp(aSykmeldingGruppering, 'tom').map(tilDateVerdi).reduce(maximum, toDate('2000-01-01'))
             const verdiB = bSykmeldingId.endsWith('_GHOST')
-                ? mapTilKlippProp(bSykmeldingGruppering, 'tom').map(tilDayjsVerdi).reduce(maximum, dayjs('2000-01-01'))
-                : mapTilSoknadProp(bSykmeldingGruppering, 'tom').map(tilDayjsVerdi).reduce(maximum, dayjs('2000-01-01'))
+                ? mapTilKlippProp(bSykmeldingGruppering, 'tom').map(tilDateVerdi).reduce(maximum, toDate('2000-01-01'))
+                : mapTilSoknadProp(bSykmeldingGruppering, 'tom').map(tilDateVerdi).reduce(maximum, toDate('2000-01-01'))
             return isGreater(verdiA, verdiB) ? -1 : 1
         }
     }

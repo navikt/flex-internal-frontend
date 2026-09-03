@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import {
     BackendKlippetSykepengesoknadRecord,
@@ -35,6 +35,10 @@ const lagKlipp = (overstyringer: Partial<BackendKlippetSykepengesoknadRecord> = 
     } as unknown as BackendKlippetSykepengesoknadRecord)
 
 describe('gruppertOgFiltrert', () => {
+    afterEach(() => {
+        vi.restoreAllMocks()
+    })
+
     it('grupperer næringsdrivende separat fra klippet ghost-søknad', () => {
         const naeringsdrivendeSoknad = lagSoknad({
             id: 'soknad-naering',
@@ -161,7 +165,7 @@ describe('gruppertOgFiltrert', () => {
 })
 
 describe('sortert', () => {
-    it('sorterer synkende pa tom for dayjs-verdier', () => {
+    it('sorterer synkende pa tom for datoverdier', () => {
         const tidligSoknad = lagSoknad({ id: 'tidlig', sykmeldingId: 'syk-tidlig', tom: '2026-01-10' })
         const senSoknad = lagSoknad({ id: 'sen', sykmeldingId: 'syk-sen', tom: '2026-01-20' })
 

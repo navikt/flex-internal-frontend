@@ -1,14 +1,7 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query'
-import dayjs, { Dayjs } from 'dayjs'
-import nb from 'dayjs/locale/nb'
 
 import { fetchJsonMedRequestId } from '../utils/fetch'
-import { tilDayjs } from '../utils/dayjsValidering'
-
-dayjs.locale({
-    ...nb,
-    weekStart: 1,
-})
+import { toDateEllerUndefined } from '../utils/dato-utils'
 
 export function useSoknader(fnr: string | undefined, enabled = true): UseQueryResult<SoknaderResponse, Error> {
     return useQuery<SoknaderResponse, Error>({
@@ -72,7 +65,7 @@ export class KlippetSykepengesoknadRecord {
     klippVariant: KlippVariant
     periodeFor: Soknadsperiode[]
     periodeEtter: Soknadsperiode[] | null
-    timestamp?: Dayjs
+    timestamp?: Date
 
     constructor(json: BackendKlippetSykepengesoknadRecord) {
         this.id = json.id
@@ -83,7 +76,7 @@ export class KlippetSykepengesoknadRecord {
         const periodeEtter = typeof json.periodeEtter === 'string' ? JSON.parse(json.periodeEtter) : json.periodeEtter
         this.periodeFor = mapTilSoknadsperioder(periodeFor)
         this.periodeEtter = periodeEtter === null ? null : mapTilSoknadsperioder(periodeEtter)
-        this.timestamp = tilDayjs(json.timestamp)
+        this.timestamp = toDateEllerUndefined(json.timestamp)
     }
 }
 
@@ -118,17 +111,17 @@ export class Soknad {
     soknadstype: Soknadstype
     status: Soknadstatus
     arbeidssituasjon?: Arbeidssituasjon
-    fom?: Dayjs
-    tom?: Dayjs
+    fom?: Date
+    tom?: Date
     korrigerer?: string
     korrigertAv?: string
-    avbruttDato?: Dayjs
-    sykmeldingUtskrevet?: Dayjs
-    sykmeldingSignaturDato?: Dayjs
-    startSykeforlop?: Dayjs
-    opprettetDato?: Dayjs
-    sendtTilNAVDato?: Dayjs
-    sendtTilArbeidsgiverDato?: Dayjs
+    avbruttDato?: Date
+    sykmeldingUtskrevet?: Date
+    sykmeldingSignaturDato?: Date
+    startSykeforlop?: Date
+    opprettetDato?: Date
+    sendtTilNAVDato?: Date
+    sendtTilArbeidsgiverDato?: Date
     arbeidsgiverNavn?: string
     arbeidsgiverOrgnummer?: string
     soknadPerioder: Soknadsperiode[]
@@ -142,17 +135,17 @@ export class Soknad {
         this.soknadstype = json.soknadstype
         this.status = json.status
         this.arbeidssituasjon = json.arbeidssituasjon
-        this.fom = tilDayjs(json.fom)
-        this.tom = tilDayjs(json.tom)
+        this.fom = toDateEllerUndefined(json.fom)
+        this.tom = toDateEllerUndefined(json.tom)
         this.korrigerer = json.korrigerer
         this.korrigertAv = json.korrigertAv
-        this.avbruttDato = tilDayjs(json.avbruttDato)
-        this.sykmeldingUtskrevet = tilDayjs(json.sykmeldingUtskrevet)
-        this.sykmeldingSignaturDato = tilDayjs(json.sykmeldingSignaturDato)
-        this.startSykeforlop = tilDayjs(json.startSykeforlop)
-        this.opprettetDato = tilDayjs(json.opprettetDato)
-        this.sendtTilNAVDato = tilDayjs(json.sendtTilNAVDato)
-        this.sendtTilArbeidsgiverDato = tilDayjs(json.sendtTilArbeidsgiverDato)
+        this.avbruttDato = toDateEllerUndefined(json.avbruttDato)
+        this.sykmeldingUtskrevet = toDateEllerUndefined(json.sykmeldingUtskrevet)
+        this.sykmeldingSignaturDato = toDateEllerUndefined(json.sykmeldingSignaturDato)
+        this.startSykeforlop = toDateEllerUndefined(json.startSykeforlop)
+        this.opprettetDato = toDateEllerUndefined(json.opprettetDato)
+        this.sendtTilNAVDato = toDateEllerUndefined(json.sendtTilNAVDato)
+        this.sendtTilArbeidsgiverDato = toDateEllerUndefined(json.sendtTilArbeidsgiverDato)
         this.arbeidsgiverNavn = json.arbeidsgiverNavn
         this.arbeidsgiverOrgnummer = json.arbeidsgiverOrgnummer
         this.soknadPerioder = mapTilSoknadsperioder(json.soknadPerioder)
@@ -162,15 +155,12 @@ export class Soknad {
     }
 }
 
-export const dayjsToDate = (dato?: string | Dayjs | null): Date | undefined =>
-    typeof dato === 'string' ? tilDayjs(dato)?.toDate() : dato?.toDate()
-
 const mapTilSoknadsperioder = (perioder?: BackendSoknadsperiode[] | null): Soknadsperiode[] => {
     if (!perioder) return []
     return perioder
         .map((periode) => {
-            const fom = tilDayjs(periode.fom)
-            const tom = tilDayjs(periode.tom)
+            const fom = toDateEllerUndefined(periode.fom)
+            const tom = toDateEllerUndefined(periode.tom)
             if (!fom || !tom) return undefined
             return {
                 ...periode,
@@ -185,8 +175,8 @@ const mapTilDatoPerioder = (perioder?: BackendPeriode[] | null): DatoPeriode[] |
     if (!perioder) return undefined
     return perioder
         .map((periode) => {
-            const fom = tilDayjs(periode.fom)
-            const tom = tilDayjs(periode.tom)
+            const fom = toDateEllerUndefined(periode.fom)
+            const tom = toDateEllerUndefined(periode.tom)
             if (!fom || !tom) return undefined
             return { fom, tom }
         })
@@ -227,8 +217,8 @@ export interface BackendSoknadsperiode {
 }
 
 export interface Soknadsperiode {
-    fom: Dayjs
-    tom: Dayjs
+    fom: Date
+    tom: Date
     grad: number
     sykmeldingstype: string
 }
@@ -244,6 +234,6 @@ export interface BackendPeriode {
 }
 
 export interface DatoPeriode {
-    fom: Dayjs
-    tom: Dayjs
+    fom: Date
+    tom: Date
 }

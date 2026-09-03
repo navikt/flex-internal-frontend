@@ -3,7 +3,7 @@ import { Timeline } from '@navikt/ds-react'
 
 import { ArbeidsgiverGruppering, SoknadGruppering, SykmeldingGruppering } from '../../utils/gruppering'
 import { sortert } from '../../utils/soknadSortering'
-import { dayjsToDate } from '../../queryhooks/useSoknader'
+import { toDateEllerUndefined } from '../../utils/dato-utils'
 import { beregnAktivTidsvindu, erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
 import { Filter } from '../Filter'
 import { Detaljer } from '../Detaljer'
@@ -71,8 +71,8 @@ export default function TidslinjeSykmelding({
 
     for (const { soknader } of soknaderGruppertPaSykmeldinger.values()) {
         for (const sok of soknader.values()) {
-            const fom = dayjsToDate(sok.soknad.fom!)
-            const tom = dayjsToDate(sok.soknad.tom!)
+            const fom = sok.soknad.fom
+            const tom = sok.soknad.tom
             if (fom && (!eldsteFra || fom < eldsteFra)) eldsteFra = fom
             if (tom && (!nysteTil || tom > nysteTil)) nysteTil = tom
         }
@@ -104,8 +104,8 @@ export default function TidslinjeSykmelding({
                             .flatMap((sok: SoknadGruppering) => {
                                 const klippingAvSoknad = sok.klippingAvSoknad
                                     .filter((k) => {
-                                        const fom = dayjsToDate(k.fom)
-                                        const tom = dayjsToDate(k.tom)
+                                        const fom = toDateEllerUndefined(k.fom)
+                                        const tom = toDateEllerUndefined(k.tom)
                                         return (
                                             fom &&
                                             tom &&
@@ -114,8 +114,8 @@ export default function TidslinjeSykmelding({
                                     })
                                     .map((k) => (
                                         <Timeline.Period
-                                            start={dayjsToDate(k.fom)!}
-                                            end={dayjsToDate(k.tom)!}
+                                            start={toDateEllerUndefined(k.fom)!}
+                                            end={toDateEllerUndefined(k.tom)!}
                                             status="neutral"
                                             key={k.tom}
                                         >
@@ -124,8 +124,8 @@ export default function TidslinjeSykmelding({
                                     ))
 
                                 if (!erGhostSykmelding) {
-                                    const sokFom = dayjsToDate(sok.soknad.fom!)
-                                    const sokTom = dayjsToDate(sok.soknad.tom!)
+                                    const sokFom = sok.soknad.fom
+                                    const sokTom = sok.soknad.tom
                                     if (
                                         sokFom &&
                                         sokTom &&
@@ -154,8 +154,8 @@ export default function TidslinjeSykmelding({
                             .concat(
                                 syk.klippingAvSykmelding
                                     .filter((k) => {
-                                        const fom = dayjsToDate(k.fom)
-                                        const tom = dayjsToDate(k.tom)
+                                        const fom = toDateEllerUndefined(k.fom)
+                                        const tom = toDateEllerUndefined(k.tom)
                                         return (
                                             fom &&
                                             tom &&
@@ -164,8 +164,8 @@ export default function TidslinjeSykmelding({
                                     })
                                     .map((k) => (
                                         <Timeline.Period
-                                            start={dayjsToDate(k.fom)!}
-                                            end={dayjsToDate(k.tom)!}
+                                            start={toDateEllerUndefined(k.fom)!}
+                                            end={toDateEllerUndefined(k.tom)!}
                                             status="neutral"
                                             key={k.tom}
                                         >

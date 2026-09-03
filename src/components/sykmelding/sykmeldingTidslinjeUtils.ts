@@ -1,3 +1,5 @@
+import { addDays, differenceInCalendarDays, format, isAfter, isBefore, isValid, startOfDay } from 'date-fns'
+
 import type { Sykmelding, SykmeldingStatusType } from '../../queryhooks/useSykmeldinger'
 
 export interface SykmeldingerPerArbeidsgiver {
@@ -13,8 +15,8 @@ export interface PeriodeMedDatoer {
     sluttDato: Date
 }
 
-const dayjsTilUtcDato = (dato: { year: () => number; month: () => number; date: () => number }): Date =>
-    new Date(Date.UTC(dato.year(), dato.month(), dato.date()))
+/** Bygger en UTC-midnatt-forankret kalenderdato fra en Oslo-forankret Date (f.eks. fra toDate/toDatePaakrevd). */
+const tilUtcKalenderdato = (dato: Date): Date => new Date(Date.UTC(dato.getFullYear(), dato.getMonth(), dato.getDate()))
 
 export const sykmeldingStatus = (status?: SykmeldingStatusType): 'success' | 'warning' | 'info' => {
     if (!status) return 'info'
@@ -69,13 +71,13 @@ const dagNoklerForSykmelding = (sykmelding: Sykmelding): Set<string> => {
     const dagNokler = new Set<string>()
 
     sykmelding.sykmeldingsperioder.forEach((periode) => {
-        const fom = periode.fom.startOf('day')
-        const tom = periode.tom.startOf('day')
+        const fom = startOfDay(periode.fom)
+        const tom = startOfDay(periode.tom)
 
-        if (!fom.isValid() || !tom.isValid() || tom.isBefore(fom, 'day')) return
+        if (!isValid(fom) || !isValid(tom) || isBefore(tom, fom)) return
 
-        for (let dag = fom; !dag.isAfter(tom, 'day'); dag = dag.add(1, 'day')) {
-            dagNokler.add(dag.format('YYYY-MM-DD'))
+        for (let dag = fom; !isAfter(dag, tom); dag = addDays(dag, 1)) {
+            dagNokler.add(format(dag, 'yyyy-MM-dd'))
         }
     })
 
@@ -139,13 +141,13 @@ export const grupperSykmeldingerPaArbeidsgiver = (
 
 export const perioderMedDatoer = (sykmelding: Sykmelding): PeriodeMedDatoer[] => {
     return sykmelding.sykmeldingsperioder.flatMap((periode) => {
-        if (!periode.fom.isValid() || !periode.tom.isValid()) return []
+        if (!isValid(periode.fom) || !isValid(periode.tom)) return []
         return [
             {
-                fom: periode.fom.format('YYYY-MM-DD'),
-                tom: periode.tom.format('YYYY-MM-DD'),
-                startDato: dayjsTilUtcDato(periode.fom),
-                sluttDato: dayjsTilUtcDato(periode.tom),
+                fom: format(periode.fom, 'yyyy-MM-dd'),
+                tom: format(periode.tom, 'yyyy-MM-dd'),
+                startDato: tilUtcKalenderdato(periode.fom),
+                sluttDato: tilUtcKalenderdato(periode.tom),
             },
         ]
     })
@@ -169,6 +171,5 @@ export const formaterDatoMedTid = (dato: Date): string =>
     }).format(dato)
 
 export const antallKalenderdager = (fra: Date, til: Date): number => {
-    const millisekunderPerDag = 24 * 60 * 60 * 1000
-    return Math.floor((til.getTime() - fra.getTime()) / millisekunderPerDag) + 1
+    return differenceInCalendarDays(til, fra) + 1
 }

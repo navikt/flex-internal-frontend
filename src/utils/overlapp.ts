@@ -1,8 +1,11 @@
-import dayjs, { Dayjs } from 'dayjs'
+import { addDays, eachDayOfInterval, format, isBefore, isEqual, isValid, startOfDay } from 'date-fns'
 
 import { KlippetSykepengesoknadRecord, Soknadsperiode } from '../queryhooks/useSoknader'
 
+import { toDate } from './dato-utils'
 import { SykmeldingGruppering } from './gruppering'
+
+const DATO_FORMAT = 'yyyy-MM-dd'
 
 export interface FomTom {
     fom: string
@@ -13,8 +16,8 @@ export interface Klipp extends KlippetSykepengesoknadRecord, FomTom {}
 export function perioderSomMangler(klipping: KlippetSykepengesoknadRecord) {
     const fom = minFom(klipping.periodeFor)
     const tom = maxTom(klipping.periodeFor)
-    const range = dayjsRange(fom, tom)
-    const dagerSomMangler: Dayjs[] = []
+    const range = dateRange(fom, tom)
+    const dagerSomMangler: Date[] = []
 
     for (const dag of range) {
         const iPerioderFor = dagErIPerioder(dag, klipping.periodeFor)
@@ -32,10 +35,10 @@ export function perioderSomMangler(klipping: KlippetSykepengesoknadRecord) {
     })
 }
 
-export function minFom(perioder: { fom: string | Dayjs }[]) {
+export function minFom(perioder: { fom: string | Date }[]) {
     let currentMin = '9999-12-31'
     perioder.forEach((p) => {
-        const fom = typeof p.fom === 'string' ? p.fom : p.fom.format('YYYY-MM-DD')
+        const fom = typeof p.fom === 'string' ? p.fom : format(p.fom, DATO_FORMAT)
         if (fom < currentMin) {
             currentMin = fom
         }
@@ -43,10 +46,10 @@ export function minFom(perioder: { fom: string | Dayjs }[]) {
     return currentMin
 }
 
-export function maxTom(perioder: { tom: string | Dayjs }[]) {
+export function maxTom(perioder: { tom: string | Date }[]) {
     let currentMax = '1111-01-01'
     perioder.forEach((p) => {
-        const tom = typeof p.tom === 'string' ? p.tom : p.tom.format('YYYY-MM-DD')
+        const tom = typeof p.tom === 'string' ? p.tom : format(p.tom, DATO_FORMAT)
         if (tom > currentMax) {
             currentMax = tom
         }
@@ -54,20 +57,31 @@ export function maxTom(perioder: { tom: string | Dayjs }[]) {
     return currentMax
 }
 
-function dayjsRange(from: string | Dayjs, to: string | Dayjs) {
-    const fom = dayjs(from)
-    const tom = dayjs(to)
-    const range: Dayjs[] = []
-
-    let current: dayjs.Dayjs
-    for (current = fom; !tom.isBefore(current); current = current.add(1, 'days')) {
-        range.push(current)
-    }
-
-    return range
+/**
+ * Normaliserer en dato-only-verdi (streng eller Date) til midnatt Oslo-tid.
+ * `toDate()` av en dato-only streng er forankret i UTC-midnatt av datostrengen (viser riktig Oslo-kalenderdag ved
+ * formatering, men er ikke selv Oslo-midnatt som instant). `eachDayOfInterval` sin interne dag-stepping bruker derimot
+ * ekte Oslo-midnatt (via setHours). Uten denne normaliseringen blir første dag i et spenn feilaktig ekskludert.
+ */
+function kalenderdag(dato: string | Date): Date {
+    return startOfDay(typeof dato === 'string' ? toDate(dato) : dato)
 }
 
-function dagErIPerioder(dag: Dayjs, perioder: Soknadsperiode[] | null) {
+/** Bygger en inklusiv liste av kalenderdager (Oslo-dato, midnatt) fra og med `from` til og med `to`. */
+function dateRange(from: string | Date, to: string | Date): Date[] {
+    const fom = kalenderdag(from)
+    const tom = kalenderdag(to)
+
+    // Ugyldige eller omvendte spenn ga tidligere en tom range (den gamle isBefore-sjekken over hoppet aldri løkken).
+    // eachDayOfInterval kaster på ugyldig intervall, så vi bevarer den samme fail-safe atferden eksplisitt.
+    if (!isValid(fom) || !isValid(tom) || isBefore(tom, fom)) {
+        return []
+    }
+
+    return eachDayOfInterval({ start: fom, end: tom })
+}
+
+function dagErIPerioder(dag: Date, perioder: Soknadsperiode[] | null) {
     let iPeriode = false
 
     if (perioder === null) {
@@ -75,8 +89,8 @@ function dagErIPerioder(dag: Dayjs, perioder: Soknadsperiode[] | null) {
     }
 
     for (const periode of perioder) {
-        const fom = periode.fom
-        const tom = periode.tom
+        const fom = kalenderdag(periode.fom)
+        const tom = kalenderdag(periode.tom)
         if (dag >= fom && dag <= tom) {
             iPeriode = true
         }
@@ -84,25 +98,25 @@ function dagErIPerioder(dag: Dayjs, perioder: Soknadsperiode[] | null) {
     return iPeriode
 }
 
-function sammenhengendeDagerTilPerioder(dager: Dayjs[]) {
+function sammenhengendeDagerTilPerioder(dager: Date[]): FomTom[] {
     if (dager.length === 0) {
         return []
     }
 
-    dager.sort((a, b) => a.diff(b))
+    dager.sort((a, b) => a.getTime() - b.getTime())
     const perioder: FomTom[] = []
     let fom = dager[0]
     let tom = dager[0]
 
     for (const dag of dager) {
-        if (tom.isSame(dag, 'day') || tom.add(1, 'day').isSame(dag)) {
+        if (isEqual(tom, dag) || isEqual(addDays(tom, 1), dag)) {
             // Sammenhengende periode
             tom = dag
         } else {
             // Ny periode
             perioder.push({
-                fom: fom.format('YYYY-MM-DD'),
-                tom: tom.format('YYYY-MM-DD'),
+                fom: format(fom, DATO_FORMAT),
+                tom: format(tom, DATO_FORMAT),
             })
             fom = dag
             tom = dag
@@ -110,8 +124,8 @@ function sammenhengendeDagerTilPerioder(dager: Dayjs[]) {
     }
 
     perioder.push({
-        fom: fom.format('YYYY-MM-DD'),
-        tom: tom.format('YYYY-MM-DD'),
+        fom: format(fom, DATO_FORMAT),
+        tom: format(tom, DATO_FORMAT),
     })
 
     return perioder
@@ -125,27 +139,27 @@ export function overlappendePeriodeInnenforTimelineRad(sykmeldingGruppering: Map
         overlappendeDager.push(...sykmeldingOverlappendeDager(sykmeldingDager(sykId, syk)))
     })
 
-    return sammenhengendeDagerTilPerioder(overlappendeDager.sort().map((dag) => dayjs(dag)))
+    return sammenhengendeDagerTilPerioder(overlappendeDager.sort().map((dag) => kalenderdag(dag)))
 }
 
 export function sykmeldingDager(sykId: string, syk: SykmeldingGruppering) {
     const dager: string[] = [] // Alle dager som skal legges til i samme rad i tidslinjen
 
     syk.klippingAvSykmelding.forEach((klippSyk) => {
-        dayjsRange(klippSyk.fom, klippSyk.tom).forEach((dag) => {
-            dager.push(dag.format('YYYY-MM-DD'))
+        dateRange(klippSyk.fom, klippSyk.tom).forEach((dag) => {
+            dager.push(format(dag, DATO_FORMAT))
         })
     })
 
     syk.soknader.forEach((sok) => {
         if (!sykId.endsWith('_GHOST')) {
-            dayjsRange(sok.soknad.fom!, sok.soknad.tom!).forEach((dag) => {
-                dager.push(dag.format('YYYY-MM-DD'))
+            dateRange(sok.soknad.fom!, sok.soknad.tom!).forEach((dag) => {
+                dager.push(format(dag, DATO_FORMAT))
             })
         }
         sok.klippingAvSoknad.forEach((klippSok) => {
-            dayjsRange(klippSok.fom, klippSok.tom).forEach((dag) => {
-                dager.push(dag.format('YYYY-MM-DD'))
+            dateRange(klippSok.fom, klippSok.tom).forEach((dag) => {
+                dager.push(format(dag, DATO_FORMAT))
             })
         })
     })

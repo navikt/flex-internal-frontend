@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
+import { addDays } from 'date-fns'
 import { Alert, BodyShort, Button, Link, Radio, RadioGroup, ReadMore, Search } from '@navikt/ds-react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import dayjs from 'dayjs'
+import { useMutation, useQueryClient, type UseMutationResult } from '@tanstack/react-query'
 
 import { initialProps, PrefetchResults } from '../initialprops/initialProps'
 import {
@@ -17,18 +17,16 @@ import { useIdenter } from '../queryhooks/useIdenter'
 import { handterUuidValidering } from '../utils/inputValidering'
 import { useValgtFnr } from '../utils/useValgtFnr'
 
-const DayButton = ({
-    days,
-    mutation,
-}: {
-    days: number
-    mutation: ReturnType<typeof useMutation<object, Error, dayjs.Dayjs>>
-}) => (
+export function cronJobTidspunktFraDager(baseDato: Date, dager: number): Date {
+    return addDays(baseDato, dager)
+}
+
+const DayButton = ({ days, mutation }: { days: number; mutation: UseMutationResult<object, Error, Date> }) => (
     <Button
         size="small"
         variant="secondary"
         loading={mutation.isPending}
-        onClick={() => mutation.mutate(dayjs().add(days, 'day'))}
+        onClick={() => mutation.mutate(cronJobTidspunktFraDager(new Date(), days))}
     >
         {days} dager
     </Button>
@@ -99,7 +97,7 @@ const Vedtaksperioder = ({ erMockBackend }: Pick<PrefetchResults, 'erMockBackend
     const { data: data, isRefetching } = useVedtaksperioderMedInntektsmeldinger(fnr, vedtaksperiodeId, enabled)
     const queryClient = useQueryClient()
 
-    const cronJobMutation = useMutation<object, Error, dayjs.Dayjs>({
+    const cronJobMutation = useMutation<object, Error, Date>({
         mutationFn: async (dato) => {
             return await fetchJsonMedRequestId<object>(
                 `/api/flex-inntektsmelding-status/api/v1/cronjob?now=${dato.toISOString()}`,

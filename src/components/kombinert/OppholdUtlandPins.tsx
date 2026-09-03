@@ -3,7 +3,6 @@ import { EarthIcon } from '@navikt/aksel-icons'
 import { Timeline } from '@navikt/ds-react'
 
 import { ArbeidsgiverGruppering } from '../../utils/gruppering'
-import { dayjsToDate } from '../../queryhooks/useSoknader'
 import { lagOppholdUtlandSoknadDrawerInnhold, type DrawerInnhold } from '../DetaljerDrawer'
 import ViktigeFeltForSoknad from '../periodeinfo/ViktigeFeltForSoknad'
 
@@ -22,7 +21,7 @@ export const lagOppholdUtlandPins = ({
 }: Props): React.ReactElement[] => {
     return Array.from(soknaderGruppert.get('opphold_utland')?.sykmeldinger.values() ?? []).flatMap((syk) =>
         Array.from(syk.soknader.values()).flatMap((sok) => {
-            const dato = dayjsToDate(sok.soknad.opprettetDato)
+            const dato = sok.soknad.opprettetDato
             if (!dato) return []
             const kildeId = sok.soknad.id
 
