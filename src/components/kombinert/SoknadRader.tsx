@@ -3,14 +3,13 @@ import { TasklistIcon } from '@navikt/aksel-icons'
 import { Timeline } from '@navikt/ds-react'
 
 import { ArbeidsgiverGruppering, SoknadGruppering } from '../../utils/gruppering'
-import { dayjsToDate } from '../../queryhooks/useSoknader'
+import { dayjsToDate, Soknadstatus } from '../../queryhooks/useSoknader'
 import { erPeriodeInnenforTidsvindu } from '../../utils/tidslinjeUtils'
 import { ikonParForSoknad, ikonerForSoknad, klippIkon } from '../../utils/tidslinjeIkonUtils'
 import { sorterSoknadGrupperEtterSignaturDato } from '../../utils/kombinertTidslinjeSortering'
 import { arbeidsgiverLabelForSoknader } from '../../utils/soknadArbeidsgiverLabel'
 import { lagKlippetSoknadDrawerInnhold, lagSoknadDrawerInnhold } from '../DetaljerDrawer'
 import ViktigeFeltForSoknad from '../periodeinfo/ViktigeFeltForSoknad'
-import { timelinePeriodeStatus } from '../soknad/Tidslinje'
 
 import type { SammenlignElement } from './useTidslinjeKombinert'
 import type { OnPeriodeValgt } from './SykmeldingRader'
@@ -51,6 +50,16 @@ const grupperPerioderISpor = (perioder: TidslinjePeriodeMedElement[]): Tidslinje
         })
 
     return spor
+}
+
+function timelinePeriodeStatus(status: Soknadstatus) {
+    if (['AVBRUTT', 'SLETTET', 'UTGAATT'].includes(status)) {
+        return 'warning'
+    }
+    if (['SENDT', 'KORRIGERT'].includes(status)) {
+        return 'success'
+    }
+    return 'info'
 }
 
 interface Props {

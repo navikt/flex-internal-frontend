@@ -117,17 +117,6 @@ function sammenhengendeDagerTilPerioder(dager: Dayjs[]) {
     return perioder
 }
 
-export function overlappendePeriodeInnenforTimelineRad(sykmeldingGruppering: Map<string, SykmeldingGruppering>) {
-    const overlappendeDager: string[] = []
-
-    Array.from(sykmeldingGruppering.entries()).forEach(([sykId, syk]) => {
-        // Finner dager som kommer til å overlappe i tidslinjen
-        overlappendeDager.push(...sykmeldingOverlappendeDager(sykmeldingDager(sykId, syk)))
-    })
-
-    return sammenhengendeDagerTilPerioder(overlappendeDager.sort().map((dag) => dayjs(dag)))
-}
-
 export function sykmeldingDager(sykId: string, syk: SykmeldingGruppering) {
     const dager: string[] = [] // Alle dager som skal legges til i samme rad i tidslinjen
 
