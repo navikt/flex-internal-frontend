@@ -1,8 +1,8 @@
 import dayjs from 'dayjs'
 
-import { Sortering } from '../components/soknad/ValgtSortering'
-
 import { SykmeldingGruppering } from './gruppering'
+
+export type Sortering = 'sykmelding skrevet' | 'opprettet' | 'tom'
 
 export const sortert = (
     a: [string, SykmeldingGruppering],
