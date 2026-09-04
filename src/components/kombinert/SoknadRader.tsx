@@ -52,7 +52,7 @@ const grupperPerioderISpor = (perioder: TidslinjePeriodeMedElement[]): Tidslinje
     return spor
 }
 
-export function timelinePeriodeStatus(status: Soknadstatus) {
+function timelinePeriodeStatus(status: Soknadstatus) {
     if (['AVBRUTT', 'SLETTET', 'UTGAATT'].includes(status)) {
         return 'warning'
     }
