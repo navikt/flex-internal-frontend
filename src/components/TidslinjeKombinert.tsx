@@ -12,6 +12,7 @@ import { ValgteFilter } from './Filter'
 import VelgZoomPeriode from './VelgZoomPeriode'
 import DetaljerDrawer, { lagSykmeldingDrawerInnhold, lagSoknadDrawerInnhold } from './DetaljerDrawer'
 import { useTidslinjeKombinert } from './kombinert/useTidslinjeKombinert'
+import NavigerTidsvindu from './NavigerTidsvindu'
 import SykmeldingTidslinje from './kombinert/SykmeldingTidslinje'
 import SoknadTidslinje from './kombinert/SoknadTidslinje'
 import ViktigeFeltForSoknad from './periodeinfo/ViktigeFeltForSoknad'
@@ -26,6 +27,7 @@ interface Props {
 
 const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.ReactElement => {
     const {
+        grenser,
         filter,
         setFilter,
         setVisningsFraDato,
@@ -40,7 +42,9 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
         aktivTidsvindu,
         nysteTil,
         sykmeldingAntall,
+        sykmeldingTotalAntall,
         soknadAntall,
+        soknadTotalAntall,
         handlePeriodeValgt,
         handleDrawerValgt,
         handleLukkDrawer,
@@ -50,6 +54,7 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
         handleStartSammenlign,
         handleAvsluttSammenlign,
         handleLukkSammenlignDrawer,
+        handleBla,
     } = useTidslinjeKombinert(sykmeldinger, soknader, klipp)
 
     const { valgtPeriodeId, valgtDrawerKildeId, oppslagData, nullstillValgtPeriode } = useValgtFnr()
@@ -114,7 +119,7 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
         <div className="min-w-[800px] overflow-x-auto">
             <ValgteFilter filter={filter} setFilter={setFilter} />
             <HStack align="center" gap="space-4" className="mb-1">
-                <BodyShort className="font-semibold">{`${sykmeldingAntall} sykmelding(er) · ${soknadAntall} søknad(er)`}</BodyShort>
+                <BodyShort className="font-semibold">{`${sykmeldingAntall} sykmelding(er) · ${soknadAntall} søknad(er) (${sykmeldingTotalAntall + soknadTotalAntall} totalt)`}</BodyShort>
                 {!sammenlignModus && (
                     <Button
                         size="small"
@@ -145,11 +150,16 @@ const TidslinjeKombinert = ({ sykmeldinger, soknader, klipp }: Props): React.Rea
                     {sammenlignModus ? sammenlignStatusTekst() : ''}
                 </BodyShort>
             </HStack>
-            <VelgZoomPeriode
-                setFraDato={setVisningsFraDato}
-                setTilDato={setVisningstilDato}
-                maxTilDato={nysteTil ?? undefined}
-            />
+            <HStack gap="space-8" align="center">
+                <VelgZoomPeriode
+                    setFraDato={setVisningsFraDato}
+                    setTilDato={setVisningstilDato}
+                    maxTilDato={nysteTil ?? undefined}
+                />
+                {aktivTidsvindu && grenser && (
+                    <NavigerTidsvindu vindu={aktivTidsvindu} grenser={grenser} onBla={handleBla} />
+                )}
+            </HStack>
             {aktivTidsvindu && (
                 <>
                     <SykmeldingTidslinje
