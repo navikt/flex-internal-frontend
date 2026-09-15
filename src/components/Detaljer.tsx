@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react'
-import { format } from 'date-fns'
 
 import { erGyldigDato, formaterDato, toDate } from '../utils/dato-utils'
 
@@ -28,7 +27,7 @@ const formaterVerdi = (verdi: unknown): string => {
     if (typeof verdi === 'string') {
         if (erDatostreng(verdi)) {
             const dato = toDate(verdi)
-            return format(dato, harTidspunkt(verdi) ? 'd MMM yyyy HH:mm' : 'd MMM yyyy')
+            return formaterDato(dato, harTidspunkt(verdi) ? 'd MMM yyyy HH:mm' : 'd MMM yyyy')
         }
         return verdi
     }
