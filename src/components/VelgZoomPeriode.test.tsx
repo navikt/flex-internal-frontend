@@ -2,7 +2,7 @@ import React from 'react'
 import { vi, describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import dayjs from 'dayjs'
+import { addDays, isSameDay, subDays, subMonths, subYears } from 'date-fns'
 
 import VelgZoomPeriode from './VelgZoomPeriode'
 
@@ -28,11 +28,11 @@ describe('VelgZoomPeriode', () => {
 
             expect(setFraDato).toHaveBeenCalledOnce()
             const fraDato = setFraDato.mock.calls[0][0] as Date
-            expect(dayjs(fraDato).isSame(dayjs().subtract(3, 'month'), 'day')).toBe(true)
+            expect(isSameDay(fraDato, subMonths(new Date(), 3))).toBe(true)
 
             expect(setTilDato).toHaveBeenCalledOnce()
             const tilDato = setTilDato.mock.calls[0][0] as Date
-            expect(dayjs(tilDato).isSame(dayjs(), 'day')).toBe(true)
+            expect(isSameDay(tilDato, new Date())).toBe(true)
         })
 
         it('2 år setter fraDato 2 år tilbake', async () => {
@@ -42,7 +42,7 @@ describe('VelgZoomPeriode', () => {
             await userEvent.click(screen.getByRole('button', { name: /2 år/i }))
 
             const fraDato = setFraDato.mock.calls[0][0] as Date
-            expect(dayjs(fraDato).isSame(dayjs().subtract(2, 'year'), 'day')).toBe(true)
+            expect(isSameDay(fraDato, subYears(new Date(), 2))).toBe(true)
         })
 
         it('Alle nullstiller begge datoer', async () => {
@@ -60,23 +60,24 @@ describe('VelgZoomPeriode', () => {
     describe('maxTilDato-logikk', () => {
         it('bruker maxTilDato når den er i fremtiden', async () => {
             const setTilDato = vi.fn()
-            const fremtidigDato = dayjs().add(30, 'day').toDate()
+            const fremtidigDato = addDays(new Date(), 30)
             render(<VelgZoomPeriode setFraDato={vi.fn()} setTilDato={setTilDato} maxTilDato={fremtidigDato} />)
 
             await userEvent.click(screen.getByRole('button', { name: /3 måneder/i }))
 
-            expect(setTilDato).toHaveBeenCalledWith(fremtidigDato)
+            const tilDato = setTilDato.mock.calls[0][0] as Date
+            expect(isSameDay(tilDato, fremtidigDato)).toBe(true)
         })
 
         it('bruker i dag når maxTilDato er i fortiden', async () => {
             const setTilDato = vi.fn()
-            const tidligereDato = dayjs().subtract(10, 'day').toDate()
+            const tidligereDato = subDays(new Date(), 10)
             render(<VelgZoomPeriode setFraDato={vi.fn()} setTilDato={setTilDato} maxTilDato={tidligereDato} />)
 
             await userEvent.click(screen.getByRole('button', { name: /3 måneder/i }))
 
             const tilDato = setTilDato.mock.calls[0][0] as Date
-            expect(dayjs(tilDato).isSame(dayjs(), 'day')).toBe(true)
+            expect(isSameDay(tilDato, new Date())).toBe(true)
         })
 
         it('bruker i dag når maxTilDato ikke er satt', async () => {
@@ -86,7 +87,7 @@ describe('VelgZoomPeriode', () => {
             await userEvent.click(screen.getByRole('button', { name: /7 måneder/i }))
 
             const tilDato = setTilDato.mock.calls[0][0] as Date
-            expect(dayjs(tilDato).isSame(dayjs(), 'day')).toBe(true)
+            expect(isSameDay(tilDato, new Date())).toBe(true)
         })
     })
 })

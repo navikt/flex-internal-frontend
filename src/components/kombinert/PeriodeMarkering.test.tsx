@@ -1,5 +1,5 @@
 import React from 'react'
-import dayjs from 'dayjs'
+import { startOfDay } from 'date-fns'
 import { describe, expect, it, vi } from 'vitest'
 import { render } from '@testing-library/react'
 
@@ -130,7 +130,7 @@ describe('PeriodeMarkering', () => {
                 'arbeidsgiver-1',
                 {
                     label: 'Arbeidsgiver',
-                    sykmeldinger: [{ ...sykmelding, signaturDato: dayjs('2026-01-28') }],
+                    sykmeldinger: [{ ...sykmelding, signaturDato: startOfDay(new Date('2026-01-28T00:00:00Z')) }],
                     dagNokler: new Set<string>(),
                 },
             ],

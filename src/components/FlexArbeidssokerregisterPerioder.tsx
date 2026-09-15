@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Alert, Button, Detail, Heading, Table, TextField } from '@navikt/ds-react'
-import dayjs from 'dayjs'
+import { format } from 'date-fns'
 import { DatePicker, useDatepicker } from '@navikt/ds-react'
 
 import {
@@ -11,12 +11,13 @@ import {
 import { useOppdaterArbeidssokerperiodeTomMutation } from '../queryhooks/useOppdaterArbeidssokerperiodeTom'
 import { useOppdaterArbeidssokerperiodeFomMutation } from '../queryhooks/useOppdaterArbeidssokerperiodeFom'
 import { useOppdaterArbeidssokerperiodeIdMutation } from '../queryhooks/useOppdaterArbeidssokerperiodeId'
+import { now, toDate } from '../utils/dato-utils'
 
 const EndreVedtaksperiodeFom: React.FC<{ periode: ArbeidssokerperiodeResponse }> = ({ periode }) => {
     const { datepickerProps, inputProps, selectedDay } = useDatepicker({
         defaultSelected: new Date(periode.vedtaksperiodeFom),
     })
-    const formattertSelected = dayjs(selectedDay).format('YYYY-MM-DD')
+    const formattertSelected = format(selectedDay ?? now(), 'yyyy-MM-dd')
     const oppdaterFom = useOppdaterArbeidssokerperiodeFomMutation()
 
     return (
@@ -51,7 +52,7 @@ const EndreVedtaksperiodeTom: React.FC<{ periode: ArbeidssokerperiodeResponse }>
     const { datepickerProps, inputProps, selectedDay } = useDatepicker({
         defaultSelected: new Date(periode.vedtaksperiodeTom),
     })
-    const formattertSelected = dayjs(selectedDay).format('YYYY-MM-DD')
+    const formattertSelected = format(selectedDay ?? now(), 'yyyy-MM-dd')
     const oppdaterTom = useOppdaterArbeidssokerperiodeTomMutation()
 
     return (
@@ -144,7 +145,7 @@ const PeriodebekreftelserTable: React.FC<{ periodebekreftelser: Periodebekreftel
                         <Table.DataCell>{pb.sykepengesoknadId}</Table.DataCell>
                         <Table.DataCell>{pb.fortsattArbeidssoker ? 'Ja' : 'Nei'}</Table.DataCell>
                         <Table.DataCell>{pb.inntektUnderveis ? 'Ja' : 'Nei'}</Table.DataCell>
-                        <Table.DataCell>{dayjs(pb.opprettet).format('DD.MM.YYYY HH:mm')}</Table.DataCell>
+                        <Table.DataCell>{format(toDate(pb.opprettet), 'dd.MM.yyyy HH:mm')}</Table.DataCell>
                         <Table.DataCell>{pb.avsluttendeSoknad ? 'Ja' : 'Nei'}</Table.DataCell>
                     </Table.Row>
                 ))}
@@ -169,8 +170,8 @@ const ArbeidssokerperioderTable: React.FC<ArbeidssokerperioderTableProps> = ({ f
         return <Alert variant="error">Det oppsto en feil ved henting av arbeidssøkerperioder.</Alert>
     }
 
-    const sortedPerioder = data.arbeidssokerperioder.sort((a, b) =>
-        dayjs(a.vedtaksperiodeFom).diff(dayjs(b.vedtaksperiodeFom)),
+    const sortedPerioder = data.arbeidssokerperioder.sort(
+        (a, b) => toDate(a.vedtaksperiodeFom).getTime() - toDate(b.vedtaksperiodeFom).getTime(),
     )
 
     const toggleRow = (id: string) => {
@@ -222,10 +223,10 @@ const ArbeidssokerperioderTable: React.FC<ArbeidssokerperioderTableProps> = ({ f
                                 <Table.DataCell>{periode.vedtaksperiodeFom}</Table.DataCell>
                                 <Table.DataCell>{periode.vedtaksperiodeTom}</Table.DataCell>
                                 <Table.DataCell>{periode.arbeidssokerperiodeId}</Table.DataCell>
-                                <Table.DataCell>{dayjs(periode.opprettet).format('DD.MM.YYYY HH:mm')}</Table.DataCell>
+                                <Table.DataCell>{format(toDate(periode.opprettet), 'dd.MM.yyyy HH:mm')}</Table.DataCell>
                                 <Table.DataCell>
                                     {periode.avsluttetTidspunkt &&
-                                        dayjs(periode.avsluttetTidspunkt).format('DD.MM.YYYY HH:mm')}
+                                        format(toDate(periode.avsluttetTidspunkt), 'dd.MM.yyyy HH:mm')}
                                 </Table.DataCell>
                                 <Table.DataCell>{periode.avsluttetAarsak}</Table.DataCell>
                                 <Table.DataCell>

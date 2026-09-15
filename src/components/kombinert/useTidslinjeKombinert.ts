@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 
-import { KlippetSykepengesoknadRecord, Soknad, dayjsToDate } from '../../queryhooks/useSoknader'
+import { KlippetSykepengesoknadRecord, Soknad } from '../../queryhooks/useSoknader'
 import type { Sykmelding } from '../../queryhooks/useSykmeldinger'
 import { filtrerPaFilter } from '../../utils/filterlogikk'
 import gruppertOgFiltrert from '../../utils/gruppering'
@@ -53,8 +53,8 @@ export const useTidslinjeKombinert = (
         for (const { soknader: sokGrp } of sykGrp.values()) {
             for (const sok of sokGrp.values()) {
                 const erOppholdUtland = arbId === 'opphold_utland'
-                const fom = erOppholdUtland ? dayjsToDate(sok.soknad.opprettetDato) : dayjsToDate(sok.soknad.fom!)
-                const tom = erOppholdUtland ? dayjsToDate(sok.soknad.opprettetDato) : dayjsToDate(sok.soknad.tom!)
+                const fom = erOppholdUtland ? sok.soknad.opprettetDato : sok.soknad.fom
+                const tom = erOppholdUtland ? sok.soknad.opprettetDato : sok.soknad.tom
                 if (fom && (!eldsteFra || fom < eldsteFra)) eldsteFra = fom
                 if (tom && (!nysteTil || tom > nysteTil)) nysteTil = tom
             }
@@ -81,8 +81,8 @@ export const useTidslinjeKombinert = (
               [...arb.sykmeldinger.values()].flatMap((syk) =>
                   [...syk.soknader.values()].filter((sok) => {
                       const erOppholdUtland = arbId === 'opphold_utland'
-                      const fom = erOppholdUtland ? dayjsToDate(sok.soknad.opprettetDato) : dayjsToDate(sok.soknad.fom!)
-                      const tom = erOppholdUtland ? dayjsToDate(sok.soknad.opprettetDato) : dayjsToDate(sok.soknad.tom!)
+                      const fom = erOppholdUtland ? sok.soknad.opprettetDato : sok.soknad.fom
+                      const tom = erOppholdUtland ? sok.soknad.opprettetDato : sok.soknad.tom
                       return fom && tom && erPeriodeInnenforTidsvindu(fom, tom, aktivTidsvindu.fra, aktivTidsvindu.til)
                   }),
               ),

@@ -1,7 +1,8 @@
 import React from 'react'
-import dayjs from 'dayjs'
+import { addDays, isAfter } from 'date-fns'
 import { BodyShort, Box, Timeline } from '@navikt/ds-react'
 
+import { now, tilOsloDatoFraDato } from '../../utils/dato-utils'
 import type { ArbeidsgiverGruppering, SykmeldingGruppering } from '../../utils/gruppering'
 import KlippBugInfo from '../soknad/KlippBugInfo'
 
@@ -41,6 +42,9 @@ const SoknadTidslinje = ({
         })
     })
 
+    const iDag = tilOsloDatoFraDato(now())
+    const tilDato = tilOsloDatoFraDato(aktivTidsvindu.til)
+
     return (
         <Box
             borderColor="brand-blue"
@@ -52,8 +56,8 @@ const SoknadTidslinje = ({
             <BodyShort className="font-semibold mb-2">Søknader</BodyShort>
             <KlippBugInfo sykmeldingGruppering={sykmeldingGruppering} />
             <Timeline
-                endDate={dayjs(aktivTidsvindu.til).startOf('day').add(1, 'day').toDate()}
-                startDate={aktivTidsvindu.fra}
+                endDate={addDays(tilDato, 1)}
+                startDate={tilOsloDatoFraDato(aktivTidsvindu.fra)}
                 key={`sok-${aktivTidsvindu.fra.toISOString()}-${aktivTidsvindu.til.toISOString()}`}
             >
                 {lagSoknadRader({
@@ -71,8 +75,8 @@ const SoknadTidslinje = ({
                     aktivDrawerKildeId,
                     onDrawerValgt,
                 })}
-                {!dayjs().isAfter(dayjs(aktivTidsvindu.til), 'day') && (
-                    <Timeline.Pin date={dayjs().startOf('day').toDate()} data-idag="true">
+                {!isAfter(iDag, tilDato) && (
+                    <Timeline.Pin date={iDag} data-idag="true">
                         I dag
                     </Timeline.Pin>
                 )}
