@@ -1,7 +1,9 @@
+import { addDays, differenceInCalendarDays, isAfter, isBefore } from 'date-fns'
 import { useCallback, useState } from 'react'
 
 import { KlippetSykepengesoknadRecord, Soknad } from '../../queryhooks/useSoknader'
 import type { Sykmelding } from '../../queryhooks/useSykmeldinger'
+import { now, tilOsloDatoFraDato } from '../../utils/dato-utils'
 import { filtrerPaFilter } from '../../utils/filterlogikk'
 import gruppertOgFiltrert from '../../utils/gruppering'
 import { hentDatospenn, validerSykmeldingsDatoer } from '../../utils/sykmeldingValidering'
@@ -19,6 +21,39 @@ export interface SammenlignElement {
     kildeId: string
     objekt: object
     tittel: string
+}
+
+type Blaretning = 'bakover' | 'framover'
+
+interface Tidsgrenser {
+    grenseFra: Date
+    grenseTil: Date
+}
+
+const flyttTidsvindu = (vindu: { fra: Date; til: Date }, retning: Blaretning, grenser: Tidsgrenser) => {
+    const fra = tilOsloDatoFraDato(vindu.fra)
+    const til = tilOsloDatoFraDato(vindu.til)
+    const grenseFra = tilOsloDatoFraDato(grenser.grenseFra)
+    const grenseTil = tilOsloDatoFraDato(grenser.grenseTil)
+    const bredde = differenceInCalendarDays(til, fra)
+    const steg = Math.max(1, Math.round(bredde / 2))
+    const fortegn = retning === 'framover' ? 1 : -1
+
+    let nyFra = addDays(fra, fortegn * steg)
+    let nyTil = addDays(til, fortegn * steg)
+
+    if (isBefore(nyFra, grenseFra)) {
+        const diff = differenceInCalendarDays(grenseFra, nyFra)
+        nyFra = addDays(nyFra, diff)
+        nyTil = addDays(nyTil, diff)
+    }
+    if (isAfter(nyTil, grenseTil)) {
+        const diff = differenceInCalendarDays(nyTil, grenseTil)
+        nyFra = addDays(nyFra, -diff)
+        nyTil = addDays(nyTil, -diff)
+    }
+
+    return { fra: nyFra, til: nyTil }
 }
 
 export const useTidslinjeKombinert = (
@@ -46,6 +81,9 @@ export const useTidslinjeKombinert = (
         [...arb.sykmeldinger.values()].flatMap((syk) => [...syk.soknader.values()]),
     ).length
 
+    const sykmeldingTotalAntall = filtrerteSykmeldinger.length
+    const soknadTotalAntall = filtrerteSoknaderAntall
+
     let eldsteFra: Date | null = datospennSyk?.startDato ?? null
     let nysteTil: Date | null = datospennSyk?.sluttDato ?? null
 
@@ -61,7 +99,18 @@ export const useTidslinjeKombinert = (
         }
     }
 
-    const aktivTidsvindu = beregnAktivTidsvindu(visningsFraDato, visningstilDato, eldsteFra, nysteTil)
+    const osloEldsteFra = eldsteFra ? tilOsloDatoFraDato(eldsteFra) : null
+    const osloNysteTil = nysteTil ? tilOsloDatoFraDato(nysteTil) : null
+
+    const grenser: Tidsgrenser | null =
+        osloEldsteFra && osloNysteTil
+            ? {
+                  grenseFra: osloEldsteFra,
+                  grenseTil: tilOsloDatoFraDato(isAfter(osloNysteTil, now()) ? osloNysteTil : now()),
+              }
+            : null
+
+    const aktivTidsvindu = beregnAktivTidsvindu(visningsFraDato, visningstilDato, osloEldsteFra, osloNysteTil)
 
     const sykmeldingAntall = aktivTidsvindu
         ? filtrerteSykmeldinger.filter((sykmelding) => {
@@ -159,7 +208,15 @@ export const useTidslinjeKombinert = (
         // sammenlignModus forblir true — brukeren kan velge nye elementer
     }, [])
 
+    const handleBla = (retning: Blaretning) => {
+        if (!aktivTidsvindu || !grenser) return
+        const nyttVindu = flyttTidsvindu(aktivTidsvindu, retning, grenser)
+        setVisningsFraDato(nyttVindu.fra)
+        setVisningstilDato(nyttVindu.til)
+    }
+
     return {
+        grenser,
         filter,
         setFilter,
         setVisningsFraDato,
@@ -172,9 +229,11 @@ export const useTidslinjeKombinert = (
         sykmeldingerGruppertPaArbeidsgiver,
         soknaderGruppert,
         aktivTidsvindu,
-        nysteTil,
+        nysteTil: osloNysteTil,
         sykmeldingAntall,
+        sykmeldingTotalAntall,
         soknadAntall,
+        soknadTotalAntall,
         handlePeriodeValgt,
         handleDrawerValgt,
         handleLukkDrawer,
@@ -184,5 +243,6 @@ export const useTidslinjeKombinert = (
         handleStartSammenlign,
         handleAvsluttSammenlign,
         handleLukkSammenlignDrawer,
+        handleBla,
     }
 }
