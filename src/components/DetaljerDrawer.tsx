@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
-import { Button, Heading, ToggleGroup } from '@navikt/ds-react'
+import { Alert, Button, Heading, ToggleGroup } from '@navikt/ds-react'
 import { XMarkIcon, SidebarRightIcon } from '@navikt/aksel-icons'
 
 import { useSoknadKafkaformat } from '../queryhooks/useSoknadKafkaformat'
+import { useVedtakForSoknad } from '../queryhooks/useVedtakForSoknad'
+import { useValgtFnr } from '../utils/useValgtFnr'
 
 import { Detaljer } from './Detaljer'
 import { Filter } from './Filter'
@@ -116,7 +118,15 @@ function SoknadInnholdRenderer({
     visModus: VisModus
 }) {
     const [kafkaformatFilter, setKafkaformatFilter] = useState<Filter[]>([])
+    const [vedtakFilter, setVedtakFilter] = useState<Filter[]>([])
     const { data: kafkaformatData, isLoading: lasterKafka } = useSoknadKafkaformat(variant.soknadId)
+    const { fnr } = useValgtFnr()
+    const {
+        data: vedtakListe,
+        isFetching: henterVedtak,
+        isError: vedtakFeil,
+        refetch: hentVedtak,
+    } = useVedtakForSoknad(fnr, variant.soknadId)
 
     const filtrertSoknad = filtrerNøkler(variant.objekt, SKJUL_I_DETALJER)
     const vanligDetaljer = <Detaljer objekt={filtrertSoknad} filter={filter} setFilter={setFilter} />
@@ -133,13 +143,43 @@ function SoknadInnholdRenderer({
         <span className="text-gray-400 text-sm">Ingen kafkaformat-data</span>
     )
 
+    const vedtakPanel = (
+        <div className="space-y-3">
+            <Button size="small" loading={henterVedtak} disabled={henterVedtak} onClick={() => hentVedtak()}>
+                Hent vedtak
+            </Button>
+
+            {vedtakFeil && <Alert variant="error">Kunne ikke hente vedtak for søknaden</Alert>}
+
+            {vedtakListe !== undefined && !vedtakFeil && vedtakListe.length === 0 && (
+                <p className="text-sm text-gray-600">Ingen vedtak funnet for søknaden</p>
+            )}
+
+            {vedtakListe !== undefined && vedtakListe.length > 0 && (
+                <ul className="space-y-4" aria-label="Vedtak for søknad">
+                    {vedtakListe.map((vedtak, indeks) => (
+                        <li key={vedtak.id} className="rounded border border-gray-200 p-3">
+                            <Heading size="xsmall" level="3" spacing>
+                                Vedtak {indeks + 1}
+                            </Heading>
+                            <Detaljer objekt={vedtak} filter={vedtakFilter} setFilter={setVedtakFilter} />
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    )
+
     if (plassering === 'bunn') {
         if (visModus === 'begge') {
             return (
                 <div className="flex h-full gap-4">
                     <div className="w-1/4 overflow-y-auto">{variant.periodeInfo}</div>
                     <div className="w-[37.5%] overflow-y-auto">{vanligDetaljer}</div>
-                    <div className="w-[37.5%] overflow-y-auto">{kafkaDetaljer}</div>
+                    <div className="w-[37.5%] space-y-4 overflow-y-auto">
+                        {kafkaDetaljer}
+                        {vedtakPanel}
+                    </div>
                 </div>
             )
         }
@@ -147,7 +187,10 @@ function SoknadInnholdRenderer({
             <div className="flex h-full gap-6">
                 <div className="w-1/2 overflow-y-auto">{variant.periodeInfo}</div>
                 <div className="w-1/2 overflow-y-auto">
-                    {visModus === 'kafkaformat' ? kafkaDetaljer : vanligDetaljer}
+                    <div className="space-y-4">
+                        {visModus === 'kafkaformat' ? kafkaDetaljer : vanligDetaljer}
+                        {vedtakPanel}
+                    </div>
                 </div>
             </div>
         )
@@ -159,7 +202,10 @@ function SoknadInnholdRenderer({
                 {variant.periodeInfo}
                 <div className="flex gap-4">
                     <div className="w-1/2 overflow-y-auto">{vanligDetaljer}</div>
-                    <div className="w-1/2 overflow-y-auto">{kafkaDetaljer}</div>
+                    <div className="w-1/2 space-y-4 overflow-y-auto">
+                        {kafkaDetaljer}
+                        {vedtakPanel}
+                    </div>
                 </div>
             </div>
         )
@@ -169,6 +215,7 @@ function SoknadInnholdRenderer({
         <div className="space-y-4">
             {variant.periodeInfo}
             {visModus === 'kafkaformat' ? kafkaDetaljer : vanligDetaljer}
+            {vedtakPanel}
         </div>
     )
 }
