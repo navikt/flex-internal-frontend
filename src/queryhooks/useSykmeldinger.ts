@@ -52,6 +52,10 @@ export const mapTilSykmelding = (sykmelding: BackendSykmelding): Sykmelding => {
             hendelseOpprettet: toDatePaakrevd(hendelse.hendelseOpprettet, 'hendelser.hendelseOpprettet'),
             lokaltOpprettet: toDatePaakrevd(hendelse.lokaltOpprettet, 'hendelser.lokaltOpprettet'),
         })),
+        optIn: sykmelding.optIn.map((optIn) => ({
+            ...optIn,
+            opprettet: toDatePaakrevd(optIn.opprettet, 'optIn.opprettet'),
+        })),
     }
 }
 
@@ -73,6 +77,7 @@ export interface BackendSykmelding {
     sykmeldingsperioder: BackendSykmeldingsperiode[]
     hendelser: BackendHendelse[]
     utenlandskSykmelding: UtenlandskSykmelding | null
+    optIn: BackendOptIn[]
 }
 
 export interface Sykmelding {
@@ -93,6 +98,7 @@ export interface Sykmelding {
     sykmeldingsperioder: Sykmeldingsperiode[]
     hendelser: Hendelse[]
     utenlandskSykmelding: UtenlandskSykmelding | null
+    optIn: OptIn[]
 }
 
 export interface Pasient {
@@ -131,6 +137,10 @@ export interface BackendSykmeldingsperiode {
     reisetilskudd: boolean
 }
 
+export interface BackendOptIn {
+    opprettet: string
+}
+
 export interface Sykmeldingsperiode {
     fom: Date
     tom: Date
@@ -140,6 +150,10 @@ export interface Sykmeldingsperiode {
     type: Periodetype
     aktivitetIkkeMulig: AktivitetIkkeMulig | null
     reisetilskudd: boolean
+}
+
+export interface OptIn {
+    opprettet: Date
 }
 
 export type Periodetype = 'AKTIVITET_IKKE_MULIG' | 'AVVENTENDE' | 'BEHANDLINGSDAGER' | 'GRADERT' | 'REISETILSKUDD'

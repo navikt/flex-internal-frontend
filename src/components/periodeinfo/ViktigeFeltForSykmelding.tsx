@@ -63,6 +63,13 @@ export default function ViktigeFeltForSykmelding({ sykmelding, perioder }: Props
             etikett: 'Antall kalenderdager',
             verdi: antallKalenderdager(forstePeriode.startDato, sistePeriode.sluttDato),
         },
+        {
+            etikett: 'Opt-in',
+            verdi:
+                sykmelding.optIn.length > 0
+                    ? sykmelding.optIn.map((optIn) => formaterDatoMedTid(optIn.opprettet)).join(', ')
+                    : 'Nei',
+        },
     ]
 
     const delperiodeTekster = perioder.map(

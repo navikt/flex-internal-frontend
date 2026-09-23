@@ -8,6 +8,7 @@ import {
     CompassIcon,
     DoorOpenIcon,
     GlobeIcon,
+    HandFingerFillIcon,
     HospitalIcon,
     HourglassIcon,
     ImageIcon,
@@ -130,5 +131,19 @@ describe('ikonForSykmeldingPerioder', () => {
 
     it('returnerer BandageFillIcon som fallback når periodetype er undefined', () => {
         expect(ikonForSykmeldingPerioder(1, undefined).type).toBe(BandageFillIcon)
+    })
+
+    it('legger til HandFingerFillIcon sist når sykmeldingen er optet inn', () => {
+        const result = ikonForSykmeldingPerioder(1, 'GRADERT', 'ARBEIDSTAKER', true) as ReactElement<{
+            children: Array<ReactElement<{ children: ReactElement }>>
+        }>
+        expect(result.type).toBe('span')
+        expect(result.props.children[0].props.children.type).toBe(BriefcaseIcon)
+        expect(result.props.children[1].props.children.type).toBe(SectorChartIcon)
+        expect(result.props.children[2].props.children.type).toBe(HandFingerFillIcon)
+    })
+
+    it('viser ikke HandFingerFillIcon uten opt-in', () => {
+        expect(ikonForSykmeldingPerioder(1, 'GRADERT', null, false).type).toBe(SectorChartIcon)
     })
 })

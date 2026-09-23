@@ -65,11 +65,17 @@ export const lagSykmeldingRader = ({
 
                 const forstePeriodetype = sykmelding.sykmeldingsperioder[0]?.type
                 const arbeidssituasjon = sykmelding.sykmeldingStatus?.brukerSvar?.arbeidssituasjon?.svar
-                const ikon = ikonForSykmeldingPerioder(perioder.length, forstePeriodetype, arbeidssituasjon)
+                const harOptIn = sykmelding.optIn.length > 0
+                const ikon = ikonForSykmeldingPerioder(perioder.length, forstePeriodetype, arbeidssituasjon, harOptIn)
                 const periodeKey = `${sykmelding.id}-${forstePeriode.fom}-${sistePeriode.tom}`
                 const periodeInfo = <ViktigeFeltForSykmelding sykmelding={sykmelding} perioder={perioder} />
                 const sykmeldingAktivId = sykmelding.id
-                const ikonHeader = ikonParForSykmeldingPerioder(perioder.length, forstePeriodetype, arbeidssituasjon)
+                const ikonHeader = ikonParForSykmeldingPerioder(
+                    perioder.length,
+                    forstePeriodetype,
+                    arbeidssituasjon,
+                    harOptIn,
+                )
 
                 const erValgtPeriode = aktivDrawerKildeId === sykmeldingAktivId
                 const erSammenlignValgt = sammenlignValgteIder.includes(sykmeldingAktivId)

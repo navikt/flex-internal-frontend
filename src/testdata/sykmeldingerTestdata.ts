@@ -117,6 +117,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         ],
         utenlandskSykmelding: null,
         signaturDato: '2026-02-10',
+        optIn: [{ opprettet: '2026-02-10T12:00:00Z' }],
     },
     {
         id: 'bc3c9e72-58c0-4d24-91ba-d712fdd8c713',
@@ -214,6 +215,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         ],
         utenlandskSykmelding: null,
         signaturDato: '2026-01-28',
+        optIn: [],
     },
     {
         id: 'ac4d9e72-58c0-4d24-91ba-d712fdd8c714',
@@ -308,6 +310,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         merknader: [{ type: 'UNDER_BEHANDLING', beskrivelse: 'Oppfølging av langvarig sykmelding' }],
         signaturDato: '2026-03-10',
         utenlandskSykmelding: null,
+        optIn: [],
     },
     {
         id: 'bd5e8f73-59c1-5d35-92cb-d812fdd8c815',
@@ -399,6 +402,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         merknader: [{ type: 'TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER', beskrivelse: 'Tilbakedatert sykmelding' }],
         signaturDato: '2025-11-15',
         utenlandskSykmelding: null,
+        optIn: [],
     },
     {
         id: 'bd5e8f73-59c1-5d35-92cb-d812fdd8c816',
@@ -506,6 +510,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         merknader: [{ type: 'TILBAKEDATERING_KREVER_FLERE_OPPLYSNINGER', beskrivelse: 'Tilbakedatert sykmelding' }],
         signaturDato: null,
         utenlandskSykmelding: null,
+        optIn: [],
     },
     {
         id: 'ce6f0a84-60d2-6e46-a3dc-e923fee9d926',
@@ -591,6 +596,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         merknader: [],
         signaturDato: '2026-02-25',
         utenlandskSykmelding: null,
+        optIn: [],
     },
     // GRADERT periode
     {
@@ -661,6 +667,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         merknader: [],
         signaturDato: null,
         utenlandskSykmelding: null,
+        optIn: [],
     },
     // BEHANDLINGSDAGER periode
     {
@@ -731,6 +738,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         merknader: [],
         signaturDato: null,
         utenlandskSykmelding: null,
+        optIn: [],
     },
     // AVVENTENDE periode
     {
@@ -801,6 +809,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         merknader: [],
         signaturDato: null,
         utenlandskSykmelding: null,
+        optIn: [],
     },
     // REISETILSKUDD periode
     {
@@ -881,6 +890,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         merknader: [],
         signaturDato: null,
         utenlandskSykmelding: null,
+        optIn: [],
     },
     // Sykmeldinger for eksisterende søknader (Klonelabben 2023-data)
     {
@@ -947,6 +957,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         merknader: [],
         signaturDato: null,
         utenlandskSykmelding: null,
+        optIn: [],
     },
     {
         id: '884b8a9f-e24a-432d-b1c6-89bbac272513',
@@ -1012,6 +1023,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         merknader: [],
         signaturDato: null,
         utenlandskSykmelding: null,
+        optIn: [],
     },
     {
         id: 'd02d8d3a-b58e-44b2-8b41-5279865360a6',
@@ -1077,6 +1089,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         merknader: [],
         signaturDato: null,
         utenlandskSykmelding: null,
+        optIn: [],
     },
     {
         id: '2e6666d0-2540-40f2-99b6-083cbd91934d',
@@ -1142,6 +1155,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         merknader: [],
         signaturDato: null,
         utenlandskSykmelding: null,
+        optIn: [],
     },
     {
         id: 'de68e6ed-3cb6-4e3b-9cf0-0a07c234c629',
@@ -1210,6 +1224,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         merknader: [],
         signaturDato: null,
         utenlandskSykmelding: null,
+        optIn: [],
     },
     {
         id: '468ecc00-7346-4a71-80a9-61d890971f6e',
@@ -1278,6 +1293,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         merknader: [],
         signaturDato: null,
         utenlandskSykmelding: null,
+        optIn: [],
     },
     {
         id: 'bb95fde1-cdc7-4fc9-baee-abc8dccd0dfe',
@@ -1346,6 +1362,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         merknader: [],
         signaturDato: null,
         utenlandskSykmelding: null,
+        optIn: [],
     },
     // Sykmelding som matcher klippet/erstattet-søknad testcase (Klonelabben, jun–aug 2023)
     {
@@ -1445,6 +1462,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         merknader: [],
         signaturDato: null,
         utenlandskSykmelding: null,
+        optIn: [],
     },
     // Ny overlappende sykmelding som forårsaket klipping av søknad på 'sykmelding-klippet-erstattet'.
     // Dekker juli med gradert 50%, og ga opphav til 'erstatning-soknad-ny-uuid'.
@@ -1529,5 +1547,6 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         merknader: [],
         signaturDato: null,
         utenlandskSykmelding: null,
+        optIn: [],
     },
 ]

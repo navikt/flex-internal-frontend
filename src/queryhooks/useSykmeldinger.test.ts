@@ -41,6 +41,7 @@ const baseSykmelding: BackendSykmelding = {
     ],
     hendelser: [],
     utenlandskSykmelding: null,
+    optIn: [],
 }
 
 describe('mapTilSykmelding hendelser', () => {
@@ -73,6 +74,16 @@ describe('mapTilSykmelding optional datofelter', () => {
         expect(sykmelding.signaturDato).toBeUndefined()
         expect(sykmelding.syketilfelleStartDato).toBeUndefined()
         expect(sykmelding.kontaktMedPasient.kontaktDato).toBeUndefined()
+    })
+
+    it('konverterer optIn.opprettet til Date', () => {
+        const sykmelding = mapTilSykmelding({
+            ...baseSykmelding,
+            optIn: [{ opprettet: '2026-03-29T12:00:00Z' }],
+        })
+
+        expect(sykmelding.optIn[0].opprettet).toBeInstanceOf(Date)
+        expect(sykmelding.optIn[0].opprettet.toISOString()).toBe('2026-03-29T12:00:00.000Z')
     })
 })
 
