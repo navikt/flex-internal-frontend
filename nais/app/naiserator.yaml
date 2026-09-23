@@ -62,6 +62,7 @@ spec:
         - application: flex-arbeidssokerregister-oppdatering
         - application: flex-inntektsmelding-status
         - application: flex-syketilfelle
+        - application: spinnsyn-backend
       external:
         - host: reops-proxy.intern.nav.no
   env:
