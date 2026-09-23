@@ -117,7 +117,7 @@ export const sykmeldingerTestdata: BackendSykmelding[] = [
         ],
         utenlandskSykmelding: null,
         signaturDato: '2026-02-10',
-        optIn: [{ opprettet: '2026-02-10T12:00:00Z' }],
+        optIn: [{ opprettet: '2026-02-10T12:00:00Z' }, { opprettet: '2026-02-11T12:00:00Z' }],
     },
     {
         id: 'bc3c9e72-58c0-4d24-91ba-d712fdd8c713',

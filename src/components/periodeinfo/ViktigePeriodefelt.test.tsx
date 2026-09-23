@@ -54,6 +54,19 @@ describe('ViktigePeriodefelt', () => {
             render(<ViktigePeriodefelt viktigeFelt={[{ etikett: 'Grad', verdi: 80 }]} />)
             expect(screen.getByText('80')).toBeInTheDocument()
         })
+
+        it('viser listeverdi som egne linjer nedover', () => {
+            render(
+                <ViktigePeriodefelt
+                    viktigeFelt={[{ etikett: 'Opt-in', verdi: ['10.02.2026 12:00', '15.03.2026 09:30'] }]}
+                />,
+            )
+            const forste = screen.getByText('10.02.2026 12:00')
+            const andre = screen.getByText('15.03.2026 09:30')
+            expect(forste).not.toBe(andre)
+            expect(forste.parentElement).toBe(andre.parentElement)
+            expect(forste.parentElement).toHaveClass('flex-col')
+        })
     })
 
     describe('statusvisning', () => {

@@ -5,7 +5,7 @@ import { hentIkon, hentStatusFarge } from './periodefelt-utils'
 
 interface ViktigFelt {
     etikett: string
-    verdi: string | number
+    verdi: string | number | string[]
 }
 
 interface Props {
@@ -32,6 +32,12 @@ export function FeltKort({ viktigeFelt }: Props) {
                                 >
                                     {felt.verdi}
                                 </Tag>
+                            ) : Array.isArray(felt.verdi) ? (
+                                <span className="flex flex-col text-ax-text-default">
+                                    {felt.verdi.map((verdi, indeks) => (
+                                        <span key={`${verdi}-${indeks}`}>{verdi}</span>
+                                    ))}
+                                </span>
                             ) : (
                                 <span
                                     className="truncate text-ax-text-default"
