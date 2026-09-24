@@ -8,6 +8,7 @@ import {
     CompassIcon,
     DoorOpenIcon,
     GlobeIcon,
+    HandFingerFillIcon,
     HospitalIcon,
     HourglassIcon,
     ImageIcon,
@@ -96,6 +97,7 @@ export function ikonParForSykmeldingPerioder(
     antallPerioder: number,
     forstePeriodetype: Periodetype | undefined,
     arbeidssituasjon?: string | null,
+    harOptIn = false,
 ): Array<{ ikon: React.ReactElement; tekst: string }> {
     const periodePar: { ikon: React.ReactElement; tekst: string } =
         antallPerioder > 1
@@ -104,12 +106,20 @@ export function ikonParForSykmeldingPerioder(
               ? { ikon: ikonForPeriodetype(forstePeriodetype), tekst: beskrivelseForPeriodetype(forstePeriodetype) }
               : { ikon: <BandageFillIcon aria-hidden />, tekst: '100% sykmeldt' }
 
-    if (!arbeidssituasjon) return [periodePar]
+    const par: Array<{ ikon: React.ReactElement; tekst: string }> = arbeidssituasjon
+        ? [
+              { ikon: ikonForArbeidssituasjon(arbeidssituasjon), tekst: arbeidssituasjonTilTekst(arbeidssituasjon) },
+              periodePar,
+          ]
+        : [periodePar]
 
-    return [
-        { ikon: ikonForArbeidssituasjon(arbeidssituasjon), tekst: arbeidssituasjonTilTekst(arbeidssituasjon) },
-        periodePar,
-    ]
+    if (harOptIn)
+        par.push({
+            ikon: <HandFingerFillIcon aria-hidden className="text-ax-brand-magenta-800" />,
+            tekst: 'Optet inn',
+        })
+
+    return par
 }
 
 export function ikonerFraIkonPar(par: Array<{ ikon: React.ReactElement; tekst: string }>): React.ReactElement {
@@ -213,8 +223,9 @@ export function ikonForSykmeldingPerioder(
     antallPerioder: number,
     forstePeriodetype: Periodetype | undefined,
     arbeidssituasjon?: string | null,
+    harOptIn = false,
 ): React.ReactElement {
-    return ikonerFraIkonPar(ikonParForSykmeldingPerioder(antallPerioder, forstePeriodetype, arbeidssituasjon))
+    return ikonerFraIkonPar(ikonParForSykmeldingPerioder(antallPerioder, forstePeriodetype, arbeidssituasjon, harOptIn))
 }
 
 export function beskrivelseForSykmeldingPerioder(

@@ -5,7 +5,7 @@ import { FeltKort } from './FeltKort'
 
 interface ViktigFelt {
     etikett: string
-    verdi: string | number
+    verdi: string | number | string[]
 }
 
 interface Props {

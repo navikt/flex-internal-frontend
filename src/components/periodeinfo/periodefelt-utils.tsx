@@ -11,6 +11,7 @@ import {
     CheckmarkCircleIcon,
     TimerStartIcon,
     PersonCheckmarkIcon,
+    HandFingerFillIcon,
 } from '@navikt/aksel-icons'
 
 export const hentIkon = (etikett: string): React.ReactNode => {
@@ -40,6 +41,8 @@ export const hentIkon = (etikett: string): React.ReactNode => {
             return <CalendarIcon aria-hidden fontSize="1.25rem" />
         case 'Arbeidssituasjon':
             return <BriefcaseIcon aria-hidden fontSize="1.25rem" />
+        case 'Opt-in':
+            return <HandFingerFillIcon aria-hidden className="text-ax-brand-magenta-800" fontSize="1.25rem" />
         default:
             return '•'
     }
