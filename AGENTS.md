@@ -6,17 +6,17 @@ Repoet `flex-internal-frontend` er et internt Next.js-verktøy for NAV-ansatte f
 Bruk IntelliJ MCP (`execute_run_configuration`) for scripts — se **`AGENTS-intellij.md`**. Scripts for referanse:
 
 ```sh
-pnpm run dev # kjør lokalt med mock-backend på port 8080
-pnpm run local # kjør lokalt med LOCAL_BACKEND=true og MOCK_BACKEND=true
-pnpm run test # kjør Vitest i CI-modus (ingen watch)
-pnpm run test:watch # kjør Vitest i watch-modus
-pnpm run build # bygg for produksjon
-pnpm run format # kjør prettier + eslint --fix
-pnpm run lint # kjør eslint
-pnpm run prettier:check # sjekk formattering
+npm run dev # kjør lokalt med mock-backend på port 8080
+npm run local # kjør lokalt med LOCAL_BACKEND=true og MOCK_BACKEND=true
+npm run test # kjør Vitest i CI-modus (ingen watch)
+npm run test:watch # kjør Vitest i watch-modus
+npm run build # bygg for produksjon
+npm run format # kjør prettier + eslint --fix
+npm run lint # kjør eslint
+npm run prettier:check # sjekk formattering
 ```
 
-- `pnpm run dev` bruker mock-backend lokalt (`MOCK_BACKEND=true`)
+- `npm run dev` bruker mock-backend lokalt (`MOCK_BACKEND=true`)
 
 ### Før commit (obligatorisk)
 
@@ -30,7 +30,7 @@ Kjør i rekkefølge via `execute_run_configuration`:
 
 - Enhet/integrasjon: **Vitest** (`.test.ts` / `.test.tsx`) i `src/`
 - E2E: Ikke satt opp som standard script i dette repoet per nå
-- «Kjør tester» betyr `pnpm run test` med mindre noe annet er eksplisitt avtalt
+- «Kjør tester» betyr `npm run test` med mindre noe annet er eksplisitt avtalt
 - Prioriter tester for endret domenelogikk
 
 ## 3) Prosjektstruktur

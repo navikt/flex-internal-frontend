@@ -16,12 +16,10 @@ Interne henvendelser kan sendes via Slack i kanalen `#flex`.
 
 ## Oppsett
 
-Apen bruker `pnpm`:
+Apen bruker `npm`:
 
 ```sh
-corepack enable
-corepack install
-pnpm -v
+npm install
+npm -v
 ```
-
 
