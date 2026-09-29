@@ -47,7 +47,7 @@ describe('useVedtakForSoknad', () => {
             refetchResult = await result.current.refetch()
         })
 
-        expect(fetchJsonMedRequestIdMock).toHaveBeenCalledWith('/api/spinnsyn-backend/api/v4/veileder/vedtak/soknad', {
+        expect(fetchJsonMedRequestIdMock).toHaveBeenCalledWith('/api/spinnsyn-backend/api/v1/flex/vedtak/soknad', {
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },

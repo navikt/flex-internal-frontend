@@ -312,7 +312,7 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         res.end()
         return
     }
-    if (validert.api == 'POST /api/v4/veileder/vedtak/soknad') {
+    if (validert.api == 'POST /api/v1/flex/vedtak/soknad') {
         type HentVedtakBody = {
             fnr: string
             soknadId: string

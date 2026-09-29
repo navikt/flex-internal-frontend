@@ -44,7 +44,7 @@ export function useVedtakForSoknad(
             }
 
             const requestBody: HentVedtakRequest = { fnr, soknadId }
-            return fetchJsonMedRequestId<RSVedtakWrapper[]>('/api/spinnsyn-backend/api/v4/veileder/vedtak/soknad', {
+            return fetchJsonMedRequestId<RSVedtakWrapper[]>('/api/spinnsyn-backend/api/v1/flex/vedtak/soknad', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {

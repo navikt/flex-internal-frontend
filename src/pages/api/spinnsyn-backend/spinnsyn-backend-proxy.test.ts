@@ -16,11 +16,11 @@ function lagRequestMock(method: string, url: string) {
 }
 
 describe('spinnsyn-backend proxy whitelist', () => {
-    const tillatteApier = ['POST /api/v4/veileder/vedtak/soknad']
+    const tillatteApier = ['POST /api/v1/flex/vedtak/soknad']
 
-    it('tillater POST /api/v4/veileder/vedtak/soknad', () => {
+    it('tillater POST /api/v1/flex/vedtak/soknad', () => {
         const { res } = lagResponseMock()
-        const req = lagRequestMock('POST', '/api/spinnsyn-backend/api/v4/veileder/vedtak/soknad')
+        const req = lagRequestMock('POST', '/api/spinnsyn-backend/api/v1/flex/vedtak/soknad')
 
         const resultat =
             validerKall({
@@ -33,14 +33,14 @@ describe('spinnsyn-backend proxy whitelist', () => {
             }) ?? null
 
         expect(resultat).toEqual({
-            api: 'POST /api/v4/veileder/vedtak/soknad',
-            rewritedPath: '/api/v4/veileder/vedtak/soknad',
+            api: 'POST /api/v1/flex/vedtak/soknad',
+            rewritedPath: '/api/v1/flex/vedtak/soknad',
         })
     })
 
     it('avviser GET mot samme sti med 404', () => {
         const { res, status, send, end } = lagResponseMock()
-        const req = lagRequestMock('GET', '/api/spinnsyn-backend/api/v4/veileder/vedtak/soknad')
+        const req = lagRequestMock('GET', '/api/spinnsyn-backend/api/v1/flex/vedtak/soknad')
 
         const resultat = validerKall({
             req,

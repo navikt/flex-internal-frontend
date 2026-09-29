@@ -7,7 +7,7 @@ import { isMockBackend } from '../../../utils/environment'
 
 const SPINNSYN_BACKEND_CLIENT_ID = process.env.SPINNSYN_BACKEND_CLIENT_ID || ''
 
-const tillatteApier = ['POST /api/v4/veileder/vedtak/soknad']
+const tillatteApier = ['POST /api/v1/flex/vedtak/soknad']
 
 const handler = beskyttetApi(async (req: NextApiRequest, res: NextApiResponse) => {
     const opts = {
