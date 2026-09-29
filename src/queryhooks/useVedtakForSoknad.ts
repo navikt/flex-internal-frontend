@@ -7,21 +7,40 @@ interface VedtakDokument {
     type: string
 }
 
+export interface Utbetalingsdag {
+    dato: string
+    type: string
+    begrunnelser: string[]
+    beløpTilArbeidsgiver?: number | null
+    beløpTilSykmeldt?: number | null
+    sykdomsgrad?: number | null
+}
+
 interface VedtakUtbetaling {
     utbetalingId?: string | null
     utbetalingType?: string
+    utbetalingsdager?: Utbetalingsdag[] | null
     [key: string]: unknown
 }
 
 interface VedtakData {
     dokumenter: VedtakDokument[]
     utbetaling: VedtakUtbetaling
+    fom?: string
+    tom?: string
+    vedtakFattetTidspunkt?: string | null
+    organisasjonsnummer?: string
     [key: string]: unknown
 }
 
 export interface RSVedtakWrapper {
     id: string
     vedtak: VedtakData
+    orgnavn?: string
+    annullert?: boolean
+    revurdert?: boolean
+    sykepengebelopArbeidsgiver?: number
+    sykepengebelopSykmeldt?: number
     [key: string]: unknown
 }
 

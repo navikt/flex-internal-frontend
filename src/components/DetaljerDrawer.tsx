@@ -10,6 +10,7 @@ import { useValgtFnr } from '../utils/useValgtFnr'
 import { Detaljer } from './Detaljer'
 import { Filter } from './Filter'
 import { SammenlignDetaljer } from './SammenlignDetaljer'
+import { VedtakOppsummering } from './VedtakOppsummering'
 
 type VisModus = 'vanlig' | 'kafkaformat' | 'begge'
 
@@ -118,7 +119,6 @@ function SoknadInnholdRenderer({
     visModus: VisModus
 }) {
     const [kafkaformatFilter, setKafkaformatFilter] = useState<Filter[]>([])
-    const [vedtakFilter, setVedtakFilter] = useState<Filter[]>([])
     const { data: kafkaformatData, isLoading: lasterKafka } = useSoknadKafkaformat(variant.soknadId)
     const { fnr } = useValgtFnr()
     const {
@@ -162,7 +162,7 @@ function SoknadInnholdRenderer({
                             <Heading size="xsmall" level="3" spacing>
                                 Vedtak {indeks + 1}
                             </Heading>
-                            <Detaljer objekt={vedtak} filter={vedtakFilter} setFilter={setVedtakFilter} />
+                            <VedtakOppsummering vedtak={vedtak} />
                         </li>
                     ))}
                 </ul>
