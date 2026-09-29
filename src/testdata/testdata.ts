@@ -13,6 +13,7 @@ import { HentIdenterRequest } from '../queryhooks/useIdenter'
 
 import { sykepengesoknaderTestdata } from './sykepengesoknaderTestdata'
 import { sykmeldingerTestdata } from './sykmeldingerTestdata'
+import { hentVedtakTestdata } from './vedtakTestdata'
 
 const vedtaksperiodeTestdata: FullVedtaksperiodeBehandling[] = [
     {
@@ -318,79 +319,8 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
             soknadId: string
         }
         const body = await parseRequest<HentVedtakBody>(req)
-        const valgtSoknadId = body.soknadId
-
-        const vedtakA = {
-            id: 'vedtak-wrapper-1',
-            lest: false,
-            opprettetTimestamp: '2024-05-14T05:12:15.133973Z',
-            orgnavn: 'Eksempel AS',
-            annullert: false,
-            revurdert: false,
-            sykepengebelopArbeidsgiver: 1000,
-            sykepengebelopSykmeldt: 2000,
-            daglisteArbeidsgiver: [],
-            daglisteSykmeldt: [],
-            andreArbeidsgivere: null,
-            organisasjoner: {},
-            vedtak: {
-                organisasjonsnummer: '999888777',
-                yrkesaktivitetstype: 'ARBEIDSTAKER',
-                fom: '2024-01-01',
-                tom: '2024-01-31',
-                dokumenter: [
-                    { dokumentId: valgtSoknadId, type: 'Søknad' },
-                    { dokumentId: '33333333-3333-3333-3333-333333333333', type: 'Sykmelding' },
-                ],
-                inntekt: 50000,
-                sykepengegrunnlag: 600000,
-                utbetaling: {
-                    organisasjonsnummer: '999888777',
-                    utbetalingId: 'utbetaling-1',
-                    forbrukteSykedager: 10,
-                    gjenståendeSykedager: 230,
-                    automatiskBehandling: true,
-                    arbeidsgiverOppdrag: null,
-                    personOppdrag: null,
-                    utbetalingsdager: [],
-                    foreløpigBeregnetSluttPåSykepenger: '2025-01-01',
-                    utbetalingType: 'UTBETALING',
-                },
-                grunnlagForSykepengegrunnlag: 600000,
-                grunnlagForSykepengegrunnlagPerArbeidsgiver: { '999888777': 600000 },
-                begrensning: null,
-                vedtakFattetTidspunkt: '2024-01-10',
-                sykepengegrunnlagsfakta: null,
-                begrunnelser: null,
-                tags: [],
-            },
-        }
-
-        const vedtakB = {
-            ...vedtakA,
-            id: 'vedtak-wrapper-2',
-            opprettetTimestamp: '2024-06-01T09:00:00.000Z',
-            vedtak: {
-                ...vedtakA.vedtak,
-                fom: '2024-02-01',
-                tom: '2024-02-28',
-                utbetaling: {
-                    ...vedtakA.vedtak.utbetaling,
-                    utbetalingId: 'utbetaling-2',
-                    utbetalingType: 'REVURDERING',
-                },
-            },
-        }
-
-        if (valgtSoknadId === '11111111-1111-1111-1111-111111111111') {
-            res.status(200)
-            res.json([vedtakA, vedtakB])
-            res.end()
-            return
-        }
-
         res.status(200)
-        res.json([])
+        res.json(hentVedtakTestdata(body.soknadId))
         res.end()
         return
     }
