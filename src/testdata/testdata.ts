@@ -13,6 +13,7 @@ import { HentIdenterRequest } from '../queryhooks/useIdenter'
 
 import { sykepengesoknaderTestdata } from './sykepengesoknaderTestdata'
 import { sykmeldingerTestdata } from './sykmeldingerTestdata'
+import { hentVedtakTestdata } from './vedtakTestdata'
 
 const vedtaksperiodeTestdata: FullVedtaksperiodeBehandling[] = [
     {
@@ -276,8 +277,15 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         return
     }
     if (validert.api == 'GET /api/v1/flex/sykmeldinger/[uuid]') {
+        const id = validert.rewritedPath.split('?')[0].split('/').at(-1)
+        const sykmelding = sykmeldingerTestdata.find((s) => s.id === id)
+        if (!sykmelding) {
+            res.status(404)
+            res.end()
+            return
+        }
         res.status(200)
-        res.json(sykmeldingerTestdata[0])
+        res.json(sykmelding)
         res.end()
         return
     }
@@ -294,8 +302,16 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         return
     }
     if (validert.api == 'GET /api/v1/flex/sykepengesoknader/[uuid]') {
+        const id = validert.rewritedPath.split('?')[0].split('/').at(-1)
+        const soknad = sykepengesoknaderTestdata.sykepengesoknadListe.find((s) => s.id === id)
+        if (!soknad) {
+            res.status(404)
+            res.end()
+            return
+        }
+        const fnr = sykmeldingerTestdata.find((s) => s.id === soknad.sykmeldingId)?.pasient.fnr ?? '12345678901'
         res.status(200)
-        res.json({ fnr: 'fødselsnummer', sykepengesoknad: sykepengesoknaderTestdata.sykepengesoknadListe[0] })
+        res.json({ fnr, sykepengesoknad: soknad })
         res.end()
         return
     }
@@ -309,6 +325,17 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
                 metadata: { kilde: 'mock', format: 'kafka' },
             },
         })
+        res.end()
+        return
+    }
+    if (validert.api == 'POST /api/v1/flex/vedtak/soknad') {
+        type HentVedtakBody = {
+            fnr: string
+            soknadId: string
+        }
+        const body = await parseRequest<HentVedtakBody>(req)
+        res.status(200)
+        res.json(hentVedtakTestdata(body.soknadId))
         res.end()
         return
     }
