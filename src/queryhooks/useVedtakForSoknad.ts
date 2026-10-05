@@ -49,6 +49,10 @@ interface HentVedtakRequest {
     soknadId: string
 }
 
+interface VedtakForSoknadResponse {
+    vedtak: RSVedtakWrapper[]
+}
+
 export function useVedtakForSoknad(
     fnr: string | undefined,
     soknadId: string,
@@ -63,14 +67,14 @@ export function useVedtakForSoknad(
             }
 
             const requestBody: HentVedtakRequest = { fnr, soknadId }
-            return fetchJsonMedRequestId<RSVedtakWrapper[]>('/api/spinnsyn-backend/api/v1/flex/vedtak/soknad', {
+            return fetchJsonMedRequestId<VedtakForSoknadResponse>('/api/spinnsyn-backend/api/v1/flex/vedtak/soknad', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(requestBody),
-            })
+            }).then((response) => response.vedtak)
         },
     })
 }
