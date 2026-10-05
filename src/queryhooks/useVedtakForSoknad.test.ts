@@ -30,7 +30,7 @@ describe('useVedtakForSoknad', () => {
     })
 
     it('henter ikke data før refetch', async () => {
-        fetchJsonMedRequestIdMock.mockResolvedValue([])
+        fetchJsonMedRequestIdMock.mockResolvedValue({ vedtak: [] })
         renderHook(() => useVedtakForSoknad(fnr, soknadId), { wrapper })
 
         await new Promise((resolve) => setTimeout(resolve, 10))
@@ -39,7 +39,9 @@ describe('useVedtakForSoknad', () => {
     })
 
     it('sender POST med korrekt body ved refetch', async () => {
-        fetchJsonMedRequestIdMock.mockResolvedValue([{ id: 'vedtak-1', vedtak: { dokumenter: [], utbetaling: {} } }])
+        fetchJsonMedRequestIdMock.mockResolvedValue({
+            vedtak: [{ id: 'vedtak-1', vedtak: { dokumenter: [], utbetaling: {} } }],
+        })
         const { result } = renderHook(() => useVedtakForSoknad(fnr, soknadId), { wrapper })
 
         let refetchResult: Awaited<ReturnType<typeof result.current.refetch>> | undefined
@@ -55,10 +57,25 @@ describe('useVedtakForSoknad', () => {
         })
 
         expect(refetchResult?.data).toHaveLength(1)
+        expect(refetchResult?.data?.[0]?.id).toBe('vedtak-1')
+    })
+
+    it('gir tom liste når backend svarer med tom vedtaksliste', async () => {
+        fetchJsonMedRequestIdMock.mockResolvedValue({ vedtak: [] })
+        const { result } = renderHook(() => useVedtakForSoknad(fnr, soknadId), { wrapper })
+
+        let refetchResult: Awaited<ReturnType<typeof result.current.refetch>> | undefined
+        await act(async () => {
+            refetchResult = await result.current.refetch()
+        })
+
+        expect(refetchResult?.data).toEqual([])
     })
 
     it('gjør nytt backendkall for hvert refetch', async () => {
-        fetchJsonMedRequestIdMock.mockResolvedValue([{ id: 'vedtak-1', vedtak: { dokumenter: [], utbetaling: {} } }])
+        fetchJsonMedRequestIdMock.mockResolvedValue({
+            vedtak: [{ id: 'vedtak-1', vedtak: { dokumenter: [], utbetaling: {} } }],
+        })
         const { result } = renderHook(() => useVedtakForSoknad(fnr, soknadId), { wrapper })
 
         await act(async () => {
@@ -83,8 +100,8 @@ describe('useVedtakForSoknad', () => {
 
     it('isolerer cache mellom query keys', async () => {
         fetchJsonMedRequestIdMock
-            .mockResolvedValueOnce([{ id: 'vedtak-A', vedtak: { dokumenter: [], utbetaling: {} } }])
-            .mockResolvedValueOnce([{ id: 'vedtak-B', vedtak: { dokumenter: [], utbetaling: {} } }])
+            .mockResolvedValueOnce({ vedtak: [{ id: 'vedtak-A', vedtak: { dokumenter: [], utbetaling: {} } }] })
+            .mockResolvedValueOnce({ vedtak: [{ id: 'vedtak-B', vedtak: { dokumenter: [], utbetaling: {} } }] })
 
         const { result: første } = renderHook(
             () => useVedtakForSoknad('12345678901', '11111111-1111-1111-1111-111111111111'),

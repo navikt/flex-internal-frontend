@@ -335,7 +335,7 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
         }
         const body = await parseRequest<HentVedtakBody>(req)
         res.status(200)
-        res.json(hentVedtakTestdata(body.soknadId))
+        res.json({ vedtak: hentVedtakTestdata(body.soknadId) })
         res.end()
         return
     }
