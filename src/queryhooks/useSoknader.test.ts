@@ -38,6 +38,36 @@ describe('Soknad optional datofelter', () => {
     })
 })
 
+describe('Soknad fiskerfelter', () => {
+    it.each([
+        { fiskerBlad: 'A', fiskerLottOgHyre: 'LOTT' },
+        { fiskerBlad: 'B', fiskerLottOgHyre: 'HYRE' },
+        { fiskerBlad: 'A', fiskerLottOgHyre: 'BEGGE' },
+    ] satisfies Pick<BackendSoknad, 'fiskerBlad' | 'fiskerLottOgHyre'>[])(
+        'beholder $fiskerBlad og $fiskerLottOgHyre',
+        (fiskerfelter) => {
+            const soknad = new Soknad({ ...baseSoknad, ...fiskerfelter })
+
+            expect(soknad.fiskerBlad).toBe(fiskerfelter.fiskerBlad)
+            expect(soknad.fiskerLottOgHyre).toBe(fiskerfelter.fiskerLottOgHyre)
+        },
+    )
+
+    it('beholder null fra backend', () => {
+        const soknad = new Soknad({ ...baseSoknad, fiskerBlad: null, fiskerLottOgHyre: null })
+
+        expect(soknad.fiskerBlad).toBeNull()
+        expect(soknad.fiskerLottOgHyre).toBeNull()
+    })
+
+    it('gir undefined når feltene mangler', () => {
+        const soknad = new Soknad(baseSoknad)
+
+        expect(soknad.fiskerBlad).toBeUndefined()
+        expect(soknad.fiskerLottOgHyre).toBeUndefined()
+    })
+})
+
 describe('Soknad date-only felt', () => {
     it('tolker fom/tom uten tidssone som Oslo-kalenderdag', () => {
         const soknad = new Soknad({ ...baseSoknad, fom: '2026-03-29', tom: '2026-03-30' })

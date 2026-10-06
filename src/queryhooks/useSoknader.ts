@@ -103,6 +103,8 @@ export interface BackendSoknad {
     merknaderFraSykmelding?: Merknad[]
     ventetidSykmeldingUuid?: string
     meldingTilNavDagerFraSykmelding?: BackendPeriode[]
+    fiskerBlad?: FiskerBlad | null
+    fiskerLottOgHyre?: FiskerLottOgHyre | null
 }
 
 export class Soknad {
@@ -128,6 +130,8 @@ export class Soknad {
     merknaderFraSykmelding?: Merknad[]
     ventetidSykmeldingUuid?: string
     meldingTilNavDagerFraSykmelding?: DatoPeriode[]
+    fiskerBlad?: FiskerBlad | null
+    fiskerLottOgHyre?: FiskerLottOgHyre | null
 
     constructor(json: BackendSoknad) {
         this.id = json.id
@@ -152,6 +156,8 @@ export class Soknad {
         this.merknaderFraSykmelding = json.merknaderFraSykmelding
         this.ventetidSykmeldingUuid = json.ventetidSykmeldingUuid
         this.meldingTilNavDagerFraSykmelding = mapTilDatoPerioder(json.meldingTilNavDagerFraSykmelding)
+        this.fiskerBlad = json.fiskerBlad
+        this.fiskerLottOgHyre = json.fiskerLottOgHyre
     }
 }
 
@@ -237,3 +243,7 @@ export interface DatoPeriode {
     fom: Date
     tom: Date
 }
+
+export type FiskerBlad = 'A' | 'B'
+
+export type FiskerLottOgHyre = 'LOTT' | 'HYRE' | 'BEGGE'
