@@ -616,7 +616,7 @@ export async function mockApi(opts: BackendProxyOpts): Promise<void> {
                             id: 'bek4',
                             arbeidssokerperiodeId: 'periode1',
                             sykepengesoknadId: 'sok4',
-                            fortsattArbeidssoker: false,
+                            fortsattArbeidssoker: null,
                             inntektUnderveis: false,
                             opprettet: '2024-06-14T12:00:00.000Z',
                             avsluttendeSoknad: true,
