@@ -143,7 +143,13 @@ const PeriodebekreftelserTable: React.FC<{ periodebekreftelser: Periodebekreftel
                     <Table.Row key={pb.id}>
                         <Table.DataCell>{pb.id}</Table.DataCell>
                         <Table.DataCell>{pb.sykepengesoknadId}</Table.DataCell>
-                        <Table.DataCell>{pb.fortsattArbeidssoker ? 'Ja' : 'Nei'}</Table.DataCell>
+                        <Table.DataCell>
+                            {pb.fortsattArbeidssoker === true
+                                ? 'Ja'
+                                : pb.fortsattArbeidssoker === false
+                                  ? 'Nei'
+                                  : 'N/A'}
+                        </Table.DataCell>
                         <Table.DataCell>{pb.inntektUnderveis ? 'Ja' : 'Nei'}</Table.DataCell>
                         <Table.DataCell>{format(toDate(pb.opprettet), 'dd.MM.yyyy HH:mm')}</Table.DataCell>
                         <Table.DataCell>{pb.avsluttendeSoknad ? 'Ja' : 'Nei'}</Table.DataCell>
