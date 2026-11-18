@@ -1,12 +1,12 @@
-FROM gcr.io/distroless/nodejs24-debian13@sha256:24bc0fe0225c7518f202a822587dad74fe143b96326b81fe5cc08c1df8bed03e
+FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/node:24-slim
+
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=8080
 
-COPY .next/standalone ./
-COPY .next/static ./.next/static
-COPY public ./public
+COPY --chown=node:node .next/standalone ./
+COPY --chown=node:node .next/static ./.next/static
+COPY --chown=node:node public ./public
 
-ENTRYPOINT ["/nodejs/bin/node"]
 CMD ["server.js"]
